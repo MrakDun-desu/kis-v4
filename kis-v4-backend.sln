@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.DAL.Common", "Api.DAL.Common\Api.DAL.Common.csproj", "{6F72542F-D0B0-4DD7-B910-F920D15253D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.DAL.EF", "Api.DAL.EF\Api.DAL.EF.csproj", "{6F72542F-D0B0-4DD7-B910-F920D15253D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
