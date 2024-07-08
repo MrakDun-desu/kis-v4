@@ -1,0 +1,6 @@
+﻿services:
+  kis-v4-backend:
+    image: kis-v4-backend
+    build:
+      context: .
+      dockerfile: kis-v4-backend/Dockerfile
