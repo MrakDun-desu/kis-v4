@@ -6,4 +6,5 @@ namespace Api.DAL.EF.Entities;
 public record UserAccountEntity : AccountEntity {
     public string Name { get; set; } = string.Empty;
     public bool Deleted { get; set; }
+    public ICollection<TransactionEntity> Transactions = new List<TransactionEntity>();
 }

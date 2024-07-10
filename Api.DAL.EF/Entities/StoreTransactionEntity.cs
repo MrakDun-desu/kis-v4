@@ -7,6 +7,8 @@ namespace Api.DAL.EF.Entities;
 /// </summary>
 public record StoreTransactionEntity : TransactionEntity {
     public TransactionReason TransactionReason { get; set; }
+    public int? SaleTransactionId { get; set; }
+    public SaleTransactionEntity? SaleTransaction { get; set; }
 
     public ICollection<StoreTransactionItemEntity> StoreTransactionItems =
         new List<StoreTransactionItemEntity>();

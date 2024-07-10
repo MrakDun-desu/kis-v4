@@ -5,35 +5,68 @@ namespace Api.DAL.EF;
 
 public class KisDbContext : DbContext {
 
-    public DbSet<AccountEntity> Accounts { get; set; }
-    public DbSet<CashboxEntity> Cashboxes { get; set; }
-    public DbSet<CompositionEntity> Compositions { get; set; }
-    public DbSet<ContainerEntity> Containers { get; set; }
-    public DbSet<CurrencyCostEntity> CurrencyCosts { get; set; }
-    public DbSet<CurrencyChangeEntity> CurrencyChanges { get; set; }
-    public DbSet<DiscountEntity> Discounts { get; set; }
-    public DbSet<DiscountUsageEntity> DiscountUsages { get; set; }
-    public DbSet<DiscountUsageItemEntity> DiscountUsageItems { get; set; }
-    public DbSet<IncompleteTransactionEntity> IncompleteTransactions { get; set; }
-    public DbSet<ModifierEntity> Modifiers { get; set; }
-    public DbSet<PipeEntity> Pipes { get; set; }
-    public DbSet<ProductCategoryEntity> ProductCategories { get; set; }
-    public DbSet<ProductEntity> Products { get; set; }
-    public DbSet<SaleItemEntity> SaleItems { get; set; }
-    public DbSet<SaleTransactionEntity> SaleTransactions { get; set; }
-    public DbSet<SaleTransactionItemEntity> SaleTransactionItems { get; set; }
-    public DbSet<StockTakingEntity> StockTakings { get; set; }
-    public DbSet<StoreEntity> Stores { get; set; }
-    public DbSet<StoreItemEntity> StoreItems { get; set; }
-    public DbSet<StoreTransactionEntity> StoreTransactions { get; set; }
-    public DbSet<StoreTransactionItemEntity> StoreTransactionItems { get; set; }
-    public DbSet<TransactionEntity> Transactions { get; set; }
-    public DbSet<TransactionPriceEntity> TransactionPrices { get; set; }
-    public DbSet<UserAccountEntity> UserAccounts { get; set; }
+    public DbSet<AccountEntity> Accounts { get; init; } = null!;
+    public DbSet<CashboxEntity> Cashboxes { get; init; } = null!;
+    public DbSet<CompositionEntity> Compositions { get; init; } = null!;
+    public DbSet<ContainerEntity> Containers { get; init; } = null!;
+    public DbSet<CurrencyChangeEntity> CurrencyChanges { get; init; } = null!;
+    public DbSet<CurrencyCostEntity> CurrencyCosts { get; init; } = null!;
+    public DbSet<CurrencyEntity> Currencies { get; init; } = null!;
+    public DbSet<DiscountEntity> Discounts { get; init; } = null!;
+    public DbSet<DiscountUsageEntity> DiscountUsages { get; init; } = null!;
+    public DbSet<DiscountUsageItemEntity> DiscountUsageItems { get; init; } = null!;
+    public DbSet<IncompleteTransactionEntity> IncompleteTransactions { get; init; } = null!;
+    public DbSet<ModifierEntity> Modifiers { get; init; } = null!;
+    public DbSet<PipeEntity> Pipes { get; init; } = null!;
+    public DbSet<ProductCategoryEntity> ProductCategories { get; init; } = null!;
+    public DbSet<ProductEntity> Products { get; init; } = null!;
+    public DbSet<SaleItemEntity> SaleItems { get; init; } = null!;
+    public DbSet<SaleTransactionEntity> SaleTransactions { get; init; } = null!;
+    public DbSet<SaleTransactionItemEntity> SaleTransactionItems { get; init; } = null!;
+    public DbSet<StockTakingEntity> StockTakings { get; init; } = null!;
+    public DbSet<StoreEntity> Stores { get; init; } = null!;
+    public DbSet<StoreItemEntity> StoreItems { get; init; } = null!;
+    public DbSet<StoreTransactionEntity> StoreTransactions { get; init; } = null!;
+    public DbSet<StoreTransactionItemEntity> StoreTransactionItems { get; init; } = null!;
+    public DbSet<TransactionEntity> Transactions { get; init; } = null!;
+    public DbSet<TransactionPriceEntity> TransactionPrices { get; init; } = null!;
+    public DbSet<UserAccountEntity> UserAccounts { get; init;}
 
     public KisDbContext(DbContextOptions<KisDbContext> options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
+
+        // for better naming of the join tables
+        modelBuilder.Entity<ProductEntity>()
+            .HasMany(e => e.Categories)
+            .WithMany(e => e.Products)
+            .UsingEntity("ProductInCategory");
+
+        modelBuilder.Entity<ModifierEntity>()
+            .HasMany(e => e.Applications)
+            .WithMany(e => e.Modifiers)
+            .UsingEntity("ModifierApplications");
+
+        modelBuilder.Entity<UserAccountEntity>()
+            .HasMany(e => e.Transactions)
+            .WithOne(e => e.ResponsibleUser);
+
+        // using table-per-type instead of table-per-hierarchy for saving space
+        modelBuilder.Entity<ProductEntity>().ToTable("Products");
+        modelBuilder.Entity<SaleItemEntity>().ToTable("SaleItems");
+        modelBuilder.Entity<StoreItemEntity>().ToTable("StoreItems");
+        modelBuilder.Entity<ModifierEntity>().ToTable("Modifiers");
+
+        modelBuilder.Entity<AccountEntity>().ToTable("Accounts");
+        modelBuilder.Entity<UserAccountEntity>().ToTable("UserAccounts");
+        modelBuilder.Entity<CashboxEntity>().ToTable("Cashboxes");
+
+        modelBuilder.Entity<TransactionEntity>().ToTable("Transactions");
+        modelBuilder.Entity<StoreTransactionEntity>().ToTable("StoreTransactions");
+        modelBuilder.Entity<SaleTransactionEntity>().ToTable("SaleTransactions");
+
+        modelBuilder.Entity<StoreEntity>().ToTable("Stores");
+        modelBuilder.Entity<ContainerEntity>().ToTable("Containers");
     }
 }

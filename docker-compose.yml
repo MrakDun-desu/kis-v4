@@ -1,6 +1,25 @@
 ﻿services:
   kis-v4-backend:
-    image: kis-v4-backend
     build:
       context: .
-      dockerfile: kis-v4-backend/Dockerfile
+      dockerfile: Api/Dockerfile
+    depends_on: [ "database" ] # depends on the database service
+    container_name: kis-v4-backend
+    ports: [ "8080:8080", "8081:8081" ]
+    environment: # environment vars for dynamic configuration (no need to hardcode anywhere else)
+      - ConnectionStrings__DefaultConnection=User ID=postgres;Password=B6MchiUp69z;Server=database;Port=5432;Database=kis_v4;IntegratedSecurity=true;
+
+  database:
+    image: postgres:latest
+    container_name: postgres_db
+    ports: [ "5432:5432" ]
+    environment: # environment vars for configuration of db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=B6MchiUp69z
+      - POSTGRES_DB=kis_v4
+    restart: always # always restart in case of failure
+    volumes: # store persistent data on the app_data volume
+      - app_data:/var/lib/postgresql/data # physical location of the volume
+
+volumes:
+  app_data:

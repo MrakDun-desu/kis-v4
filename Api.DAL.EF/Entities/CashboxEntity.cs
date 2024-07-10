@@ -6,5 +6,5 @@ namespace Api.DAL.EF.Entities;
 public record CashboxEntity : AccountEntity {
     public string Name { get; set; } = string.Empty;
     public bool Deleted { get; set; }
-    public ICollection<StockTakingEntity> StockTakings { get; set; } = new List<StockTakingEntity>();
+    public ICollection<StockTakingEntity> StockTakings { get; init; } = new List<StockTakingEntity>();
 }

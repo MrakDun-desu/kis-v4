@@ -6,4 +6,7 @@ namespace Api.DAL.EF.Entities;
 public record ModifierEntity : SaleItemEntity {
     public required int ModificationTargetId { get; set; }
     public SaleItemEntity? ModificationTarget { get; set; }
+
+    public ICollection<SaleTransactionItemEntity> Applications { get; set; } =
+        new List<SaleTransactionItemEntity>();
 }

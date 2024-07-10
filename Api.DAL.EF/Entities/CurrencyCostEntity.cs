@@ -5,16 +5,18 @@ namespace Api.DAL.EF.Entities;
 /// <summary>
 /// Represents a currency cost of a given product.
 /// </summary>
-[PrimaryKey(nameof(ProductId), nameof(CurrencyId))]
+[PrimaryKey(nameof(ProductId), nameof(CurrencyId), nameof(ValidSince))]
 public record CurrencyCostEntity {
-    public required int ProductId { get; set; }
+    public required int ProductId { get; init; }
     public ProductEntity? Product { get; set; }
-    public required int CurrencyId { get; set; }
+    public required int CurrencyId { get; init; }
     public CurrencyEntity? Currency { get; set; }
+    public DateTime ValidSince { get; init; }
 
     [Precision(11,2)]
     public decimal Amount { get; set; }
-    public DateTime ValidSince { get; init; }
+    /// <summary>
+    /// Description of this cost or a reason why this cost is given to a product.
+    /// </summary>
     public string Description { get; set; } = string.Empty;
-    public bool IsExclusive { get; set; } // whether the cost is exclusive with other costs
 }

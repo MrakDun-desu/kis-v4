@@ -1,7 +1,11 @@
+using Api.DAL.EF;
+
 var builder = WebApplication.CreateBuilder(args);
 
 ConfigureCors(builder.Services);
 ConfigureOpenApiDocuments(builder.Services);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddEntityFrameworkDAL(connectionString!);
 
 var app = builder.Build();
 

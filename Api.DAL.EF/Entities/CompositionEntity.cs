@@ -8,9 +8,9 @@ namespace Api.DAL.EF.Entities;
 /// </summary>
 [PrimaryKey(nameof(SaleItemId), nameof(StoreItemId))]
 public record CompositionEntity {
-    public required int SaleItemId { get; set; }
+    public required int SaleItemId { get; init; }
     public SaleItemEntity? SaleItem { get; set; }
-    public required int StoreItemId { get; set; }
+    public required int StoreItemId { get; init; }
     public StoreItemEntity? StoreItem { get; set; }
 
     [Precision(11,2)]

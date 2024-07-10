@@ -6,6 +6,8 @@ namespace Api.DAL.EF.Entities;
 /// Represents a container that holds some kind of StoreItem. Original use is for beer kegs.
 /// </summary>
 public record ContainerEntity : StoreEntity {
+    public int ContainedItemId { get; set; }
+    public StoreItemEntity? ContainedItem { get; set; }
     public DateTime OpenSince { get; set; }
     public bool WrittenOff { get; set; }
     [Precision(11,2)]
