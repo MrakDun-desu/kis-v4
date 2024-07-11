@@ -30,6 +30,13 @@ namespace Api.DAL.EF.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Accounts", (string)null);
@@ -82,26 +89,34 @@ namespace Api.DAL.EF.Migrations
 
             modelBuilder.Entity("Api.DAL.EF.Entities.CurrencyCostEntity", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.Property<int>("CurrencyId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ValidSince")
-                        .HasColumnType("timestamp with time zone");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(11, 2)
                         .HasColumnType("numeric(11,2)");
 
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("ProductId", "CurrencyId", "ValidSince");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ValidSince")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CurrencyId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("CurrencyCosts");
                 });
@@ -293,15 +308,21 @@ namespace Api.DAL.EF.Migrations
 
             modelBuilder.Entity("Api.DAL.EF.Entities.StockTakingEntity", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CashboxId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("CashboxEntityId")
-                        .HasColumnType("integer");
+                    b.HasKey("Id");
 
-                    b.HasKey("Timestamp");
-
-                    b.HasIndex("CashboxEntityId");
+                    b.HasIndex("CashboxId");
 
                     b.ToTable("StockTakings");
                 });
@@ -439,26 +460,12 @@ namespace Api.DAL.EF.Migrations
                 {
                     b.HasBaseType("Api.DAL.EF.Entities.AccountEntity");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.ToTable("Cashboxes", (string)null);
                 });
 
             modelBuilder.Entity("Api.DAL.EF.Entities.UserAccountEntity", b =>
                 {
                     b.HasBaseType("Api.DAL.EF.Entities.AccountEntity");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.ToTable("UserAccounts", (string)null);
                 });
@@ -497,22 +504,11 @@ namespace Api.DAL.EF.Migrations
                     b.Property<int>("ContainedItemId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("CurrentAmount")
-                        .HasPrecision(11, 2)
-                        .HasColumnType("numeric(11,2)");
-
-                    b.Property<decimal>("MaxAmount")
-                        .HasPrecision(11, 2)
-                        .HasColumnType("numeric(11,2)");
-
-                    b.Property<DateTime>("OpenSince")
+                    b.Property<DateTime?>("OpenSince")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("PipeId")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("WrittenOff")
-                        .HasColumnType("boolean");
 
                     b.HasIndex("ContainedItemId");
 
@@ -577,7 +573,7 @@ namespace Api.DAL.EF.Migrations
             modelBuilder.Entity("Api.DAL.EF.Entities.CurrencyChangeEntity", b =>
                 {
                     b.HasOne("Api.DAL.EF.Entities.AccountEntity", "Account")
-                        .WithMany()
+                        .WithMany("CurrencyChanges")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -623,13 +619,13 @@ namespace Api.DAL.EF.Migrations
             modelBuilder.Entity("Api.DAL.EF.Entities.DiscountUsageEntity", b =>
                 {
                     b.HasOne("Api.DAL.EF.Entities.DiscountEntity", "Discount")
-                        .WithMany()
+                        .WithMany("DiscountUsages")
                         .HasForeignKey("DiscountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Api.DAL.EF.Entities.UserAccountEntity", "User")
-                        .WithMany()
+                        .WithMany("DiscountUsages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -654,7 +650,7 @@ namespace Api.DAL.EF.Migrations
                         .IsRequired();
 
                     b.HasOne("Api.DAL.EF.Entities.SaleTransactionItemEntity", "SaleTransactionItem")
-                        .WithMany()
+                        .WithMany("DiscountUsageItems")
                         .HasForeignKey("SaleTransactionItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -675,7 +671,7 @@ namespace Api.DAL.EF.Migrations
                         .IsRequired();
 
                     b.HasOne("Api.DAL.EF.Entities.UserAccountEntity", "User")
-                        .WithMany()
+                        .WithMany("IncompleteTransactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -688,7 +684,7 @@ namespace Api.DAL.EF.Migrations
             modelBuilder.Entity("Api.DAL.EF.Entities.SaleTransactionItemEntity", b =>
                 {
                     b.HasOne("Api.DAL.EF.Entities.SaleItemEntity", "SaleItem")
-                        .WithMany()
+                        .WithMany("SaleTransactionItems")
                         .HasForeignKey("SaleItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -706,21 +702,25 @@ namespace Api.DAL.EF.Migrations
 
             modelBuilder.Entity("Api.DAL.EF.Entities.StockTakingEntity", b =>
                 {
-                    b.HasOne("Api.DAL.EF.Entities.CashboxEntity", null)
+                    b.HasOne("Api.DAL.EF.Entities.CashboxEntity", "Cashbox")
                         .WithMany("StockTakings")
-                        .HasForeignKey("CashboxEntityId");
+                        .HasForeignKey("CashboxId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cashbox");
                 });
 
             modelBuilder.Entity("Api.DAL.EF.Entities.StoreTransactionItemEntity", b =>
                 {
                     b.HasOne("Api.DAL.EF.Entities.StoreEntity", "Store")
-                        .WithMany()
+                        .WithMany("StoreTransactionItems")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Api.DAL.EF.Entities.StoreItemEntity", "StoreItem")
-                        .WithMany()
+                        .WithMany("StoreTransactionItems")
                         .HasForeignKey("StoreItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -888,12 +888,22 @@ namespace Api.DAL.EF.Migrations
                         .IsRequired();
 
                     b.HasOne("Api.DAL.EF.Entities.SaleItemEntity", "ModificationTarget")
-                        .WithMany()
+                        .WithMany("AvailableModifiers")
                         .HasForeignKey("ModificationTargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ModificationTarget");
+                });
+
+            modelBuilder.Entity("Api.DAL.EF.Entities.AccountEntity", b =>
+                {
+                    b.Navigation("CurrencyChanges");
+                });
+
+            modelBuilder.Entity("Api.DAL.EF.Entities.DiscountEntity", b =>
+                {
+                    b.Navigation("DiscountUsages");
                 });
 
             modelBuilder.Entity("Api.DAL.EF.Entities.DiscountUsageEntity", b =>
@@ -908,7 +918,14 @@ namespace Api.DAL.EF.Migrations
 
             modelBuilder.Entity("Api.DAL.EF.Entities.SaleTransactionItemEntity", b =>
                 {
+                    b.Navigation("DiscountUsageItems");
+
                     b.Navigation("TransactionPrices");
+                });
+
+            modelBuilder.Entity("Api.DAL.EF.Entities.StoreEntity", b =>
+                {
+                    b.Navigation("StoreTransactionItems");
                 });
 
             modelBuilder.Entity("Api.DAL.EF.Entities.CashboxEntity", b =>
@@ -918,12 +935,25 @@ namespace Api.DAL.EF.Migrations
 
             modelBuilder.Entity("Api.DAL.EF.Entities.UserAccountEntity", b =>
                 {
+                    b.Navigation("DiscountUsages");
+
+                    b.Navigation("IncompleteTransactions");
+
                     b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Api.DAL.EF.Entities.SaleItemEntity", b =>
                 {
+                    b.Navigation("AvailableModifiers");
+
                     b.Navigation("Composition");
+
+                    b.Navigation("SaleTransactionItems");
+                });
+
+            modelBuilder.Entity("Api.DAL.EF.Entities.StoreItemEntity", b =>
+                {
+                    b.Navigation("StoreTransactionItems");
                 });
 
             modelBuilder.Entity("Api.DAL.EF.Entities.SaleTransactionEntity", b =>

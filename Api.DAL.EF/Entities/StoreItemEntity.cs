@@ -8,12 +8,21 @@ public record StoreItemEntity : ProductEntity {
     /// Name of the unit of this store item to be displayed (ks, l, g...)
     /// </summary>
     public string UnitName { get; set; } = string.Empty;
+
     /// <summary>
     /// Whether a barman can stock this store item.
     /// </summary>
     public bool BarmanCanStock { get; set; }
+
     /// <summary>
-    /// Whether this item should be managed through containers.
+    /// If this is set, this item shouldn't be managed through normal stores, only through
+    /// containers that have it set as contained item.
     /// </summary>
     public bool IsContainerItem { get; set; }
+
+    /// <summary>
+    /// Store transaction items that this store item is a part of.
+    /// </summary>
+    public ICollection<StoreTransactionItemEntity> StoreTransactionItems { get; init; } =
+        new List<StoreTransactionItemEntity>();
 }

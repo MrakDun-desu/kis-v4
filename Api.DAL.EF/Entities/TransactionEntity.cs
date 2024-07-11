@@ -3,10 +3,14 @@ namespace Api.DAL.EF.Entities;
 /// <summary>
 /// Represents a general transaction.
 /// </summary>
-public record TransactionEntity {
+public abstract record TransactionEntity {
     public required int Id { get; set; }
 
     public int? ResponsibleUserId { get; set; }
+    /// <summary>
+    /// User that initiated this transaction in the system. Can be barman for sale transactions and
+    /// some store transactions, or inventory manager for other store transactions.
+    /// </summary>
     public UserAccountEntity? ResponsibleUser { get; set; }
     public DateTime Timestamp { get; set; }
     public bool Cancelled { get; set; }

@@ -4,7 +4,13 @@ namespace Api.DAL.EF.Entities;
 /// Represents a store.
 /// </summary>
 public record StoreEntity {
-    public required int Id { get; set; }
+    public required int Id { get; init; }
     public string Name { get; set; } = string.Empty;
     public bool Deleted { get; set; }
+
+    /// <summary>
+    /// Store transaction items that have been applied to this store.
+    /// </summary>
+    public ICollection<StoreTransactionItemEntity> StoreTransactionItems { get; init; } =
+        new List<StoreTransactionItemEntity>();
 }

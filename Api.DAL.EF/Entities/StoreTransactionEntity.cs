@@ -8,8 +8,14 @@ namespace Api.DAL.EF.Entities;
 public record StoreTransactionEntity : TransactionEntity {
     public TransactionReason TransactionReason { get; set; }
     public int? SaleTransactionId { get; set; }
+    /// <summary>
+    /// Sale transaction that has initiated this store transaction, if there is one.
+    /// </summary>
     public SaleTransactionEntity? SaleTransaction { get; set; }
 
+    /// <summary>
+    /// Store transaction items that are part of this store transaction.
+    /// </summary>
     public ICollection<StoreTransactionItemEntity> StoreTransactionItems =
         new List<StoreTransactionItemEntity>();
 }

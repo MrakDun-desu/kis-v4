@@ -11,8 +11,14 @@ public record StoreTransactionItemEntity {
     public required int StoreItemId { get; init; }
     public StoreItemEntity? StoreItem { get; set; }
     public required int StoreId { get; init; }
+    /// <summary>
+    /// Store where the amount of store item has changed as a part of this store transaction item.
+    /// </summary>
     public StoreEntity? Store { get; set; }
     public required int StoreTransactionId { get; init; }
+    /// <summary>
+    /// Store transaction that this transaction item belongs to.
+    /// </summary>
     public StoreTransactionEntity? StoreTransaction { get; set; }
 
     /// <summary>

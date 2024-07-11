@@ -5,12 +5,21 @@ namespace Api.DAL.EF.Entities;
 /// and currency changes on accounts that have participated in this transaction.
 /// </summary>
 public record SaleTransactionEntity : TransactionEntity {
+    /// <summary>
+    /// Sale transaction items that are part of this sale transaction.
+    /// </summary>
     public ICollection<SaleTransactionItemEntity> SaleTransactionItems { get; set; } =
         new List<SaleTransactionItemEntity>();
 
+    /// <summary>
+    /// Store transactions that are initiated by this sale transactions.
+    /// </summary>
     public ICollection<StoreTransactionEntity> StoreTransactions { get; set; } =
         new List<StoreTransactionEntity>();
 
+    /// <summary>
+    /// Currency changes on accounts that happened because of this sale transaction.
+    /// </summary>
     public ICollection<CurrencyChangeEntity> CurrencyChanges { get; set; } =
         new List<CurrencyChangeEntity>();
 }

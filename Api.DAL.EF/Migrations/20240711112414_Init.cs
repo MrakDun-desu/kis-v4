@@ -17,7 +17,9 @@ namespace Api.DAL.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Deleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,9 +111,7 @@ namespace Api.DAL.EF.Migrations
                 name: "Cashboxes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Deleted = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,9 +128,7 @@ namespace Api.DAL.EF.Migrations
                 name: "UserAccounts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Deleted = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -147,6 +145,8 @@ namespace Api.DAL.EF.Migrations
                 name: "CurrencyCosts",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ProductId = table.Column<int>(type: "integer", nullable: false),
                     CurrencyId = table.Column<int>(type: "integer", nullable: false),
                     ValidSince = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -155,7 +155,7 @@ namespace Api.DAL.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CurrencyCosts", x => new { x.ProductId, x.CurrencyId, x.ValidSince });
+                    table.PrimaryKey("PK_CurrencyCosts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CurrencyCosts_Currencies_CurrencyId",
                         column: x => x.CurrencyId,
@@ -236,17 +236,20 @@ namespace Api.DAL.EF.Migrations
                 name: "StockTakings",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CashboxEntityId = table.Column<int>(type: "integer", nullable: true)
+                    CashboxId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockTakings", x => x.Timestamp);
+                    table.PrimaryKey("PK_StockTakings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StockTakings_Cashboxes_CashboxEntityId",
-                        column: x => x.CashboxEntityId,
+                        name: "FK_StockTakings_Cashboxes_CashboxId",
+                        column: x => x.CashboxId,
                         principalTable: "Cashboxes",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -351,10 +354,7 @@ namespace Api.DAL.EF.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
                     ContainedItemId = table.Column<int>(type: "integer", nullable: false),
-                    OpenSince = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    WrittenOff = table.Column<bool>(type: "boolean", nullable: false),
-                    MaxAmount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false),
-                    CurrentAmount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false),
+                    OpenSince = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     PipeId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -649,6 +649,11 @@ namespace Api.DAL.EF.Migrations
                 column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CurrencyCosts_ProductId",
+                table: "CurrencyCosts",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DiscountUsageItems_CurrencyId",
                 table: "DiscountUsageItems",
                 column: "CurrencyId");
@@ -699,9 +704,9 @@ namespace Api.DAL.EF.Migrations
                 column: "SaleTransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockTakings_CashboxEntityId",
+                name: "IX_StockTakings_CashboxId",
                 table: "StockTakings",
-                column: "CashboxEntityId");
+                column: "CashboxId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StoreTransactionItems_StoreId",

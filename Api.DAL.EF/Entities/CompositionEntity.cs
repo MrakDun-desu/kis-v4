@@ -9,8 +9,14 @@ namespace Api.DAL.EF.Entities;
 [PrimaryKey(nameof(SaleItemId), nameof(StoreItemId))]
 public record CompositionEntity {
     public required int SaleItemId { get; init; }
+    /// <summary>
+    /// Sale item which is partly composed of given store item.
+    /// </summary>
     public SaleItemEntity? SaleItem { get; set; }
     public required int StoreItemId { get; init; }
+    /// <summary>
+    /// Store item that is a part of the composition of given sale item.
+    /// </summary>
     public StoreItemEntity? StoreItem { get; set; }
 
     [Precision(11,2)]
