@@ -1,20 +1,28 @@
+using System.Data;
+using Api.BL.EF;
 using Api.DAL.EF;
+using KisV4.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
 ConfigureCors(builder.Services);
 ConfigureOpenApiDocuments(builder.Services);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddEntityFrameworkDAL(connectionString!);
+if (connectionString is null) {
+    throw new NoNullAllowedException("Database connection string is null");
+}
+
+builder.Services.AddEntityFrameworkDAL(connectionString);
+builder.Services.AddEntityFrameworkBL();
 
 var app = builder.Build();
 
 app.UseCors();
 app.UseHttpsRedirection();
-app.UseRouting();
 app.UseSwagger();
 app.UseSwaggerUI();
 UseDevelopmentSettings(app);
+app.UseRouting();
 UseEndpoints(app);
 
 app.Run();
@@ -44,5 +52,5 @@ void UseDevelopmentSettings(WebApplication application) {
 }
 
 void UseEndpoints(IEndpointRouteBuilder routeBuilder) {
-    routeBuilder.MapGet("hello-world", () => "Hello, world!");
+    Cashboxes.MapEndpoints(routeBuilder);
 }

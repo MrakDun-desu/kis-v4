@@ -4,7 +4,7 @@ namespace Api.DAL.EF.Entities;
 /// Represents any account, can be a cashbox or user account.
 /// </summary>
 public abstract record AccountEntity {
-    public required int Id { get; init; }
+    public int Id { get; init; }
     public string Name { get; set; } = string.Empty;
     public bool Deleted { get; set; }
 

@@ -20,6 +20,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Api.BL.Common\Api.BL.Common.csproj" />
+      <ProjectReference Include="..\Api.BL.EF\Api.BL.EF.csproj" />
+      <ProjectReference Include="..\Api.Common\Api.Common.csproj" />
       <ProjectReference Include="..\Api.DAL.EF\Api.DAL.EF.csproj" />
     </ItemGroup>
 
