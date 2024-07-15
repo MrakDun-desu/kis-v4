@@ -8,15 +8,18 @@ public record SaleTransactionEntity : TransactionEntity {
     /// <summary>
     /// Sale transaction items that are part of this sale transaction.
     /// </summary>
-    public virtual ICollection<SaleTransactionItemEntity> SaleTransactionItems { get; private set; }
+    public virtual ICollection<SaleTransactionItemEntity>
+        SaleTransactionItems { get; private set; } = new List<SaleTransactionItemEntity>();
 
     /// <summary>
     /// Store transactions that are initiated by this sale transactions.
     /// </summary>
-    public virtual ICollection<StoreTransactionEntity> StoreTransactions { get; private set; }
+    public virtual ICollection<StoreTransactionEntity> StoreTransactions { get; private set; } =
+        new List<StoreTransactionEntity>();
 
     /// <summary>
     /// Currency changes on accounts that happened because of this sale transaction.
     /// </summary>
-    public virtual ICollection<CurrencyChangeEntity> CurrencyChanges { get; private set; }
+    public virtual ICollection<CurrencyChangeEntity> CurrencyChanges { get; private set; } =
+        new List<CurrencyChangeEntity>();
 }
