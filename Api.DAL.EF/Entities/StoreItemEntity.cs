@@ -23,6 +23,6 @@ public record StoreItemEntity : ProductEntity {
     /// <summary>
     /// Store transaction items that this store item is a part of.
     /// </summary>
-    public ICollection<StoreTransactionItemEntity> StoreTransactionItems { get; init; } =
+    public virtual ICollection<StoreTransactionItemEntity> StoreTransactionItems { get; private set; } =
         new List<StoreTransactionItemEntity>();
 }

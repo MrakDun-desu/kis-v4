@@ -12,17 +12,17 @@ public record DiscountUsageItemEntity {
     /// <summary>
     /// Discount usage this has been used as a part of.
     /// </summary>
-    public DiscountUsageEntity? DiscountUsage { get; set; }
+    public virtual DiscountUsageEntity? DiscountUsage { get; set; }
     public required int CurrencyId { get; init; }
     /// <summary>
     /// Currency for which this discount usage item applies.
     /// </summary>
-    public CurrencyEntity? Currency { get; set; }
+    public virtual CurrencyEntity? Currency { get; set; }
     public required int SaleTransactionItemId { get; init; }
     /// <summary>
     /// Sale transaction item that this usage item has been used on.
     /// </summary>
-    public SaleTransactionItemEntity? SaleTransactionItem { get; set; }
+    public virtual SaleTransactionItemEntity? SaleTransactionItem { get; set; }
 
     [Precision(11,2)]
     public decimal Amount { get; set; }

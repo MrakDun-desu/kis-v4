@@ -11,9 +11,9 @@ public abstract record ProductEntity {
     /// <summary>
     /// Categories that this product is in.
     /// </summary>
-    public ICollection<ProductCategoryEntity> Categories { get; init; } = new List<ProductCategoryEntity>();
+    public virtual ICollection<ProductCategoryEntity> Categories { get; private set; } = new List<ProductCategoryEntity>();
     /// <summary>
     /// Costs that this product has.
     /// </summary>
-    public ICollection<CurrencyCostEntity> Costs { get; init; } = new List<CurrencyCostEntity>();
+    public virtual ICollection<CurrencyCostEntity> Costs { get; private set; } = new List<CurrencyCostEntity>();
 }

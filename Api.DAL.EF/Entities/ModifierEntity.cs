@@ -5,11 +5,11 @@ namespace Api.DAL.EF.Entities;
 /// </summary>
 public record ModifierEntity : SaleItemEntity {
     public required int ModificationTargetId { get; set; }
-    public SaleItemEntity? ModificationTarget { get; set; }
+    public virtual SaleItemEntity? ModificationTarget { get; set; }
 
     /// <summary>
     /// Sale transaction items this modifier has been applied on.
     /// </summary>
-    public ICollection<SaleTransactionItemEntity> Applications { get; set; } =
+    public virtual ICollection<SaleTransactionItemEntity> Applications { get; private set; } =
         new List<SaleTransactionItemEntity>();
 }

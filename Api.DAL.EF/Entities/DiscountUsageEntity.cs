@@ -10,18 +10,18 @@ public record DiscountUsageEntity {
     /// <summary>
     /// User that has used the given discount.
     /// </summary>
-    public UserAccountEntity? User { get; set; }
+    public virtual UserAccountEntity? User { get; set; }
     public required int DiscountId { get; init; }
     /// <summary>
     /// Discount that has been used by the given user.
     /// </summary>
-    public DiscountEntity? Discount { get; set; }
+    public virtual DiscountEntity? Discount { get; set; }
 
     public DateTime Timestamp { get; set; }
 
     /// <summary>
     /// Each item and currency that this discount usage was applied on.
     /// </summary>
-    public ICollection<DiscountUsageItemEntity> UsageItems { get; set; } =
+    public virtual ICollection<DiscountUsageItemEntity> UsageItems { get; private set; } =
         new List<DiscountUsageItemEntity>();
 }

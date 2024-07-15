@@ -11,6 +11,6 @@ public abstract record AccountEntity {
     /// <summary>
     /// Currency changes that have occured for this account.
     /// </summary>
-    public ICollection<CurrencyChangeEntity> CurrencyChanges { get; set; } =
+    public virtual ICollection<CurrencyChangeEntity> CurrencyChanges { get; private set; } =
         new List<CurrencyChangeEntity>();
 }

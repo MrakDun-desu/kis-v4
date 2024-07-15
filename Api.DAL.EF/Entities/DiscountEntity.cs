@@ -11,6 +11,6 @@ public record DiscountEntity {
     /// Each single time this discount was used.
     /// Can have multiple items and currencies to be applied to.
     /// </summary>
-    public ICollection<DiscountUsageEntity> DiscountUsages { get; init; } =
+    public virtual ICollection<DiscountUsageEntity> DiscountUsages { get; private set; } =
         new List<DiscountUsageEntity>();
 }

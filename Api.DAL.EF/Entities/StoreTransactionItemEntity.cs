@@ -9,17 +9,17 @@ public record StoreTransactionItemEntity {
     public required int Id { get; init; }
 
     public required int StoreItemId { get; init; }
-    public StoreItemEntity? StoreItem { get; set; }
+    public virtual StoreItemEntity? StoreItem { get; set; }
     public required int StoreId { get; init; }
     /// <summary>
     /// Store where the amount of store item has changed as a part of this store transaction item.
     /// </summary>
-    public StoreEntity? Store { get; set; }
+    public virtual StoreEntity? Store { get; set; }
     public required int StoreTransactionId { get; init; }
     /// <summary>
     /// Store transaction that this transaction item belongs to.
     /// </summary>
-    public StoreTransactionEntity? StoreTransaction { get; set; }
+    public virtual StoreTransactionEntity? StoreTransaction { get; set; }
 
     /// <summary>
     /// Amount of the item that was added to the store in this transaction.

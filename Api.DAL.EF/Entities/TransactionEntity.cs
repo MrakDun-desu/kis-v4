@@ -11,7 +11,7 @@ public abstract record TransactionEntity {
     /// User that initiated this transaction in the system. Can be barman for sale transactions and
     /// some store transactions, or inventory manager for other store transactions.
     /// </summary>
-    public UserAccountEntity? ResponsibleUser { get; set; }
+    public virtual UserAccountEntity? ResponsibleUser { get; set; }
     public DateTime Timestamp { get; set; }
     public bool Cancelled { get; set; }
 }

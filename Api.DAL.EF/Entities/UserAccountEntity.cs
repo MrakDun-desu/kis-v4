@@ -7,17 +7,21 @@ public record UserAccountEntity : AccountEntity {
     /// <summary>
     /// Transactions that this user is responsible for.
     /// </summary>
-    public ICollection<TransactionEntity> Transactions { get; init; } = new List<TransactionEntity>();
+    public virtual ICollection<TransactionEntity> Transactions { get; private set; } =
+        new List<TransactionEntity>();
 
     /// <summary>
     /// Incomplete transactions that this user is supposed to pay for when they're finished.
     /// </summary>
-    public ICollection<IncompleteTransactionEntity> IncompleteTransactions { get; init; } =
+    public virtual ICollection<IncompleteTransactionEntity> IncompleteTransactions {
+        get;
+        private set;
+    } =
         new List<IncompleteTransactionEntity>();
 
     /// <summary>
     /// Discount usages that this user has applied.
     /// </summary>
-    public ICollection<DiscountUsageEntity> DiscountUsages { get; init; } =
+    public virtual ICollection<DiscountUsageEntity> DiscountUsages { get; private set; } =
         new List<DiscountUsageEntity>();
 }

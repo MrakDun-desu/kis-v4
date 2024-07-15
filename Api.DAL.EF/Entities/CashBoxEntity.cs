@@ -7,5 +7,5 @@ public record CashBoxEntity : AccountEntity {
     /// <summary>
     /// Stock-taking periods that have been marked for this cash box.
     /// </summary>
-    public ICollection<StockTakingEntity> StockTakings { get; init; } = new List<StockTakingEntity>();
+    public virtual ICollection<StockTakingEntity> StockTakings { get; private set; } = new List<StockTakingEntity>();
 }

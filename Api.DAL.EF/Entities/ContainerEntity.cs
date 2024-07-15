@@ -7,7 +7,7 @@ namespace Api.DAL.EF.Entities;
 /// </summary>
 public record ContainerEntity : StoreEntity {
     public required int ContainedItemId { get; init; }
-    public StoreItemEntity? ContainedItem { get; set; }
+    public virtual StoreItemEntity? ContainedItem { get; set; }
     /// <summary>
     /// Timestamp for when container was first opened (first time the PipeId was set to not null).
     /// </summary>
@@ -17,7 +17,7 @@ public record ContainerEntity : StoreEntity {
     /// Pipe that the container is currently active at, if the container is active.
     /// If container isn't active, this should be null.
     /// </summary>
-    public PipeEntity? Pipe { get; set; }
+    public virtual PipeEntity? Pipe { get; set; }
     // Deleted flag is already present in the parent entity of Store,
     // so it's better to just have an alias for written-off flag for containers.
     [NotMapped]

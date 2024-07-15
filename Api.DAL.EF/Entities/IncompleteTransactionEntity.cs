@@ -12,10 +12,10 @@ public record IncompleteTransactionEntity {
     /// <summary>
     /// Incomplete sale transaction this record responds to.
     /// </summary>
-    public SaleTransactionEntity? SaleTransaction { get; set; }
+    public virtual SaleTransactionEntity? SaleTransaction { get; set; }
     public required int UserId { get; init; }
     /// <summary>
     /// User that is supposed to pay for this incomplete transaction when it finishes.
     /// </summary>
-    public UserAccountEntity? User { get; set; }
+    public virtual UserAccountEntity? User { get; set; }
 }

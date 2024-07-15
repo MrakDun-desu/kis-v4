@@ -11,11 +11,11 @@ public record StoreTransactionEntity : TransactionEntity {
     /// <summary>
     /// Sale transaction that has initiated this store transaction, if there is one.
     /// </summary>
-    public SaleTransactionEntity? SaleTransaction { get; set; }
+    public virtual SaleTransactionEntity? SaleTransaction { get; set; }
 
     /// <summary>
     /// Store transaction items that are part of this store transaction.
     /// </summary>
-    public ICollection<StoreTransactionItemEntity> StoreTransactionItems =
+    public virtual ICollection<StoreTransactionItemEntity> StoreTransactionItems { get; private set; } =
         new List<StoreTransactionItemEntity>();
 }

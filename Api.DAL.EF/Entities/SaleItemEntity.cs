@@ -12,18 +12,18 @@ public record SaleItemEntity : ProductEntity {
     /// <summary>
     /// Amounts of store items that this sale item is composed of.
     /// </summary>
-    public ICollection<CompositionEntity> Composition { get; set; } =
+    public virtual ICollection<CompositionEntity> Composition { get; private set; } =
         new List<CompositionEntity>();
 
     /// <summary>
     /// Sale transaction items that this sale item is a part of.
     /// </summary>
-    public ICollection<SaleTransactionItemEntity> SaleTransactionItems { get; init; } =
+    public virtual ICollection<SaleTransactionItemEntity> SaleTransactionItems { get; private set; } =
         new List<SaleTransactionItemEntity>();
 
     /// <summary>
     /// Available modifiers for this sale item.
     /// </summary>
-    public ICollection<ModifierEntity> AvailableModifiers { get; init; } =
+    public virtual ICollection<ModifierEntity> AvailableModifiers { get; private set; } =
         new List<ModifierEntity>();
 }

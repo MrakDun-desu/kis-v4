@@ -9,5 +9,5 @@ public record ProductCategoryEntity {
     /// <summary>
     /// Products that are in this category.
     /// </summary>
-    public ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>();
+    public virtual ICollection<ProductEntity> Products { get; private set; } = new List<ProductEntity>();
 }

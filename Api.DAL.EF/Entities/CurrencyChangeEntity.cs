@@ -11,17 +11,17 @@ public record CurrencyChangeEntity {
     /// <summary>
     /// Currency which amount was changed.
     /// </summary>
-    public CurrencyEntity? Currency { get; set; }
+    public virtual CurrencyEntity? Currency { get; set; }
     public required int SaleTransactionId { get; init; }
     /// <summary>
     /// Sale transaction that has changed the currency amount.
     /// </summary>
-    public SaleTransactionEntity? SaleTransaction { get; set; }
+    public virtual SaleTransactionEntity? SaleTransaction { get; set; }
     public required int AccountId { get; init; }
     /// <summary>
     /// Account for which the currency amount has changed.
     /// </summary>
-    public AccountEntity? Account { get; set; }
+    public virtual AccountEntity? Account { get; set; }
 
     [Precision(11,2)]
     public decimal Amount { get; set; }

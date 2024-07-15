@@ -12,12 +12,12 @@ public record CompositionEntity {
     /// <summary>
     /// Sale item which is partly composed of given store item.
     /// </summary>
-    public SaleItemEntity? SaleItem { get; set; }
+    public virtual SaleItemEntity? SaleItem { get; set; }
     public required int StoreItemId { get; init; }
     /// <summary>
     /// Store item that is a part of the composition of given sale item.
     /// </summary>
-    public StoreItemEntity? StoreItem { get; set; }
+    public virtual StoreItemEntity? StoreItem { get; set; }
 
     [Precision(11,2)]
     public decimal Amount { get; set; }

@@ -11,12 +11,12 @@ public record CurrencyCostEntity {
     /// <summary>
     /// Product that has this cost.
     /// </summary>
-    public ProductEntity? Product { get; set; }
+    public virtual ProductEntity? Product { get; set; }
     public required int CurrencyId { get; init; }
     /// <summary>
     /// Currency that is part of the cost of given product.
     /// </summary>
-    public CurrencyEntity? Currency { get; set; }
+    public virtual CurrencyEntity? Currency { get; set; }
     public DateTime ValidSince { get; init; }
 
     [Precision(11,2)]

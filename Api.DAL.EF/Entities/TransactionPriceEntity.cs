@@ -11,12 +11,12 @@ public record TransactionPriceEntity {
     /// <summary>
     /// Currency that this transaction price is in.
     /// </summary>
-    public CurrencyEntity? Currency { get; set; }
+    public virtual CurrencyEntity? Currency { get; set; }
     public required int SaleTransactionItemId { get; init; }
     /// <summary>
     /// Sale transaction item that has this price.
     /// </summary>
-    public SaleTransactionItemEntity? SaleTransactionItem { get; set; }
+    public virtual SaleTransactionItemEntity? SaleTransactionItem { get; set; }
 
     [Precision(11,2)]
     public decimal Amount { get; set; }
