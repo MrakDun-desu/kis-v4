@@ -18,7 +18,7 @@ public class CurrencyService(KisDbContext dbContext, Mapper mapper) : ICurrencyS
     }
 
     public List<CurrencyModel> ReadAll() {
-        return mapper.ToModelEnumerable(dbContext.Currencies).ToList();
+        return mapper.ToModels(dbContext.Currencies).ToList();
     }
 
     public bool Update(int id, CurrencyUpdateModel updateModel) {

@@ -8,8 +8,11 @@ namespace KisV4.BL.EF;
 public partial class Mapper {
     public partial CashBoxEntity ToEntity(CashBoxCreateModel model);
     public partial CashBoxDetailModel? ToModel(CashBoxEntity? entity);
-    public partial IEnumerable<CashBoxListModel> ToModelEnumerable(IEnumerable<CashBoxEntity> entity);
+    public partial IEnumerable<CashBoxListModel> ToModels(IEnumerable<CashBoxEntity> entities);
 
     public partial CurrencyEntity ToEntity(CurrencyCreateModel model);
-    public partial IEnumerable<CurrencyModel> ToModelEnumerable(IEnumerable<CurrencyEntity> entity);
+    public partial IEnumerable<CurrencyModel> ToModels(IEnumerable<CurrencyEntity> entities);
+
+    public partial PipeEntity ToEntity(PipeCreateModel model);
+    public partial IEnumerable<PipeModel> ToModels(IEnumerable<PipeEntity> entities);
 }
