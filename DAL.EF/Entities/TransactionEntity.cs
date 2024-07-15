@@ -4,7 +4,7 @@ namespace KisV4.DAL.EF.Entities;
 /// Represents a general transaction.
 /// </summary>
 public abstract record TransactionEntity {
-    public required int Id { get; set; }
+    public int Id { get; set; }
 
     public int? ResponsibleUserId { get; set; }
     /// <summary>

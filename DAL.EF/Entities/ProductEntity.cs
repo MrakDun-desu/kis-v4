@@ -4,7 +4,7 @@ namespace KisV4.DAL.EF.Entities;
 /// Represents a product. Product can be a sale item or a store item.
 /// </summary>
 public abstract record ProductEntity {
-    public required int Id { get; init; }
+    public int Id { get; init; }
     public string Name { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;
     public bool Deleted { get; set; }

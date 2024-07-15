@@ -4,7 +4,7 @@ namespace KisV4.DAL.EF.Entities;
 /// Represents a store.
 /// </summary>
 public record StoreEntity {
-    public required int Id { get; init; }
+    public int Id { get; init; }
     public string Name { get; set; } = string.Empty;
     public bool Deleted { get; set; }
 

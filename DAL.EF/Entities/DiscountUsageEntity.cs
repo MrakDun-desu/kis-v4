@@ -5,7 +5,7 @@ namespace KisV4.DAL.EF.Entities;
 /// Can be used on multiple items to discount multiple currencies.
 /// </summary>
 public record DiscountUsageEntity {
-    public required int Id { get; init; }
+    public int Id { get; init; }
     public required int UserId { get; init; }
     /// <summary>
     /// User that has used the given discount.

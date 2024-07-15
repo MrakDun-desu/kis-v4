@@ -6,7 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 /// Represents a sale transaction item.
 /// </summary>
 public record SaleTransactionItemEntity {
-    public required int Id { get; init; }
+    public int Id { get; init; }
     public required int SaleItemId { get; init; }
     public virtual SaleItemEntity? SaleItem { get; set; }
     public required int SaleTransactionId { get; init; }

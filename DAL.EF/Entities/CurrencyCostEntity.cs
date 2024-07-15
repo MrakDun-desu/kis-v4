@@ -6,7 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 /// Represents a currency cost of a given product.
 /// </summary>
 public record CurrencyCostEntity {
-    public required int Id { get; init; }
+    public int Id { get; init; }
     public required int ProductId { get; init; }
     /// <summary>
     /// Product that has this cost.

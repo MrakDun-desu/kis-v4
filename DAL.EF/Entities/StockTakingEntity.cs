@@ -4,7 +4,7 @@ namespace KisV4.DAL.EF.Entities;
 /// Represents a stock taking for a cashbox.
 /// </summary>
 public record StockTakingEntity {
-    public required int Id { get; init; }
+    public int Id { get; init; }
     public DateTime Timestamp { get; set; }
     public required int CashboxId { get; init; }
     public virtual CashBoxEntity? Cashbox { get; set; }
