@@ -1,14 +1,14 @@
 using KisV4.BL.Common;
 using KisV4.Common.DependencyInjection;
-using KisV4.Common.Models.CashBox;
+using KisV4.Common.Models;
 using KisV4.DAL.EF;
 
 namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
-public class CashboxService(KisDbContext dbContext, Mapper mapper) : ICashboxService, IScopedService {
+public class CashBoxService(KisDbContext dbContext, Mapper mapper) : ICashBoxService, IScopedService {
 
-    public int Create(CashboxCreateModel createModel) {
+    public int Create(CashBoxCreateModel createModel) {
         var entity = mapper.ToEntity(createModel);
         var insertedEntity = dbContext.CashBoxes.Add(entity);
 
@@ -17,7 +17,7 @@ public class CashboxService(KisDbContext dbContext, Mapper mapper) : ICashboxSer
         return insertedEntity.Entity.Id;
     }
 
-    public List<CashboxListModel> ReadAll() {
+    public List<CashBoxListModel> ReadAll() {
         return mapper.ToModelEnumerable(dbContext.CashBoxes).ToList();
     }
 
@@ -25,7 +25,7 @@ public class CashboxService(KisDbContext dbContext, Mapper mapper) : ICashboxSer
         return mapper.ToModel(dbContext.CashBoxes.Find(id));
     }
 
-    public bool Update(int id, CashboxUpdateModel updateModel) {
+    public bool Update(int id, CashBoxUpdateModel updateModel) {
         var entity = dbContext.CashBoxes.Find(id);
         if (entity is null)
             return false;

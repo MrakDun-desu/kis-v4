@@ -1,4 +1,4 @@
-using KisV4.Common.Models.Currency;
+using KisV4.Common.Models;
 
 namespace KisV4.BL.Common;
 

@@ -52,6 +52,6 @@ void UseDevelopmentSettings(WebApplication application) {
 }
 
 void UseEndpoints(IEndpointRouteBuilder routeBuilder) {
-    Cashboxes.MapEndpoints(routeBuilder);
+    CashBoxes.MapEndpoints(routeBuilder);
     Currencies.MapEndpoints(routeBuilder);
 }

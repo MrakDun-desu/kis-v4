@@ -1,10 +1,10 @@
 using KisV4.BL.Common;
-using KisV4.Common.Models.CashBox;
+using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace KisV4.App.Endpoints;
 
-public static class Cashboxes {
+public static class CashBoxes {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("cashboxes");
         group.MapPost(string.Empty, Create);
@@ -15,20 +15,20 @@ public static class Cashboxes {
     }
 
     private static int Create(
-        ICashboxService cashboxService,
-        CashboxCreateModel createModel) {
-        var createdId = cashboxService.Create(createModel);
+        ICashBoxService cashBoxService,
+        CashBoxCreateModel createModel) {
+        var createdId = cashBoxService.Create(createModel);
         return createdId;
     }
 
-    private static List<CashboxListModel> ReadAll(ICashboxService cashboxService) {
-        return cashboxService.ReadAll();
+    private static List<CashBoxListModel> ReadAll(ICashBoxService cashBoxService) {
+        return cashBoxService.ReadAll();
     }
 
     private static Results<Ok<CashBoxDetailModel>, NotFound>Read(
-        ICashboxService cashboxService,
+        ICashBoxService cashBoxService,
         int id) {
-        var cashboxDetail = cashboxService.Read(id);
+        var cashboxDetail = cashBoxService.Read(id);
         if (cashboxDetail is null) {
             return TypedResults.NotFound();
         }
@@ -37,15 +37,15 @@ public static class Cashboxes {
     }
 
     private static Results<Ok, NotFound> Update(
-        ICashboxService cashboxService,
+        ICashBoxService cashBoxService,
         int id,
-        CashboxUpdateModel updateModel) {
-        return cashboxService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
+        CashBoxUpdateModel updateModel) {
+        return cashBoxService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
     }
 
     private static Results<Ok, NotFound> Delete(
-        ICashboxService cashboxService,
+        ICashBoxService cashBoxService,
         int id) {
-        return cashboxService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
+        return cashBoxService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
     }
 }

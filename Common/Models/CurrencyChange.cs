@@ -1,6 +1,6 @@
-using KisV4.Common.Models.Currency;
+using KisV4.Common.Models;
 
-namespace KisV4.Common.Models.CurrencyChange;
+namespace KisV4.Common.Models;
 
 public record CurrencyChangeModel(
     CurrencyModel Currency,
