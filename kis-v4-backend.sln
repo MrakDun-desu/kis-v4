@@ -1,19 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{F6A26A7B-E865-40AE-B7F9-66446829011A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App", "App\App.csproj", "{F6A26A7B-E865-40AE-B7F9-66446829011A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65E77554-7C51-4964-8169-8673DD8A54D4}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.DAL.EF", "Api.DAL.EF\Api.DAL.EF.csproj", "{6F72542F-D0B0-4DD7-B910-F920D15253D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL.EF", "DAL.EF\DAL.EF.csproj", "{6F72542F-D0B0-4DD7-B910-F920D15253D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Common", "Api.Common\Api.Common.csproj", "{CC7CA692-096B-489A-9A10-16C8D173305A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{CC7CA692-096B-489A-9A10-16C8D173305A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.BL.Common", "Api.BL.Common\Api.BL.Common.csproj", "{1CE43732-41A0-4930-BB3D-858714CB365A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL.Common", "BL.Common\BL.Common.csproj", "{1CE43732-41A0-4930-BB3D-858714CB365A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.BL.EF", "Api.BL.EF\Api.BL.EF.csproj", "{2AF9F3EA-B7AA-4B9D-9CD6-751B7A568225}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL.EF", "BL.EF\BL.EF.csproj", "{2AF9F3EA-B7AA-4B9D-9CD6-751B7A568225}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
