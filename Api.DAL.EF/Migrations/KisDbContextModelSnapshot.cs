@@ -456,11 +456,11 @@ namespace Api.DAL.EF.Migrations
                     b.ToTable("ProductInCategory");
                 });
 
-            modelBuilder.Entity("Api.DAL.EF.Entities.CashboxEntity", b =>
+            modelBuilder.Entity("Api.DAL.EF.Entities.CashBoxEntity", b =>
                 {
                     b.HasBaseType("Api.DAL.EF.Entities.AccountEntity");
 
-                    b.ToTable("Cashboxes", (string)null);
+                    b.ToTable("CashBoxes", (string)null);
                 });
 
             modelBuilder.Entity("Api.DAL.EF.Entities.UserAccountEntity", b =>
@@ -702,7 +702,7 @@ namespace Api.DAL.EF.Migrations
 
             modelBuilder.Entity("Api.DAL.EF.Entities.StockTakingEntity", b =>
                 {
-                    b.HasOne("Api.DAL.EF.Entities.CashboxEntity", "Cashbox")
+                    b.HasOne("Api.DAL.EF.Entities.CashBoxEntity", "Cashbox")
                         .WithMany("StockTakings")
                         .HasForeignKey("CashboxId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -796,11 +796,11 @@ namespace Api.DAL.EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Api.DAL.EF.Entities.CashboxEntity", b =>
+            modelBuilder.Entity("Api.DAL.EF.Entities.CashBoxEntity", b =>
                 {
                     b.HasOne("Api.DAL.EF.Entities.AccountEntity", null)
                         .WithOne()
-                        .HasForeignKey("Api.DAL.EF.Entities.CashboxEntity", "Id")
+                        .HasForeignKey("Api.DAL.EF.Entities.CashBoxEntity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -928,7 +928,7 @@ namespace Api.DAL.EF.Migrations
                     b.Navigation("StoreTransactionItems");
                 });
 
-            modelBuilder.Entity("Api.DAL.EF.Entities.CashboxEntity", b =>
+            modelBuilder.Entity("Api.DAL.EF.Entities.CashBoxEntity", b =>
                 {
                     b.Navigation("StockTakings");
                 });

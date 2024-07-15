@@ -7,5 +7,5 @@ public record StockTakingEntity {
     public required int Id { get; init; }
     public DateTime Timestamp { get; set; }
     public required int CashboxId { get; init; }
-    public CashboxEntity? Cashbox { get; set; }
+    public CashBoxEntity? Cashbox { get; set; }
 }

@@ -3,10 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api.DAL.EF;
 
-public class KisDbContext : DbContext {
-
+public class KisDbContext(DbContextOptions<KisDbContext> options) : DbContext(options) {
     public DbSet<AccountEntity> Accounts { get; init; } = null!;
-    public DbSet<CashboxEntity> Cashboxes { get; init; } = null!;
+    public DbSet<CashBoxEntity> CashBoxes { get; init; } = null!;
     public DbSet<CompositionEntity> Compositions { get; init; } = null!;
     public DbSet<ContainerEntity> Containers { get; init; } = null!;
     public DbSet<CurrencyChangeEntity> CurrencyChanges { get; init; } = null!;
@@ -30,9 +29,7 @@ public class KisDbContext : DbContext {
     public DbSet<StoreTransactionItemEntity> StoreTransactionItems { get; init; } = null!;
     public DbSet<TransactionEntity> Transactions { get; init; } = null!;
     public DbSet<TransactionPriceEntity> TransactionPrices { get; init; } = null!;
-    public DbSet<UserAccountEntity> UserAccounts { get; init;}
-
-    public KisDbContext(DbContextOptions<KisDbContext> options) : base(options) {}
+    public DbSet<UserAccountEntity> UserAccounts { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
@@ -60,7 +57,7 @@ public class KisDbContext : DbContext {
 
         modelBuilder.Entity<AccountEntity>().ToTable("Accounts");
         modelBuilder.Entity<UserAccountEntity>().ToTable("UserAccounts");
-        modelBuilder.Entity<CashboxEntity>().ToTable("Cashboxes");
+        modelBuilder.Entity<CashBoxEntity>().ToTable("CashBoxes");
 
         modelBuilder.Entity<TransactionEntity>().ToTable("Transactions");
         modelBuilder.Entity<StoreTransactionEntity>().ToTable("StoreTransactions");

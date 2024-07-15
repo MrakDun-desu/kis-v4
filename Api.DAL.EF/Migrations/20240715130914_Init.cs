@@ -108,16 +108,16 @@ namespace Api.DAL.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cashboxes",
+                name: "CashBoxes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cashboxes", x => x.Id);
+                    table.PrimaryKey("PK_CashBoxes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cashboxes_Accounts_Id",
+                        name: "FK_CashBoxes_Accounts_Id",
                         column: x => x.Id,
                         principalTable: "Accounts",
                         principalColumn: "Id",
@@ -245,9 +245,9 @@ namespace Api.DAL.EF.Migrations
                 {
                     table.PrimaryKey("PK_StockTakings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StockTakings_Cashboxes_CashboxId",
+                        name: "FK_StockTakings_CashBoxes_CashboxId",
                         column: x => x.CashboxId,
-                        principalTable: "Cashboxes",
+                        principalTable: "CashBoxes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -788,7 +788,7 @@ namespace Api.DAL.EF.Migrations
                 name: "ProductCategories");
 
             migrationBuilder.DropTable(
-                name: "Cashboxes");
+                name: "CashBoxes");
 
             migrationBuilder.DropTable(
                 name: "StoreItems");

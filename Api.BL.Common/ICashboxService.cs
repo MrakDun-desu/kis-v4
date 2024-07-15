@@ -1,11 +1,11 @@
-using KisV4.Api.Common.Models.Cashbox;
+using KisV4.Api.Common.Models.CashBox;
 
 namespace Api.BL.Common;
 
 public interface ICashboxService {
     public int Create(CashboxCreateModel createModel);
     public List<CashboxListModel> ReadAll();
-    public CashboxDetailModel? Read(int id);
+    public CashBoxDetailModel? Read(int id);
     public bool Update(int id, CashboxUpdateModel updateModel);
     public bool Delete(int id);
 }

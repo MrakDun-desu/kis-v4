@@ -1,7 +1,7 @@
 using Api.BL.Common;
 using Api.DAL.EF;
 using KisV4.Api.Common.DependencyInjection;
-using KisV4.Api.Common.Models.Cashbox;
+using KisV4.Api.Common.Models.CashBox;
 
 namespace Api.BL.EF.Services;
 
@@ -10,7 +10,7 @@ public class CashboxService(KisDbContext dbContext, Mapper mapper) : ICashboxSer
 
     public int Create(CashboxCreateModel createModel) {
         var entity = mapper.ToEntity(createModel);
-        var insertedEntity = dbContext.Cashboxes.Add(entity);
+        var insertedEntity = dbContext.CashBoxes.Add(entity);
 
         dbContext.SaveChanges();
 
@@ -18,15 +18,15 @@ public class CashboxService(KisDbContext dbContext, Mapper mapper) : ICashboxSer
     }
 
     public List<CashboxListModel> ReadAll() {
-        return mapper.ToModelEnumerable(dbContext.Cashboxes).ToList();
+        return mapper.ToModelEnumerable(dbContext.CashBoxes).ToList();
     }
 
-    public CashboxDetailModel? Read(int id) {
-        return mapper.ToModel(dbContext.Cashboxes.Find(id));
+    public CashBoxDetailModel? Read(int id) {
+        return mapper.ToModel(dbContext.CashBoxes.Find(id));
     }
 
     public bool Update(int id, CashboxUpdateModel updateModel) {
-        var entity = dbContext.Cashboxes.Find(id);
+        var entity = dbContext.CashBoxes.Find(id);
         if (entity is null)
             return false;
 
@@ -41,19 +41,19 @@ public class CashboxService(KisDbContext dbContext, Mapper mapper) : ICashboxSer
             return true;
         }
 
-        dbContext.Cashboxes.Update(entity);
+        dbContext.CashBoxes.Update(entity);
         dbContext.SaveChanges();
 
         return true;
     }
 
     public bool Delete(int id) {
-        var entity = dbContext.Cashboxes.Find(id);
+        var entity = dbContext.CashBoxes.Find(id);
         if (entity is null) {
             return true;
         }
 
-        dbContext.Cashboxes.Remove(entity);
+        dbContext.CashBoxes.Remove(entity);
         dbContext.SaveChanges();
 
         return true;

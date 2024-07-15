@@ -1,5 +1,5 @@
 using Api.BL.Common;
-using KisV4.Api.Common.Models.Cashbox;
+using KisV4.Api.Common.Models.CashBox;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace KisV4.Api.Endpoints;
@@ -25,7 +25,7 @@ public static class Cashboxes {
         return cashboxService.ReadAll();
     }
 
-    private static Results<Ok<CashboxDetailModel>, NotFound>Read(
+    private static Results<Ok<CashBoxDetailModel>, NotFound>Read(
         ICashboxService cashboxService,
         int id) {
         var cashboxDetail = cashboxService.Read(id);
