@@ -15,4 +15,7 @@ public partial class Mapper {
 
     public partial PipeEntity ToEntity(PipeCreateModel model);
     public partial IEnumerable<PipeModel> ToModels(IEnumerable<PipeEntity> entities);
+
+    public partial ProductCategoryEntity ToEntity(CategoryCreateModel model);
+    public partial IEnumerable<CategoryModel> ToModels(IEnumerable<ProductCategoryEntity> entities);
 }
