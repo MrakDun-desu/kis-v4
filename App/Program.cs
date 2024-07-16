@@ -57,4 +57,5 @@ void UseEndpoints(IEndpointRouteBuilder routeBuilder) {
     Currencies.MapEndpoints(routeBuilder);
     Pipes.MapEndpoints(routeBuilder);
     SaleItems.MapEndpoints(routeBuilder);
+    Stores.MapEndpoints(routeBuilder);
 }

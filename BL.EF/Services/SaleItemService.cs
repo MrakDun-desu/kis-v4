@@ -3,6 +3,7 @@ using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.BL.EF.Services;
 
@@ -37,7 +38,11 @@ public class SaleItemService(KisDbContext dbContext, Mapper mapper)
     }
 
     public List<SaleItemReadAllModel> ReadAll() {
-        return mapper.ToModels(dbContext.SaleItems.Where(e => !e.Deleted).ToList());
+        return mapper.ToModels(dbContext.SaleItems
+            .Where(e => !e.Deleted)
+            // including categories to prevent lazy loading from sending ton of db queries
+            .Include(e => e.Categories)
+            .ToList());
     }
 
     public SaleItemReadModel? Read(int id) {

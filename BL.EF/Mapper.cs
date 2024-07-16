@@ -23,4 +23,7 @@ public partial class Mapper {
     public partial SaleItemEntity ToEntity(SaleItemCreateModel model);
     public partial SaleItemReadModel? ToModel(SaleItemEntity? entity);
     public partial List<SaleItemReadAllModel> ToModels(List<SaleItemEntity> entities);
+
+    public partial StoreEntity ToEntity(StoreCreateModel model);
+    public partial List<StoreReadAllModel> ToModels(List<StoreEntity> entities);
 }
