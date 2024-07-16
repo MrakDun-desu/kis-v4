@@ -17,8 +17,8 @@ public class CurrencyService(KisDbContext dbContext, Mapper mapper) : ICurrencyS
         return insertedEntity.Entity.Id;
     }
 
-    public List<CurrencyModel> ReadAll() {
-        return mapper.ToModels(dbContext.Currencies).ToList();
+    public List<CurrencyReadAllModel> ReadAll() {
+        return mapper.ToModels(dbContext.Currencies.ToList());
     }
 
     public bool Update(int id, CurrencyUpdateModel updateModel) {
@@ -26,15 +26,8 @@ public class CurrencyService(KisDbContext dbContext, Mapper mapper) : ICurrencyS
         if (entity is null)
             return false;
 
-        var changed = false;
-
         if (updateModel.Name is not null) {
             entity.Name = updateModel.Name;
-            changed = true;
-        }
-
-        if (!changed) {
-            return true;
         }
 
         dbContext.Currencies.Update(entity);

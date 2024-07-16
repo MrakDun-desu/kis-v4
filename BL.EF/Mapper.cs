@@ -7,15 +7,20 @@ namespace KisV4.BL.EF;
 [Mapper]
 public partial class Mapper {
     public partial CashBoxEntity ToEntity(CashBoxCreateModel model);
-    public partial CashBoxDetailModel? ToModel(CashBoxEntity? entity);
-    public partial IEnumerable<CashBoxListModel> ToModels(IEnumerable<CashBoxEntity> entities);
-
-    public partial CurrencyEntity ToEntity(CurrencyCreateModel model);
-    public partial IEnumerable<CurrencyModel> ToModels(IEnumerable<CurrencyEntity> entities);
-
-    public partial PipeEntity ToEntity(PipeCreateModel model);
-    public partial IEnumerable<PipeModel> ToModels(IEnumerable<PipeEntity> entities);
+    public partial CashBoxReadModel? ToModel(CashBoxEntity? entity);
+    public partial List<CashBoxReadAllModel> ToModels(List<CashBoxEntity> entities);
 
     public partial ProductCategoryEntity ToEntity(CategoryCreateModel model);
-    public partial IEnumerable<CategoryModel> ToModels(IEnumerable<ProductCategoryEntity> entities);
+    public partial ProductCategoryEntity ToEntity(CategoryReadAllModel model);
+    public partial List<CategoryReadAllModel> ToModels(List<ProductCategoryEntity> entities);
+
+    public partial CurrencyEntity ToEntity(CurrencyCreateModel model);
+    public partial List<CurrencyReadAllModel> ToModels(List<CurrencyEntity> entities);
+
+    public partial PipeEntity ToEntity(PipeCreateModel model);
+    public partial List<PipeReadAllModel> ToModels(List<PipeEntity> entities);
+
+    public partial SaleItemEntity ToEntity(SaleItemCreateModel model);
+    public partial SaleItemReadModel? ToModel(SaleItemEntity? entity);
+    public partial List<SaleItemReadAllModel> ToModels(List<SaleItemEntity> entities);
 }

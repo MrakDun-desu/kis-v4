@@ -4,7 +4,7 @@ namespace KisV4.BL.Common;
 
 public interface ICategoryService {
     public int Create(CategoryCreateModel createModel);
-    public List<CategoryModel> ReadAll();
+    public List<CategoryReadAllModel> ReadAll();
     public bool Update(int id, CategoryUpdateModel updateModel);
     public bool Delete(int id);
 }

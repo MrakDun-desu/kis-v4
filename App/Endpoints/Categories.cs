@@ -14,26 +14,26 @@ public static class Categories {
     }
 
     private static int Create(
-        ICategoryService cashBoxService,
+        ICategoryService categoryService,
         CategoryCreateModel createModel) {
-        var createdId = cashBoxService.Create(createModel);
+        var createdId = categoryService.Create(createModel);
         return createdId;
     }
 
-    private static List<CategoryModel> ReadAll(ICategoryService cashBoxService) {
-        return cashBoxService.ReadAll();
+    private static List<CategoryReadAllModel> ReadAll(ICategoryService categoryService) {
+        return categoryService.ReadAll();
     }
 
     private static Results<Ok, NotFound> Update(
-        ICategoryService cashBoxService,
+        ICategoryService categoryService,
         int id,
         CategoryUpdateModel updateModel) {
-        return cashBoxService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
+        return categoryService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
     }
 
     private static Results<Ok, NotFound> Delete(
-        ICategoryService cashBoxService,
+        ICategoryService categoryService,
         int id) {
-        return cashBoxService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
+        return categoryService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
     }
 }

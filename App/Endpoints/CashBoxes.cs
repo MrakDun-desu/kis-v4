@@ -21,19 +21,19 @@ public static class CashBoxes {
         return createdId;
     }
 
-    private static List<CashBoxListModel> ReadAll(ICashBoxService cashBoxService) {
+    private static List<CashBoxReadAllModel> ReadAll(ICashBoxService cashBoxService) {
         return cashBoxService.ReadAll();
     }
 
-    private static Results<Ok<CashBoxDetailModel>, NotFound>Read(
+    private static Results<Ok<CashBoxReadModel>, NotFound>Read(
         ICashBoxService cashBoxService,
         int id) {
-        var cashboxDetail = cashBoxService.Read(id);
-        if (cashboxDetail is null) {
+        var cashBoxDetail = cashBoxService.Read(id);
+        if (cashBoxDetail is null) {
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(cashboxDetail);
+        return TypedResults.Ok(cashBoxDetail);
     }
 
     private static Results<Ok, NotFound> Update(

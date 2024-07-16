@@ -17,8 +17,8 @@ public class PipeService(KisDbContext dbContext, Mapper mapper) : IPipeService, 
         return insertedEntity.Entity.Id;
     }
 
-    public List<PipeModel> ReadAll() {
-        return mapper.ToModels(dbContext.Pipes).ToList();
+    public List<PipeReadAllModel> ReadAll() {
+        return mapper.ToModels(dbContext.Pipes.ToList());
     }
 
     public bool Update(int id, PipeUpdateModel updateModel) {
@@ -26,15 +26,8 @@ public class PipeService(KisDbContext dbContext, Mapper mapper) : IPipeService, 
         if (entity is null)
             return false;
 
-        var changed = false;
-
         if (updateModel.Name is not null) {
             entity.Name = updateModel.Name;
-            changed = true;
-        }
-
-        if (!changed) {
-            return true;
         }
 
         dbContext.Pipes.Update(entity);
@@ -46,7 +39,7 @@ public class PipeService(KisDbContext dbContext, Mapper mapper) : IPipeService, 
     public bool Delete(int id) {
         var entity = dbContext.Pipes.Find(id);
         if (entity is null) {
-            return true;
+            return false;
         }
 
         dbContext.Pipes.Remove(entity);

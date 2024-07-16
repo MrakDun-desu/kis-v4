@@ -17,8 +17,8 @@ public class CategoryService(KisDbContext dbContext, Mapper mapper) : ICategoryS
         return insertedEntity.Entity.Id;
     }
 
-    public List<CategoryModel> ReadAll() {
-        return mapper.ToModels(dbContext.ProductCategories).ToList();
+    public List<CategoryReadAllModel> ReadAll() {
+        return mapper.ToModels(dbContext.ProductCategories.ToList());
     }
 
     public bool Update(int id, CategoryUpdateModel updateModel) {
@@ -26,15 +26,8 @@ public class CategoryService(KisDbContext dbContext, Mapper mapper) : ICategoryS
         if (entity is null)
             return false;
 
-        var changed = false;
-
         if (updateModel.Name is not null) {
             entity.Name = updateModel.Name;
-            changed = true;
-        }
-
-        if (!changed) {
-            return true;
         }
 
         dbContext.ProductCategories.Update(entity);
@@ -46,7 +39,7 @@ public class CategoryService(KisDbContext dbContext, Mapper mapper) : ICategoryS
     public bool Delete(int id) {
         var entity = dbContext.ProductCategories.Find(id);
         if (entity is null) {
-            return true;
+            return false;
         }
 
         dbContext.ProductCategories.Remove(entity);

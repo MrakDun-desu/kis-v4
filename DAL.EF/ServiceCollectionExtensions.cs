@@ -7,7 +7,9 @@ public static class ServiceCollectionExtensions {
     public static void AddEntityFrameworkDAL(this IServiceCollection serviceCollection,
         string connectionString) {
         serviceCollection.AddDbContext<KisDbContext>(options =>
-            options.UseNpgsql(connectionString));
-
+            options.UseNpgsql(connectionString)
+                .UseLazyLoadingProxies());
+        // using lazy loading to ease the development. Can switch to eager with .Include() calls
+        // for critical sections of the code
     }
 }

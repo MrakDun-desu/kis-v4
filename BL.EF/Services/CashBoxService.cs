@@ -17,11 +17,11 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper) : ICashBoxSer
         return insertedEntity.Entity.Id;
     }
 
-    public List<CashBoxListModel> ReadAll() {
-        return mapper.ToModels(dbContext.CashBoxes).ToList();
+    public List<CashBoxReadAllModel> ReadAll() {
+        return mapper.ToModels(dbContext.CashBoxes.ToList());
     }
 
-    public CashBoxDetailModel? Read(int id) {
+    public CashBoxReadModel? Read(int id) {
         return mapper.ToModel(dbContext.CashBoxes.Find(id));
     }
 
@@ -30,15 +30,8 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper) : ICashBoxSer
         if (entity is null)
             return false;
 
-        var changed = false;
-
         if (updateModel.Name is not null) {
             entity.Name = updateModel.Name;
-            changed = true;
-        }
-
-        if (!changed) {
-            return true;
         }
 
         dbContext.CashBoxes.Update(entity);
@@ -50,10 +43,10 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper) : ICashBoxSer
     public bool Delete(int id) {
         var entity = dbContext.CashBoxes.Find(id);
         if (entity is null) {
-            return true;
+            return false;
         }
 
-        dbContext.CashBoxes.Remove(entity);
+        entity.Deleted = true;
         dbContext.SaveChanges();
 
         return true;

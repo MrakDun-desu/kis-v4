@@ -19,7 +19,7 @@ public static class Currencies {
         return createdId;
     }
 
-    private static List<CurrencyModel> ReadAll(ICurrencyService currencyService) {
+    private static List<CurrencyReadAllModel> ReadAll(ICurrencyService currencyService) {
         return currencyService.ReadAll();
     }
 

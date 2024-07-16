@@ -20,7 +20,7 @@ public static class Pipes {
         return createdId;
     }
 
-    private static List<PipeModel> ReadAll(IPipeService cashBoxService) {
+    private static List<PipeReadAllModel> ReadAll(IPipeService cashBoxService) {
         return cashBoxService.ReadAll();
     }
 
