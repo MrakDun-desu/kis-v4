@@ -8,6 +8,7 @@ public static class CashBoxes {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("cashboxes");
         group.MapPost(string.Empty, Create);
+        group.MapPost("{id:int}/stock-taking", AddStockTaking);
         group.MapGet(string.Empty, ReadAll);
         group.MapGet("{id:int}", Read);
         group.MapPut("{id:int}", Update);
@@ -21,11 +22,17 @@ public static class CashBoxes {
         return createdId;
     }
 
+    private static Results<Ok, NotFound>AddStockTaking(
+        ICashBoxService cashBoxService,
+        int id) {
+        return cashBoxService.AddStockTaking(id) ? TypedResults.Ok() : TypedResults.NotFound();
+    }
+
     private static List<CashBoxReadAllModel> ReadAll(ICashBoxService cashBoxService) {
         return cashBoxService.ReadAll();
     }
 
-    private static Results<Ok<CashBoxReadModel>, NotFound>Read(
+    private static Results<Ok<CashBoxReadModel>, NotFound> Read(
         ICashBoxService cashBoxService,
         int id) {
         var cashBoxDetail = cashBoxService.Read(id);

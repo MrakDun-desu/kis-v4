@@ -18,7 +18,7 @@ public record SaleItemEntity : ProductEntity {
     /// <summary>
     /// Sale transaction items that this sale item is a part of.
     /// </summary>
-    public virtual ICollection<SaleTransactionItemEntity> SaleTransactionItems { get; private set; } =
+    public ICollection<SaleTransactionItemEntity> SaleTransactionItems { get; private set; } =
         new List<SaleTransactionItemEntity>();
 
     /// <summary>
