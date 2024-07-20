@@ -149,7 +149,7 @@ namespace KisV4.DAL.EF.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ProductId = table.Column<int>(type: "integer", nullable: false),
                     CurrencyId = table.Column<int>(type: "integer", nullable: false),
-                    ValidSince = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ValidSince = table.Column<DateTime>(type: "timestamp(0) with time zone", precision: 0, nullable: false),
                     Amount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false)
                 },
@@ -238,7 +238,7 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "timestamp(0) with time zone", precision: 0, nullable: false),
                     CashboxId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -260,7 +260,7 @@ namespace KisV4.DAL.EF.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     DiscountId = table.Column<int>(type: "integer", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Timestamp = table.Column<DateTime>(type: "timestamp(0) with time zone", precision: 0, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -286,7 +286,7 @@ namespace KisV4.DAL.EF.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ResponsibleUserId = table.Column<int>(type: "integer", nullable: true),
-                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "timestamp(0) with time zone", precision: 0, nullable: false),
                     Cancelled = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -354,7 +354,7 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
                     ContainedItemId = table.Column<int>(type: "integer", nullable: false),
-                    OpenSince = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    OpenSince = table.Column<DateTime>(type: "timestamp(0) with time zone", precision: 0, nullable: true),
                     PipeId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>

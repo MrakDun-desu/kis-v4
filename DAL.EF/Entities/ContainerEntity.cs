@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.DAL.EF.Entities;
 
@@ -11,6 +12,7 @@ public record ContainerEntity : StoreEntity {
     /// <summary>
     /// Timestamp for when container was first opened (first time the PipeId was set to not null).
     /// </summary>
+    [Precision(0)]
     public DateTime? OpenSince { get; set; }
     public int? PipeId { get; set; }
     /// <summary>

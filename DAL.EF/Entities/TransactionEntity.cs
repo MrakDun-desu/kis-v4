@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace KisV4.DAL.EF.Entities;
 
 /// <summary>
@@ -12,6 +14,7 @@ public abstract record TransactionEntity {
     /// some store transactions, or inventory manager for other store transactions.
     /// </summary>
     public virtual UserAccountEntity? ResponsibleUser { get; set; }
+    [Precision(0)]
     public DateTime Timestamp { get; set; }
     public bool Cancelled { get; set; }
 }

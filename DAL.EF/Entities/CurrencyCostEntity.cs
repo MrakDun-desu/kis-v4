@@ -17,6 +17,7 @@ public record CurrencyCostEntity {
     /// Currency that is part of the cost of given product.
     /// </summary>
     public virtual CurrencyEntity? Currency { get; set; }
+    [Precision(0)]
     public DateTime ValidSince { get; init; }
 
     [Precision(11,2)]

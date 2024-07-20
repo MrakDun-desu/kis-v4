@@ -18,11 +18,14 @@ namespace KisV4.DAL.EF.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("App.DAL.EF.Entities.AccountEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.AccountEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,7 +47,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CompositionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CompositionEntity", b =>
                 {
                     b.Property<int>("SaleItemId")
                         .HasColumnType("integer");
@@ -63,7 +66,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("Compositions");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CurrencyChangeEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CurrencyChangeEntity", b =>
                 {
                     b.Property<int>("CurrencyId")
                         .HasColumnType("integer");
@@ -87,7 +90,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("CurrencyChanges");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CurrencyCostEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CurrencyCostEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,7 +113,8 @@ namespace KisV4.DAL.EF.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("ValidSince")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(0)
+                        .HasColumnType("timestamp(0) with time zone");
 
                     b.HasKey("Id");
 
@@ -121,7 +125,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("CurrencyCosts");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CurrencyEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CurrencyEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -138,7 +142,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("Currencies");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.DiscountEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.DiscountEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,7 +159,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("Discounts");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.DiscountUsageEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.DiscountUsageEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -167,7 +171,8 @@ namespace KisV4.DAL.EF.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(0)
+                        .HasColumnType("timestamp(0) with time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -181,7 +186,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("DiscountUsages");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.DiscountUsageItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.DiscountUsageItemEntity", b =>
                 {
                     b.Property<int>("DiscountUsageId")
                         .HasColumnType("integer");
@@ -205,7 +210,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("DiscountUsageItems");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.IncompleteTransactionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.IncompleteTransactionEntity", b =>
                 {
                     b.Property<int>("SaleTransactionId")
                         .HasColumnType("integer");
@@ -220,7 +225,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("IncompleteTransactions");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.PipeEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.PipeEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -237,7 +242,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("Pipes");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.ProductCategoryEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.ProductCategoryEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -254,7 +259,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("ProductCategories");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.ProductEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.ProductEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -280,7 +285,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.SaleTransactionItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleTransactionItemEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -306,7 +311,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("SaleTransactionItems");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StockTakingEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StockTakingEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -318,7 +323,8 @@ namespace KisV4.DAL.EF.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(0)
+                        .HasColumnType("timestamp(0) with time zone");
 
                     b.HasKey("Id");
 
@@ -327,7 +333,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("StockTakings");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StoreEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -349,7 +355,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StoreTransactionItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreTransactionItemEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -381,7 +387,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("StoreTransactionItems");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.TransactionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.TransactionEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -396,7 +402,8 @@ namespace KisV4.DAL.EF.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(0)
+                        .HasColumnType("timestamp(0) with time zone");
 
                     b.HasKey("Id");
 
@@ -407,7 +414,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.TransactionPriceEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.TransactionPriceEntity", b =>
                 {
                     b.Property<int>("SaleTransactionItemId")
                         .HasColumnType("integer");
@@ -456,23 +463,23 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("ProductInCategory");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CashBoxEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CashBoxEntity", b =>
                 {
-                    b.HasBaseType("App.DAL.EF.Entities.AccountEntity");
+                    b.HasBaseType("KisV4.DAL.EF.Entities.AccountEntity");
 
                     b.ToTable("CashBoxes", (string)null);
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.UserAccountEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.UserAccountEntity", b =>
                 {
-                    b.HasBaseType("App.DAL.EF.Entities.AccountEntity");
+                    b.HasBaseType("KisV4.DAL.EF.Entities.AccountEntity");
 
                     b.ToTable("UserAccounts", (string)null);
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.SaleItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleItemEntity", b =>
                 {
-                    b.HasBaseType("App.DAL.EF.Entities.ProductEntity");
+                    b.HasBaseType("KisV4.DAL.EF.Entities.ProductEntity");
 
                     b.Property<bool>("ShowOnWeb")
                         .HasColumnType("boolean");
@@ -480,9 +487,9 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("SaleItems", (string)null);
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StoreItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreItemEntity", b =>
                 {
-                    b.HasBaseType("App.DAL.EF.Entities.ProductEntity");
+                    b.HasBaseType("KisV4.DAL.EF.Entities.ProductEntity");
 
                     b.Property<bool>("BarmanCanStock")
                         .HasColumnType("boolean");
@@ -497,15 +504,16 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("StoreItems", (string)null);
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.ContainerEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.ContainerEntity", b =>
                 {
-                    b.HasBaseType("App.DAL.EF.Entities.StoreEntity");
+                    b.HasBaseType("KisV4.DAL.EF.Entities.StoreEntity");
 
                     b.Property<int>("ContainedItemId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("OpenSince")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(0)
+                        .HasColumnType("timestamp(0) with time zone");
 
                     b.Property<int?>("PipeId")
                         .HasColumnType("integer");
@@ -517,16 +525,16 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("Containers", (string)null);
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.SaleTransactionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleTransactionEntity", b =>
                 {
-                    b.HasBaseType("App.DAL.EF.Entities.TransactionEntity");
+                    b.HasBaseType("KisV4.DAL.EF.Entities.TransactionEntity");
 
                     b.ToTable("SaleTransactions", (string)null);
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StoreTransactionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreTransactionEntity", b =>
                 {
-                    b.HasBaseType("App.DAL.EF.Entities.TransactionEntity");
+                    b.HasBaseType("KisV4.DAL.EF.Entities.TransactionEntity");
 
                     b.Property<int?>("SaleTransactionId")
                         .HasColumnType("integer");
@@ -539,9 +547,9 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("StoreTransactions", (string)null);
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.ModifierEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.ModifierEntity", b =>
                 {
-                    b.HasBaseType("App.DAL.EF.Entities.SaleItemEntity");
+                    b.HasBaseType("KisV4.DAL.EF.Entities.SaleItemEntity");
 
                     b.Property<int>("ModificationTargetId")
                         .HasColumnType("integer");
@@ -551,15 +559,15 @@ namespace KisV4.DAL.EF.Migrations
                     b.ToTable("Modifiers", (string)null);
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CompositionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CompositionEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.SaleItemEntity", "SaleItem")
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleItemEntity", "SaleItem")
                         .WithMany("Composition")
                         .HasForeignKey("SaleItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.StoreItemEntity", "StoreItem")
+                    b.HasOne("KisV4.DAL.EF.Entities.StoreItemEntity", "StoreItem")
                         .WithMany()
                         .HasForeignKey("StoreItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -570,21 +578,21 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("StoreItem");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CurrencyChangeEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CurrencyChangeEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.AccountEntity", "Account")
+                    b.HasOne("KisV4.DAL.EF.Entities.AccountEntity", "Account")
                         .WithMany("CurrencyChanges")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.CurrencyEntity", "Currency")
+                    b.HasOne("KisV4.DAL.EF.Entities.CurrencyEntity", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.SaleTransactionEntity", "SaleTransaction")
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleTransactionEntity", "SaleTransaction")
                         .WithMany("CurrencyChanges")
                         .HasForeignKey("SaleTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -597,15 +605,15 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("SaleTransaction");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CurrencyCostEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CurrencyCostEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.CurrencyEntity", "Currency")
+                    b.HasOne("KisV4.DAL.EF.Entities.CurrencyEntity", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.ProductEntity", "Product")
+                    b.HasOne("KisV4.DAL.EF.Entities.ProductEntity", "Product")
                         .WithMany("Costs")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -616,15 +624,15 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.DiscountUsageEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.DiscountUsageEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.DiscountEntity", "Discount")
+                    b.HasOne("KisV4.DAL.EF.Entities.DiscountEntity", "Discount")
                         .WithMany("DiscountUsages")
                         .HasForeignKey("DiscountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.UserAccountEntity", "User")
+                    b.HasOne("KisV4.DAL.EF.Entities.UserAccountEntity", "User")
                         .WithMany("DiscountUsages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -635,21 +643,21 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.DiscountUsageItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.DiscountUsageItemEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.CurrencyEntity", "Currency")
+                    b.HasOne("KisV4.DAL.EF.Entities.CurrencyEntity", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.DiscountUsageEntity", "DiscountUsage")
+                    b.HasOne("KisV4.DAL.EF.Entities.DiscountUsageEntity", "DiscountUsage")
                         .WithMany("UsageItems")
                         .HasForeignKey("DiscountUsageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.SaleTransactionItemEntity", "SaleTransactionItem")
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleTransactionItemEntity", "SaleTransactionItem")
                         .WithMany("DiscountUsageItems")
                         .HasForeignKey("SaleTransactionItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -662,15 +670,15 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("SaleTransactionItem");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.IncompleteTransactionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.IncompleteTransactionEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.SaleTransactionEntity", "SaleTransaction")
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleTransactionEntity", "SaleTransaction")
                         .WithMany()
                         .HasForeignKey("SaleTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.UserAccountEntity", "User")
+                    b.HasOne("KisV4.DAL.EF.Entities.UserAccountEntity", "User")
                         .WithMany("IncompleteTransactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -681,15 +689,15 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.SaleTransactionItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleTransactionItemEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.SaleItemEntity", "SaleItem")
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleItemEntity", "SaleItem")
                         .WithMany("SaleTransactionItems")
                         .HasForeignKey("SaleItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.SaleTransactionEntity", "SaleTransaction")
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleTransactionEntity", "SaleTransaction")
                         .WithMany("SaleTransactionItems")
                         .HasForeignKey("SaleTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -700,9 +708,9 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("SaleTransaction");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StockTakingEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StockTakingEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.CashBoxEntity", "Cashbox")
+                    b.HasOne("KisV4.DAL.EF.Entities.CashBoxEntity", "Cashbox")
                         .WithMany("StockTakings")
                         .HasForeignKey("CashboxId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -711,22 +719,22 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("Cashbox");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StoreTransactionItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreTransactionItemEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.StoreEntity", "Store")
+                    b.HasOne("KisV4.DAL.EF.Entities.StoreEntity", "Store")
                         .WithMany("StoreTransactionItems")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.StoreItemEntity", "StoreItem")
+                    b.HasOne("KisV4.DAL.EF.Entities.StoreItemEntity", "StoreItem")
                         .WithMany("StoreTransactionItems")
                         .HasForeignKey("StoreItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.StoreTransactionEntity", "StoreTransaction")
-                        .WithMany()
+                    b.HasOne("KisV4.DAL.EF.Entities.StoreTransactionEntity", "StoreTransaction")
+                        .WithMany("StoreTransactionItems")
                         .HasForeignKey("StoreTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -738,24 +746,24 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("StoreTransaction");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.TransactionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.TransactionEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.UserAccountEntity", "ResponsibleUser")
+                    b.HasOne("KisV4.DAL.EF.Entities.UserAccountEntity", "ResponsibleUser")
                         .WithMany("Transactions")
                         .HasForeignKey("ResponsibleUserId");
 
                     b.Navigation("ResponsibleUser");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.TransactionPriceEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.TransactionPriceEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.CurrencyEntity", "Currency")
+                    b.HasOne("KisV4.DAL.EF.Entities.CurrencyEntity", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.SaleTransactionItemEntity", "SaleTransactionItem")
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleTransactionItemEntity", "SaleTransactionItem")
                         .WithMany("TransactionPrices")
                         .HasForeignKey("SaleTransactionItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -768,13 +776,13 @@ namespace KisV4.DAL.EF.Migrations
 
             modelBuilder.Entity("ModifierApplications", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.SaleTransactionItemEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleTransactionItemEntity", null)
                         .WithMany()
                         .HasForeignKey("ApplicationsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.ModifierEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.ModifierEntity", null)
                         .WithMany()
                         .HasForeignKey("ModifiersId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -783,70 +791,70 @@ namespace KisV4.DAL.EF.Migrations
 
             modelBuilder.Entity("ProductInCategory", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.ProductCategoryEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.ProductCategoryEntity", null)
                         .WithMany()
                         .HasForeignKey("CategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.ProductEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.ProductEntity", null)
                         .WithMany()
                         .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CashBoxEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CashBoxEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.AccountEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.AccountEntity", null)
                         .WithOne()
-                        .HasForeignKey("App.DAL.EF.Entities.CashBoxEntity", "Id")
+                        .HasForeignKey("KisV4.DAL.EF.Entities.CashBoxEntity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.UserAccountEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.UserAccountEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.AccountEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.AccountEntity", null)
                         .WithOne()
-                        .HasForeignKey("App.DAL.EF.Entities.UserAccountEntity", "Id")
+                        .HasForeignKey("KisV4.DAL.EF.Entities.UserAccountEntity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.SaleItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleItemEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.ProductEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.ProductEntity", null)
                         .WithOne()
-                        .HasForeignKey("App.DAL.EF.Entities.SaleItemEntity", "Id")
+                        .HasForeignKey("KisV4.DAL.EF.Entities.SaleItemEntity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StoreItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreItemEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.ProductEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.ProductEntity", null)
                         .WithOne()
-                        .HasForeignKey("App.DAL.EF.Entities.StoreItemEntity", "Id")
+                        .HasForeignKey("KisV4.DAL.EF.Entities.StoreItemEntity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.ContainerEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.ContainerEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.StoreItemEntity", "ContainedItem")
+                    b.HasOne("KisV4.DAL.EF.Entities.StoreItemEntity", "ContainedItem")
                         .WithMany()
                         .HasForeignKey("ContainedItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.StoreEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.StoreEntity", null)
                         .WithOne()
-                        .HasForeignKey("App.DAL.EF.Entities.ContainerEntity", "Id")
+                        .HasForeignKey("KisV4.DAL.EF.Entities.ContainerEntity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.PipeEntity", "Pipe")
+                    b.HasOne("KisV4.DAL.EF.Entities.PipeEntity", "Pipe")
                         .WithMany()
                         .HasForeignKey("PipeId");
 
@@ -855,39 +863,39 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("Pipe");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.SaleTransactionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleTransactionEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.TransactionEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.TransactionEntity", null)
                         .WithOne()
-                        .HasForeignKey("App.DAL.EF.Entities.SaleTransactionEntity", "Id")
+                        .HasForeignKey("KisV4.DAL.EF.Entities.SaleTransactionEntity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StoreTransactionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreTransactionEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.TransactionEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.TransactionEntity", null)
                         .WithOne()
-                        .HasForeignKey("App.DAL.EF.Entities.StoreTransactionEntity", "Id")
+                        .HasForeignKey("KisV4.DAL.EF.Entities.StoreTransactionEntity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.SaleTransactionEntity", "SaleTransaction")
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleTransactionEntity", "SaleTransaction")
                         .WithMany("StoreTransactions")
                         .HasForeignKey("SaleTransactionId");
 
                     b.Navigation("SaleTransaction");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.ModifierEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.ModifierEntity", b =>
                 {
-                    b.HasOne("App.DAL.EF.Entities.SaleItemEntity", null)
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleItemEntity", null)
                         .WithOne()
-                        .HasForeignKey("App.DAL.EF.Entities.ModifierEntity", "Id")
+                        .HasForeignKey("KisV4.DAL.EF.Entities.ModifierEntity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.DAL.EF.Entities.SaleItemEntity", "ModificationTarget")
+                    b.HasOne("KisV4.DAL.EF.Entities.SaleItemEntity", "ModificationTarget")
                         .WithMany("AvailableModifiers")
                         .HasForeignKey("ModificationTargetId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -896,44 +904,44 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("ModificationTarget");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.AccountEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.AccountEntity", b =>
                 {
                     b.Navigation("CurrencyChanges");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.DiscountEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.DiscountEntity", b =>
                 {
                     b.Navigation("DiscountUsages");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.DiscountUsageEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.DiscountUsageEntity", b =>
                 {
                     b.Navigation("UsageItems");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.ProductEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.ProductEntity", b =>
                 {
                     b.Navigation("Costs");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.SaleTransactionItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleTransactionItemEntity", b =>
                 {
                     b.Navigation("DiscountUsageItems");
 
                     b.Navigation("TransactionPrices");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StoreEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreEntity", b =>
                 {
                     b.Navigation("StoreTransactionItems");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.CashBoxEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CashBoxEntity", b =>
                 {
                     b.Navigation("StockTakings");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.UserAccountEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.UserAccountEntity", b =>
                 {
                     b.Navigation("DiscountUsages");
 
@@ -942,7 +950,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.SaleItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleItemEntity", b =>
                 {
                     b.Navigation("AvailableModifiers");
 
@@ -951,18 +959,23 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("SaleTransactionItems");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.StoreItemEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreItemEntity", b =>
                 {
                     b.Navigation("StoreTransactionItems");
                 });
 
-            modelBuilder.Entity("App.DAL.EF.Entities.SaleTransactionEntity", b =>
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleTransactionEntity", b =>
                 {
                     b.Navigation("CurrencyChanges");
 
                     b.Navigation("SaleTransactionItems");
 
                     b.Navigation("StoreTransactions");
+                });
+
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.StoreTransactionEntity", b =>
+                {
+                    b.Navigation("StoreTransactionItems");
                 });
 #pragma warning restore 612, 618
         }

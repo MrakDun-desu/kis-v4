@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace KisV4.DAL.EF.Entities;
 
 /// <summary>
@@ -17,6 +19,7 @@ public record DiscountUsageEntity {
     /// </summary>
     public virtual DiscountEntity? Discount { get; set; }
 
+    [Precision(0)]
     public DateTime Timestamp { get; set; }
 
     /// <summary>
