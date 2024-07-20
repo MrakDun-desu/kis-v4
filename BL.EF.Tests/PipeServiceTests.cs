@@ -1,3 +1,4 @@
+using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
@@ -24,7 +25,7 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
 
         var createdEntity = _dbContext.Pipes.Find(createdId);
         var expectedEntity = new PipeEntity { Id = createdId, Name = createModel.Name };
-        Assert.Equal(createdEntity, expectedEntity);
+        createdEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     [Fact]
@@ -38,7 +39,7 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         var readModels = _pipeService.ReadAll();
         var mappedModels = _mapper.ToModels(_dbContext.Pipes.ToList());
 
-        Assert.Equal(readModels, mappedModels);
+        readModels.Should().BeEquivalentTo(mappedModels);
     }
 
     [Fact]
@@ -52,10 +53,10 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
 
         var updateSuccess = _pipeService.Update(insertedEntity.Entity.Id, updateModel);
 
-        Assert.True(updateSuccess);
+        updateSuccess.Should().BeTrue();
         var updatedEntity = _dbContext.Pipes.Find(insertedEntity.Entity.Id);
         var expectedEntity = insertedEntity.Entity with { Name = newName };
-        Assert.Equal(updatedEntity, expectedEntity);
+        updatedEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     [Fact]
@@ -64,7 +65,7 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
 
         var updateSuccess = _pipeService.Update(42, updateModel);
 
-        Assert.False(updateSuccess);
+        updateSuccess.Should().BeFalse();
     }
 
     [Fact]
@@ -75,16 +76,16 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
 
         var deleteSuccess = _pipeService.Delete(insertedEntity.Entity.Id);
 
-        Assert.True(deleteSuccess);
+        deleteSuccess.Should().BeTrue();
         var deletedEntity = _dbContext.Pipes.Find(insertedEntity.Entity.Id);
-        Assert.Null(deletedEntity);
+        deletedEntity.Should().BeNull();
     }
 
     [Fact]
     public void Delete_ReturnsFalse_WhenNotFound() {
         var deleteSuccess = _pipeService.Delete(42);
 
-        Assert.False(deleteSuccess);
+        deleteSuccess.Should().BeFalse();
     }
 
     public void Dispose() {
