@@ -1,6 +1,6 @@
 using KisV4.Common.Models;
 
-namespace KisV4.BL.Common;
+namespace KisV4.BL.Common.Services;
 
 public interface ICurrencyService {
     public int Create(CurrencyCreateModel createModel);

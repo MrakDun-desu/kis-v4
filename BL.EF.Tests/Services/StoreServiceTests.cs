@@ -5,7 +5,7 @@ using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 
-namespace BL.EF.Tests;
+namespace BL.EF.Tests.Services;
 
 public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly StoreService _storeService;

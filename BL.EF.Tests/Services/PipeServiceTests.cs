@@ -5,7 +5,7 @@ using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 
-namespace BL.EF.Tests;
+namespace BL.EF.Tests.Services;
 
 public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly PipeService _pipeService;
