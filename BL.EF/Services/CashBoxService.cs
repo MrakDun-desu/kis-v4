@@ -1,4 +1,3 @@
-using KisV4.BL.Common;
 using KisV4.BL.Common.Services;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
-public class CashBoxService(KisDbContext dbContext, Mapper mapper)
+public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider timeProvider)
     : ICashBoxService, IScopedService {
     public int Create(CashBoxCreateModel createModel) {
         var entity = mapper.ToEntity(createModel);
@@ -21,7 +20,7 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper)
     }
 
     public List<CashBoxReadAllModel> ReadAll() {
-        return mapper.ToModels(dbContext.CashBoxes.ToList());
+        return mapper.ToModels(dbContext.CashBoxes.Where(cb => !cb.Deleted).ToList());
     }
 
     public CashBoxReadModel? Read(int id) {
@@ -34,13 +33,18 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper)
         }
 
         var lastTimestamp = lastStockTaking.Timestamp;
-        var currencyChanges = dbContext.CurrencyChanges
-            .Include(cc => cc.SaleTransaction)
-            .Where(cc => cc.AccountId == id && cc.SaleTransaction!.Timestamp > lastTimestamp);
-        var cashBox = dbContext.CashBoxes.Find(id);
+        // if I remove the AsNoTracking, for some reason, all the currency changes get included
+        // even when not wanted. Maybe there's a better way to do this, but I don't know it
+        var cashBox = dbContext.CashBoxes.AsNoTracking().SingleOrDefault(cb => cb.Id == id);
         if (cashBox is null) {
             return null;
         }
+
+        // need to use explicit querying here because query is too complex to utilize lazy loading
+        var currencyChanges = dbContext.Entry(cashBox)
+            .Collection(cb => cb.CurrencyChanges).Query()
+            .Where(cc => cc.SaleTransaction!.Timestamp > lastTimestamp)
+            .Include(cc => cc.Currency);
 
         cashBox.CurrencyChanges.Clear();
         foreach (var currencyChange in currencyChanges) {
@@ -83,7 +87,7 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper)
             return false;
         }
 
-        var newStockTaking = new StockTakingEntity { CashboxId = id, Timestamp = DateTime.Now };
+        var newStockTaking = new StockTakingEntity { CashboxId = id, Timestamp = timeProvider.GetUtcNow() };
 
         dbContext.StockTakings.Add(newStockTaking);
         dbContext.SaveChanges();

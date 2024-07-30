@@ -14,6 +14,7 @@ if (connectionString is null) {
 
 builder.Services.AddEntityFrameworkDAL(connectionString);
 builder.Services.AddEntityFrameworkBL();
+builder.Services.AddSingleton(TimeProvider.System);
 
 var app = builder.Build();
 

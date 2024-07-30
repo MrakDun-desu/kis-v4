@@ -7,7 +7,7 @@ public record UserAccountEntity : AccountEntity {
     /// <summary>
     /// Transactions that this user is responsible for.
     /// </summary>
-    public ICollection<TransactionEntity> Transactions { get; private set; } =
+    public virtual ICollection<TransactionEntity> Transactions { get; private set; } =
         new List<TransactionEntity>();
 
     /// <summary>

@@ -8,7 +8,7 @@ namespace KisV4.DAL.EF.Entities;
 public record StockTakingEntity {
     public int Id { get; init; }
     [Precision(0)]
-    public DateTime Timestamp { get; set; }
-    public required int CashboxId { get; init; }
+    public DateTimeOffset Timestamp { get; set; }
+    public int CashboxId { get; init; }
     public virtual CashBoxEntity? Cashbox { get; set; }
 }

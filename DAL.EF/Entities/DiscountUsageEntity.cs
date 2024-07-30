@@ -20,7 +20,7 @@ public record DiscountUsageEntity {
     public virtual DiscountEntity? Discount { get; set; }
 
     [Precision(0)]
-    public DateTime Timestamp { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
 
     /// <summary>
     /// Each item and currency that this discount usage was applied on.

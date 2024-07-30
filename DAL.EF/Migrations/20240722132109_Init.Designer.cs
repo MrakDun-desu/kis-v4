@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KisV4.DAL.EF.Migrations
 {
     [DbContext(typeof(KisDbContext))]
-    [Migration("20240720114247_Init")]
+    [Migration("20240722132109_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -115,7 +115,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("ValidSince")
+                    b.Property<DateTimeOffset>("ValidSince")
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
@@ -173,7 +173,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("DiscountId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTimeOffset>("Timestamp")
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
@@ -325,7 +325,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("CashboxId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTimeOffset>("Timestamp")
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
@@ -404,7 +404,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int?>("ResponsibleUserId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTimeOffset>("Timestamp")
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
@@ -514,7 +514,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("ContainedItemId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("OpenSince")
+                    b.Property<DateTimeOffset?>("OpenSince")
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 

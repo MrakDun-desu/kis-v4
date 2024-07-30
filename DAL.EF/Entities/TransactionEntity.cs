@@ -15,6 +15,6 @@ public abstract record TransactionEntity {
     /// </summary>
     public virtual UserAccountEntity? ResponsibleUser { get; set; }
     [Precision(0)]
-    public DateTime Timestamp { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
     public bool Cancelled { get; set; }
 }

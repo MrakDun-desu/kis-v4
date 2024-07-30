@@ -11,6 +11,6 @@ public record StoreEntity {
     /// <summary>
     /// Store transaction items that have been applied to this store.
     /// </summary>
-    public ICollection<StoreTransactionItemEntity> StoreTransactionItems { get; private set; }
+    public virtual ICollection<StoreTransactionItemEntity> StoreTransactionItems { get; private set; }
         = new List<StoreTransactionItemEntity>();
 }

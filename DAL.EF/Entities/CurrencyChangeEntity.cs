@@ -7,17 +7,17 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 [PrimaryKey(nameof(CurrencyId), nameof(SaleTransactionId), nameof(AccountId))]
 public record CurrencyChangeEntity {
-    public required int CurrencyId { get; init; }
+    public int CurrencyId { get; init; }
     /// <summary>
     /// Currency which amount was changed.
     /// </summary>
     public virtual CurrencyEntity? Currency { get; set; }
-    public required int SaleTransactionId { get; init; }
+    public int SaleTransactionId { get; init; }
     /// <summary>
     /// Sale transaction that has changed the currency amount.
     /// </summary>
     public virtual SaleTransactionEntity? SaleTransaction { get; set; }
-    public required int AccountId { get; init; }
+    public int AccountId { get; init; }
     /// <summary>
     /// Account for which the currency amount has changed.
     /// </summary>

@@ -13,7 +13,7 @@ public record ContainerEntity : StoreEntity {
     /// Timestamp for when container was first opened (first time the PipeId was set to not null).
     /// </summary>
     [Precision(0)]
-    public DateTime? OpenSince { get; set; }
+    public DateTimeOffset? OpenSince { get; set; }
     public int? PipeId { get; set; }
     /// <summary>
     /// Pipe that the container is currently active at, if the container is active.

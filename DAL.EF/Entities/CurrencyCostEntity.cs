@@ -18,7 +18,7 @@ public record CurrencyCostEntity {
     /// </summary>
     public virtual CurrencyEntity? Currency { get; set; }
     [Precision(0)]
-    public DateTime ValidSince { get; init; }
+    public DateTimeOffset ValidSince { get; init; }
 
     [Precision(11,2)]
     public decimal Amount { get; set; }

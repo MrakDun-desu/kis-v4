@@ -5,7 +5,7 @@ public record CostModel(
     int ProductId,
     int CurrencyId,
     CurrencyReadAllModel Currency,
-    DateTime ValidSince,
+    DateTimeOffset ValidSince,
     decimal Amount,
     string Description
 );
