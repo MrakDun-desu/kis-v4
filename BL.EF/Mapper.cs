@@ -26,4 +26,6 @@ public partial class Mapper {
 
     public partial StoreEntity ToEntity(StoreCreateModel model);
     public partial List<StoreReadAllModel> ToModels(List<StoreEntity> entities);
+
+    public partial CompositionEntity ToEntity(CompositionCreateModel model);
 }

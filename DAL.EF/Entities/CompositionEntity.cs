@@ -8,12 +8,12 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 [PrimaryKey(nameof(SaleItemId), nameof(StoreItemId))]
 public record CompositionEntity {
-    public required int SaleItemId { get; init; }
+    public int SaleItemId { get; init; }
     /// <summary>
     /// Sale item which is partly composed of given store item.
     /// </summary>
     public virtual SaleItemEntity? SaleItem { get; set; }
-    public required int StoreItemId { get; init; }
+    public int StoreItemId { get; init; }
     /// <summary>
     /// Store item that is a part of the composition of given sale item.
     /// </summary>
