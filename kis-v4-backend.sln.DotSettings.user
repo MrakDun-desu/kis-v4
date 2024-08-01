@@ -1,11 +1,11 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=09a3a31c_002D59a9_002D4fe6_002D944c_002D81802d6f672e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Read_ReadsCorrectly_WhenComplex" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=09a3a31c_002D59a9_002D4fe6_002D944c_002D81802d6f672e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Read_ReadsCorrectly_WhenComplex" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CashBoxServiceTests.Read_ReadsCorrectly_WhenComplex&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests.Create_DoesntCreate_WhenAmountIs0&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f01b21b1_002Dd635_002D417c_002D9d01_002D6bf9d6ae12e2/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Create_CreatesPipe_WhenDataIsValid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f01b21b1_002Dd635_002D417c_002D9d01_002D6bf9d6ae12e2/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Create_CreatesPipe_WhenDataIsValid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CashBoxServiceTests&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests.Create_DoesntCreate_WhenAmountIs0&lt;/TestId&gt;
@@ -13,5 +13,6 @@
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests.Create_DeletesExisting_WhenAmountIs0&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests.Create_UpdatesExisting_WhenAmountIsMoreThan0&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests.ReadAll_DoesntReadDeleted&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
