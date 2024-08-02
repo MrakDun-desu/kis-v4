@@ -18,13 +18,11 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     private readonly KisDbContext _dbContext;
     private readonly Mapper _mapper;
     private readonly FakeTimeProvider _timeProvider = new();
-    private readonly ITestOutputHelper _output;
 
-    public ContainerServiceTests(KisDbContextFactory dbContextFactory, ITestOutputHelper output) {
+    public ContainerServiceTests(KisDbContextFactory dbContextFactory) {
         _dbContext = dbContextFactory.CreateDbContext();
         _mapper = new Mapper();
         _containerService = new ContainerService(_dbContext, _mapper, _timeProvider);
-        _output = output;
     }
 
     [Fact]
@@ -49,9 +47,6 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
         var mappedModels =
             _mapper.ToModels(_dbContext.Containers.Where(c => !c.Deleted).ToList());
 
-        foreach (var readModel in readModels) {
-            _output.WriteLine(readModel.ToString());
-        }
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 

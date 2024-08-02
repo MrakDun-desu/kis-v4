@@ -15,13 +15,11 @@ public class
     private readonly KisDbContext _dbContext;
     private readonly Mapper _mapper;
     private readonly FakeTimeProvider _timeProvider = new();
-    private readonly ITestOutputHelper _output;
 
-    public CashBoxServiceTests(KisDbContextFactory dbContextFactory, ITestOutputHelper output) {
+    public CashBoxServiceTests(KisDbContextFactory dbContextFactory) {
         _dbContext = dbContextFactory.CreateDbContext();
         _mapper = new Mapper();
         _cashBoxService = new CashBoxService(_dbContext, _mapper, _timeProvider);
-        _output = output;
     }
 
     public void Dispose() {
@@ -198,7 +196,6 @@ public class
         });
         var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
         _dbContext.SaveChanges();
-        _output.WriteLine(insertedEntity.ToString());
         var id = insertedEntity.Entity.Id;
 
         var returnedModel = _cashBoxService.Read(id);

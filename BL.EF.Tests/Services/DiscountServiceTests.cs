@@ -13,11 +13,10 @@ public class
     private readonly KisDbContext _dbContext;
     private readonly Mapper _mapper;
 
-    public DiscountServiceTests(KisDbContextFactory dbContextFactory, ITestOutputHelper output) {
+    public DiscountServiceTests(KisDbContextFactory dbContextFactory) {
         _dbContext = dbContextFactory.CreateDbContext();
         _mapper = new Mapper();
         _cashBoxService = new DiscountService(_dbContext, _mapper);
-        _output = output;
     }
 
     public void Dispose() {
