@@ -2,16 +2,13 @@ using System.Data;
 using KisV4.BL.EF;
 using KisV4.DAL.EF;
 using KisV4.App.Endpoints;
-using KisV4.App;
 
 var builder = WebApplication.CreateBuilder(args);
 
 ConfigureCors(builder.Services);
 ConfigureOpenApiDocuments(builder.Services);
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (connectionString is null) {
-    throw new NoNullAllowedException("Database connection string is null");
-}
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new NoNullAllowedException("Database connection string");
 
 builder.Services.AddEntityFrameworkDAL(connectionString);
 builder.Services.AddEntityFrameworkBL();
@@ -58,6 +55,7 @@ void UseEndpoints(IEndpointRouteBuilder routeBuilder) {
     Categories.MapEndpoints(routeBuilder);
     Compositions.MapEndpoints(routeBuilder);
     Containers.MapEndpoints(routeBuilder);
+    Costs.MapEndpoints(routeBuilder);
     Currencies.MapEndpoints(routeBuilder);
     Pipes.MapEndpoints(routeBuilder);
     SaleItems.MapEndpoints(routeBuilder);

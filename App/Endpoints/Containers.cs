@@ -2,18 +2,21 @@ using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace KisV4.App;
+namespace KisV4.App.Endpoints;
 
 public static class Containers {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("containers");
+        group.MapPost(string.Empty, Create);
+        group.MapGet(string.Empty, ReadAll);
+        group.MapPut("{id:int}", Update);
+        group.MapDelete("{id:int}", Delete);
     }
 
     private static int Create(
         IContainerService containerService,
         ContainerCreateModel createModel) {
-        var createdId = containerService.Create(createModel);
-        return createdId;
+        return containerService.Create(createModel);
     }
 
     private static List<ContainerReadAllModel> ReadAll(IContainerService containerService) {

@@ -9,3 +9,11 @@ public record CostModel(
     decimal Amount,
     string Description
 );
+
+public record CostCreateModel(
+    int ProductId,
+    int CurrencyId,
+    DateTimeOffset ValidSince,
+    decimal Amount,
+    string Description
+);
