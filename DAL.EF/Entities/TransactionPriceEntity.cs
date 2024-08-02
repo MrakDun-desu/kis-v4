@@ -7,12 +7,12 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 [PrimaryKey(nameof(SaleTransactionItemId), nameof(CurrencyId))]
 public record TransactionPriceEntity {
-    public required int CurrencyId { get; init; }
+    public int CurrencyId { get; init; }
     /// <summary>
     /// Currency that this transaction price is in.
     /// </summary>
     public virtual CurrencyEntity? Currency { get; set; }
-    public required int SaleTransactionItemId { get; init; }
+    public int SaleTransactionItemId { get; init; }
     /// <summary>
     /// Sale transaction item that has this price.
     /// </summary>

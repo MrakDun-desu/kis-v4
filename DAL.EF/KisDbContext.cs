@@ -29,7 +29,7 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : DbContext(op
     public DbSet<StoreTransactionItemEntity> StoreTransactionItems { get; init; } = null!;
     public DbSet<TransactionEntity> Transactions { get; init; } = null!;
     public DbSet<TransactionPriceEntity> TransactionPrices { get; init; } = null!;
-    public DbSet<UserAccountEntity> UserAccounts { get; init; }
+    public DbSet<UserAccountEntity> UserAccounts { get; init; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);

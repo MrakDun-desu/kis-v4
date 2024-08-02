@@ -7,12 +7,12 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 public record CurrencyCostEntity {
     public int Id { get; init; }
-    public required int ProductId { get; init; }
+    public int ProductId { get; init; }
     /// <summary>
     /// Product that has this cost.
     /// </summary>
     public virtual ProductEntity? Product { get; set; }
-    public required int CurrencyId { get; init; }
+    public int CurrencyId { get; init; }
     /// <summary>
     /// Currency that is part of the cost of given product.
     /// </summary>

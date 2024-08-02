@@ -8,12 +8,12 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 public record DiscountUsageEntity {
     public int Id { get; init; }
-    public required int UserId { get; init; }
+    public int UserId { get; init; }
     /// <summary>
     /// User that has used the given discount.
     /// </summary>
     public virtual UserAccountEntity? User { get; set; }
-    public required int DiscountId { get; init; }
+    public int DiscountId { get; init; }
     /// <summary>
     /// Discount that has been used by the given user.
     /// </summary>

@@ -8,14 +8,14 @@ namespace KisV4.DAL.EF.Entities;
 public record StoreTransactionItemEntity {
     public int Id { get; init; }
 
-    public required int StoreItemId { get; init; }
+    public int StoreItemId { get; init; }
     public virtual StoreItemEntity? StoreItem { get; set; }
-    public required int StoreId { get; init; }
+    public int StoreId { get; init; }
     /// <summary>
     /// Store where the amount of store item has changed as a part of this store transaction item.
     /// </summary>
     public virtual StoreEntity? Store { get; set; }
-    public required int StoreTransactionId { get; init; }
+    public int StoreTransactionId { get; init; }
     /// <summary>
     /// Store transaction that this transaction item belongs to.
     /// </summary>

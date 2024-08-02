@@ -33,4 +33,7 @@ public partial class Mapper {
     public partial List<ContainerReadAllModel> ToModels(List<ContainerEntity> entities);
     
     public partial CurrencyCostEntity ToEntity(CostCreateModel createModel);
+
+    public partial DiscountReadModel? ToModel(DiscountEntity? entity);
+    public partial List<DiscountReadAllModel> ToModels(List<DiscountEntity> entities);
 }

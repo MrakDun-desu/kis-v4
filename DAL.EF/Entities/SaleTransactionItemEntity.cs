@@ -7,9 +7,9 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 public record SaleTransactionItemEntity {
     public int Id { get; init; }
-    public required int SaleItemId { get; init; }
+    public int SaleItemId { get; init; }
     public virtual SaleItemEntity? SaleItem { get; set; }
-    public required int SaleTransactionId { get; init; }
+    public int SaleTransactionId { get; init; }
     /// <summary>
     /// Sale transaction that this transaction item is a part of.
     /// </summary>

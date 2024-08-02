@@ -8,17 +8,17 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 [PrimaryKey(nameof(DiscountUsageId), nameof(CurrencyId), nameof(SaleTransactionItemId))]
 public record DiscountUsageItemEntity {
-    public required int DiscountUsageId { get; init; }
+    public int DiscountUsageId { get; init; }
     /// <summary>
     /// Discount usage this has been used as a part of.
     /// </summary>
     public virtual DiscountUsageEntity? DiscountUsage { get; set; }
-    public required int CurrencyId { get; init; }
+    public int CurrencyId { get; init; }
     /// <summary>
     /// Currency for which this discount usage item applies.
     /// </summary>
     public virtual CurrencyEntity? Currency { get; set; }
-    public required int SaleTransactionItemId { get; init; }
+    public int SaleTransactionItemId { get; init; }
     /// <summary>
     /// Sale transaction item that this usage item has been used on.
     /// </summary>

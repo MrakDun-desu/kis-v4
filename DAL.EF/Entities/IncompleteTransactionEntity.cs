@@ -8,12 +8,12 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 [PrimaryKey(nameof(SaleTransactionId), nameof(UserId))]
 public record IncompleteTransactionEntity {
-    public required int SaleTransactionId { get; init; }
+    public int SaleTransactionId { get; init; }
     /// <summary>
     /// Incomplete sale transaction this record responds to.
     /// </summary>
     public virtual SaleTransactionEntity? SaleTransaction { get; set; }
-    public required int UserId { get; init; }
+    public int UserId { get; init; }
     /// <summary>
     /// User that is supposed to pay for this incomplete transaction when it finishes.
     /// </summary>

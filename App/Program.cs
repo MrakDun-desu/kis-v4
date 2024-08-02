@@ -2,6 +2,7 @@ using System.Data;
 using KisV4.BL.EF;
 using KisV4.DAL.EF;
 using KisV4.App.Endpoints;
+using KisV4.App;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,7 @@ void UseEndpoints(IEndpointRouteBuilder routeBuilder) {
     Containers.MapEndpoints(routeBuilder);
     Costs.MapEndpoints(routeBuilder);
     Currencies.MapEndpoints(routeBuilder);
+    Discounts.MapEndpoints(routeBuilder);
     Pipes.MapEndpoints(routeBuilder);
     SaleItems.MapEndpoints(routeBuilder);
     Stores.MapEndpoints(routeBuilder);
