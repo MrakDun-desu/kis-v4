@@ -20,16 +20,13 @@ public class KisDbContextFactory : IDbContextFactory<KisDbContext>, IAsyncLifeti
         await _databaseContainer.StopAsync();
     }
 
-    private bool _dbCreated;
-
     public KisDbContext CreateDbContext() {
         var optionsBuilder = new DbContextOptionsBuilder<KisDbContext>();
         optionsBuilder.UseNpgsql(_databaseContainer.GetConnectionString());
         var dbContext = new KisDbContext(optionsBuilder.Options);
-        if (!_dbCreated) {
-            dbContext.Database.EnsureCreated();
-            _dbCreated = true;
-        }
+        // delete and create database between every dbcontext creation so the test cases are perfectly isolated from each other
+        dbContext.Database.EnsureDeleted();
+        dbContext.Database.EnsureCreated();
         return dbContext;
     }
 }

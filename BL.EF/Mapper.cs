@@ -36,4 +36,8 @@ public partial class Mapper {
 
     public partial DiscountReadModel? ToModel(DiscountEntity? entity);
     public partial List<DiscountReadAllModel> ToModels(List<DiscountEntity> entities);
+
+    public partial ModifierEntity ToEntity(ModifierCreateModel model);
+    public partial ModifierReadModel? ToModel(ModifierEntity? entity);
+    public partial List<ModifierReadAllModel> ToModels(List<ModifierEntity> entities);
 }
