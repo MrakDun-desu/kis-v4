@@ -34,7 +34,6 @@ public record StoreItemUpdateModel(
     string? Name,
     string? Image,
     IEnumerable<CategoryReadAllModel>? Categories,
-    string UnitName,
-    bool BarmanCanStock,
-    bool IsContainerItem
+    string? UnitName,
+    bool? BarmanCanStock
 );

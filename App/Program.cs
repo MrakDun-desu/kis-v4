@@ -62,5 +62,6 @@ void UseEndpoints(IEndpointRouteBuilder routeBuilder) {
     Modifiers.MapEndpoints(routeBuilder);
     Pipes.MapEndpoints(routeBuilder);
     SaleItems.MapEndpoints(routeBuilder);
+    StoreItems.MapEndpoints(routeBuilder);
     Stores.MapEndpoints(routeBuilder);
 }

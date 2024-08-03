@@ -40,4 +40,8 @@ public partial class Mapper {
     public partial ModifierEntity ToEntity(ModifierCreateModel model);
     public partial ModifierReadModel? ToModel(ModifierEntity? entity);
     public partial List<ModifierReadAllModel> ToModels(List<ModifierEntity> entities);
+
+    public partial StoreItemEntity ToEntity(StoreItemCreateModel model);
+    public partial StoreItemReadModel? ToModel(StoreItemEntity? entity);
+    public partial List<StoreItemReadAllModel> ToModels(List<StoreItemEntity> entities);
 }
