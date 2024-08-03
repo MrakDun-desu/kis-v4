@@ -44,4 +44,6 @@ public partial class Mapper {
     public partial StoreItemEntity ToEntity(StoreItemCreateModel model);
     public partial StoreItemReadModel? ToModel(StoreItemEntity? entity);
     public partial List<StoreItemReadAllModel> ToModels(List<StoreItemEntity> entities);
+
+    public partial DiscountUsageReadModel? ToModel(DiscountUsageEntity? entity);
 }
