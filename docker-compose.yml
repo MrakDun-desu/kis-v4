@@ -2,7 +2,7 @@
   kis-v4-backend:
     build:
       context: .
-      dockerfile: Api/Dockerfile
+      dockerfile: App/Dockerfile
     depends_on: [ "database" ] # depends on the database service
     container_name: kis-v4-backend
     ports: [ "8080:8080", "8081:8081" ]
