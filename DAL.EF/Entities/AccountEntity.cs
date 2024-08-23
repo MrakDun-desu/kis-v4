@@ -1,11 +1,10 @@
 namespace KisV4.DAL.EF.Entities;
 
 /// <summary>
-/// Represents any account, can be a cashbox or user account.
+/// Represents any account, can be a cash-box or user account.
 /// </summary>
 public abstract record AccountEntity {
     public int Id { get; init; }
-    public string Name { get; set; } = string.Empty;
     public bool Deleted { get; set; }
 
     /// <summary>

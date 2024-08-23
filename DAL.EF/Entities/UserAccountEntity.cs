@@ -1,9 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace KisV4.DAL.EF.Entities;
 
 /// <summary>
 /// Represents a user account.
 /// </summary>
-public record UserAccountEntity : AccountEntity {
+[Index(nameof(UserName), IsUnique = true)]
+public record UserAccountEntity : AccountEntity
+{
+    public required string UserName { get; set; }
     /// <summary>
     /// Transactions that this user is responsible for.
     /// </summary>

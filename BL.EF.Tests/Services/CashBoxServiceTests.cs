@@ -5,7 +5,6 @@ using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.Extensions.Time.Testing;
-using Xunit.Abstractions;
 
 namespace BL.EF.Tests.Services;
 
@@ -179,7 +178,7 @@ public class
             Amount = 10,
             SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = new UserAccountEntity {
-                    Name = "Some user"
+                    UserName = "Some user"
                 },
                 Timestamp = currencyChangeTimestamp1
             }
@@ -189,7 +188,7 @@ public class
             Amount = 10,
             SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = new UserAccountEntity {
-                    Name = "Some user"
+                    UserName = "Some user"
                 },
                 Timestamp = currencyChangeTimestamp2
             }
