@@ -25,7 +25,7 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider 
 
     public CashBoxReadModel? Read(int id) {
         var lastStockTaking = dbContext.StockTakings
-            .Where(st => st.CashboxId == id)
+            .Where(st => st.CashBoxId == id)
             .OrderByDescending(st => st.Timestamp).FirstOrDefault();
 
         if (lastStockTaking is null) {
@@ -87,7 +87,7 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider 
             return false;
         }
 
-        var newStockTaking = new StockTakingEntity { CashboxId = id, Timestamp = timeProvider.GetUtcNow() };
+        var newStockTaking = new StockTakingEntity { CashBoxId = id, Timestamp = timeProvider.GetUtcNow() };
 
         dbContext.StockTakings.Add(newStockTaking);
         dbContext.SaveChanges();

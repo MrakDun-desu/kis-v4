@@ -25,4 +25,5 @@ public record CurrencyChangeEntity {
 
     [Precision(11,2)]
     public decimal Amount { get; set; }
+    public bool Cancelled { get; set; }
 }

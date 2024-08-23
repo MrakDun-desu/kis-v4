@@ -1,6 +1,6 @@
 namespace KisV4.Common.Models;
 
-public record CostModel(
+public record CostReadAllModel(
     int Id,
     int ProductId,
     int CurrencyId,

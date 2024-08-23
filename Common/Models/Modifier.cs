@@ -23,9 +23,8 @@ public record ModifierReadModel(
     string Name,
     string Image,
     IEnumerable<CategoryReadAllModel> Categories,
-    IEnumerable<CostModel> Costs,
+    IEnumerable<CostReadAllModel> Costs,
     IEnumerable<CompositionReadAllModel> Composition,
-    IEnumerable<ModifierReadAllModel> AvailableModifiers,
     bool ShowOnWeb
 );
 

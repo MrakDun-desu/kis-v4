@@ -18,8 +18,8 @@ public record SaleTransactionItemEntity {
     /// <summary>
     /// Modifiers applied to the sale item of this sale transaction item.
     /// </summary>
-    public virtual ICollection<ModifierEntity> Modifiers { get; private set; } =
-        new List<ModifierEntity>();
+    public virtual ICollection<ModifierAmountEntity> ModifierAmounts { get; private set; } =
+        new List<ModifierAmountEntity>();
 
     /// <summary>
     /// Prices paid for this transaction item with various currencies.
@@ -36,4 +36,5 @@ public record SaleTransactionItemEntity {
     /// Amount of a sale item that has been sold in this transaction.
     /// </summary>
     public int ItemAmount { get; set; }
+    public bool Cancelled { get; set; }
 }

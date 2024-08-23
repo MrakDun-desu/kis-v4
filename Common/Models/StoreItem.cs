@@ -24,7 +24,7 @@ public record StoreItemReadModel(
     string Name,
     string Image,
     IEnumerable<CategoryReadAllModel> Categories,
-    IEnumerable<CostModel> Costs,
+    IEnumerable<CostReadAllModel> Costs,
     string UnitName,
     bool BarmanCanStock,
     bool IsContainerItem

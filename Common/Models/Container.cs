@@ -1,16 +1,18 @@
 namespace KisV4.Common.Models;
 
 public record ContainerCreateModel(
-    string Name,
-    int ContainedItemId,
-    decimal ItemAmount);
+    int TemplateId,
+    int PipeId
+);
 
 public record ContainerReadAllModel(
     int Id,
-    string Name
+    DateTimeOffset? OpenSince,
+    PipeReadAllModel Pipe,
+    bool WrittenOff,
+    ContainerTemplateReadAllModel Template
 );
 
 public record ContainerUpdateModel(
-    string? Name,
     int? PipeId
 );

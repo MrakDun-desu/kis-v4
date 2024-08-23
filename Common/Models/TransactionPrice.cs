@@ -2,5 +2,7 @@ namespace KisV4.Common.Models;
 
 public record TransactionPriceModel(
     CurrencyReadAllModel Currency,
-    decimal Amount
+    int SaleTransactionItemId,
+    decimal Amount,
+    bool Cancelled
 );

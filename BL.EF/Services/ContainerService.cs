@@ -22,10 +22,6 @@ public class ContainerService(KisDbContext dbContext, Mapper mapper, TimeProvide
         if (entity is null || entity.Deleted)
             return false;
 
-        if (updateModel.Name is not null) {
-            entity.Name = updateModel.Name;
-        }
-        
         if (updateModel.PipeId is not null 
             && entity.PipeId is null
             && entity.OpenSince is null) {

@@ -3,7 +3,8 @@ namespace KisV4.Common.Models;
 public record SaleTransactionItemModel(
     int Id,
     SaleItemReadAllModel SaleItem,
-    IEnumerable<ModifierReadAllModel> Modifiers,
+    IEnumerable<ModifierAmountReadAllModel> ModifierAmounts,
     IEnumerable<TransactionPriceModel> TransactionPrices,
-    int ItemAmount
+    int ItemAmount,
+    bool Cancelled
 );

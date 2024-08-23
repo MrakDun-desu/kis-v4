@@ -131,8 +131,8 @@ public class
         stockTakingSuccess.Should().BeTrue();
         var createdEntity =
             _dbContext.StockTakings
-                .First(st => st.CashboxId == insertedEntity.Entity.Id);
-        createdEntity.CashboxId.Should().Be(insertedEntity.Entity.Id);
+                .First(st => st.CashBoxId == insertedEntity.Entity.Id);
+        createdEntity.CashBoxId.Should().Be(insertedEntity.Entity.Id);
         createdEntity.Timestamp.Should().Be(returnedDateTime);
     }
 

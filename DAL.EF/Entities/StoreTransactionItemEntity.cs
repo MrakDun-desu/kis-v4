@@ -26,4 +26,5 @@ public record StoreTransactionItemEntity {
     /// </summary>
     [Precision(11,2)]
     public decimal ItemAmount { get; set; }
+    public bool Cancelled { get; set; }
 }

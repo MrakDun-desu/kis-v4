@@ -40,11 +40,6 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : DbContext(op
             .WithMany(e => e.Products)
             .UsingEntity("ProductInCategory");
 
-        modelBuilder.Entity<ModifierEntity>()
-            .HasMany(e => e.Applications)
-            .WithMany(e => e.Modifiers)
-            .UsingEntity("ModifierApplications");
-
         modelBuilder.Entity<UserAccountEntity>()
             .HasMany(e => e.Transactions)
             .WithOne(e => e.ResponsibleUser);

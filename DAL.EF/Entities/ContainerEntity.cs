@@ -7,8 +7,8 @@ namespace KisV4.DAL.EF.Entities;
 /// Represents a container that holds some kind of StoreItem. Intended use is for beer kegs.
 /// </summary>
 public record ContainerEntity : StoreEntity {
-    public int ContainedItemId { get; init; }
-    public virtual StoreItemEntity? ContainedItem { get; set; }
+    public int TemplateId { get; init; }
+    public virtual ContainerTemplateEntity? Template { get; set; }
     /// <summary>
     /// Timestamp for when container was first opened (first time the PipeId was set to not null).
     /// </summary>
