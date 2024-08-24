@@ -3,7 +3,9 @@ using KisV4.BL.EF;
 using KisV4.DAL.EF;
 using KisV4.App.Endpoints;
 using KisV4.App;
+using KisV4.App.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,16 @@ builder.Services.AddCors(opts =>
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
+
+// Image storage
+var imageDirectory = builder.Configuration.GetValue<string>("ImageDirectory")
+                     ?? Path.Combine(Environment.CurrentDirectory, "Images");
+builder.Services.AddSingleton(new ImageStorageConfiguration(imageDirectory));
+
+// Auth
+builder.Services.AddAuthentication("Bearer").AddJwtBearer();
+builder.Services.AddAuthorizationBuilder()
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
 // OpenAPI/Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -50,11 +62,6 @@ builder.Services.AddSwaggerGen(o =>
 });
 
 
-// Auth
-builder.Services.AddAuthentication("Bearer").AddJwtBearer();
-builder.Services.AddAuthorizationBuilder()
-    .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
-
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                        ?? throw new NoNullAllowedException("Database connection string");
@@ -72,6 +79,11 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(imageDirectory),
+    RequestPath = "/images"
+});
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -84,6 +96,7 @@ Costs.MapEndpoints(app);
 Currencies.MapEndpoints(app);
 Discounts.MapEndpoints(app);
 DiscountUsages.MapEndpoints(app);
+Images.MapEndpoints(app);
 Modifiers.MapEndpoints(app);
 Pipes.MapEndpoints(app);
 SaleItems.MapEndpoints(app);

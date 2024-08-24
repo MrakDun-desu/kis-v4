@@ -8,6 +8,7 @@
     <UserSecretsId>b8e97e0c-8e8d-4960-b54f-6756128c4667</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="File.TypeChecker" Version="4.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
