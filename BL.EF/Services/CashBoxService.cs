@@ -9,59 +9,35 @@ namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
 public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider timeProvider)
-    : ICashBoxService, IScopedService {
-    public int Create(CashBoxCreateModel createModel) {
+    : ICashBoxService, IScopedService
+{
+    public List<CashBoxReadAllModel> ReadAll(bool? deleted)
+    {
+        return mapper.ToModels(deleted.HasValue
+            ? dbContext.CashBoxes.Where(cb => cb.Deleted == deleted).ToList()
+            : dbContext.CashBoxes.ToList());
+    }
+
+    public CashBoxReadModel Create(CashBoxCreateModel createModel)
+    {
         var entity = mapper.ToEntity(createModel);
+        entity.StockTakings.Add(new StockTakingEntity
+        {
+            Timestamp = timeProvider.GetUtcNow()
+        });
         var insertedEntity = dbContext.CashBoxes.Add(entity);
 
         dbContext.SaveChanges();
 
-        return insertedEntity.Entity.Id;
+        return mapper.ToModel(insertedEntity.Entity)!;
     }
 
-    public List<CashBoxReadAllModel> ReadAll() {
-        return mapper.ToModels(dbContext.CashBoxes.Where(cb => !cb.Deleted).ToList());
-    }
-
-    public CashBoxReadModel? Read(int id) {
-        var lastStockTaking = dbContext.StockTakings
-            .Where(st => st.CashBoxId == id)
-            .OrderByDescending(st => st.Timestamp).FirstOrDefault();
-
-        if (lastStockTaking is null) {
-            return mapper.ToModel(dbContext.CashBoxes.Find(id));
-        }
-
-        var lastTimestamp = lastStockTaking.Timestamp;
-        // if I remove the AsNoTracking, for some reason, all the currency changes get included
-        // even when not wanted. Maybe there's a better way to do this, but I don't know it
-        var cashBox = dbContext.CashBoxes.AsNoTracking().SingleOrDefault(cb => cb.Id == id);
-        if (cashBox is null) {
-            return null;
-        }
-
-        // need to use explicit querying here because query is too complex to utilize lazy loading
-        var currencyChanges = dbContext.Entry(cashBox)
-            .Collection(cb => cb.CurrencyChanges).Query()
-            .Where(cc => cc.SaleTransaction!.Timestamp > lastTimestamp)
-            .Include(cc => cc.Currency);
-
-        cashBox.CurrencyChanges.Clear();
-        foreach (var currencyChange in currencyChanges) {
-            cashBox.CurrencyChanges.Add(currencyChange);
-        }
-
-        return mapper.ToModel(cashBox);
-    }
-
-    public bool Update(int id, CashBoxUpdateModel updateModel) {
-        var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null)
+    public bool Update(CashBoxUpdateModel updateModel)
+    {
+        if (!dbContext.CashBoxes.Any(cb => cb.Id == updateModel.Id))
             return false;
 
-        if (updateModel.Name is not null) {
-            entity.Name = updateModel.Name;
-        }
+        var entity = mapper.ToEntity(updateModel);
 
         dbContext.CashBoxes.Update(entity);
         dbContext.SaveChanges();
@@ -69,9 +45,46 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider 
         return true;
     }
 
-    public bool Delete(int id) {
+    public CashBoxReadModel? Read(int id, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
+    {
+        // needs to do AsNoTracking because otherwise currency changes will get included by lazy loading
+        var cashBox = dbContext.CashBoxes.AsNoTracking()
+            .Include(cb => cb.StockTakings)
+            .SingleOrDefault(cb => cb.Id == id);
+        if (cashBox is null)
+        {
+            return null;
+        }
+
+        var lastTimestamp = cashBox.StockTakings.Last().Timestamp;
+
+        // need to use explicit querying here because query is too complex to utilize lazy loading
+        var realStartDate = startDate ?? lastTimestamp;
+        var realEndDate = endDate ?? timeProvider.GetUtcNow();
+        var currencyChanges = dbContext.CurrencyChanges
+            .Include(cc => cc.SaleTransaction)
+            .Include(cc => cc.Currency)
+            .Where(cc => cc.AccountId == id)
+            .Where(cc => cc.SaleTransaction!.Timestamp > realStartDate && cc.SaleTransaction.Timestamp < realEndDate);
+
+        var totalCurrencyChanges = currencyChanges
+            .GroupBy(cc => cc.Currency)
+            .Select(s =>
+                new TotalCurrencyChangeModel(
+                    mapper.ToModel(s.Key!),
+                    s.Sum(cc => cc.Amount))
+            );
+
+        return mapper.ToModel(
+            new CashBoxIntermediateModel(cashBox, currencyChanges.ToList(),
+                totalCurrencyChanges.ToList()));
+    }
+
+    public bool Delete(int id)
+    {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null) {
+        if (entity is null)
+        {
             return false;
         }
 
@@ -81,15 +94,17 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider 
         return true;
     }
 
-    public bool AddStockTaking(int id) {
+    public bool AddStockTaking(int id)
+    {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null) {
+        if (entity is null)
+        {
             return false;
         }
 
-        var newStockTaking = new StockTakingEntity { CashBoxId = id, Timestamp = timeProvider.GetUtcNow() };
+        entity.StockTakings.Add(new StockTakingEntity { Timestamp = timeProvider.GetUtcNow() });
 
-        dbContext.StockTakings.Add(newStockTaking);
+        dbContext.CashBoxes.Update(entity);
         dbContext.SaveChanges();
 
         return true;

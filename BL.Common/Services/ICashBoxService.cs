@@ -3,10 +3,10 @@ using KisV4.Common.Models;
 namespace KisV4.BL.Common.Services;
 
 public interface ICashBoxService {
-    public int Create(CashBoxCreateModel createModel);
-    public bool AddStockTaking(int id);
-    public List<CashBoxReadAllModel> ReadAll();
-    public CashBoxReadModel? Read(int id);
-    public bool Update(int id, CashBoxUpdateModel updateModel);
+    public List<CashBoxReadAllModel> ReadAll(bool? deleted);
+    public CashBoxReadModel Create(CashBoxCreateModel createModel);
+    public bool Update(CashBoxUpdateModel updateModel);
+    public CashBoxReadModel? Read(int id, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null);
     public bool Delete(int id);
+    public bool AddStockTaking(int id);
 }

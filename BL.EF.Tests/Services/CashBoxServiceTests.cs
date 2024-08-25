@@ -9,95 +9,359 @@ using Microsoft.Extensions.Time.Testing;
 namespace BL.EF.Tests.Services;
 
 public class
-    CashBoxServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+    CashBoxServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
+{
     private readonly CashBoxService _cashBoxService;
     private readonly KisDbContext _dbContext;
     private readonly Mapper _mapper;
     private readonly FakeTimeProvider _timeProvider = new();
 
-    public CashBoxServiceTests(KisDbContextFactory dbContextFactory) {
+    public CashBoxServiceTests(KisDbContextFactory dbContextFactory)
+    {
         _dbContext = dbContextFactory.CreateDbContext();
         _mapper = new Mapper();
         _cashBoxService = new CashBoxService(_dbContext, _mapper, _timeProvider);
+        AssertionOptions.AssertEquivalencyUsing(options =>
+            options.Using<DateTimeOffset>(ctx =>
+                ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
+        );
     }
 
-    public void Dispose() {
+    public void Dispose()
+    {
         _dbContext.Dispose();
     }
 
-    public async ValueTask DisposeAsync() {
+    public async ValueTask DisposeAsync()
+    {
         await _dbContext.DisposeAsync();
     }
 
     [Fact]
-    public void ReadAll_ReadsAll() {
-        var testCashbox1 = new CashBoxEntity { Name = "Some cash box" };
-        var testCashbox2 = new CashBoxEntity { Name = "Some cash box 2" };
-        _dbContext.CashBoxes.Add(testCashbox1);
-        _dbContext.CashBoxes.Add(testCashbox2);
+    public void ReadAll_ReadsAll_WhenNoFilters()
+    {
+        // arrange
+        var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
+        var testCashBox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
+        _dbContext.CashBoxes.Add(testCashBox1);
+        _dbContext.CashBoxes.Add(testCashBox2);
         _dbContext.SaveChanges();
 
-        var readModels = _cashBoxService.ReadAll();
+        // act
+        var readModels = _cashBoxService.ReadAll(null);
+
+        // assert
+        var mappedModels =
+            _mapper.ToModels(_dbContext.CashBoxes.ToList());
+        readModels.Should().BeEquivalentTo(mappedModels);
+    }
+
+    [Fact]
+    public void ReadAll_DoesntReadDeleted_WhenDeletedFilterIsFalse()
+    {
+        // arrange
+        var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
+        var testCashBox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
+        _dbContext.CashBoxes.Add(testCashBox1);
+        _dbContext.CashBoxes.Add(testCashBox2);
+        _dbContext.SaveChanges();
+
+        // act
+        var readModels = _cashBoxService.ReadAll(false);
+
+        // assert
         var mappedModels =
             _mapper.ToModels(_dbContext.CashBoxes.Where(cb => !cb.Deleted).ToList());
-
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
     [Fact]
-    public void ReadAll_DoesntRead_WhenDeleted() {
-        var testCashbox1 = new CashBoxEntity { Name = "Some cash box" };
-        var testCashbox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
-        _dbContext.CashBoxes.Add(testCashbox1);
-        _dbContext.CashBoxes.Add(testCashbox2);
+    public void ReadAll_ReadsOnlyDeleted_WhenDeletedFilterIsTrue()
+    {
+        // arrange
+        var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
+        var testCashBox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
+        _dbContext.CashBoxes.Add(testCashBox1);
+        _dbContext.CashBoxes.Add(testCashBox2);
         _dbContext.SaveChanges();
 
-        var readModels = _cashBoxService.ReadAll();
-        var mappedModels = _mapper.ToModels(_dbContext.CashBoxes.Where(cb => !cb.Deleted).ToList());
+        // act
+        var readModels = _cashBoxService.ReadAll(true);
 
+        // assert
+        var mappedModels =
+            _mapper.ToModels(_dbContext.CashBoxes.Where(cb => cb.Deleted).ToList());
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
     [Fact]
-    public void Create_Creates_WhenDataIsValid() {
+    public void Create_Creates_WhenDataIsValid()
+    {
+        // arrange
         const string name = "Some cash box";
         var createModel = new CashBoxCreateModel(name);
-        var createdId = _cashBoxService.Create(createModel);
+        var timestamp = DateTimeOffset.UtcNow;
+        _timeProvider.SetUtcNow(timestamp);
 
-        var createdEntity = _dbContext.CashBoxes.Find(createdId);
-        var expectedEntity = new CashBoxEntity { Id = createdId, Name = name };
+        // act
+        var createdCashBox = _cashBoxService.Create(createModel);
+
+        // assert
+        var createdEntity = _dbContext.CashBoxes.Find(createdCashBox.Id);
+        var expectedEntity = new CashBoxEntity
+        {
+            Id = createdCashBox.Id,
+            Name = name,
+            StockTakings =
+            {
+                new StockTakingEntity
+                {
+                    CashBox = createdEntity,
+                    CashBoxId = createdCashBox.Id,
+                    Timestamp = timestamp
+                }
+            }
+        };
+        var expectedModel = new CashBoxReadModel(createdCashBox.Id, createModel.Name, false, [], [],
+            [new StockTakingModel(timestamp)]);
 
         createdEntity.Should().BeEquivalentTo(expectedEntity);
+        createdCashBox.Should().BeEquivalentTo(expectedModel);
     }
 
     [Fact]
-    public void Update_UpdatesName_WhenExistingId() {
+    public void Update_UpdatesName_WhenExistingId()
+    {
+        // arrange
         const string oldName = "Some cash box";
         const string newName = "Some cash box 2";
         var testEntity = new CashBoxEntity { Name = oldName };
         var insertedEntity = _dbContext.CashBoxes.Add(testEntity);
         _dbContext.SaveChanges();
-        var updateModel = new CashBoxUpdateModel(newName);
+        var id = insertedEntity.Entity.Id;
+        var updateModel = new CashBoxUpdateModel(id, newName);
+        _dbContext.ChangeTracker.Clear();
 
-        var updateSuccess = _cashBoxService.Update(insertedEntity.Entity.Id, updateModel);
+        // act
+        var updateSuccess = _cashBoxService.Update(updateModel);
 
+        // assert
         updateSuccess.Should().BeTrue();
-        var updatedEntity = _dbContext.CashBoxes.Find(insertedEntity.Entity.Id);
+        var updatedEntity = _dbContext.CashBoxes.Find(id);
         var expectedEntity = insertedEntity.Entity with { Name = newName };
         updatedEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     [Fact]
-    public void Update_ReturnsFalse_WhenNotFound() {
-        var updateModel = new CashBoxUpdateModel("Some cash box");
+    public void Update_ReturnsFalse_WhenNotFound()
+    {
+        // arrange
+        var updateModel = new CashBoxUpdateModel(42, "Some cash box");
 
-        var updateSuccess = _cashBoxService.Update(42, updateModel);
+        // act
+        var updateSuccess = _cashBoxService.Update(updateModel);
 
+        // assert
         updateSuccess.Should().BeFalse();
     }
 
     [Fact]
-    public void Delete_Deletes_WhenExistingId() {
+    public void Read_ReturnsNull_WhenNotFound()
+    {
+        // act
+        var returnedModel = _cashBoxService.Read(42);
+
+        // assert
+        returnedModel.Should().BeNull();
+    }
+
+    [Fact]
+    public void Read_ReadsCorrectly_WhenSimple()
+    {
+        // arrange
+        var timestamp = DateTimeOffset.UtcNow;
+        var testCashBox = new CashBoxEntity
+        {
+            Name = "Test cash box",
+            StockTakings = { new StockTakingEntity { Timestamp = timestamp } }
+        };
+        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
+        _dbContext.SaveChanges();
+        var id = insertedEntity.Entity.Id;
+
+        // act
+        var returnedModel = _cashBoxService.Read(id);
+
+        // assert
+        var expectedModel = _mapper.ToModel(insertedEntity.Entity);
+        returnedModel.Should().BeEquivalentTo(expectedModel);
+    }
+
+    [Fact]
+    public void Read_ReadsCorrectly_WithoutFilters()
+    {
+        // arrange
+        var testCashBox = new CashBoxEntity { Name = "Test cash box" };
+        var stockTakingTimestamp = DateTimeOffset.UtcNow.AddDays(-2);
+        var currencyChangeTimestamp1 = DateTimeOffset.UtcNow.AddDays(-3);
+        var currencyChangeTimestamp2 = DateTimeOffset.UtcNow.AddDays(-1);
+        _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
+        testCashBox.StockTakings.Add(new StockTakingEntity { Timestamp = stockTakingTimestamp });
+        var currencyChange1 = new CurrencyChangeEntity
+        {
+            Currency = new CurrencyEntity { Name = "Some currency" },
+            Amount = 10,
+            SaleTransaction = new SaleTransactionEntity
+            {
+                ResponsibleUser = new UserAccountEntity
+                {
+                    UserName = "Some user"
+                },
+                Timestamp = currencyChangeTimestamp1
+            }
+        };
+        var currencyChange2 = new CurrencyChangeEntity
+        {
+            Currency = new CurrencyEntity { Name = "Some currency" },
+            Amount = 10,
+            SaleTransaction = new SaleTransactionEntity
+            {
+                ResponsibleUser = new UserAccountEntity
+                {
+                    UserName = "Some other user"
+                },
+                Timestamp = currencyChangeTimestamp2
+            }
+        };
+        testCashBox.CurrencyChanges.Add(currencyChange1);
+        testCashBox.CurrencyChanges.Add(currencyChange2);
+        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
+        _dbContext.SaveChanges();
+        var id = insertedEntity.Entity.Id;
+
+        // act
+        var returnedModel = _cashBoxService.Read(id);
+
+        // assert
+        var expectedModel = _mapper.ToModel(new CashBoxIntermediateModel(
+            insertedEntity.Entity,
+            [currencyChange2],
+            [new TotalCurrencyChangeModel(_mapper.ToModel(currencyChange2.Currency), currencyChange2.Amount)]));
+        returnedModel.Should().BeEquivalentTo(expectedModel);
+    }
+
+    [Fact]
+    public void Read_ReadsCorrectly_WithFilters()
+    {
+        // arrange
+        var testCashBox = new CashBoxEntity { Name = "Test cash box" };
+        var stockTakingTimestamp = DateTimeOffset.UtcNow.AddDays(-2);
+        var currencyChangeTimestamp1 = DateTimeOffset.UtcNow.AddDays(-3);
+        var currencyChangeTimestamp2 = DateTimeOffset.UtcNow.AddDays(-1);
+        _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
+        testCashBox.StockTakings.Add(new StockTakingEntity { Timestamp = stockTakingTimestamp });
+        var currencyChange1 = new CurrencyChangeEntity
+        {
+            Currency = new CurrencyEntity { Name = "Some currency" },
+            Amount = 10,
+            SaleTransaction = new SaleTransactionEntity
+            {
+                ResponsibleUser = new UserAccountEntity
+                {
+                    UserName = "Some user"
+                },
+                Timestamp = currencyChangeTimestamp1
+            }
+        };
+        var currencyChange2 = new CurrencyChangeEntity
+        {
+            Currency = new CurrencyEntity { Name = "Some currency" },
+            Amount = 10,
+            SaleTransaction = new SaleTransactionEntity
+            {
+                ResponsibleUser = new UserAccountEntity
+                {
+                    UserName = "Some other user"
+                },
+                Timestamp = currencyChangeTimestamp2
+            }
+        };
+        testCashBox.CurrencyChanges.Add(currencyChange1);
+        testCashBox.CurrencyChanges.Add(currencyChange2);
+        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
+        _dbContext.SaveChanges();
+        var id = insertedEntity.Entity.Id;
+
+        // act
+        var returnedModel = _cashBoxService.Read(id, currencyChangeTimestamp1.AddDays(-1), stockTakingTimestamp);
+
+        // assert
+        var expectedModel = _mapper.ToModel(new CashBoxIntermediateModel(
+            insertedEntity.Entity,
+            [currencyChange1],
+            [new TotalCurrencyChangeModel(_mapper.ToModel(currencyChange1.Currency), currencyChange1.Amount)]));
+        returnedModel.Should().BeEquivalentTo(expectedModel);
+    }
+
+    [Fact]
+    public void Read_ReadsCorrectly_WithAggregation()
+    {
+        // arrange
+        var testCashBox = new CashBoxEntity { Name = "Test cash box" };
+        var stockTakingTimestamp = DateTimeOffset.UtcNow.AddDays(-3);
+        var currencyChangeTimestamp1 = DateTimeOffset.UtcNow.AddDays(-2);
+        var currencyChangeTimestamp2 = DateTimeOffset.UtcNow.AddDays(-1);
+        _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
+        testCashBox.StockTakings.Add(new StockTakingEntity { Timestamp = stockTakingTimestamp });
+        var currency = new CurrencyEntity { Name = "Some currency" };
+        var currencyChange1 = new CurrencyChangeEntity
+        {
+            Currency = currency,
+            Amount = 10,
+            SaleTransaction = new SaleTransactionEntity
+            {
+                ResponsibleUser = new UserAccountEntity
+                {
+                    UserName = "Some user"
+                },
+                Timestamp = currencyChangeTimestamp1
+            }
+        };
+        var currencyChange2 = new CurrencyChangeEntity
+        {
+            Currency = currency,
+            Amount = 10,
+            SaleTransaction = new SaleTransactionEntity
+            {
+                ResponsibleUser = new UserAccountEntity
+                {
+                    UserName = "Some other user"
+                },
+                Timestamp = currencyChangeTimestamp2
+            }
+        };
+        testCashBox.CurrencyChanges.Add(currencyChange1);
+        testCashBox.CurrencyChanges.Add(currencyChange2);
+        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
+        _dbContext.SaveChanges();
+        var id = insertedEntity.Entity.Id;
+
+        // act
+        var returnedModel = _cashBoxService.Read(id);
+
+        // assert
+        var expectedModel = _mapper.ToModel(new CashBoxIntermediateModel(
+            insertedEntity.Entity,
+            [currencyChange1, currencyChange2],
+            [
+                new TotalCurrencyChangeModel(_mapper.ToModel(currency), currencyChange1.Amount + currencyChange2.Amount)
+            ]));
+        returnedModel.Should().BeEquivalentTo(expectedModel);
+    }
+
+    [Fact]
+    public void Delete_Deletes_WhenExistingId()
+    {
         var testCashBox1 = new CashBoxEntity { Name = "Some category" };
         var insertedEntity = _dbContext.CashBoxes.Add(testCashBox1);
         _dbContext.SaveChanges();
@@ -111,20 +375,21 @@ public class
     }
 
     [Fact]
-    public void Delete_ReturnsFalse_WhenNotFound() {
+    public void Delete_ReturnsFalse_WhenNotFound()
+    {
         var deleteSuccess = _cashBoxService.Delete(42);
 
         deleteSuccess.Should().BeFalse();
     }
 
     [Fact]
-    public void AddStockTaking_AddsStockTaking_WhenExistingId() {
+    public void AddStockTaking_AddsStockTaking_WhenExistingId()
+    {
         var testCashBox1 = new CashBoxEntity { Name = "Some category" };
         var insertedEntity = _dbContext.CashBoxes.Add(testCashBox1);
         _dbContext.SaveChanges();
         var returnedDateTime = DateTimeOffset.UtcNow;
         _timeProvider.SetUtcNow(returnedDateTime);
-        _timeProvider.SetLocalTimeZone(TimeZoneInfo.Utc);
 
         var stockTakingSuccess = _cashBoxService.AddStockTaking(insertedEntity.Entity.Id);
 
@@ -132,75 +397,20 @@ public class
         var createdEntity =
             _dbContext.StockTakings
                 .First(st => st.CashBoxId == insertedEntity.Entity.Id);
-        createdEntity.CashBoxId.Should().Be(insertedEntity.Entity.Id);
-        createdEntity.Timestamp.Should().Be(returnedDateTime);
+        var expectedEntity = new StockTakingEntity
+        {
+            Timestamp = returnedDateTime,
+            CashBox = insertedEntity.Entity,
+            CashBoxId = insertedEntity.Entity.Id
+        };
+        createdEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     [Fact]
-    public void AddStockTaking_ReturnsFalse_WhenNotFound() {
+    public void AddStockTaking_ReturnsFalse_WhenNotFound()
+    {
         var stockTakingSuccess = _cashBoxService.AddStockTaking(42);
 
         stockTakingSuccess.Should().BeFalse();
-    }
-
-    [Fact]
-    public void Read_ReturnsNull_WhenNotFound() {
-        var returnedModel = _cashBoxService.Read(42);
-
-        returnedModel.Should().BeNull();
-    }
-
-    [Fact]
-    public void Read_ReadsCorrectly_WhenSimple() {
-        var testCashBox = new CashBoxEntity { Name = "Test cash box" };
-        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
-        _dbContext.SaveChanges();
-        var id = insertedEntity.Entity.Id;
-
-        var returnedModel = _cashBoxService.Read(id);
-
-        var expectedModel = _mapper.ToModel(insertedEntity.Entity);
-        returnedModel.Should().BeEquivalentTo(expectedModel);
-    }
-
-    [Fact]
-    public void Read_ReadsCorrectly_WhenComplex() {
-        // add a stock-taking and two transactions, one of which is before the stock-taking and
-        // second which is after the stock-taking. Read should only get the currency changes after
-        // the stock-taking
-        var testCashBox = new CashBoxEntity { Name = "Test cash box" };
-        var stockTakingTimestamp = DateTimeOffset.UtcNow.AddDays(-2);
-        var currencyChangeTimestamp1 = DateTimeOffset.UtcNow.AddDays(-3);
-        var currencyChangeTimestamp2 = DateTimeOffset.UtcNow.AddDays(-1);
-        testCashBox.StockTakings.Add(new StockTakingEntity { Timestamp = stockTakingTimestamp });
-        testCashBox.CurrencyChanges.Add(new CurrencyChangeEntity {
-            Currency = new CurrencyEntity { Name = "Some currency" },
-            Amount = 10,
-            SaleTransaction = new SaleTransactionEntity {
-                ResponsibleUser = new UserAccountEntity {
-                    UserName = "Some user"
-                },
-                Timestamp = currencyChangeTimestamp1
-            }
-        });
-        testCashBox.CurrencyChanges.Add(new CurrencyChangeEntity {
-            Currency = new CurrencyEntity { Name = "Some currency" },
-            Amount = 10,
-            SaleTransaction = new SaleTransactionEntity {
-                ResponsibleUser = new UserAccountEntity {
-                    UserName = "Some user"
-                },
-                Timestamp = currencyChangeTimestamp2
-            }
-        });
-        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
-        _dbContext.SaveChanges();
-        var id = insertedEntity.Entity.Id;
-
-        var returnedModel = _cashBoxService.Read(id);
-
-        var expectedModel = _mapper.ToModel(insertedEntity.Entity);
-        expectedModel!.CurrencyChanges.Remove(expectedModel.CurrencyChanges.First());
-        returnedModel.Should().BeEquivalentTo(expectedModel);
     }
 }

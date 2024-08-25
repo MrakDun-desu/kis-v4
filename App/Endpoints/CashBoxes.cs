@@ -1,58 +1,74 @@
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.App.Endpoints;
 
-public static class CashBoxes {
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
+public static class CashBoxes
+{
+    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
+    {
         var group = routeBuilder.MapGroup("cashboxes");
-        group.MapPost(string.Empty, Create);
-        group.MapPost("{id:int}/stock-taking", AddStockTaking);
         group.MapGet(string.Empty, ReadAll);
+        group.MapPost(string.Empty, Create);
+        group.MapPut(string.Empty, Update);
         group.MapGet("{id:int}", Read);
-        group.MapPut("{id:int}", Update);
         group.MapDelete("{id:int}", Delete);
+        group.MapPost("{id:int}/stock-taking", AddStockTaking);
     }
 
-    private static int Create(
+    private static List<CashBoxReadAllModel> ReadAll(
         ICashBoxService cashBoxService,
-        CashBoxCreateModel createModel) {
-        var createdId = cashBoxService.Create(createModel);
-        return createdId;
+        [FromQuery] bool? deleted = false
+    )
+    {
+        return cashBoxService.ReadAll(deleted);
     }
 
-    private static Results<Ok, NotFound>AddStockTaking(
+    private static Created<CashBoxReadModel> Create(
         ICashBoxService cashBoxService,
-        int id) {
-        return cashBoxService.AddStockTaking(id) ? TypedResults.Ok() : TypedResults.NotFound();
+        CashBoxCreateModel createModel,
+        HttpRequest request)
+    {
+        var createdModel = cashBoxService.Create(createModel);
+        return TypedResults.Created(
+            request.Host + request.Path + "/" + createdModel.Id, createdModel);
     }
-
-    private static List<CashBoxReadAllModel> ReadAll(ICashBoxService cashBoxService) {
-        return cashBoxService.ReadAll();
+    
+    private static Results<NoContent, NotFound> Update(
+        ICashBoxService cashBoxService,
+        CashBoxUpdateModel updateModel)
+    {
+        return cashBoxService.Update(updateModel) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 
     private static Results<Ok<CashBoxReadModel>, NotFound> Read(
         ICashBoxService cashBoxService,
-        int id) {
-        var cashBoxDetail = cashBoxService.Read(id);
-        if (cashBoxDetail is null) {
+        int id,
+        [FromQuery] DateTimeOffset? startDate = null,
+        [FromQuery] DateTimeOffset? endDate = null)
+    {
+        var cashBoxDetail = cashBoxService.Read(id, startDate, endDate);
+        if (cashBoxDetail is null)
+        {
             return TypedResults.NotFound();
         }
 
         return TypedResults.Ok(cashBoxDetail);
     }
 
-    private static Results<Ok, NotFound> Update(
+    private static Results<NoContent, NotFound> Delete(
         ICashBoxService cashBoxService,
-        int id,
-        CashBoxUpdateModel updateModel) {
-        return cashBoxService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
+        int id)
+    {
+        return cashBoxService.Delete(id) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
-
-    private static Results<Ok, NotFound> Delete(
+    
+    private static Results<Ok, NotFound> AddStockTaking(
         ICashBoxService cashBoxService,
-        int id) {
-        return cashBoxService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
+        int id)
+    {
+        return cashBoxService.AddStockTaking(id) ? TypedResults.Ok() : TypedResults.NotFound();
     }
 }

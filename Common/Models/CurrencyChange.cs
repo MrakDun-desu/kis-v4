@@ -5,3 +5,8 @@ public record CurrencyChangeModel(
     int SaleTransactionId,
     decimal Amount
 );
+
+public record TotalCurrencyChangeModel(
+    CurrencyReadAllModel Currency,
+    decimal Amount
+);
