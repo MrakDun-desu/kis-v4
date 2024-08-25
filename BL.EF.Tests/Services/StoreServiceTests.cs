@@ -7,19 +7,30 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
-    private readonly StoreService _storeService;
+public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
+{
     private readonly KisDbContext _dbContext;
-    private readonly Mapper _mapper;
+    private readonly StoreService _storeService;
 
-    public StoreServiceTests(KisDbContextFactory dbContextFactory) {
+    public StoreServiceTests(KisDbContextFactory dbContextFactory)
+    {
         _dbContext = dbContextFactory.CreateDbContext();
-        _mapper = new Mapper();
-        _storeService = new StoreService(_dbContext, _mapper);
+        _storeService = new StoreService(_dbContext);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]
-    public void Create_CreatesStore_WhenDataIsValid() {
+    public void Create_CreatesStore_WhenDataIsValid()
+    {
         var createModel = new StoreCreateModel("Some store");
         var createdId = _storeService.Create(createModel);
 
@@ -29,7 +40,8 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
     }
 
     [Fact]
-    public void ReadAll_ReadsAll() {
+    public void ReadAll_ReadsAll()
+    {
         var testStore1 = new StoreEntity { Name = "Some store" };
         var testStore2 = new StoreEntity { Name = "Some store 2" };
         _dbContext.Stores.Add(testStore1);
@@ -37,13 +49,14 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
         _dbContext.SaveChanges();
 
         var readModels = _storeService.ReadAll();
-        var mappedModels = _mapper.ToModels(_dbContext.Stores.ToList());
+        var mappedModels = _dbContext.Stores.ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
     [Fact]
-    public void Update_UpdatesName_WhenExistingId() {
+    public void Update_UpdatesName_WhenExistingId()
+    {
         const string oldName = "Some store";
         const string newName = "Some store 2";
         var testStore1 = new StoreEntity { Name = oldName };
@@ -60,7 +73,8 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
     }
 
     [Fact]
-    public void Update_ReturnsFalse_WhenNotFound() {
+    public void Update_ReturnsFalse_WhenNotFound()
+    {
         var updateModel = new StoreUpdateModel("Some store");
 
         var updateSuccess = _storeService.Update(42, updateModel);
@@ -69,7 +83,8 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
     }
 
     [Fact]
-    public void Delete_Deletes_WhenExistingId() {
+    public void Delete_Deletes_WhenExistingId()
+    {
         var testStore1 = new StoreEntity { Name = "Some store" };
         var insertedEntity = _dbContext.Stores.Add(testStore1);
         _dbContext.SaveChanges();
@@ -82,17 +97,10 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
     }
 
     [Fact]
-    public void Delete_ReturnsFalse_WhenNotFound() {
+    public void Delete_ReturnsFalse_WhenNotFound()
+    {
         var deleteSuccess = _storeService.Delete(42);
 
         deleteSuccess.Should().BeFalse();
-    }
-
-    public void Dispose() {
-        _dbContext.Dispose();
-    }
-
-    public async ValueTask DisposeAsync() {
-        await _dbContext.DisposeAsync();
     }
 }

@@ -1,9 +1,9 @@
 using System.Data;
-using KisV4.BL.EF;
-using KisV4.DAL.EF;
-using KisV4.App.Endpoints;
 using KisV4.App;
 using KisV4.App.Configuration;
+using KisV4.App.Endpoints;
+using KisV4.BL.EF;
+using KisV4.DAL.EF;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;

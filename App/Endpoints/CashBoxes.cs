@@ -35,7 +35,7 @@ public static class CashBoxes
         return TypedResults.Created(
             request.Host + request.Path + "/" + createdModel.Id, createdModel);
     }
-    
+
     private static Results<NoContent, NotFound> Update(
         ICashBoxService cashBoxService,
         CashBoxUpdateModel updateModel)
@@ -50,10 +50,7 @@ public static class CashBoxes
         [FromQuery] DateTimeOffset? endDate = null)
     {
         var cashBoxDetail = cashBoxService.Read(id, startDate, endDate);
-        if (cashBoxDetail is null)
-        {
-            return TypedResults.NotFound();
-        }
+        if (cashBoxDetail is null) return TypedResults.NotFound();
 
         return TypedResults.Ok(cashBoxDetail);
     }
@@ -64,7 +61,7 @@ public static class CashBoxes
     {
         return cashBoxService.Delete(id) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
-    
+
     private static Results<Ok, NotFound> AddStockTaking(
         ICashBoxService cashBoxService,
         int id)

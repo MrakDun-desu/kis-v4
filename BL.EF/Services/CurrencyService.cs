@@ -1,4 +1,3 @@
-using KisV4.BL.Common;
 using KisV4.BL.Common.Services;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
@@ -7,10 +6,11 @@ using KisV4.DAL.EF;
 namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
-public class CurrencyService(KisDbContext dbContext, Mapper mapper) : ICurrencyService, IScopedService {
-
-    public int Create(CurrencyCreateModel createModel) {
-        var entity = mapper.ToEntity(createModel);
+public class CurrencyService(KisDbContext dbContext) : ICurrencyService, IScopedService
+{
+    public int Create(CurrencyCreateModel createModel)
+    {
+        var entity = createModel.ToEntity();
         var insertedEntity = dbContext.Currencies.Add(entity);
 
         dbContext.SaveChanges();
@@ -18,18 +18,18 @@ public class CurrencyService(KisDbContext dbContext, Mapper mapper) : ICurrencyS
         return insertedEntity.Entity.Id;
     }
 
-    public List<CurrencyReadAllModel> ReadAll() {
-        return mapper.ToModels(dbContext.Currencies.ToList());
+    public List<CurrencyReadAllModel> ReadAll()
+    {
+        return dbContext.Currencies.ToList().ToModels();
     }
 
-    public bool Update(int id, CurrencyUpdateModel updateModel) {
+    public bool Update(int id, CurrencyUpdateModel updateModel)
+    {
         var entity = dbContext.Currencies.Find(id);
         if (entity is null)
             return false;
 
-        if (updateModel.Name is not null) {
-            entity.Name = updateModel.Name;
-        }
+        if (updateModel.Name is not null) entity.Name = updateModel.Name;
 
         dbContext.Currencies.Update(entity);
         dbContext.SaveChanges();

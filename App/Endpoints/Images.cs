@@ -1,6 +1,5 @@
 using FileTypeChecker;
 using KisV4.App.Configuration;
-using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace KisV4.App.Endpoints;
@@ -20,10 +19,8 @@ public static class Images
     {
         // validating the filetype with magic bytes
         if (!FileTypeValidator.IsImage(image.OpenReadStream()))
-        {
             return TypedResults.ValidationProblem(new Dictionary<string, string[]>
                 { { "fileType", ["File must be of type image"] } });
-        }
 
         string creationPath;
         string fileName;

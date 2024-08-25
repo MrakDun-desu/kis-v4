@@ -5,13 +5,16 @@ using KisV4.DAL.EF;
 
 namespace KisV4.BL.EF.Services;
 
-public class DiscountService(KisDbContext dbContext, Mapper mapper)
-    : IDiscountService, IScopedService {
-    public DiscountReadModel? Read(int id) {
-        return mapper.ToModel(dbContext.Discounts.Find(id));
+public class DiscountService(KisDbContext dbContext)
+    : IDiscountService, IScopedService
+{
+    public DiscountReadModel? Read(int id)
+    {
+        return dbContext.Discounts.Find(id).ToModel();
     }
 
-    public List<DiscountReadAllModel> ReadAll() {
-        return mapper.ToModels(dbContext.Discounts.ToList());
+    public List<DiscountReadAllModel> ReadAll()
+    {
+        return dbContext.Discounts.ToList().ToModels();
     }
 }

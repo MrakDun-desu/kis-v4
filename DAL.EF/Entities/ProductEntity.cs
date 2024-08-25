@@ -1,19 +1,23 @@
 namespace KisV4.DAL.EF.Entities;
 
 /// <summary>
-/// Represents a product. Product can be a sale item or a store item.
+///     Represents a product. Product can be a sale item or a store item.
 /// </summary>
-public abstract record ProductEntity {
+public abstract record ProductEntity
+{
     public int Id { get; init; }
     public string Name { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;
     public bool Deleted { get; set; }
+
     /// <summary>
-    /// Categories that this product is in.
+    ///     Categories that this product is in.
     /// </summary>
-    public virtual ICollection<ProductCategoryEntity> Categories { get; private set; } = new List<ProductCategoryEntity>();
+    public virtual ICollection<ProductCategoryEntity> Categories { get; private set; } =
+        new List<ProductCategoryEntity>();
+
     /// <summary>
-    /// Costs that this product has.
+    ///     Costs that this product has.
     /// </summary>
     public virtual ICollection<CurrencyCostEntity> Costs { get; private set; } = new List<CurrencyCostEntity>();
 }

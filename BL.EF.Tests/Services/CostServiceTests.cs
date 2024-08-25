@@ -1,41 +1,42 @@
-using System.Net.NetworkInformation;
 using FluentAssertions;
-using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace BL.EF.Tests.Services;
 
-public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
+{
     private readonly CostService _costService;
     private readonly KisDbContext _dbContext;
-    private readonly Mapper _mapper;
 
-    public CostServiceTests(KisDbContextFactory dbContextFactory) {
+    public CostServiceTests(KisDbContextFactory dbContextFactory)
+    {
         _dbContext = dbContextFactory.CreateDbContext();
-        _mapper = new Mapper();
-        _costService = new CostService(_dbContext, _mapper);
+        _costService = new CostService(_dbContext);
     }
 
-    public void Dispose() {
-        _dbContext.Dispose();
-    }
-
-    public async ValueTask DisposeAsync() {
+    public async ValueTask DisposeAsync()
+    {
         await _dbContext.DisposeAsync();
     }
 
+    public void Dispose()
+    {
+        _dbContext.Dispose();
+    }
+
     [Fact]
-    public void Create_Creates_WhenDataIsValid() {
+    public void Create_Creates_WhenDataIsValid()
+    {
         // Given
-        var testStoreItem = new StoreItemEntity {
+        var testStoreItem = new StoreItemEntity
+        {
             Name = "Test store item"
         };
-        var testCurrency = new CurrencyEntity {
+        var testCurrency = new CurrencyEntity
+        {
             Name = "Test currency"
         };
         var addedStoreItem = _dbContext.StoreItems.Add(testStoreItem);
@@ -52,12 +53,13 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
             costValidSince,
             currencyAmount,
             costDescription
-            );
+        );
         var createdId = _costService.Create(createModel);
 
         // Then
         var createdEntity = _dbContext.CurrencyCosts.Find(createdId);
-        var expectedEntity = new CurrencyCostEntity {
+        var expectedEntity = new CurrencyCostEntity
+        {
             Id = createdId,
             CurrencyId = addedCurrency.Entity.Id,
             Currency = addedCurrency.Entity,
@@ -65,7 +67,7 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
             Product = addedStoreItem.Entity,
             Amount = currencyAmount,
             Description = costDescription,
-            ValidSince = costValidSince,
+            ValidSince = costValidSince
         };
         createdEntity.Should().BeEquivalentTo(expectedEntity);
     }

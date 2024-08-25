@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>KisV4.BL.EF</RootNamespace>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BL.Common\BL.Common.csproj" />
-    <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\DAL.EF\DAL.EF.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Riok.Mapperly" Version="3.6.0" />
-    <PackageReference Include="Scrutor" Version="4.2.2" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>KisV4.BL.EF</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\BL.Common\BL.Common.csproj"/>
+        <ProjectReference Include="..\Common\Common.csproj"/>
+        <ProjectReference Include="..\DAL.EF\DAL.EF.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Riok.Mapperly" Version="3.6.0"/>
+        <PackageReference Include="Scrutor" Version="4.2.2"/>
+    </ItemGroup>
 </Project>

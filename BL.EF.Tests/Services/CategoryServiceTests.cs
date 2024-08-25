@@ -7,19 +7,30 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
+{
     private readonly CategoryService _categoryService;
     private readonly KisDbContext _dbContext;
-    private readonly Mapper _mapper;
 
-    public CategoryServiceTests(KisDbContextFactory dbContextFactory) {
+    public CategoryServiceTests(KisDbContextFactory dbContextFactory)
+    {
         _dbContext = dbContextFactory.CreateDbContext();
-        _mapper = new Mapper();
-        _categoryService = new CategoryService(_dbContext, _mapper);
+        _categoryService = new CategoryService(_dbContext);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]
-    public void Create_CreatesCategory_WhenDataIsValid() {
+    public void Create_CreatesCategory_WhenDataIsValid()
+    {
         var createModel = new CategoryCreateModel("Some category");
         var createdId = _categoryService.Create(createModel);
 
@@ -29,7 +40,8 @@ public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     }
 
     [Fact]
-    public void ReadAll_ReadsAll() {
+    public void ReadAll_ReadsAll()
+    {
         var testCategory1 = new ProductCategoryEntity { Name = "Some category" };
         var testCategory2 = new ProductCategoryEntity { Name = "Some category 2" };
         _dbContext.ProductCategories.Add(testCategory1);
@@ -37,13 +49,14 @@ public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
         _dbContext.SaveChanges();
 
         var readModels = _categoryService.ReadAll();
-        var mappedModels = _mapper.ToModels(_dbContext.ProductCategories.ToList());
+        var mappedModels = _dbContext.ProductCategories.ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
     [Fact]
-    public void Update_UpdatesName_WhenExistingId() {
+    public void Update_UpdatesName_WhenExistingId()
+    {
         const string oldName = "Some category";
         const string newName = "Some category 2";
         var testCategory1 = new ProductCategoryEntity { Name = oldName };
@@ -60,7 +73,8 @@ public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     }
 
     [Fact]
-    public void Update_ReturnsFalse_WhenNotFound() {
+    public void Update_ReturnsFalse_WhenNotFound()
+    {
         var updateModel = new CategoryUpdateModel("Some category");
 
         var updateSuccess = _categoryService.Update(42, updateModel);
@@ -69,7 +83,8 @@ public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     }
 
     [Fact]
-    public void Delete_Deletes_WhenExistingId() {
+    public void Delete_Deletes_WhenExistingId()
+    {
         var testCategory1 = new ProductCategoryEntity { Name = "Some category" };
         var insertedEntity = _dbContext.ProductCategories.Add(testCategory1);
         _dbContext.SaveChanges();
@@ -82,17 +97,10 @@ public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     }
 
     [Fact]
-    public void Delete_ReturnsFalse_WhenNotFound() {
+    public void Delete_ReturnsFalse_WhenNotFound()
+    {
         var deleteSuccess = _categoryService.Delete(42);
 
         deleteSuccess.Should().BeFalse();
-    }
-
-    public void Dispose() {
-        _dbContext.Dispose();
-    }
-
-    public async ValueTask DisposeAsync() {
-        await _dbContext.DisposeAsync();
     }
 }

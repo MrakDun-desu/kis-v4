@@ -5,12 +5,15 @@ using KisV4.DAL.EF;
 
 namespace KisV4.BL.EF.Services;
 
-public class CostService(KisDbContext dbContext, Mapper mapper)
-    : ICostService, IScopedService {
-    public int Create(CostCreateModel createModel) {
-        var entity = mapper.ToEntity(createModel with {
+public class CostService(KisDbContext dbContext)
+    : ICostService, IScopedService
+{
+    public int Create(CostCreateModel createModel)
+    {
+        var entity = (createModel with
+        {
             ValidSince = createModel.ValidSince.ToUniversalTime()
-        });
+        }).ToEntity();
         var insertedEntity = dbContext.CurrencyCosts.Add(entity);
 
         dbContext.SaveChanges();

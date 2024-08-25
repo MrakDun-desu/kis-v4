@@ -1,5 +1,5 @@
 namespace KisV4.Common.DependencyInjection;
 
-public interface ITransientService {
-    
+public interface ITransientService
+{
 }

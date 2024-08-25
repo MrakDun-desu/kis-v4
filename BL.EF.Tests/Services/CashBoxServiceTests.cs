@@ -13,28 +13,26 @@ public class
 {
     private readonly CashBoxService _cashBoxService;
     private readonly KisDbContext _dbContext;
-    private readonly Mapper _mapper;
     private readonly FakeTimeProvider _timeProvider = new();
 
     public CashBoxServiceTests(KisDbContextFactory dbContextFactory)
     {
         _dbContext = dbContextFactory.CreateDbContext();
-        _mapper = new Mapper();
-        _cashBoxService = new CashBoxService(_dbContext, _mapper, _timeProvider);
+        _cashBoxService = new CashBoxService(_dbContext, _timeProvider);
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
         );
     }
 
-    public void Dispose()
-    {
-        _dbContext.Dispose();
-    }
-
     public async ValueTask DisposeAsync()
     {
         await _dbContext.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]
@@ -52,7 +50,7 @@ public class
 
         // assert
         var mappedModels =
-            _mapper.ToModels(_dbContext.CashBoxes.ToList());
+            _dbContext.CashBoxes.ToList().ToModels();
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
@@ -71,7 +69,7 @@ public class
 
         // assert
         var mappedModels =
-            _mapper.ToModels(_dbContext.CashBoxes.Where(cb => !cb.Deleted).ToList());
+            _dbContext.CashBoxes.Where(cb => !cb.Deleted).ToList().ToModels();
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
@@ -90,7 +88,7 @@ public class
 
         // assert
         var mappedModels =
-            _mapper.ToModels(_dbContext.CashBoxes.Where(cb => cb.Deleted).ToList());
+            _dbContext.CashBoxes.Where(cb => cb.Deleted).ToList().ToModels();
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
@@ -193,7 +191,7 @@ public class
         var returnedModel = _cashBoxService.Read(id);
 
         // assert
-        var expectedModel = _mapper.ToModel(insertedEntity.Entity);
+        var expectedModel = insertedEntity.Entity.ToModel();
         returnedModel.Should().BeEquivalentTo(expectedModel);
     }
 
@@ -243,10 +241,10 @@ public class
         var returnedModel = _cashBoxService.Read(id);
 
         // assert
-        var expectedModel = _mapper.ToModel(new CashBoxIntermediateModel(
+        var expectedModel = new CashBoxIntermediateModel(
             insertedEntity.Entity,
             [currencyChange2],
-            [new TotalCurrencyChangeModel(_mapper.ToModel(currencyChange2.Currency), currencyChange2.Amount)]));
+            [new TotalCurrencyChangeModel(currencyChange2.Currency.ToModel(), currencyChange2.Amount)]).ToReadModel();
         returnedModel.Should().BeEquivalentTo(expectedModel);
     }
 
@@ -296,10 +294,10 @@ public class
         var returnedModel = _cashBoxService.Read(id, currencyChangeTimestamp1.AddDays(-1), stockTakingTimestamp);
 
         // assert
-        var expectedModel = _mapper.ToModel(new CashBoxIntermediateModel(
+        var expectedModel = new CashBoxIntermediateModel(
             insertedEntity.Entity,
             [currencyChange1],
-            [new TotalCurrencyChangeModel(_mapper.ToModel(currencyChange1.Currency), currencyChange1.Amount)]));
+            [new TotalCurrencyChangeModel(currencyChange1.Currency.ToModel(), currencyChange1.Amount)]).ToReadModel();
         returnedModel.Should().BeEquivalentTo(expectedModel);
     }
 
@@ -350,12 +348,12 @@ public class
         var returnedModel = _cashBoxService.Read(id);
 
         // assert
-        var expectedModel = _mapper.ToModel(new CashBoxIntermediateModel(
+        var expectedModel = new CashBoxIntermediateModel(
             insertedEntity.Entity,
             [currencyChange1, currencyChange2],
             [
-                new TotalCurrencyChangeModel(_mapper.ToModel(currency), currencyChange1.Amount + currencyChange2.Amount)
-            ]));
+                new TotalCurrencyChangeModel(currency.ToModel(), currencyChange1.Amount + currencyChange2.Amount)
+            ]).ToReadModel();
         returnedModel.Should().BeEquivalentTo(expectedModel);
     }
 

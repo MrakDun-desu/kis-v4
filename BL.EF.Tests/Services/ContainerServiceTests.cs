@@ -1,28 +1,25 @@
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using FluentAssertions;
-using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
-using KisV4.Common.Models;
 using KisV4.DAL.EF;
-using KisV4.DAL.EF.Entities;
 using Microsoft.Extensions.Time.Testing;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
-using Xunit.Abstractions;
 
 namespace BL.EF.Tests.Services;
 
 public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
-    IDisposable, IAsyncDisposable {
+    IDisposable, IAsyncDisposable
+{
     private readonly ContainerService _containerService;
     private readonly KisDbContext _dbContext;
-    private readonly Mapper _mapper;
     private readonly FakeTimeProvider _timeProvider = new();
 
-    public ContainerServiceTests(KisDbContextFactory dbContextFactory) {
+    public ContainerServiceTests(KisDbContextFactory dbContextFactory)
+    {
         _dbContext = dbContextFactory.CreateDbContext();
-        _mapper = new Mapper();
-        _containerService = new ContainerService(_dbContext, _mapper, _timeProvider);
+        _containerService = new ContainerService(_dbContext, _timeProvider);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
     }
 
     // [Fact]
@@ -45,7 +42,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     //
     //     var readModels = _containerService.ReadAll();
     //     var mappedModels =
-    //         _mapper.ToModels(_dbContext.Containers.Where(c => !c.Deleted).ToList());
+    //         Mapper.ToModels(_dbContext.Containers.Where(c => !c.Deleted).ToList());
     //
     //     readModels.Should().BeEquivalentTo(mappedModels);
     // }
@@ -147,11 +144,8 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
     // }
 
-    public void Dispose() {
+    public void Dispose()
+    {
         _dbContext.Dispose();
-    }
-
-    public async ValueTask DisposeAsync() {
-        await _dbContext.DisposeAsync();
     }
 }

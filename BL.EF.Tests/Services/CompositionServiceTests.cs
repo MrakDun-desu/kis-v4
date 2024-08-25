@@ -1,5 +1,4 @@
 using FluentAssertions;
-using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
@@ -8,19 +7,30 @@ using KisV4.DAL.EF.Entities;
 namespace BL.EF.Tests.Services;
 
 public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
-    IAsyncDisposable {
+    IAsyncDisposable
+{
     private readonly CompositionService _compositionService;
     private readonly KisDbContext _dbContext;
-    private readonly Mapper _mapper;
 
-    public CompositionServiceTests(KisDbContextFactory dbContextFactory) {
+    public CompositionServiceTests(KisDbContextFactory dbContextFactory)
+    {
         _dbContext = dbContextFactory.CreateDbContext();
-        _mapper = new Mapper();
-        _compositionService = new CompositionService(_dbContext, _mapper);
+        _compositionService = new CompositionService(_dbContext);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]
-    public void Create_DoesntCreate_WhenAmountIs0() {
+    public void Create_DoesntCreate_WhenAmountIs0()
+    {
         var createModel = new CompositionCreateModel(1, 1, 0);
 
         _compositionService.Create(createModel);
@@ -30,7 +40,8 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
     }
 
     [Fact]
-    public void Create_Creates_WhenAmountIsMoreThan0() {
+    public void Create_Creates_WhenAmountIsMoreThan0()
+    {
         var saleItemEntity = new SaleItemEntity { Name = "Test sale item" };
         var storeItemEntity = new StoreItemEntity { Name = "Test store item" };
         var insertedSaleItem = _dbContext.SaleItems.Add(saleItemEntity);
@@ -43,7 +54,8 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         _compositionService.Create(createModel);
 
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
-        createdEntity.Should().Be(new CompositionEntity {
+        createdEntity.Should().Be(new CompositionEntity
+        {
             Amount = createModel.Amount,
             SaleItemId = saleItemId,
             StoreItemId = storeItemId,
@@ -53,10 +65,12 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
     }
 
     [Fact]
-    public void Create_DeletesExisting_WhenAmountIs0() {
+    public void Create_DeletesExisting_WhenAmountIs0()
+    {
         var saleItemEntity = new SaleItemEntity { Name = "Test sale item" };
         var storeItemEntity = new StoreItemEntity { Name = "Test store item" };
-        var compositionEntity = new CompositionEntity {
+        var compositionEntity = new CompositionEntity
+        {
             Amount = 42, SaleItem = saleItemEntity, StoreItem = storeItemEntity
         };
         var insertedSaleItem = _dbContext.SaleItems.Add(saleItemEntity);
@@ -74,10 +88,12 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
     }
 
     [Fact]
-    public void Create_UpdatesExisting_WhenAmountIsMoreThan0() {
+    public void Create_UpdatesExisting_WhenAmountIsMoreThan0()
+    {
         var saleItemEntity = new SaleItemEntity { Name = "Test sale item" };
         var storeItemEntity = new StoreItemEntity { Name = "Test store item" };
-        var compositionEntity = new CompositionEntity {
+        var compositionEntity = new CompositionEntity
+        {
             Amount = 42, SaleItem = saleItemEntity, StoreItem = storeItemEntity
         };
         var insertedSaleItem = _dbContext.SaleItems.Add(saleItemEntity);
@@ -91,20 +107,13 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         _compositionService.Create(createModel);
 
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
-        createdEntity.Should().Be(new CompositionEntity {
+        createdEntity.Should().Be(new CompositionEntity
+        {
             Amount = createModel.Amount,
             SaleItemId = saleItemId,
             StoreItemId = storeItemId,
             SaleItem = insertedSaleItem.Entity,
             StoreItem = insertedStoreItem.Entity
         });
-    }
-
-    public void Dispose() {
-        _dbContext.Dispose();
-    }
-
-    public async ValueTask DisposeAsync() {
-        await _dbContext.DisposeAsync();
     }
 }

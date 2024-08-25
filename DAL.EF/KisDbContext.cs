@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.DAL.EF;
 
-public class KisDbContext(DbContextOptions<KisDbContext> options) : DbContext(options) {
+public class KisDbContext(DbContextOptions<KisDbContext> options) : DbContext(options)
+{
     public DbSet<AccountEntity> Accounts { get; init; } = null!;
     public DbSet<CashBoxEntity> CashBoxes { get; init; } = null!;
     public DbSet<CompositionEntity> Compositions { get; init; } = null!;
@@ -31,7 +32,8 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : DbContext(op
     public DbSet<TransactionPriceEntity> TransactionPrices { get; init; } = null!;
     public DbSet<UserAccountEntity> UserAccounts { get; init; } = null!;
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         base.OnModelCreating(modelBuilder);
 
         // for better naming of the join tables

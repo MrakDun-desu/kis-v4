@@ -8,19 +8,19 @@ using Microsoft.EntityFrameworkCore;
 namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
-public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider timeProvider)
+public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
     : ICashBoxService, IScopedService
 {
     public List<CashBoxReadAllModel> ReadAll(bool? deleted)
     {
-        return mapper.ToModels(deleted.HasValue
-            ? dbContext.CashBoxes.Where(cb => cb.Deleted == deleted).ToList()
-            : dbContext.CashBoxes.ToList());
+        return deleted.HasValue
+            ? dbContext.CashBoxes.Where(cb => cb.Deleted == deleted).ToList().ToModels()
+            : dbContext.CashBoxes.ToList().ToModels();
     }
 
     public CashBoxReadModel Create(CashBoxCreateModel createModel)
     {
-        var entity = mapper.ToEntity(createModel);
+        var entity = createModel.ToEntity();
         entity.StockTakings.Add(new StockTakingEntity
         {
             Timestamp = timeProvider.GetUtcNow()
@@ -29,7 +29,7 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider 
 
         dbContext.SaveChanges();
 
-        return mapper.ToModel(insertedEntity.Entity)!;
+        return insertedEntity.Entity.ToModel()!;
     }
 
     public bool Update(CashBoxUpdateModel updateModel)
@@ -37,7 +37,7 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider 
         if (!dbContext.CashBoxes.Any(cb => cb.Id == updateModel.Id))
             return false;
 
-        var entity = mapper.ToEntity(updateModel);
+        var entity = updateModel.ToEntity();
 
         dbContext.CashBoxes.Update(entity);
         dbContext.SaveChanges();
@@ -51,10 +51,7 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider 
         var cashBox = dbContext.CashBoxes.AsNoTracking()
             .Include(cb => cb.StockTakings)
             .SingleOrDefault(cb => cb.Id == id);
-        if (cashBox is null)
-        {
-            return null;
-        }
+        if (cashBox is null) return null;
 
         var lastTimestamp = cashBox.StockTakings.Last().Timestamp;
 
@@ -71,22 +68,18 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider 
             .GroupBy(cc => cc.Currency)
             .Select(s =>
                 new TotalCurrencyChangeModel(
-                    mapper.ToModel(s.Key!),
+                    s.Key!.ToModel(),
                     s.Sum(cc => cc.Amount))
             );
 
-        return mapper.ToModel(
-            new CashBoxIntermediateModel(cashBox, currencyChanges.ToList(),
-                totalCurrencyChanges.ToList()));
+        return new CashBoxIntermediateModel(cashBox, currencyChanges.ToList(),
+            totalCurrencyChanges.ToList()).ToReadModel();
     }
 
     public bool Delete(int id)
     {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null)
-        {
-            return false;
-        }
+        if (entity is null) return false;
 
         entity.Deleted = true;
         dbContext.SaveChanges();
@@ -97,10 +90,7 @@ public class CashBoxService(KisDbContext dbContext, Mapper mapper, TimeProvider 
     public bool AddStockTaking(int id)
     {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null)
-        {
-            return false;
-        }
+        if (entity is null) return false;
 
         entity.StockTakings.Add(new StockTakingEntity { Timestamp = timeProvider.GetUtcNow() });
 

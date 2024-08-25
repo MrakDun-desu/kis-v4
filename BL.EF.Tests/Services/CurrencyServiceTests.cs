@@ -7,19 +7,30 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
+{
     private readonly CurrencyService _currencyService;
     private readonly KisDbContext _dbContext;
-    private readonly Mapper _mapper;
 
-    public CurrencyServiceTests(KisDbContextFactory dbContextFactory) {
+    public CurrencyServiceTests(KisDbContextFactory dbContextFactory)
+    {
         _dbContext = dbContextFactory.CreateDbContext();
-        _mapper = new Mapper();
-        _currencyService = new CurrencyService(_dbContext, _mapper);
+        _currencyService = new CurrencyService(_dbContext);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]
-    public void Create_CreatesCurrency_WhenDataIsValid() {
+    public void Create_CreatesCurrency_WhenDataIsValid()
+    {
         var createModel = new CurrencyCreateModel("Some currency");
         var createdId = _currencyService.Create(createModel);
 
@@ -29,7 +40,8 @@ public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     }
 
     [Fact]
-    public void ReadAll_ReadsAll() {
+    public void ReadAll_ReadsAll()
+    {
         var testCurrency1 = new CurrencyEntity { Name = "Some currency" };
         var testCurrency2 = new CurrencyEntity { Name = "Some currency 2" };
         _dbContext.Currencies.Add(testCurrency1);
@@ -37,13 +49,14 @@ public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
         _dbContext.SaveChanges();
 
         var readModels = _currencyService.ReadAll();
-        var mappedModels = _mapper.ToModels(_dbContext.Currencies.ToList());
+        var mappedModels = _dbContext.Currencies.ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
     [Fact]
-    public void Update_UpdatesName_WhenExistingId() {
+    public void Update_UpdatesName_WhenExistingId()
+    {
         const string oldName = "Some currency";
         const string newName = "Some currency 2";
         var testCurrency1 = new CurrencyEntity { Name = oldName };
@@ -60,19 +73,12 @@ public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     }
 
     [Fact]
-    public void Update_ReturnsFalse_WhenNotFound() {
+    public void Update_ReturnsFalse_WhenNotFound()
+    {
         var updateModel = new CurrencyUpdateModel("Some currency");
 
         var updateSuccess = _currencyService.Update(42, updateModel);
 
         updateSuccess.Should().BeFalse();
-    }
-
-    public void Dispose() {
-        _dbContext.Dispose();
-    }
-
-    public async ValueTask DisposeAsync() {
-        await _dbContext.DisposeAsync();
     }
 }

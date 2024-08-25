@@ -6,27 +6,32 @@ using KisV4.DAL.EF;
 namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
-public class ContainerService(KisDbContext dbContext, Mapper mapper, TimeProvider timeProvider) : IContainerService, IScopedService {
-
-    public int Create(ContainerCreateModel createModel) {
+public class ContainerService(KisDbContext dbContext, TimeProvider timeProvider) : IContainerService, IScopedService
+{
+    public int Create(ContainerCreateModel createModel)
+    {
         // can't implement this without user login feature
         throw new NotImplementedException();
     }
 
-    public List<ContainerReadAllModel> ReadAll() {
-        return mapper.ToModels(dbContext.Containers.Where(c => !c.Deleted).ToList());
+    public List<ContainerReadAllModel> ReadAll()
+    {
+        return dbContext.Containers
+            .Where(c => !c.Deleted)
+            .ToList()
+            .ToModels();
     }
 
-    public bool Update(int id, ContainerUpdateModel updateModel) {
+    public bool Update(int id, ContainerUpdateModel updateModel)
+    {
         var entity = dbContext.Containers.Find(id);
         if (entity is null || entity.Deleted)
             return false;
 
-        if (updateModel.PipeId is not null 
+        if (updateModel.PipeId is not null
             && entity.PipeId is null
-            && entity.OpenSince is null) {
+            && entity.OpenSince is null)
             entity.OpenSince = timeProvider.GetUtcNow();
-        }
 
         entity.PipeId = updateModel.PipeId;
 
@@ -36,7 +41,8 @@ public class ContainerService(KisDbContext dbContext, Mapper mapper, TimeProvide
         return true;
     }
 
-    public bool Delete(int id) {
+    public bool Delete(int id)
+    {
         // can't implement this without user login feature
         throw new NotImplementedException();
     }

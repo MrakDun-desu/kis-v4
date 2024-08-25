@@ -7,19 +7,30 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
-    private readonly PipeService _pipeService;
+public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
+{
     private readonly KisDbContext _dbContext;
-    private readonly Mapper _mapper;
+    private readonly PipeService _pipeService;
 
-    public PipeServiceTests(KisDbContextFactory dbContextFactory) {
+    public PipeServiceTests(KisDbContextFactory dbContextFactory)
+    {
         _dbContext = dbContextFactory.CreateDbContext();
-        _mapper = new Mapper();
-        _pipeService = new PipeService(_dbContext, _mapper);
+        _pipeService = new PipeService(_dbContext);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]
-    public void Create_CreatesPipe_WhenDataIsValid() {
+    public void Create_CreatesPipe_WhenDataIsValid()
+    {
         var createModel = new PipeCreateModel("Some pipe");
         var createdId = _pipeService.Create(createModel);
 
@@ -29,7 +40,8 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void ReadAll_ReadsAll() {
+    public void ReadAll_ReadsAll()
+    {
         var testPipe1 = new PipeEntity { Name = "Some pipe" };
         var testPipe2 = new PipeEntity { Name = "Some pipe 2" };
         _dbContext.Pipes.Add(testPipe1);
@@ -37,13 +49,14 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         _dbContext.SaveChanges();
 
         var readModels = _pipeService.ReadAll();
-        var mappedModels = _mapper.ToModels(_dbContext.Pipes.ToList());
+        var mappedModels = _dbContext.Pipes.ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
     [Fact]
-    public void Update_UpdatesName_WhenExistingId() {
+    public void Update_UpdatesName_WhenExistingId()
+    {
         const string oldName = "Some pipe";
         const string newName = "Some pipe 2";
         var testPipe1 = new PipeEntity { Name = oldName };
@@ -60,7 +73,8 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void Update_ReturnsFalse_WhenNotFound() {
+    public void Update_ReturnsFalse_WhenNotFound()
+    {
         var updateModel = new PipeUpdateModel("Some pipe");
 
         var updateSuccess = _pipeService.Update(42, updateModel);
@@ -69,7 +83,8 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void Delete_Deletes_WhenExistingId() {
+    public void Delete_Deletes_WhenExistingId()
+    {
         var testPipe1 = new PipeEntity { Name = "Some pipe" };
         var insertedEntity = _dbContext.Pipes.Add(testPipe1);
         _dbContext.SaveChanges();
@@ -82,17 +97,10 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void Delete_ReturnsFalse_WhenNotFound() {
+    public void Delete_ReturnsFalse_WhenNotFound()
+    {
         var deleteSuccess = _pipeService.Delete(42);
 
         deleteSuccess.Should().BeFalse();
-    }
-
-    public void Dispose() {
-        _dbContext.Dispose();
-    }
-
-    public async ValueTask DisposeAsync() {
-        await _dbContext.DisposeAsync();
     }
 }

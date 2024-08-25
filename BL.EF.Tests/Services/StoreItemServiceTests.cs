@@ -7,19 +7,30 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
-    private readonly StoreItemService _saleItemService;
+public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
+{
     private readonly KisDbContext _dbContext;
-    private readonly Mapper _mapper;
+    private readonly StoreItemService _saleItemService;
 
-    public StoreItemServiceTests(KisDbContextFactory dbContextFactory) {
+    public StoreItemServiceTests(KisDbContextFactory dbContextFactory)
+    {
         _dbContext = dbContextFactory.CreateDbContext();
-        _mapper = new Mapper();
-        _saleItemService = new StoreItemService(_dbContext, _mapper);
+        _saleItemService = new StoreItemService(_dbContext);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]
-    public void Create_CreatesStoreItem_WhenDataIsValid() {
+    public void Create_CreatesStoreItem_WhenDataIsValid()
+    {
         var createModel = new StoreItemCreateModel(
             "Some store item",
             string.Empty,
@@ -27,11 +38,12 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
             "ks",
             true,
             false
-            );
+        );
         var createdId = _saleItemService.Create(createModel);
 
         var createdEntity = _dbContext.StoreItems.Find(createdId);
-        var expectedEntity = new StoreItemEntity {
+        var expectedEntity = new StoreItemEntity
+        {
             Id = createdId,
             Name = createModel.Name,
             UnitName = createModel.UnitName,
@@ -42,7 +54,8 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void ReadAll_ReadsAll() {
+    public void ReadAll_ReadsAll()
+    {
         var testStoreItem1 = new StoreItemEntity { Name = "Some store item" };
         var testStoreItem2 = new StoreItemEntity { Name = "Some store item 2" };
         _dbContext.StoreItems.Add(testStoreItem1);
@@ -50,13 +63,14 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
         _dbContext.SaveChanges();
 
         var readModels = _saleItemService.ReadAll();
-        var mappedModels = _mapper.ToModels(_dbContext.StoreItems.Where(si => !si.Deleted).ToList());
+        var mappedModels = _dbContext.StoreItems.Where(si => !si.Deleted).ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
     [Fact]
-    public void ReadAll_DoesntRead_Deleted() {
+    public void ReadAll_DoesntRead_Deleted()
+    {
         var testStoreItem1 = new StoreItemEntity { Name = "Some store item" };
         var testStoreItem2 = new StoreItemEntity { Name = "Some store item 2", Deleted = true };
         _dbContext.StoreItems.Add(testStoreItem1);
@@ -64,13 +78,14 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
         _dbContext.SaveChanges();
 
         var readModels = _saleItemService.ReadAll();
-        var mappedModels = _mapper.ToModels(_dbContext.StoreItems.Where(si => !si.Deleted).ToList());
+        var mappedModels = _dbContext.StoreItems.Where(si => !si.Deleted).ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
     [Fact]
-    public void Update_UpdatesName_WhenExistingId() {
+    public void Update_UpdatesName_WhenExistingId()
+    {
         const string oldName = "Some store item";
         const string newName = "Some store item 2";
         var testStoreItem1 = new StoreItemEntity { Name = oldName };
@@ -87,7 +102,8 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Update_UpdatesImage_WhenExistingId() {
+    public void Update_UpdatesImage_WhenExistingId()
+    {
         const string oldImage = "Some store item";
         const string newImage = "Some store item 2";
         var testStoreItem1 = new StoreItemEntity { Name = "Test sale item", Image = oldImage };
@@ -104,7 +120,8 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Update_UpdatesCategories_WhenExistingId() {
+    public void Update_UpdatesCategories_WhenExistingId()
+    {
         var newCategory = _dbContext.ProductCategories.Add(new ProductCategoryEntity { Name = "test category 2" });
         var storeItem = new StoreItemEntity { Name = "Test sale item" };
         storeItem.Categories.Add(new ProductCategoryEntity { Name = "test category 1" });
@@ -130,7 +147,8 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Update_UpdatesUnitName_WhenExistingId() {
+    public void Update_UpdatesUnitName_WhenExistingId()
+    {
         var testStoreItem1 = new StoreItemEntity { Name = "Test name" };
         var insertedEntity = _dbContext.StoreItems.Add(testStoreItem1);
         _dbContext.SaveChanges();
@@ -145,7 +163,8 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Update_UpdatesBarmanCanStock_WhenExistingId() {
+    public void Update_UpdatesBarmanCanStock_WhenExistingId()
+    {
         var testStoreItem1 = new StoreItemEntity { Name = "Test name" };
         var insertedEntity = _dbContext.StoreItems.Add(testStoreItem1);
         _dbContext.SaveChanges();
@@ -160,7 +179,8 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Update_ReturnsFalse_WhenNotFound() {
+    public void Update_ReturnsFalse_WhenNotFound()
+    {
         var updateModel = new StoreItemUpdateModel("Some store item", null, null, null, null);
 
         var updateSuccess = _saleItemService.Update(42, updateModel);
@@ -169,7 +189,8 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Delete_Deletes_WhenExistingId() {
+    public void Delete_Deletes_WhenExistingId()
+    {
         var testStoreItem1 = new StoreItemEntity { Name = "Some store item" };
         var insertedEntity = _dbContext.StoreItems.Add(testStoreItem1);
         _dbContext.SaveChanges();
@@ -182,17 +203,10 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Delete_ReturnsFalse_WhenNotFound() {
+    public void Delete_ReturnsFalse_WhenNotFound()
+    {
         var deleteSuccess = _saleItemService.Delete(42);
 
         deleteSuccess.Should().BeFalse();
-    }
-
-    public void Dispose() {
-        _dbContext.Dispose();
-    }
-
-    public async ValueTask DisposeAsync() {
-        await _dbContext.DisposeAsync();
     }
 }

@@ -6,8 +6,9 @@ public record ContainerTemplateEntity
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    [Precision(11,2)]
-    public decimal Amount { get; set; }
+
+    [Precision(11, 2)] public decimal Amount { get; set; }
+
     public bool Deleted { get; set; }
     public int ContainedItemId { get; set; }
     public virtual StoreItemEntity? ContainedItem { get; set; }
