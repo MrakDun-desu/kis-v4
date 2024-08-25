@@ -20,7 +20,7 @@ public static class Images
         // validating the filetype with magic bytes
         if (!FileTypeValidator.IsImage(image.OpenReadStream()))
             return TypedResults.ValidationProblem(new Dictionary<string, string[]>
-                { { "fileType", ["File must be of type image"] } });
+                { { "image", ["File must be of type image"] } });
 
         string creationPath;
         string fileName;
@@ -38,6 +38,6 @@ public static class Images
         using var stream = File.Create(creationPath);
         image.CopyTo(stream);
 
-        return TypedResults.Created(request.Host + "/images/" + fileName);
+        return TypedResults.Created(request.Host + request.Path + "/" + fileName);
     }
 }

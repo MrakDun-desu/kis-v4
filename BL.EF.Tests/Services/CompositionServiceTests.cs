@@ -31,17 +31,26 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
     [Fact]
     public void Create_DoesntCreate_WhenAmountIs0()
     {
-        var createModel = new CompositionCreateModel(1, 1, 0);
+        // arrange
+        var createModel = new CompositionCreateModel(1, 2, 0);
 
-        _compositionService.Create(createModel);
+        // act
+        var errors = _compositionService.Create(createModel);
 
-        var createdEntity = _dbContext.Compositions.Find(1, 1);
+        // assert
+        var createdEntity = _dbContext.Compositions.Find(createModel.SaleItemId, createModel.StoreItemId);
         createdEntity.Should().BeNull();
+        errors.Should().BeEquivalentTo(new Dictionary<string, string[]>
+        {
+            { "sale_item_id", [$"Sale item with id {createModel.SaleItemId} doesn't exist"] },
+            { "store_item_id", [$"Store item with id {createModel.StoreItemId} doesn't exist"] },
+        });
     }
 
     [Fact]
     public void Create_Creates_WhenAmountIsMoreThan0()
     {
+        // arrange
         var saleItemEntity = new SaleItemEntity { Name = "Test sale item" };
         var storeItemEntity = new StoreItemEntity { Name = "Test store item" };
         var insertedSaleItem = _dbContext.SaleItems.Add(saleItemEntity);
@@ -51,8 +60,10 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var storeItemId = insertedStoreItem.Entity.Id;
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 42);
 
-        _compositionService.Create(createModel);
+        // act
+        var errors = _compositionService.Create(createModel);
 
+        // assert
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
         createdEntity.Should().Be(new CompositionEntity
         {
@@ -62,11 +73,13 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
             SaleItem = insertedSaleItem.Entity,
             StoreItem = insertedStoreItem.Entity
         });
+        errors.Should().BeNull();
     }
 
     [Fact]
     public void Create_DeletesExisting_WhenAmountIs0()
     {
+        // arrange
         var saleItemEntity = new SaleItemEntity { Name = "Test sale item" };
         var storeItemEntity = new StoreItemEntity { Name = "Test store item" };
         var compositionEntity = new CompositionEntity
@@ -81,15 +94,19 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var storeItemId = insertedStoreItem.Entity.Id;
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 0);
 
-        _compositionService.Create(createModel);
+        // act
+        var errors = _compositionService.Create(createModel);
 
+        // assert
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
         createdEntity.Should().BeNull();
+        errors.Should().BeNull();
     }
 
     [Fact]
     public void Create_UpdatesExisting_WhenAmountIsMoreThan0()
     {
+        // arrange
         var saleItemEntity = new SaleItemEntity { Name = "Test sale item" };
         var storeItemEntity = new StoreItemEntity { Name = "Test store item" };
         var compositionEntity = new CompositionEntity
@@ -104,8 +121,10 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var storeItemId = insertedStoreItem.Entity.Id;
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 52);
 
-        _compositionService.Create(createModel);
+        // act
+        var errors = _compositionService.Create(createModel);
 
+        // assert
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
         createdEntity.Should().Be(new CompositionEntity
         {
@@ -115,5 +134,6 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
             SaleItem = insertedSaleItem.Entity,
             StoreItem = insertedStoreItem.Entity
         });
+        errors.Should().BeNull();
     }
 }

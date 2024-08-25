@@ -4,5 +4,5 @@ namespace KisV4.BL.Common.Services;
 
 public interface ICompositionService
 {
-    public void Create(CompositionCreateModel createModel);
+    public Dictionary<string, string[]>? Create(CompositionCreateModel createModel);
 }

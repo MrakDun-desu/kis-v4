@@ -7,31 +7,46 @@ namespace KisV4.BL.EF.Services;
 
 public class CompositionService(KisDbContext dbContext) : ICompositionService, IScopedService
 {
-    public void Create(CompositionCreateModel createModel)
+    public Dictionary<string, string[]>? Create(CompositionCreateModel createModel)
     {
+        var errors = new Dictionary<string, string[]>();
+        if (!dbContext.SaleItems.Any(si => si.Id == createModel.SaleItemId))
+        {
+            errors["sale_item_id"] = [$"Sale item with id {createModel.SaleItemId} doesn't exist"];
+        }
+        if (!dbContext.StoreItems.Any(si => si.Id == createModel.StoreItemId))
+        {
+            errors["store_item_id"] = [$"Store item with id {createModel.StoreItemId} doesn't exist"];
+        }
+
+        if (errors.Count != 0)
+        {
+            return errors;
+        }
         var composition =
             dbContext.Compositions.Find(createModel.SaleItemId, createModel.StoreItemId);
 
         if (composition is null)
         {
-            if (createModel.Amount == 0) return;
+            if (createModel.Amount == 0) return null;
 
             var entity = createModel.ToEntity();
             dbContext.Compositions.Add(entity);
-            dbContext.SaveChanges();
-            return;
-        }
-
-        if (createModel.Amount == 0)
-        {
-            dbContext.Compositions.Remove(composition);
         }
         else
         {
-            composition.Amount = createModel.Amount;
-            dbContext.Update(composition);
+            if (createModel.Amount == 0)
+            {
+                dbContext.Compositions.Remove(composition);
+            }
+            else
+            {
+                composition.Amount = createModel.Amount;
+                dbContext.Update(composition);
+            }
         }
 
         dbContext.SaveChanges();
+        return null;
     }
 }
