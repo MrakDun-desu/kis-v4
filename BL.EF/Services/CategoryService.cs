@@ -8,14 +8,14 @@ namespace KisV4.BL.EF.Services;
 // ReSharper disable once UnusedType.Global
 public class CategoryService(KisDbContext dbContext) : ICategoryService, IScopedService
 {
-    public int Create(CategoryCreateModel createModel)
+    public CategoryReadAllModel Create(CategoryCreateModel createModel)
     {
         var entity = createModel.ToEntity();
         var insertedEntity = dbContext.ProductCategories.Add(entity);
 
         dbContext.SaveChanges();
 
-        return insertedEntity.Entity.Id;
+        return insertedEntity.Entity.ToModel();
     }
 
     public List<CategoryReadAllModel> ReadAll()
@@ -23,13 +23,14 @@ public class CategoryService(KisDbContext dbContext) : ICategoryService, IScoped
         return dbContext.ProductCategories.ToList().ToModels();
     }
 
-    public bool Update(int id, CategoryUpdateModel updateModel)
+    public bool Update(CategoryUpdateModel updateModel)
     {
-        var entity = dbContext.ProductCategories.Find(id);
-        if (entity is null)
+        if (!dbContext.ProductCategories.Any(pc => pc.Id == updateModel.Id))
+        {
             return false;
+        }
 
-        if (updateModel.Name is not null) entity.Name = updateModel.Name;
+        var entity = updateModel.ToEntity();
 
         dbContext.ProductCategories.Update(entity);
         dbContext.SaveChanges();
@@ -40,7 +41,10 @@ public class CategoryService(KisDbContext dbContext) : ICategoryService, IScoped
     public bool Delete(int id)
     {
         var entity = dbContext.ProductCategories.Find(id);
-        if (entity is null) return false;
+        if (entity is null)
+        {
+            return false;
+        }
 
         dbContext.ProductCategories.Remove(entity);
         dbContext.SaveChanges();

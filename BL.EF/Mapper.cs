@@ -24,6 +24,9 @@ public static partial class Mapper
         );
     }
 
+    public static partial CategoryReadAllModel ToModel(this ProductCategoryEntity entity);
+    public static partial ProductCategoryEntity ToEntity(this CategoryUpdateModel model);
+    
     private static partial List<CurrencyChangeModel> ToModels(this List<CurrencyChangeEntity> entities);
     private static partial List<StockTakingModel> ToModels(this List<StockTakingEntity> entities);
 

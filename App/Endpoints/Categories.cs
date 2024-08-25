@@ -9,18 +9,10 @@ public static class Categories
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
     {
         var group = routeBuilder.MapGroup("categories");
-        group.MapPost(string.Empty, Create);
         group.MapGet(string.Empty, ReadAll);
-        group.MapPut("{id:int}", Update);
+        group.MapPost(string.Empty, Create);
+        group.MapPut(string.Empty, Update);
         group.MapDelete("{id:int}", Delete);
-    }
-
-    private static int Create(
-        ICategoryService categoryService,
-        CategoryCreateModel createModel)
-    {
-        var createdId = categoryService.Create(createModel);
-        return createdId;
     }
 
     private static List<CategoryReadAllModel> ReadAll(ICategoryService categoryService)
@@ -28,18 +20,26 @@ public static class Categories
         return categoryService.ReadAll();
     }
 
-    private static Results<Ok, NotFound> Update(
+    private static Created<CategoryReadAllModel> Create(
         ICategoryService categoryService,
-        int id,
-        CategoryUpdateModel updateModel)
+        CategoryCreateModel createModel,
+        HttpRequest request)
     {
-        return categoryService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
+        var createdModel = categoryService.Create(createModel);
+        return TypedResults.Created(request.Host + request.Path + "/" + createdModel.Id, createdModel);
     }
 
-    private static Results<Ok, NotFound> Delete(
+    private static Results<NoContent, NotFound> Update(
+        ICategoryService categoryService,
+        CategoryUpdateModel updateModel)
+    {
+        return categoryService.Update(updateModel) ? TypedResults.NoContent() : TypedResults.NotFound();
+    }
+
+    private static Results<NoContent, NotFound> Delete(
         ICategoryService categoryService,
         int id)
     {
-        return categoryService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
+        return categoryService.Delete(id) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 }
