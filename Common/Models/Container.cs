@@ -7,12 +7,14 @@ public record ContainerCreateModel(
 
 public record ContainerReadAllModel(
     int Id,
-    DateTimeOffset? OpenSince,
-    PipeReadAllModel Pipe,
-    bool WrittenOff,
-    ContainerTemplateReadAllModel Template
+    DateTimeOffset OpenSince,
+    PipeReadAllModel? Pipe,
+    bool Deleted,
+    ContainerTemplateReadAllModel Template,
+    decimal CurrentAmount
 );
 
 public record ContainerUpdateModel(
+    int Id,
     int? PipeId
 );

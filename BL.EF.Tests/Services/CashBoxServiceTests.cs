@@ -1,3 +1,4 @@
+using BL.EF.Tests.Extensions;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -141,36 +142,36 @@ public class
         _dbContext.ChangeTracker.Clear();
 
         // act
-        var updateSuccess = _cashBoxService.Update(updateModel);
+        var updateResult = _cashBoxService.Update(updateModel);
 
         // assert
-        updateSuccess.Should().BeTrue();
+        updateResult.Should().BeSuccess();
         var updatedEntity = _dbContext.CashBoxes.Find(id);
         var expectedEntity = insertedEntity.Entity with { Name = newName };
         updatedEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     [Fact]
-    public void Update_ReturnsFalse_WhenNotFound()
+    public void Update_ReturnsNotFound_WhenNotFound()
     {
         // arrange
         var updateModel = new CashBoxUpdateModel(42, "Some cash box");
 
         // act
-        var updateSuccess = _cashBoxService.Update(updateModel);
+        var updateResult = _cashBoxService.Update(updateModel);
 
         // assert
-        updateSuccess.Should().BeFalse();
+        updateResult.Should().BeNotFound();
     }
 
     [Fact]
-    public void Read_ReturnsNull_WhenNotFound()
+    public void Read_ReturnsNotFound_WhenNotFound()
     {
         // act
         var returnedModel = _cashBoxService.Read(42);
 
         // assert
-        returnedModel.Should().BeNull();
+        returnedModel.Should().BeNotFound();
     }
 
     [Fact]
@@ -192,7 +193,7 @@ public class
 
         // assert
         var expectedModel = insertedEntity.Entity.ToModel();
-        returnedModel.Should().BeEquivalentTo(expectedModel);
+        returnedModel.Should().HaveValue(expectedModel);
     }
 
     [Fact]
@@ -245,7 +246,7 @@ public class
             insertedEntity.Entity,
             [currencyChange2],
             [new TotalCurrencyChangeModel(currencyChange2.Currency.ToModel(), currencyChange2.Amount)]).ToReadModel();
-        returnedModel.Should().BeEquivalentTo(expectedModel);
+        returnedModel.Should().HaveValue(expectedModel);
     }
 
     [Fact]
@@ -298,7 +299,7 @@ public class
             insertedEntity.Entity,
             [currencyChange1],
             [new TotalCurrencyChangeModel(currencyChange1.Currency.ToModel(), currencyChange1.Amount)]).ToReadModel();
-        returnedModel.Should().BeEquivalentTo(expectedModel);
+        returnedModel.Should().HaveValue(expectedModel);
     }
 
     [Fact]
@@ -354,7 +355,7 @@ public class
             [
                 new TotalCurrencyChangeModel(currency.ToModel(), currencyChange1.Amount + currencyChange2.Amount)
             ]).ToReadModel();
-        returnedModel.Should().BeEquivalentTo(expectedModel);
+        returnedModel.Should().HaveValue(expectedModel);
     }
 
     [Fact]
@@ -364,20 +365,20 @@ public class
         var insertedEntity = _dbContext.CashBoxes.Add(testCashBox1);
         _dbContext.SaveChanges();
 
-        var deleteSuccess = _cashBoxService.Delete(insertedEntity.Entity.Id);
+        var deleteResult = _cashBoxService.Delete(insertedEntity.Entity.Id);
 
-        deleteSuccess.Should().BeTrue();
+        deleteResult.Should().BeSuccess();
         var deletedEntity = _dbContext.CashBoxes.Find(insertedEntity.Entity.Id);
         var expectedEntity = insertedEntity.Entity with { Deleted = true };
         deletedEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     [Fact]
-    public void Delete_ReturnsFalse_WhenNotFound()
+    public void Delete_ReturnsNotFound_WhenNotFound()
     {
-        var deleteSuccess = _cashBoxService.Delete(42);
+        var deleteResult = _cashBoxService.Delete(42);
 
-        deleteSuccess.Should().BeFalse();
+        deleteResult.Should().BeNotFound();
     }
 
     [Fact]
@@ -391,7 +392,7 @@ public class
 
         var stockTakingSuccess = _cashBoxService.AddStockTaking(insertedEntity.Entity.Id);
 
-        stockTakingSuccess.Should().BeTrue();
+        stockTakingSuccess.Should().BeSuccess();
         var createdEntity =
             _dbContext.StockTakings
                 .First(st => st.CashBoxId == insertedEntity.Entity.Id);
@@ -405,10 +406,10 @@ public class
     }
 
     [Fact]
-    public void AddStockTaking_ReturnsFalse_WhenNotFound()
+    public void AddStockTaking_ReturnsNotFound_WhenNotFound()
     {
         var stockTakingSuccess = _cashBoxService.AddStockTaking(42);
 
-        stockTakingSuccess.Should().BeFalse();
+        stockTakingSuccess.Should().BeNotFound();
     }
 }

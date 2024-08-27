@@ -40,32 +40,45 @@ public static class CashBoxes
         ICashBoxService cashBoxService,
         CashBoxUpdateModel updateModel)
     {
-        return cashBoxService.Update(updateModel) ? TypedResults.NoContent() : TypedResults.NotFound();
+        return cashBoxService.Update(updateModel)
+            .Match<Results<NoContent, NotFound>>(
+                _ => TypedResults.NoContent(),
+                _ => TypedResults.NotFound()
+            );
     }
 
     private static Results<Ok<CashBoxReadModel>, NotFound> Read(
         ICashBoxService cashBoxService,
         int id,
-        [FromQuery] DateTimeOffset? startDate = null,
-        [FromQuery] DateTimeOffset? endDate = null)
+        [FromQuery] DateTimeOffset? startDate,
+        [FromQuery] DateTimeOffset? endDate)
     {
-        var cashBoxDetail = cashBoxService.Read(id, startDate, endDate);
-        if (cashBoxDetail is null) return TypedResults.NotFound();
-
-        return TypedResults.Ok(cashBoxDetail);
+        return cashBoxService.Read(id, startDate, endDate)
+            .Match<Results<Ok<CashBoxReadModel>, NotFound>>(
+                readModel => TypedResults.Ok(readModel),
+                _ => TypedResults.NotFound()
+            );
     }
 
     private static Results<NoContent, NotFound> Delete(
         ICashBoxService cashBoxService,
         int id)
     {
-        return cashBoxService.Delete(id) ? TypedResults.NoContent() : TypedResults.NotFound();
+        return cashBoxService.Delete(id)
+            .Match<Results<NoContent, NotFound>>(
+                _ => TypedResults.NoContent(),
+                _ => TypedResults.NotFound()
+            );
     }
 
     private static Results<Ok, NotFound> AddStockTaking(
         ICashBoxService cashBoxService,
         int id)
     {
-        return cashBoxService.AddStockTaking(id) ? TypedResults.Ok() : TypedResults.NotFound();
+        return cashBoxService.AddStockTaking(id)
+            .Match<Results<Ok, NotFound>>(
+                _ => TypedResults.Ok(),
+                _ => TypedResults.NotFound()
+            );
     }
 }

@@ -1,4 +1,6 @@
 using KisV4.Common.Models;
+using OneOf;
+using OneOf.Types;
 
 namespace KisV4.BL.Common.Services;
 
@@ -6,6 +8,6 @@ public interface ICategoryService
 {
     public CategoryReadAllModel Create(CategoryCreateModel createModel);
     public List<CategoryReadAllModel> ReadAll();
-    public bool Update(CategoryUpdateModel updateModel);
-    public bool Delete(int id);
+    public OneOf<Success, NotFound> Update(CategoryUpdateModel updateModel);
+    public OneOf<Success, NotFound> Delete(int id);
 }

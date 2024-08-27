@@ -12,16 +12,14 @@ public static class Compositions
         group.MapPost(string.Empty, Create);
     }
 
-    private static Results<ValidationProblem, Ok> Create(
+    private static Results<Ok, ValidationProblem> Create(
         ICompositionService compositionService,
         CompositionCreateModel createModel)
     {
-        var result = compositionService.Create(createModel);
-        if (result is not null)
-        {
-            return TypedResults.ValidationProblem(result);
-        }
-
-        return TypedResults.Ok();
+        return compositionService.Create(createModel)
+            .Match<Results<Ok, ValidationProblem>>(
+                _ => TypedResults.Ok(),
+                errors => TypedResults.ValidationProblem(errors)
+            );
     }
 }

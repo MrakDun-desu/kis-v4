@@ -6,6 +6,11 @@
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CashBoxServiceTests&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CategoryServiceTests&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.UserServiceTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests.ReadAll_ReadsAll_WhenNoFilters&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests.ReadAll_ReadsCorrectly_WhenDeletedIsTrue&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests.ReadAll_ReadsCorrectly_WhenFilteringByPipe&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	</wpf:ResourceDictionary>

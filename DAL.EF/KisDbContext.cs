@@ -9,6 +9,7 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : DbContext(op
     public DbSet<CashBoxEntity> CashBoxes { get; init; } = null!;
     public DbSet<CompositionEntity> Compositions { get; init; } = null!;
     public DbSet<ContainerEntity> Containers { get; init; } = null!;
+    public DbSet<ContainerTemplateEntity> ContainerTemplates { get; init; } = null!;
     public DbSet<CurrencyChangeEntity> CurrencyChanges { get; init; } = null!;
     public DbSet<CurrencyCostEntity> CurrencyCosts { get; init; } = null!;
     public DbSet<CurrencyEntity> Currencies { get; init; } = null!;

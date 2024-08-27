@@ -26,7 +26,7 @@ public static partial class Mapper
 
     public static partial CategoryReadAllModel ToModel(this ProductCategoryEntity entity);
     public static partial ProductCategoryEntity ToEntity(this CategoryUpdateModel model);
-    
+
     private static partial List<CurrencyChangeModel> ToModels(this List<CurrencyChangeEntity> entities);
     private static partial List<StockTakingModel> ToModels(this List<StockTakingEntity> entities);
 
@@ -40,6 +40,7 @@ public static partial class Mapper
     public static partial List<CurrencyReadAllModel> ToModels(this List<CurrencyEntity> entities);
 
     public static partial PipeEntity ToEntity(this PipeCreateModel model);
+    public static partial PipeReadAllModel? ToModel(this PipeEntity? entity);
     public static partial List<PipeReadAllModel> ToModels(this List<PipeEntity> entities);
 
     public static partial SaleItemEntity ToEntity(this SaleItemCreateModel model);
@@ -52,7 +53,26 @@ public static partial class Mapper
     public static partial CompositionEntity ToEntity(this CompositionCreateModel model);
 
     public static partial ContainerEntity ToEntity(this ContainerCreateModel model);
-    public static partial List<ContainerReadAllModel> ToModels(this List<ContainerEntity> entities);
+    public static partial ContainerEntity ToEntity(this ContainerUpdateModel model);
+
+    public static ContainerReadAllModel ToModel(this ContainerIntermediateModel model)
+    {
+        return new ContainerReadAllModel(
+            model.Entity.Id,
+            model.Entity.OpenSince,
+            model.Entity.Pipe.ToModel(),
+            model.Entity.Deleted,
+            model.Entity.Template!.ToModel(),
+            model.CurrentAmount
+        );
+    }
+
+    public static List<ContainerReadAllModel> ToModels(this List<ContainerIntermediateModel> models)
+    {
+        return models.Select(m => m.ToModel()).ToList();
+    }
+
+    public static partial ContainerTemplateReadAllModel ToModel(this ContainerTemplateEntity entity);
 
     public static partial CurrencyCostEntity ToEntity(this CostCreateModel createModel);
 
@@ -76,4 +96,9 @@ public record CashBoxIntermediateModel(
     CashBoxEntity Entity,
     List<CurrencyChangeEntity> CurrencyChanges,
     List<TotalCurrencyChangeModel> TotalCurrencyChanges
+);
+
+public record ContainerIntermediateModel(
+    ContainerEntity Entity,
+    decimal CurrentAmount
 );

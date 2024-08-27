@@ -1,8 +1,10 @@
+using BL.EF.Tests.Extensions;
 using FluentAssertions;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
+using OneOf.Types;
 
 namespace BL.EF.Tests.Services;
 
@@ -35,15 +37,15 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var createModel = new CompositionCreateModel(1, 2, 0);
 
         // act
-        var errors = _compositionService.Create(createModel);
+        var result = _compositionService.Create(createModel);
 
         // assert
         var createdEntity = _dbContext.Compositions.Find(createModel.SaleItemId, createModel.StoreItemId);
         createdEntity.Should().BeNull();
-        errors.Should().BeEquivalentTo(new Dictionary<string, string[]>
+        result.Should().HaveValue(new Dictionary<string, string[]>
         {
-            { "sale_item_id", [$"Sale item with id {createModel.SaleItemId} doesn't exist"] },
-            { "store_item_id", [$"Store item with id {createModel.StoreItemId} doesn't exist"] },
+            { nameof(createModel.SaleItemId), [$"Sale item with id {createModel.SaleItemId} doesn't exist"] },
+            { nameof(createModel.StoreItemId), [$"Store item with id {createModel.StoreItemId} doesn't exist"] },
         });
     }
 
@@ -61,7 +63,7 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 42);
 
         // act
-        var errors = _compositionService.Create(createModel);
+        var result = _compositionService.Create(createModel);
 
         // assert
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
@@ -73,7 +75,7 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
             SaleItem = insertedSaleItem.Entity,
             StoreItem = insertedStoreItem.Entity
         });
-        errors.Should().BeNull();
+        result.Should().BeSuccess();
     }
 
     [Fact]
@@ -95,12 +97,12 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 0);
 
         // act
-        var errors = _compositionService.Create(createModel);
+        var result = _compositionService.Create(createModel);
 
         // assert
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
         createdEntity.Should().BeNull();
-        errors.Should().BeNull();
+        result.Should().BeSuccess();
     }
 
     [Fact]
@@ -122,7 +124,7 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 52);
 
         // act
-        var errors = _compositionService.Create(createModel);
+        var result = _compositionService.Create(createModel);
 
         // assert
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
@@ -134,6 +136,6 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
             SaleItem = insertedSaleItem.Entity,
             StoreItem = insertedStoreItem.Entity
         });
-        errors.Should().BeNull();
+        result.Should().BeSuccess();
     }
 }

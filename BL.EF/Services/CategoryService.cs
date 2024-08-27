@@ -2,6 +2,8 @@ using KisV4.BL.Common.Services;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
+using OneOf;
+using OneOf.Types;
 
 namespace KisV4.BL.EF.Services;
 
@@ -23,11 +25,11 @@ public class CategoryService(KisDbContext dbContext) : ICategoryService, IScoped
         return dbContext.ProductCategories.ToList().ToModels();
     }
 
-    public bool Update(CategoryUpdateModel updateModel)
+    public OneOf<Success, NotFound> Update(CategoryUpdateModel updateModel)
     {
         if (!dbContext.ProductCategories.Any(pc => pc.Id == updateModel.Id))
         {
-            return false;
+            return new NotFound();
         }
 
         var entity = updateModel.ToEntity();
@@ -35,20 +37,20 @@ public class CategoryService(KisDbContext dbContext) : ICategoryService, IScoped
         dbContext.ProductCategories.Update(entity);
         dbContext.SaveChanges();
 
-        return true;
+        return new Success();
     }
 
-    public bool Delete(int id)
+    public OneOf<Success, NotFound> Delete(int id)
     {
         var entity = dbContext.ProductCategories.Find(id);
         if (entity is null)
         {
-            return false;
+            return new NotFound();
         }
 
         dbContext.ProductCategories.Remove(entity);
         dbContext.SaveChanges();
 
-        return true;
+        return new Success();
     }
 }

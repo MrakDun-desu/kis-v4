@@ -15,7 +15,7 @@ public record ContainerEntity : StoreEntity
     ///     Timestamp for when container was first opened (first time the PipeId was set to not null).
     /// </summary>
     [Precision(0)]
-    public DateTimeOffset? OpenSince { get; set; }
+    public DateTimeOffset OpenSince { get; set; }
 
     public int? PipeId { get; set; }
 
@@ -24,13 +24,4 @@ public record ContainerEntity : StoreEntity
     ///     If container isn't active, this should be null.
     /// </summary>
     public virtual PipeEntity? Pipe { get; set; }
-
-    // Deleted flag is already present in the parent entity of Store,
-    // so it's better to just have an alias for written-off flag for containers.
-    [NotMapped]
-    public bool WrittenOff
-    {
-        get => Deleted;
-        set => Deleted = value;
-    }
 }

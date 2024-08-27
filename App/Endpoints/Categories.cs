@@ -33,13 +33,21 @@ public static class Categories
         ICategoryService categoryService,
         CategoryUpdateModel updateModel)
     {
-        return categoryService.Update(updateModel) ? TypedResults.NoContent() : TypedResults.NotFound();
+        return categoryService.Update(updateModel)
+            .Match<Results<NoContent, NotFound>>(
+                _ => TypedResults.NoContent(),
+                _ => TypedResults.NotFound()
+            );
     }
 
     private static Results<NoContent, NotFound> Delete(
         ICategoryService categoryService,
         int id)
     {
-        return categoryService.Delete(id) ? TypedResults.NoContent() : TypedResults.NotFound();
+        return categoryService.Delete(id)
+            .Match<Results<NoContent, NotFound>>(
+                _ => TypedResults.NoContent(),
+                _ => TypedResults.NotFound()
+            );
     }
 }

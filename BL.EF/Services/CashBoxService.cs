@@ -4,6 +4,8 @@ using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;
+using OneOf;
+using OneOf.Types;
 
 namespace KisV4.BL.EF.Services;
 
@@ -32,26 +34,26 @@ public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
         return insertedEntity.Entity.ToModel()!;
     }
 
-    public bool Update(CashBoxUpdateModel updateModel)
+    public OneOf<Success, NotFound> Update(CashBoxUpdateModel updateModel)
     {
         if (!dbContext.CashBoxes.Any(cb => cb.Id == updateModel.Id))
-            return false;
+            return new NotFound();
 
         var entity = updateModel.ToEntity();
 
         dbContext.CashBoxes.Update(entity);
         dbContext.SaveChanges();
 
-        return true;
+        return new Success();
     }
 
-    public CashBoxReadModel? Read(int id, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
+    public OneOf<CashBoxReadModel, NotFound> Read(int id, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
     {
         // needs to do AsNoTracking because otherwise currency changes will get included by lazy loading
         var cashBox = dbContext.CashBoxes.AsNoTracking()
             .Include(cb => cb.StockTakings)
             .SingleOrDefault(cb => cb.Id == id);
-        if (cashBox is null) return null;
+        if (cashBox is null) return new NotFound();
 
         var lastTimestamp = cashBox.StockTakings.Last().Timestamp;
 
@@ -76,27 +78,27 @@ public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
             totalCurrencyChanges.ToList()).ToReadModel();
     }
 
-    public bool Delete(int id)
+    public OneOf<Success, NotFound> Delete(int id)
     {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null) return false;
+        if (entity is null) return new NotFound();
 
         entity.Deleted = true;
         dbContext.SaveChanges();
 
-        return true;
+        return new Success();
     }
 
-    public bool AddStockTaking(int id)
+    public OneOf<Success, NotFound> AddStockTaking(int id)
     {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null) return false;
+        if (entity is null) return new NotFound();
 
         entity.StockTakings.Add(new StockTakingEntity { Timestamp = timeProvider.GetUtcNow() });
 
         dbContext.CashBoxes.Update(entity);
         dbContext.SaveChanges();
 
-        return true;
+        return new Success();
     }
 }

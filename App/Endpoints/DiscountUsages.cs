@@ -2,7 +2,7 @@ using KisV4.BL.Common;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace KisV4.App;
+namespace KisV4.App.Endpoints;
 
 public static class DiscountUsages
 {
