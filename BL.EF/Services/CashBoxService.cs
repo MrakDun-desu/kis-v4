@@ -40,6 +40,8 @@ public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
             return new NotFound();
 
         var entity = updateModel.ToEntity();
+        // updating automatically restores entities from deletion
+        entity.Deleted = false;
 
         dbContext.CashBoxes.Update(entity);
         dbContext.SaveChanges();

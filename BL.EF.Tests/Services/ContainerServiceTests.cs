@@ -330,6 +330,58 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
+    public void Update_RestoresEntity_IfWasDeleted()
+    {
+        // arrange
+        var testPipe = new PipeEntity
+        {
+            Name = "Some pipe"
+        };
+        var testPipe2 = new PipeEntity
+        {
+            Name = "Some pipe 2"
+        };
+        var testContainer1 = new ContainerEntity
+        {
+            Template = new ContainerTemplateEntity
+            {
+                Name = "Some template",
+                Amount = 10,
+                ContainedItem = new StoreItemEntity
+                {
+                    Name = "Some store item"
+                }
+            },
+            Pipe = testPipe,
+            Name = "Some template",
+            Deleted = true
+        };
+        _dbContext.Containers.Add(testContainer1);
+        _dbContext.Pipes.Add(testPipe2);
+        _dbContext.SaveChanges();
+        _dbContext.ChangeTracker.Clear();
+        var updateModel = new ContainerUpdateModel(testContainer1.Id, testPipe2.Id);
+
+        // act
+        var updateResult = _containerService.Update(updateModel);
+
+        // assert
+        updateResult.Should().BeSuccess();
+        var updatedEntity = _dbContext.Containers
+            .Include(ce => ce.Pipe)
+            .Single(ce => ce.Id == testContainer1.Id);
+        var expectedEntity = testContainer1 with
+        {
+            PipeId = testPipe2.Id,
+            Pipe = testPipe2,
+            Deleted = false
+        };
+        updatedEntity.Should().BeEquivalentTo(expectedEntity,
+            opts =>
+                opts.Excluding(ce => ce.Template));
+    }
+
+    [Fact]
     public void Update_UpdatesPipe_WhenExistingId()
     {
         // arrange

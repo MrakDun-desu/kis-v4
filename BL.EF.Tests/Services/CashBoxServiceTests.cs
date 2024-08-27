@@ -129,6 +129,29 @@ public class
     }
 
     [Fact]
+    public void Update_RestoresEntity_IfWasDeleted()
+    {
+        // arrange
+        const string oldName = "Some cash box";
+        const string newName = "Some cash box 2";
+        var testEntity = new CashBoxEntity { Name = oldName, Deleted = true};
+        var insertedEntity = _dbContext.CashBoxes.Add(testEntity);
+        _dbContext.SaveChanges();
+        var id = insertedEntity.Entity.Id;
+        var updateModel = new CashBoxUpdateModel(id, newName);
+        _dbContext.ChangeTracker.Clear();
+
+        // act
+        var updateResult = _cashBoxService.Update(updateModel);
+
+        // assert
+        updateResult.Should().BeSuccess();
+        var updatedEntity = _dbContext.CashBoxes.Find(id);
+        var expectedEntity = insertedEntity.Entity with { Name = newName, Deleted = false};
+        updatedEntity.Should().BeEquivalentTo(expectedEntity);
+    }
+
+    [Fact]
     public void Update_UpdatesName_WhenExistingId()
     {
         // arrange

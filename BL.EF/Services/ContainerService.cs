@@ -124,6 +124,8 @@ public class ContainerService(
         }
 
         container.PipeId = updateModel.PipeId;
+        // updating automatically restores entities from deletion
+        container.Deleted = false;
 
         dbContext.SaveChanges();
 
