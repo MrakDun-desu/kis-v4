@@ -9,17 +9,16 @@ public static class Currencies
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
     {
         var group = routeBuilder.MapGroup("currencies");
-        group.MapPost(string.Empty, Create);
         group.MapGet(string.Empty, ReadAll);
-        group.MapPut("{id:int}", Update);
+        group.MapPost(string.Empty, Create);
+        group.MapPut(string.Empty, Update);
     }
 
-    private static int Create(
+    private static CurrencyReadAllModel Create(
         ICurrencyService currencyService,
         CurrencyCreateModel createModel)
     {
-        var createdId = currencyService.Create(createModel);
-        return createdId;
+        return currencyService.Create(createModel);
     }
 
     private static List<CurrencyReadAllModel> ReadAll(ICurrencyService currencyService)
@@ -27,11 +26,14 @@ public static class Currencies
         return currencyService.ReadAll();
     }
 
-    private static Results<Ok, NotFound> Update(
+    private static Results<NoContent, NotFound> Update(
         ICurrencyService currencyService,
-        int id,
         CurrencyUpdateModel updateModel)
     {
-        return currencyService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
+        return currencyService.Update(updateModel)
+            .Match<Results<NoContent, NotFound>>(
+                _ => TypedResults.NoContent(),
+                _ => TypedResults.NotFound()
+            );
     }
 }

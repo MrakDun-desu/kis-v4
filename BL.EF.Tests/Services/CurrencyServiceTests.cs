@@ -1,3 +1,4 @@
+using BL.EF.Tests.Extensions;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -31,54 +32,78 @@ public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     [Fact]
     public void Create_CreatesCurrency_WhenDataIsValid()
     {
-        var createModel = new CurrencyCreateModel("Some currency");
-        var createdId = _currencyService.Create(createModel);
+        // arrange
+        var createModel = new CurrencyCreateModel("Czech Crowns", "CZK");
 
-        var createdEntity = _dbContext.Currencies.Find(createdId);
-        var expectedEntity = new CurrencyEntity { Id = createdId, Name = createModel.Name };
-        createdEntity.Should().BeEquivalentTo(expectedEntity);
+        // act
+        var createdModel = _currencyService.Create(createModel);
+
+        // assert
+        var createdEntity = _dbContext.Currencies.Find(createdModel.Id);
+        var expectedEntity = new CurrencyEntity
+        {
+            Name = createModel.Name,
+            ShortName = createModel.ShortName
+        };
+        createdEntity.Should().BeEquivalentTo(expectedEntity, opts =>
+            opts.Excluding(c => c.Id)
+        );
     }
 
     [Fact]
     public void ReadAll_ReadsAll()
     {
+        // arrange
         var testCurrency1 = new CurrencyEntity { Name = "Some currency" };
         var testCurrency2 = new CurrencyEntity { Name = "Some currency 2" };
         _dbContext.Currencies.Add(testCurrency1);
         _dbContext.Currencies.Add(testCurrency2);
         _dbContext.SaveChanges();
 
+        // act
         var readModels = _currencyService.ReadAll();
-        var mappedModels = _dbContext.Currencies.ToList().ToModels();
 
-        readModels.Should().BeEquivalentTo(mappedModels);
+        // assert
+        var expectedModels = _dbContext.Currencies.ToList().ToModels();
+
+        readModels.Should().BeEquivalentTo(expectedModels);
     }
 
     [Fact]
     public void Update_UpdatesName_WhenExistingId()
     {
-        const string oldName = "Some currency";
-        const string newName = "Some currency 2";
-        var testCurrency1 = new CurrencyEntity { Name = oldName };
-        var insertedEntity = _dbContext.Currencies.Add(testCurrency1);
+        // arrange
+        var testCurrency = new CurrencyEntity { Name = "Some currency" };
+        _dbContext.Currencies.Add(testCurrency);
         _dbContext.SaveChanges();
-        var updateModel = new CurrencyUpdateModel(newName);
+        _dbContext.ChangeTracker.Clear();
+        var updateModel = new CurrencyUpdateModel(
+            testCurrency.Id,
+            "Some new name",
+            "SNN"
+        );
 
-        var updateSuccess = _currencyService.Update(insertedEntity.Entity.Id, updateModel);
+        // act
+        var updateResult = _currencyService.Update(updateModel);
 
-        updateSuccess.Should().BeTrue();
-        var updatedEntity = _dbContext.Currencies.Find(insertedEntity.Entity.Id);
-        var expectedEntity = insertedEntity.Entity with { Name = newName };
+        // assert
+        updateResult.Should().BeSuccess();
+        var updatedEntity = _dbContext.Currencies.Find(testCurrency.Id);
+        var expectedEntity = testCurrency with
+        {
+            Name = updateModel.Name,
+            ShortName = updateModel.ShortName
+        };
         updatedEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     [Fact]
-    public void Update_ReturnsFalse_WhenNotFound()
+    public void Update_ReturnsNotFound_WhenNotFound()
     {
-        var updateModel = new CurrencyUpdateModel("Some currency");
+        var updateModel = new CurrencyUpdateModel(42, "Some currency", "STH");
 
-        var updateSuccess = _currencyService.Update(42, updateModel);
+        var updateResult = _currencyService.Update(updateModel);
 
-        updateSuccess.Should().BeFalse();
+        updateResult.Should().BeNotFound();
     }
 }

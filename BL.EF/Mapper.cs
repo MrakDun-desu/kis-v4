@@ -81,6 +81,7 @@ public static partial class Mapper
     public static partial CostReadAllModel ToModel(this CurrencyCostEntity entity);
 
     public static partial CurrencyReadAllModel ToModel(this CurrencyEntity entity);
+    public static partial CurrencyEntity ToEntity(this CurrencyUpdateModel model);
 
     public static partial DiscountReadModel? ToModel(this DiscountEntity? entity);
     public static partial List<DiscountReadAllModel> ToModels(this List<DiscountEntity> entities);
