@@ -11,5 +11,5 @@ public record PageMeta(
     int From,
     int To,
     int Total,
-    int TotalPages
+    int PageCount
 );

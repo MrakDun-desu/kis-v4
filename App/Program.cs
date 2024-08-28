@@ -92,6 +92,7 @@ CashBoxes.MapEndpoints(app);
 Categories.MapEndpoints(app);
 Compositions.MapEndpoints(app);
 Containers.MapEndpoints(app);
+ContainerTemplates.MapEndpoints(app);
 Costs.MapEndpoints(app);
 Currencies.MapEndpoints(app);
 Discounts.MapEndpoints(app);

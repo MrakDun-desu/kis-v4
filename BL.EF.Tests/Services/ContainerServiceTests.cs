@@ -87,7 +87,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 .Select(c => new ContainerIntermediateModel(c, 0))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
 
-        readPage.Should().HaveValue(expectedPage);
+        readPage.Should().HaveValue(expectedPage.Value);
     }
 
     [Fact]
@@ -139,7 +139,24 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 .Select(c => new ContainerIntermediateModel(c, 0))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
 
-        readPage.Should().HaveValue(expectedPage);
+        readPage.Should().HaveValue(expectedPage.Value);
+    }
+
+    [Fact]
+    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentPipe()
+    {
+        // arrange
+        const int pipeId = 42;
+
+        // act
+        var readPage =
+            _containerService.ReadAll(null, null, true, pipeId);
+
+        // assert
+        readPage.Should().HaveValue(new Dictionary<string, string[]>
+        {
+            { nameof(pipeId), [$"Pipe with id {pipeId} doesn't exist"] }
+        });
     }
 
     [Fact]
@@ -191,7 +208,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 .Select(c => new ContainerIntermediateModel(c, 0))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
 
-        readPage.Should().HaveValue(expectedPage);
+        readPage.Should().HaveValue(expectedPage.Value);
     }
 
     [Fact]
@@ -267,7 +284,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 .Select(c => new ContainerIntermediateModel(c, 8))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
 
-        readPage.Should().HaveValue(expectedPage);
+        readPage.Should().HaveValue(expectedPage.Value);
     }
 
     [Fact]

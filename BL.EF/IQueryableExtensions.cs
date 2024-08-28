@@ -1,23 +1,46 @@
 using KisV4.Common.Models;
+using OneOf;
 
 namespace KisV4.BL.EF;
 
 public static class IQueryableExtensions
 {
-    public static Page<TTarget> Page<TSource, TTarget>(
+    public static OneOf<Page<TTarget>, Dictionary<string, string[]>> Page<TSource, TTarget>(
         this IQueryable<TSource> source,
         int page,
         int pageSize,
         Func<List<TSource>, List<TTarget>> mapping)
     {
+        if (page < 1)
+        {
+            return new Dictionary<string, string[]>
+            {
+                { nameof(page), [$"Page is required to be higher than 0. Received value: {page}"] }
+            };
+        }
+
+        var totalCount = source.Count();
+        var pageCount = totalCount / pageSize + 1;
+        if (totalCount > 0 && page > pageCount)
+        {
+            return new Dictionary<string, string[]>
+            {
+                {
+                    nameof(page),
+                    [$"Page is required to be lower or equal to page count ({pageCount}). Received value: {page}"]
+                }
+            };
+        }
+
         var skipped = (page - 1) * pageSize;
         var data = source.Skip(skipped).Take(pageSize).ToList();
         var from = skipped + 1;
-        var realSize = data.Count;
-        var total = source.Count();
+        var count = data.Count;
+
         return new Page<TTarget>(
             mapping.Invoke(data),
-            new PageMeta(page, pageSize, from, from + realSize - 1, total, total / pageSize + 1)
+            new PageMeta(totalCount == 0 ? 0 : page, pageSize, from, from + count - 1, totalCount,
+                totalCount == 0 ? 0 : pageCount)
         );
     }
 }

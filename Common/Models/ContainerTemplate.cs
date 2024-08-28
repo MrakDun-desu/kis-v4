@@ -11,10 +11,12 @@ public record ContainerTemplateReadAllModel(
     string Name,
     decimal Amount,
     bool Deleted,
-    int ContainedItemId,
     StoreItemReadAllModel ContainedItem
 );
 
 public record ContainerTemplateUpdateModel(
-    string? Name
+    int Id,
+    string Name,
+    int ContainedItemId,
+    decimal Amount
 );

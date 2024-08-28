@@ -64,18 +64,25 @@ public class ContainerService(
         var template = dbContext.ContainerTemplates.Find(createModel.TemplateId);
         if (template is null)
         {
-            errors[nameof(createModel.TemplateId)] =
-                [$"Container template with id {createModel.TemplateId} doesn't exist"];
+            errors.AddItemOrCreate(
+                nameof(createModel.TemplateId),
+                $"Container template with id {createModel.TemplateId} doesn't exist"
+            );
         }
         else if (template.Deleted)
         {
-            errors[nameof(createModel.TemplateId)] =
-                [$"Container template with id {createModel.TemplateId} is currently marked as deleted"];
+            errors.AddItemOrCreate(
+                nameof(createModel.TemplateId),
+                $"Container template with id {createModel.TemplateId} is currently marked as deleted"
+            );
         }
 
         if (!dbContext.Pipes.Any(p => p.Id == createModel.PipeId))
         {
-            errors[nameof(createModel.PipeId)] = [$"Pipe with id {createModel.PipeId} doesn't exist"];
+            errors.AddItemOrCreate(
+                nameof(createModel.PipeId),
+                $"Pipe with id {createModel.PipeId} doesn't exist"
+            );
         }
 
         if (errors.Count != 0)
