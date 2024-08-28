@@ -4,5 +4,5 @@ namespace KisV4.BL.Common.Services;
 
 public interface ICostService
 {
-    public int Create(CostCreateModel createModel);
+    public CostReadAllModel Create(CostCreateModel createModel);
 }

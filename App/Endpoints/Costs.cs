@@ -11,7 +11,9 @@ public static class Costs
         group.MapPost(string.Empty, Create);
     }
 
-    public static int Create(ICostService costService, CostCreateModel createModel)
+    private static CostReadAllModel Create(
+        ICostService costService,
+        CostCreateModel createModel)
     {
         return costService.Create(createModel);
     }

@@ -8,16 +8,16 @@ namespace KisV4.BL.EF.Services;
 public class CostService(KisDbContext dbContext)
     : ICostService, IScopedService
 {
-    public int Create(CostCreateModel createModel)
+    public CostReadAllModel Create(CostCreateModel createModel)
     {
         var entity = (createModel with
         {
             ValidSince = createModel.ValidSince.ToUniversalTime()
         }).ToEntity();
-        var insertedEntity = dbContext.CurrencyCosts.Add(entity);
+        dbContext.CurrencyCosts.Add(entity);
 
         dbContext.SaveChanges();
 
-        return insertedEntity.Entity.Id;
+        return entity.ToModel();
     }
 }

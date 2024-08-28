@@ -1,41 +1,4 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=09a3a31c_002D59a9_002D4fe6_002D944c_002D81802d6f672e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Read_ReadsCorrectly_WhenComplex" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CashBoxServiceTests.Read_ReadsCorrectly_WhenComplex&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests.Create_DoesntCreate_WhenAmountIs0&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CashBoxServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CategoryServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.UserServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests.ReadAll_ReadsAll_WhenNoFilters&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests.ReadAll_ReadsCorrectly_WhenDeletedIsTrue&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests.ReadAll_ReadsCorrectly_WhenFilteringByPipe&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerTemplateServiceTests.ReadAll_ReadsAll_WhenNoFilters&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerTemplateServiceTests&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=26f5280b_002D9ef4_002D4d2e_002Da198_002D9585b53ff918/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;And&gt;
-    &lt;TestAncestor&gt;
-      &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests&lt;/TestId&gt;
-      &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CashBoxServiceTests&lt;/TestId&gt;
-      &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CategoryServiceTests&lt;/TestId&gt;
-      &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests&lt;/TestId&gt;
-      &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerTemplateServiceTests&lt;/TestId&gt;
-    &lt;/TestAncestor&gt;
-    &lt;TestAncestor&gt;
-      &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerTemplateServiceTests&lt;/TestId&gt;
-    &lt;/TestAncestor&gt;
-  &lt;/And&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bb6c0be6_002D869c_002D46f1_002Da5be_002Dbfa17250a51b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CashBoxServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CategoryServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.CompositionServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::27377130-8F49-4B74-A471-00F92482505B::net8.0::BL.EF.Tests.Services.ContainerTemplateServiceTests&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
-	</wpf:ResourceDictionary>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=af9759ba_002D885b_002D4178_002D99fc_002Df6deb9b51958/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;BL.EF.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Project Location="/home/mrak/Documents/kis-v4-backend/BL.EF.Tests" Presentation="&amp;lt;BL.EF.Tests&amp;gt;" /&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

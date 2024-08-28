@@ -30,7 +30,7 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     [Fact]
     public void Create_Creates_WhenDataIsValid()
     {
-        // Given
+        // arrange
         var testStoreItem = new StoreItemEntity
         {
             Name = "Test store item"
@@ -42,11 +42,9 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         var addedStoreItem = _dbContext.StoreItems.Add(testStoreItem);
         var addedCurrency = _dbContext.Currencies.Add(testCurrency);
         _dbContext.SaveChanges();
-
-        // When
         const decimal currencyAmount = 42;
         const string costDescription = "Testing cost";
-        var costValidSince = DateTimeOffset.UtcNow;
+        var costValidSince = DateTimeOffset.Now;
         var createModel = new CostCreateModel(
             addedStoreItem.Entity.Id,
             addedCurrency.Entity.Id,
@@ -54,20 +52,22 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
             currencyAmount,
             costDescription
         );
-        var createdId = _costService.Create(createModel);
+        
+        // act
+        var createdModel = _costService.Create(createModel);
 
-        // Then
-        var createdEntity = _dbContext.CurrencyCosts.Find(createdId);
+        // assert
+        var createdEntity = _dbContext.CurrencyCosts.Find(createdModel.Id);
         var expectedEntity = new CurrencyCostEntity
         {
-            Id = createdId,
+            Id = createdModel.Id,
             CurrencyId = addedCurrency.Entity.Id,
             Currency = addedCurrency.Entity,
             ProductId = addedStoreItem.Entity.Id,
             Product = addedStoreItem.Entity,
             Amount = currencyAmount,
             Description = costDescription,
-            ValidSince = costValidSince
+            ValidSince = costValidSince.ToUniversalTime()
         };
         createdEntity.Should().BeEquivalentTo(expectedEntity);
     }

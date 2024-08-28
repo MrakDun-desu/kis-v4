@@ -78,6 +78,7 @@ public static partial class Mapper
     public static partial ContainerTemplateEntity ToEntity(this ContainerTemplateUpdateModel model);
 
     public static partial CurrencyCostEntity ToEntity(this CostCreateModel createModel);
+    public static partial CostReadAllModel ToModel(this CurrencyCostEntity entity);
 
     public static partial CurrencyReadAllModel ToModel(this CurrencyEntity entity);
 
