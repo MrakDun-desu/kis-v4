@@ -2,15 +2,23 @@ using KisV4.BL.Common.Services;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
+using OneOf;
+using OneOf.Types;
 
 namespace KisV4.BL.EF.Services;
 
 public class DiscountService(KisDbContext dbContext)
     : IDiscountService, IScopedService
 {
-    public DiscountReadModel? Read(int id)
+    public OneOf<DiscountReadModel, NotFound> Read(int id)
     {
-        return dbContext.Discounts.Find(id).ToModel();
+        var entity = dbContext.Discounts.Find(id);
+        if (entity is null)
+        {
+            return new NotFound();
+        }
+
+        return entity.ToModel();
     }
 
     public List<DiscountReadAllModel> ReadAll()

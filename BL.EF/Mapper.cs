@@ -10,7 +10,7 @@ public static partial class Mapper
     public static partial CashBoxEntity ToEntity(this CashBoxCreateModel model);
     public static partial CashBoxEntity ToEntity(this CashBoxUpdateModel model);
 
-    public static partial CashBoxReadModel? ToModel(this CashBoxEntity? entity);
+    public static partial CashBoxReadModel ToModel(this CashBoxEntity entity);
 
     public static CashBoxReadModel ToReadModel(this CashBoxIntermediateModel model)
     {
@@ -83,7 +83,7 @@ public static partial class Mapper
     public static partial CurrencyReadAllModel ToModel(this CurrencyEntity entity);
     public static partial CurrencyEntity ToEntity(this CurrencyUpdateModel model);
 
-    public static partial DiscountReadModel? ToModel(this DiscountEntity? entity);
+    public static partial DiscountReadModel ToModel(this DiscountEntity entity);
     public static partial List<DiscountReadAllModel> ToModels(this List<DiscountEntity> entities);
 
     public static partial ModifierEntity ToEntity(this ModifierCreateModel model);

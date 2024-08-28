@@ -22,7 +22,10 @@ public static class Discounts
         IDiscountService discountService,
         int id)
     {
-        var discount = discountService.Read(id);
-        return discount is null ? TypedResults.NotFound() : TypedResults.Ok(discount);
+        return discountService.Read(id)
+            .Match<Results<Ok<DiscountReadModel>, NotFound>>(
+                result => TypedResults.Ok(result),
+                _ => TypedResults.NotFound()
+            );
     }
 }

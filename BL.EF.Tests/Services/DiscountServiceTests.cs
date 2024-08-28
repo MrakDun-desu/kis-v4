@@ -1,3 +1,4 @@
+using BL.EF.Tests.Extensions;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -45,11 +46,11 @@ public class
     }
 
     [Fact]
-    public void Read_ReturnsNull_WhenNotFound()
+    public void Read_ReturnsNotFound_WhenNotFound()
     {
-        var returnedModel = _cashBoxService.Read(42);
+        var readResult = _cashBoxService.Read(42);
 
-        returnedModel.Should().BeNull();
+        readResult.Should().BeNotFound();
     }
 
     [Fact]
@@ -60,9 +61,44 @@ public class
         _dbContext.SaveChanges();
         var id = insertedEntity.Entity.Id;
 
-        var returnedModel = _cashBoxService.Read(id);
+        var readResult = _cashBoxService.Read(id);
 
         var expectedModel = insertedEntity.Entity.ToModel();
-        returnedModel.Should().BeEquivalentTo(expectedModel);
+        readResult.Should().HaveValue(expectedModel);
+    }
+
+    [Fact]
+    public void Read_ReadsCorrectly_WhenComplex()
+    {
+        var testDiscount = new DiscountEntity
+        {
+            Name = "Test discount box",
+            DiscountUsages =
+            {
+                new DiscountUsageEntity
+                {
+                    Timestamp = DateTimeOffset.UtcNow,
+                    User = new UserAccountEntity
+                    {
+                        UserName = "Some user"
+                    }
+                },
+                new DiscountUsageEntity
+                {
+                    Timestamp = DateTimeOffset.UtcNow.AddDays(1),
+                    User = new UserAccountEntity
+                    {
+                        UserName = "Some other user"
+                    }
+                }
+            }
+        };
+        _dbContext.Discounts.Add(testDiscount);
+        _dbContext.SaveChanges();
+
+        var readResult = _cashBoxService.Read(testDiscount.Id);
+
+        var expectedModel = testDiscount.ToModel();
+        readResult.Should().HaveValue(expectedModel);
     }
 }
