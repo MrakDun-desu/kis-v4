@@ -12,13 +12,13 @@ public static class CashBoxes
         var group = routeBuilder.MapGroup("cashboxes");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
-        group.MapPut(string.Empty, Update);
+        group.MapPut("{id:int}", Update);
         group.MapGet("{id:int}", Read);
         group.MapDelete("{id:int}", Delete);
         group.MapPost("{id:int}/stock-taking", AddStockTaking);
     }
 
-    private static List<CashBoxReadAllModel> ReadAll(
+    private static List<CashBoxListModel> ReadAll(
         ICashBoxService cashBoxService,
         [FromQuery] bool? deleted = false
     )
@@ -26,7 +26,7 @@ public static class CashBoxes
         return cashBoxService.ReadAll(deleted);
     }
 
-    private static Created<CashBoxReadModel> Create(
+    private static Created<CashBoxDetailModel> Create(
         ICashBoxService cashBoxService,
         CashBoxCreateModel createModel,
         HttpRequest request)
@@ -38,23 +38,24 @@ public static class CashBoxes
 
     private static Results<NoContent, NotFound> Update(
         ICashBoxService cashBoxService,
-        CashBoxUpdateModel updateModel)
+        CashBoxCreateModel createModel,
+        int id)
     {
-        return cashBoxService.Update(updateModel)
+        return cashBoxService.Update(id, createModel)
             .Match<Results<NoContent, NotFound>>(
                 _ => TypedResults.NoContent(),
                 _ => TypedResults.NotFound()
             );
     }
 
-    private static Results<Ok<CashBoxReadModel>, NotFound> Read(
+    private static Results<Ok<CashBoxDetailModel>, NotFound> Read(
         ICashBoxService cashBoxService,
         int id,
         [FromQuery] DateTimeOffset? startDate,
         [FromQuery] DateTimeOffset? endDate)
     {
         return cashBoxService.Read(id, startDate, endDate)
-            .Match<Results<Ok<CashBoxReadModel>, NotFound>>(
+            .Match<Results<Ok<CashBoxDetailModel>, NotFound>>(
                 readModel => TypedResults.Ok(readModel),
                 _ => TypedResults.NotFound()
             );

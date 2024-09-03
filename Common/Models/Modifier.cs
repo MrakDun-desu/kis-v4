@@ -1,36 +1,29 @@
 namespace KisV4.Common.Models;
 
 public record ModifierCreateModel(
-    int ModificationTargetId,
     string Name,
     string Image,
-    IEnumerable<CategoryReadAllModel> Categories,
-    bool ShowOnWeb
+    bool ShowOnWeb,
+    int ModificationTargetId
 );
 
-public record ModifierReadAllModel(
+public record ModifierListModel(
     int Id,
-    int ModificationTargetId,
     string Name,
     string Image,
-    IEnumerable<CategoryReadAllModel> Categories,
-    bool ShowOnWeb
+    bool ShowOnWeb,
+    int ModificationTargetId,
+    bool Deleted,
+    IEnumerable<CostListModel> CurrentCosts
 );
 
-public record ModifierReadModel(
+public record ModifierDetailModel(
     int Id,
-    int ModificationTargetId,
     string Name,
     string Image,
-    IEnumerable<CategoryReadAllModel> Categories,
-    IEnumerable<CostReadAllModel> Costs,
-    IEnumerable<CompositionReadAllModel> Composition,
-    bool ShowOnWeb
-);
-
-public record ModifierUpdateModel(
-    string? Name,
-    string? Image,
-    IEnumerable<CategoryReadAllModel>? Categories,
-    bool? ShowOnWeb
+    bool ShowOnWeb,
+    SaleItemListModel ModificationTarget,
+    bool Deleted,
+    IEnumerable<CostListModel> Costs,
+    IEnumerable<CompositionListModel> Composition
 );

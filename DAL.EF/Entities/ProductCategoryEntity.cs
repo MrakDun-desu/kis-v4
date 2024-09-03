@@ -5,7 +5,7 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 public record ProductCategoryEntity
 {
-    public int Id { get; init; }
+    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
 
     /// <summary>

@@ -24,12 +24,12 @@ public static class SaleItems
         return createdId;
     }
 
-    private static List<SaleItemReadAllModel> ReadAll(ISaleItemService saleItemService)
+    private static List<SaleItemListModel> ReadAll(ISaleItemService saleItemService)
     {
         return saleItemService.ReadAll();
     }
 
-    private static Results<Ok<SaleItemReadModel>, NotFound> Read(ISaleItemService saleItemService, int id)
+    private static Results<Ok<SaleItemDetailModel>, NotFound> Read(ISaleItemService saleItemService, int id)
     {
         var saleItemModel = saleItemService.Read(id);
 
@@ -39,7 +39,7 @@ public static class SaleItems
     private static Results<Ok, NotFound> Update(
         ISaleItemService saleItemService,
         int id,
-        SaleItemUpdateModel updateModel)
+        SaleItemCreateModel updateModel)
     {
         return saleItemService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
     }

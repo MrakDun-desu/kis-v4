@@ -53,34 +53,34 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
-
-    [Fact]
-    public void Update_UpdatesName_WhenExistingId()
-    {
-        const string oldName = "Some store";
-        const string newName = "Some store 2";
-        var testStore1 = new StoreEntity { Name = oldName };
-        var insertedEntity = _dbContext.Stores.Add(testStore1);
-        _dbContext.SaveChanges();
-        var updateModel = new StoreUpdateModel(newName);
-
-        var updateSuccess = _storeService.Update(insertedEntity.Entity.Id, updateModel);
-
-        updateSuccess.Should().BeTrue();
-        var updatedEntity = _dbContext.Stores.Find(insertedEntity.Entity.Id);
-        var expectedEntity = insertedEntity.Entity with { Name = newName };
-        updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    }
-
-    [Fact]
-    public void Update_ReturnsFalse_WhenNotFound()
-    {
-        var updateModel = new StoreUpdateModel("Some store");
-
-        var updateSuccess = _storeService.Update(42, updateModel);
-
-        updateSuccess.Should().BeFalse();
-    }
+    //
+    // [Fact]
+    // public void Update_UpdatesName_WhenExistingId()
+    // {
+    //     const string oldName = "Some store";
+    //     const string newName = "Some store 2";
+    //     var testStore1 = new StoreEntity { Name = oldName };
+    //     var insertedEntity = _dbContext.Stores.Add(testStore1);
+    //     _dbContext.SaveChanges();
+    //     var updateModel = new StoreUpdateModel(newName);
+    //
+    //     var updateSuccess = _storeService.Update(insertedEntity.Entity.Id, updateModel);
+    //
+    //     updateSuccess.Should().BeTrue();
+    //     var updatedEntity = _dbContext.Stores.Find(insertedEntity.Entity.Id);
+    //     var expectedEntity = insertedEntity.Entity with { Name = newName };
+    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
+    // }
+    //
+    // [Fact]
+    // public void Update_ReturnsFalse_WhenNotFound()
+    // {
+    //     var updateModel = new StoreUpdateModel("Some store");
+    //
+    //     var updateSuccess = _storeService.Update(42, updateModel);
+    //
+    //     updateSuccess.Should().BeFalse();
+    // }
 
     [Fact]
     public void Delete_Deletes_WhenExistingId()

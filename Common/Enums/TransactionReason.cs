@@ -1,4 +1,4 @@
-namespace KisV4.DAL.EF.Enums;
+namespace KisV4.Common.Enums;
 
 public enum TransactionReason
 {

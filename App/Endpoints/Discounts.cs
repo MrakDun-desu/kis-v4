@@ -11,7 +11,7 @@ public static class Discounts
         group.MapGet(string.Empty, ReadAll);
     }
 
-    private static List<DiscountReadAllModel> ReadAll(IDiscountService discountService)
+    private static List<DiscountListModel> ReadAll(IDiscountService discountService)
     {
         return discountService.ReadAll();
     }

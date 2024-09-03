@@ -1,16 +1,22 @@
 namespace KisV4.Common.Models;
 
-public record DiscountUsageReadAllModel(
+public record DiscountUsageCreateModel(
+    int DiscountId,
+    string UserName,
+    int SaleTransactionId
+);
+
+public record DiscountUsageListModel(
     int Id,
-    UserReadAllModel User,
-    DiscountReadAllModel Discount,
+    UserListModel User,
+    DiscountListModel Discount,
     DateTimeOffset Timestamp
 );
 
-public record DiscountUsageReadModel(
+public record DiscountUsageDetailModel(
     int Id,
-    UserReadAllModel User,
-    DiscountReadAllModel Discount,
+    UserListModel User,
+    DiscountListModel Discount,
     DateTimeOffset Timestamp,
-    IEnumerable<DiscountUsageItemModel> UsageItems
+    IEnumerable<DiscountUsageItemListModel> UsageItems
 );

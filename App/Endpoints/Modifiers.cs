@@ -16,32 +16,32 @@ public static class Modifiers
     }
 
     private static int Create(
-        IModifierService ModifierService,
+        IModifierService modifierService,
         ModifierCreateModel createModel)
     {
-        var createdId = ModifierService.Create(createModel);
+        var createdId = modifierService.Create(createModel);
         return createdId;
     }
 
-    private static Results<Ok<ModifierReadModel>, NotFound> Read(IModifierService ModifierService, int id)
+    private static Results<Ok<ModifierDetailModel>, NotFound> Read(IModifierService modifierService, int id)
     {
-        var ModifierModel = ModifierService.Read(id);
+        var modifierModel = modifierService.Read(id);
 
-        return ModifierModel is null ? TypedResults.NotFound() : TypedResults.Ok(ModifierModel);
+        return modifierModel is null ? TypedResults.NotFound() : TypedResults.Ok(modifierModel);
     }
 
     private static Results<Ok, NotFound> Update(
-        IModifierService ModifierService,
+        IModifierService modifierService,
         int id,
-        ModifierUpdateModel updateModel)
+        ModifierCreateModel updateModel)
     {
-        return ModifierService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
+        return modifierService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
     }
 
     private static Results<Ok, NotFound> Delete(
-        IModifierService ModifierService,
+        IModifierService modifierService,
         int id)
     {
-        return ModifierService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
+        return modifierService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
     }
 }

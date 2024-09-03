@@ -13,14 +13,14 @@ namespace KisV4.BL.EF.Services;
 public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
     : ICashBoxService, IScopedService
 {
-    public List<CashBoxReadAllModel> ReadAll(bool? deleted)
+    public List<CashBoxListModel> ReadAll(bool? deleted)
     {
         return deleted.HasValue
             ? dbContext.CashBoxes.Where(cb => cb.Deleted == deleted).ToList().ToModels()
             : dbContext.CashBoxes.ToList().ToModels();
     }
 
-    public CashBoxReadModel Create(CashBoxCreateModel createModel)
+    public CashBoxDetailModel Create(CashBoxCreateModel createModel)
     {
         var entity = createModel.ToEntity();
         entity.StockTakings.Add(new StockTakingEntity
@@ -31,16 +31,17 @@ public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
 
         dbContext.SaveChanges();
 
-        return insertedEntity.Entity.ToModel()!;
+        return insertedEntity.Entity.ToModel();
     }
 
-    public OneOf<Success, NotFound> Update(CashBoxUpdateModel updateModel)
+    public OneOf<Success, NotFound> Update(int id, CashBoxCreateModel updateModel)
     {
-        if (!dbContext.CashBoxes.Any(cb => cb.Id == updateModel.Id))
+        if (!dbContext.CashBoxes.Any(cb => cb.Id == id))
             return new NotFound();
 
         var entity = updateModel.ToEntity();
         // updating automatically restores entities from deletion
+        entity.Id = id;
         entity.Deleted = false;
 
         dbContext.CashBoxes.Update(entity);
@@ -49,7 +50,7 @@ public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
         return new Success();
     }
 
-    public OneOf<CashBoxReadModel, NotFound> Read(int id, DateTimeOffset? startDate = null,
+    public OneOf<CashBoxDetailModel, NotFound> Read(int id, DateTimeOffset? startDate = null,
         DateTimeOffset? endDate = null)
     {
         // needs to do AsNoTracking because otherwise currency changes will get included by lazy loading
@@ -72,7 +73,7 @@ public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
         var totalCurrencyChanges = currencyChanges
             .GroupBy(cc => cc.Currency)
             .Select(s =>
-                new TotalCurrencyChangeModel(
+                new TotalCurrencyChangeListModel(
                     s.Key!.ToModel(),
                     s.Sum(cc => cc.Amount))
             );

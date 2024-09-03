@@ -1,4 +1,4 @@
-using KisV4.DAL.EF.Enums;
+using KisV4.Common.Enums;
 
 namespace KisV4.DAL.EF.Entities;
 

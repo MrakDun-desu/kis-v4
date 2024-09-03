@@ -5,7 +5,7 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 public abstract record AccountEntity
 {
-    public int Id { get; init; }
+    public int Id { get; set; }
     public bool Deleted { get; set; }
 
     /// <summary>

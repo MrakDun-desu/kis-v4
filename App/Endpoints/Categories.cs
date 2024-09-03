@@ -11,16 +11,16 @@ public static class Categories
         var group = routeBuilder.MapGroup("categories");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
-        group.MapPut(string.Empty, Update);
+        group.MapPut("{id:int}", Update);
         group.MapDelete("{id:int}", Delete);
     }
 
-    private static List<CategoryReadAllModel> ReadAll(ICategoryService categoryService)
+    private static List<CategoryListModel> ReadAll(ICategoryService categoryService)
     {
         return categoryService.ReadAll();
     }
 
-    private static Created<CategoryReadAllModel> Create(
+    private static Created<CategoryListModel> Create(
         ICategoryService categoryService,
         CategoryCreateModel createModel,
         HttpRequest request)
@@ -31,9 +31,10 @@ public static class Categories
 
     private static Results<NoContent, NotFound> Update(
         ICategoryService categoryService,
-        CategoryUpdateModel updateModel)
+        CategoryCreateModel updateModel,
+        int id)
     {
-        return categoryService.Update(updateModel)
+        return categoryService.Update(id, updateModel)
             .Match<Results<NoContent, NotFound>>(
                 _ => TypedResults.NoContent(),
                 _ => TypedResults.NotFound()

@@ -4,5 +4,5 @@ namespace KisV4.BL.Common.Services;
 
 public interface IDiscountService
 {
-    public List<DiscountReadAllModel> ReadAll();
+    public List<DiscountListModel> ReadAll();
 }

@@ -12,30 +12,30 @@ public static class ContainerTemplates
         var group = routeBuilder.MapGroup("container-templates");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
-        group.MapPatch(string.Empty, Update);
+        group.MapPatch("{id:int}", Update);
         group.MapDelete("{id:int}", Delete);
     }
 
-    private static Results<Ok<ICollection<ContainerTemplateReadAllModel>>, ValidationProblem> ReadAll(
+    private static Results<Ok<ICollection<ContainerTemplateListModel>>, ValidationProblem> ReadAll(
         IContainerTemplateService containerTemplateService,
         [FromQuery] bool? deleted,
         [FromQuery] int? containedItemId)
     {
         return containerTemplateService
             .ReadAll(deleted, containedItemId)
-            .Match<Results<Ok<ICollection<ContainerTemplateReadAllModel>>, ValidationProblem>>(
+            .Match<Results<Ok<ICollection<ContainerTemplateListModel>>, ValidationProblem>>(
                 output => TypedResults.Ok(output),
                 errors => TypedResults.ValidationProblem(errors)
             );
     }
 
-    private static Results<Created<ContainerTemplateReadAllModel>, ValidationProblem> Create(
+    private static Results<Created<ContainerTemplateListModel>, ValidationProblem> Create(
         IContainerTemplateService containerTemplateService,
         ContainerTemplateCreateModel createModel,
         HttpRequest request)
     {
         var creationResult = containerTemplateService.Create(createModel);
-        return creationResult.Match<Results<Created<ContainerTemplateReadAllModel>, ValidationProblem>>(
+        return creationResult.Match<Results<Created<ContainerTemplateListModel>, ValidationProblem>>(
             createdModel => TypedResults.Created(
                 request.Host + request.Path + "/" + createdModel.Id,
                 createdModel),
@@ -45,9 +45,10 @@ public static class ContainerTemplates
 
     private static Results<NoContent, NotFound, ValidationProblem> Update(
         IContainerTemplateService containerTemplateService,
-        ContainerTemplateUpdateModel updateModel)
+        ContainerTemplateCreateModel updateModel,
+        int id)
     {
-        return containerTemplateService.Update(updateModel)
+        return containerTemplateService.Update(id, updateModel)
             .Match<Results<NoContent, NotFound, ValidationProblem>>(
                 _ => TypedResults.NoContent(),
                 _ => TypedResults.NotFound(),

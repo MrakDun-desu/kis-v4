@@ -8,7 +8,7 @@ namespace KisV4.BL.EF.Services;
 public class DiscountService(KisDbContext dbContext)
     : IDiscountService, IScopedService
 {
-    public List<DiscountReadAllModel> ReadAll()
+    public List<DiscountListModel> ReadAll()
     {
         return dbContext.Discounts.ToList().ToModels();
     }

@@ -18,18 +18,18 @@ public class PipeService(KisDbContext dbContext) : IPipeService, IScopedService
         return insertedEntity.Entity.Id;
     }
 
-    public List<PipeReadAllModel> ReadAll()
+    public List<PipeListModel> ReadAll()
     {
         return dbContext.Pipes.ToList().ToModels();
     }
 
-    public bool Update(int id, PipeUpdateModel updateModel)
+    public bool Update(int id, PipeCreateModel updateModel)
     {
-        var entity = dbContext.Pipes.Find(id);
-        if (entity is null)
+        if (dbContext.Pipes.Any(p => p.Id == id))
             return false;
 
-        if (updateModel.Name is not null) entity.Name = updateModel.Name;
+        var entity = updateModel.ToEntity();
+        entity.Id = id;
 
         dbContext.Pipes.Update(entity);
         dbContext.SaveChanges();

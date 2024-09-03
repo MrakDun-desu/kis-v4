@@ -5,7 +5,7 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 public record CurrencyEntity
 {
-    public int Id { get; init; }
+    public int Id { get; set; }
 
     /// <summary>
     ///     Long name of the given currency - for example "czech crowns".

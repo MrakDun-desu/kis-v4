@@ -11,26 +11,27 @@ public static class Currencies
         var group = routeBuilder.MapGroup("currencies");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
-        group.MapPut(string.Empty, Update);
+        group.MapPut("{id:int}", Update);
     }
 
-    private static CurrencyReadAllModel Create(
+    private static CurrencyListModel Create(
         ICurrencyService currencyService,
         CurrencyCreateModel createModel)
     {
         return currencyService.Create(createModel);
     }
 
-    private static List<CurrencyReadAllModel> ReadAll(ICurrencyService currencyService)
+    private static List<CurrencyListModel> ReadAll(ICurrencyService currencyService)
     {
         return currencyService.ReadAll();
     }
 
     private static Results<NoContent, NotFound> Update(
         ICurrencyService currencyService,
-        CurrencyUpdateModel updateModel)
+        CurrencyCreateModel updateModel,
+        int id)
     {
-        return currencyService.Update(updateModel)
+        return currencyService.Update(id, updateModel)
             .Match<Results<NoContent, NotFound>>(
                 _ => TypedResults.NoContent(),
                 _ => TypedResults.NotFound()

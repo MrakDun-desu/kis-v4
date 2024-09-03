@@ -5,7 +5,7 @@ namespace KisV4.BL.Common.Services;
 public interface IStoreService
 {
     public int Create(StoreCreateModel createModel);
-    public List<StoreReadAllModel> ReadAll();
-    public bool Update(int id, StoreUpdateModel updateModel);
+    public List<StoreListModel> ReadAll();
+    public bool Update(int id, StoreCreateModel updateModel);
     public bool Delete(int id);
 }

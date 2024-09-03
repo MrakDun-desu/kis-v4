@@ -10,7 +10,7 @@ namespace KisV4.BL.EF.Services;
 // ReSharper disable once UnusedType.Global
 public class CurrencyService(KisDbContext dbContext) : ICurrencyService, IScopedService
 {
-    public CurrencyReadAllModel Create(CurrencyCreateModel createModel)
+    public CurrencyListModel Create(CurrencyCreateModel createModel)
     {
         var entity = createModel.ToEntity();
         dbContext.Currencies.Add(entity);
@@ -20,16 +20,18 @@ public class CurrencyService(KisDbContext dbContext) : ICurrencyService, IScoped
         return entity.ToModel();
     }
 
-    public List<CurrencyReadAllModel> ReadAll()
+    public List<CurrencyListModel> ReadAll()
     {
         return dbContext.Currencies.ToList().ToModels();
     }
 
-    public OneOf<Success, NotFound> Update(CurrencyUpdateModel updateModel)
+    public OneOf<Success, NotFound> Update(int id, CurrencyCreateModel updateModel)
     {
-        if (!dbContext.Currencies.Any(c => c.Id == updateModel.Id)) return new NotFound();
+        if (!dbContext.Currencies.Any(c => c.Id == id)) 
+            return new NotFound();
 
         var entity = updateModel.ToEntity();
+        entity.Id = id;
 
         dbContext.Currencies.Update(entity);
         dbContext.SaveChanges();

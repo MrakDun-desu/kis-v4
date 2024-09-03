@@ -8,7 +8,7 @@ namespace KisV4.BL.EF.Services;
 public class CostService(KisDbContext dbContext)
     : ICostService, IScopedService
 {
-    public CostReadAllModel Create(CostCreateModel createModel)
+    public CostListModel Create(CostCreateModel createModel)
     {
         var entity = (createModel with
         {

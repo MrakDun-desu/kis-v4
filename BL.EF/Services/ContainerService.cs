@@ -4,7 +4,7 @@ using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
-using KisV4.DAL.EF.Enums;
+using KisV4.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
@@ -17,7 +17,7 @@ public class ContainerService(
     TimeProvider timeProvider,
     IUserService userService) : IContainerService, IScopedService
 {
-    public OneOf<Page<ContainerReadAllModel>, Dictionary<string, string[]>> ReadAll(
+    public OneOf<Page<ContainerListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
         int? pageSize,
         bool? deleted,
@@ -52,7 +52,7 @@ public class ContainerService(
         return intermediateQuery.Page(realPage, realPageSize, Mapper.ToModels);
     }
 
-    public OneOf<ContainerReadAllModel, Dictionary<string, string[]>> Create(
+    public OneOf<ContainerListModel, Dictionary<string, string[]>> Create(
         ContainerCreateModel createModel, string userName)
     {
         var errors = new Dictionary<string, string[]>();
@@ -99,9 +99,9 @@ public class ContainerService(
         return new ContainerIntermediateModel(container, template.Amount).ToModel();
     }
 
-    public OneOf<Success, NotFound, Dictionary<string, string[]>> Update(ContainerUpdateModel updateModel)
+    public OneOf<Success, NotFound, Dictionary<string, string[]>> Patch(int id, ContainerPatchModel updateModel)
     {
-        var container = dbContext.Containers.Find(updateModel.Id);
+        var container = dbContext.Containers.Find(id);
         if (container is null) return new NotFound();
 
         if (updateModel.PipeId.HasValue)

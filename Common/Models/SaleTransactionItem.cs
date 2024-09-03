@@ -1,10 +1,16 @@
 namespace KisV4.Common.Models;
 
-public record SaleTransactionItemModel(
+public record SaleTransactionItemCreateModel(
+    int SaleItemId,
+    IEnumerable<ModifierAmountCreateModel> ModifierAmounts,
+    int ItemAmount
+);
+
+public record SaleTransactionItemListModel(
     int Id,
-    SaleItemReadAllModel SaleItem,
-    IEnumerable<ModifierAmountReadAllModel> ModifierAmounts,
-    IEnumerable<TransactionPriceModel> TransactionPrices,
+    SaleItemListModel SaleItem,
+    IEnumerable<ModifierAmountListModel> ModifierAmounts,
+    IEnumerable<TransactionPriceListModel> TransactionPrices,
     int ItemAmount,
     bool Cancelled
 );

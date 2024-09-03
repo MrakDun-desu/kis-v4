@@ -9,17 +9,17 @@ namespace KisV4.BL.EF.Services;
 
 public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageService, IScopedService
 {
-    public OneOf<List<DiscountUsageReadAllModel>, Dictionary<string, string[]>> ReadAll(int? discountId, int? userId)
+    public OneOf<List<DiscountUsageListModel>, Dictionary<string, string[]>> ReadAll(int? discountId, int? userId)
     {
         throw new NotImplementedException();
     }
 
-    public OneOf<DiscountUsageReadModel, Dictionary<string, string[]>> Create(int discountId, int saleTransactionId)
+    public OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(int discountId, int saleTransactionId)
     {
         throw new NotImplementedException();
     }
 
-    public OneOf<DiscountUsageReadModel, NotFound> Read(int id)
+    public OneOf<DiscountUsageDetailModel, NotFound> Read(int id)
     {
         var output = dbContext.DiscountUsages.Find(id).ToModel();
         if (output is not null) return output;

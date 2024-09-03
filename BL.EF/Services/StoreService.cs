@@ -18,18 +18,18 @@ public class StoreService(KisDbContext dbContext) : IStoreService, IScopedServic
         return insertedEntity.Entity.Id;
     }
 
-    public List<StoreReadAllModel> ReadAll()
+    public List<StoreListModel> ReadAll()
     {
         return dbContext.Stores.ToList().ToModels();
     }
 
-    public bool Update(int id, StoreUpdateModel updateModel)
+    public bool Update(int id, StoreCreateModel updateModel)
     {
-        var entity = dbContext.Stores.Find(id);
-        if (entity is null)
+        if (dbContext.Stores.Any(s => s.Id == id))
             return false;
 
-        if (updateModel.Name is not null) entity.Name = updateModel.Name;
+        var entity = updateModel.ToEntity();
+        entity.Id = id;
 
         dbContext.Stores.Update(entity);
         dbContext.SaveChanges();

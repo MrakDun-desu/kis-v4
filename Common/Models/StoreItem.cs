@@ -3,37 +3,33 @@ namespace KisV4.Common.Models;
 public record StoreItemCreateModel(
     string Name,
     string Image,
-    IEnumerable<CategoryReadAllModel> Categories,
+    IEnumerable<int> CategoryIds,
     string UnitName,
     bool BarmanCanStock,
     bool IsContainerItem
 );
 
-public record StoreItemReadAllModel(
+public record StoreItemListModel(
     int Id,
     string Name,
     string Image,
-    IEnumerable<CategoryReadAllModel> Categories,
+    bool Deleted,
     string UnitName,
     bool BarmanCanStock,
-    bool IsContainerItem
+    bool IsContainerItem,
+    IEnumerable<CostListModel> CurrentCosts
 );
 
-public record StoreItemReadModel(
+public record StoreItemDetailModel(
     int Id,
     string Name,
     string Image,
-    IEnumerable<CategoryReadAllModel> Categories,
-    IEnumerable<CostReadAllModel> Costs,
+    bool Deleted,
     string UnitName,
     bool BarmanCanStock,
-    bool IsContainerItem
-);
-
-public record StoreItemUpdateModel(
-    string? Name,
-    string? Image,
-    IEnumerable<CategoryReadAllModel>? Categories,
-    string? UnitName,
-    bool? BarmanCanStock
+    bool IsContainerItem,
+    IEnumerable<CategoryListModel> Categories,
+    IEnumerable<CompositionListModel> Composition,
+    IEnumerable<CostListModel> Costs,
+    IEnumerable<StoreAmountListModel> StoreAmounts
 );

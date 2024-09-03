@@ -5,7 +5,7 @@ namespace KisV4.DAL.EF.Entities;
 /// </summary>
 public abstract record ProductEntity
 {
-    public int Id { get; init; }
+    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;
     public bool Deleted { get; set; }

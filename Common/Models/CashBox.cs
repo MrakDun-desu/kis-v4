@@ -2,23 +2,21 @@ namespace KisV4.Common.Models;
 
 public record CashBoxCreateModel(string Name);
 
-public record CashBoxUpdateModel(int Id, string Name);
+public record CashBoxListModel(int Id, string Name, bool Deleted);
 
-public record CashBoxReadAllModel(int Id, string Name, bool Deleted);
-
-public record CashBoxReadModel(
+public record CashBoxDetailModel(
     int Id,
     string Name,
     bool Deleted,
-    ICollection<CurrencyChangeModel> CurrencyChanges,
-    ICollection<TotalCurrencyChangeModel>? TotalCurrencyChanges = null,
-    ICollection<StockTakingModel>? StockTakings = null
+    Page<CurrencyChangeListModel> CurrencyChanges,
+    IEnumerable<TotalCurrencyChangeListModel>? TotalCurrencyChanges = null,
+    IEnumerable<StockTakingModel>? StockTakings = null
 )
 {
-    public ICollection<TotalCurrencyChangeModel> TotalCurrencyChanges { get; init; } =
-        TotalCurrencyChanges ?? new List<TotalCurrencyChangeModel>();
+    public IEnumerable<TotalCurrencyChangeListModel> TotalCurrencyChanges { get; init; } =
+        TotalCurrencyChanges ?? new List<TotalCurrencyChangeListModel>();
 
-    public ICollection<StockTakingModel> StockTakings { get; init; } =
+    public IEnumerable<StockTakingModel> StockTakings { get; init; } =
         StockTakings ?? new List<StockTakingModel>();
 }
 

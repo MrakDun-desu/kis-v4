@@ -3,32 +3,29 @@ namespace KisV4.Common.Models;
 public record SaleItemCreateModel(
     string Name,
     string Image,
-    IEnumerable<CategoryReadAllModel> Categories,
+    IEnumerable<int> CategoryIds,
     bool ShowOnWeb
 );
 
-public record SaleItemReadAllModel(
+public record SaleItemListModel(
     int Id,
     string Name,
     string Image,
-    IEnumerable<CategoryReadAllModel> Categories,
-    bool ShowOnWeb
+    bool Deleted,
+    bool ShowOnWeb,
+    IEnumerable<CostListModel> CurrentCosts
 );
 
-public record SaleItemReadModel(
+public record SaleItemDetailModel(
     int Id,
     string Name,
     string Image,
-    IEnumerable<CategoryReadAllModel> Categories,
-    IEnumerable<CostReadAllModel> Costs,
-    IEnumerable<CompositionReadAllModel> Composition,
-    IEnumerable<ModifierReadAllModel> AvailableModifiers,
-    bool ShowOnWeb
+    bool Deleted,
+    bool ShowOnWeb,
+    IEnumerable<CategoryListModel> Categories,
+    IEnumerable<CostListModel> Costs,
+    IEnumerable<CompositionListModel> Composition,
+    IEnumerable<ModifierListModel> AvailableModifiers,
+    IEnumerable<StoreAmountListModel> StoreAmounts
 );
 
-public record SaleItemUpdateModel(
-    string? Name,
-    string? Image,
-    IEnumerable<CategoryReadAllModel>? Categories,
-    bool? ShowOnWeb
-);

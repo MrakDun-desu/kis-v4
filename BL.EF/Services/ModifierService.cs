@@ -13,60 +13,26 @@ public class ModifierService(KisDbContext dbContext)
 {
     public int Create(ModifierCreateModel createModel)
     {
-        var categories = new List<ProductCategoryEntity>();
-        var newCategories = new List<CategoryReadAllModel>();
-
-        foreach (var categoryModel in createModel.Categories)
-        {
-            var categoryEntity = dbContext.ProductCategories.Find(categoryModel.Id);
-            // if category didn't exist, then add a new category to the database
-            // otherwise just add the entity itself
-            if (categoryEntity is null)
-                newCategories.Add(categoryModel with { Id = 0 });
-            else
-                categories.Add(categoryEntity);
-        }
-
-        var entity = (createModel with { Categories = newCategories }).ToEntity();
+        var entity = createModel.ToEntity();
         var insertedEntity = dbContext.Modifiers.Add(entity);
-
-        foreach (var category in categories) insertedEntity.Entity.Categories.Add(category);
 
         dbContext.SaveChanges();
 
         return insertedEntity.Entity.Id;
     }
 
-    public ModifierReadModel? Read(int id)
+    public ModifierDetailModel? Read(int id)
     {
         return Mapper.ToModel(dbContext.Modifiers.Find(id));
     }
 
-    public bool Update(int id, ModifierUpdateModel updateModel)
+    public bool Update(int id, ModifierCreateModel updateModel)
     {
-        var entity = dbContext.Modifiers.Find(id);
-        if (entity is null)
+        if (dbContext.Modifiers.Any(m => m.Id == id))
             return false;
 
-        if (updateModel.Name is not null) entity.Name = updateModel.Name;
-
-        if (updateModel.Image is not null) entity.Image = updateModel.Image;
-
-        if (updateModel.Categories is not null)
-        {
-            entity.Categories.Clear();
-            foreach (var categoryModel in updateModel.Categories)
-            {
-                var categoryEntity = dbContext.ProductCategories.Find(categoryModel.Id);
-                // if category didn't exist, then add a new category to the database
-                // otherwise just add the entity itself
-                entity.Categories.Add(
-                    categoryEntity ??
-                    (categoryModel with { Id = 0 }).ToEntity());
-            }
-        }
-
-        if (updateModel.ShowOnWeb.HasValue) entity.ShowOnWeb = updateModel.ShowOnWeb.Value;
+        var entity = updateModel.ToEntity();
+        entity.Id = id;
 
         dbContext.Modifiers.Update(entity);
         dbContext.SaveChanges();
@@ -85,7 +51,7 @@ public class ModifierService(KisDbContext dbContext)
         return true;
     }
 
-    public List<ModifierReadAllModel> ReadAll()
+    public List<ModifierListModel> ReadAll()
     {
         return dbContext.Modifiers
             .Where(e => !e.Deleted)

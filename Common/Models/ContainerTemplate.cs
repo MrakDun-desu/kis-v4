@@ -6,17 +6,10 @@ public record ContainerTemplateCreateModel(
     decimal Amount
 );
 
-public record ContainerTemplateReadAllModel(
+public record ContainerTemplateListModel(
     int Id,
     string Name,
     decimal Amount,
     bool Deleted,
-    StoreItemReadAllModel ContainedItem
-);
-
-public record ContainerTemplateUpdateModel(
-    int Id,
-    string Name,
-    int ContainedItemId,
-    decimal Amount
+    StoreItemListModel ContainedItem
 );

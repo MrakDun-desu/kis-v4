@@ -1,12 +1,14 @@
 namespace KisV4.Common.Models;
 
-public record CurrencyChangeModel(
-    CurrencyReadAllModel Currency,
+public record CurrencyChangeListModel(
+    CurrencyListModel Currency,
+    decimal Amount,
+    bool Cancelled,
     int SaleTransactionId,
-    decimal Amount
+    int AccountId
 );
 
-public record TotalCurrencyChangeModel(
-    CurrencyReadAllModel Currency,
+public record TotalCurrencyChangeListModel(
+    CurrencyListModel Currency,
     decimal Amount
 );

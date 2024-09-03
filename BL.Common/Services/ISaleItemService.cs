@@ -5,8 +5,8 @@ namespace KisV4.BL.Common.Services;
 public interface ISaleItemService
 {
     public int Create(SaleItemCreateModel createModel);
-    public List<SaleItemReadAllModel> ReadAll();
-    public SaleItemReadModel? Read(int id);
-    public bool Update(int id, SaleItemUpdateModel updateModel);
+    public List<SaleItemListModel> ReadAll();
+    public SaleItemDetailModel? Read(int id);
+    public bool Update(int id, SaleItemCreateModel updateModel);
     public bool Delete(int id);
 }

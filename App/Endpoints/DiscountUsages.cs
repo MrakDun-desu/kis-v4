@@ -12,11 +12,11 @@ public static class DiscountUsages
         group.MapGet("{id:int}", Read);
     }
 
-    private static Results<Ok<DiscountUsageReadModel>, NotFound> Read
+    private static Results<Ok<DiscountUsageDetailModel>, NotFound> Read
         (IDiscountUsageService discountUsageService, int id)
     {
         return discountUsageService.Read(id)
-            .Match<Results<Ok<DiscountUsageReadModel>, NotFound>>(
+            .Match<Results<Ok<DiscountUsageDetailModel>, NotFound>>(
                 result => TypedResults.Ok(result),
                 _ => TypedResults.NotFound()
             );

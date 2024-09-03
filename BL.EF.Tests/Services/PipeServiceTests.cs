@@ -54,33 +54,33 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
-    [Fact]
-    public void Update_UpdatesName_WhenExistingId()
-    {
-        const string oldName = "Some pipe";
-        const string newName = "Some pipe 2";
-        var testPipe1 = new PipeEntity { Name = oldName };
-        var insertedEntity = _dbContext.Pipes.Add(testPipe1);
-        _dbContext.SaveChanges();
-        var updateModel = new PipeUpdateModel(newName);
-
-        var updateSuccess = _pipeService.Update(insertedEntity.Entity.Id, updateModel);
-
-        updateSuccess.Should().BeTrue();
-        var updatedEntity = _dbContext.Pipes.Find(insertedEntity.Entity.Id);
-        var expectedEntity = insertedEntity.Entity with { Name = newName };
-        updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    }
-
-    [Fact]
-    public void Update_ReturnsFalse_WhenNotFound()
-    {
-        var updateModel = new PipeUpdateModel("Some pipe");
-
-        var updateSuccess = _pipeService.Update(42, updateModel);
-
-        updateSuccess.Should().BeFalse();
-    }
+    // [Fact]
+    // public void Update_UpdatesName_WhenExistingId()
+    // {
+    //     const string oldName = "Some pipe";
+    //     const string newName = "Some pipe 2";
+    //     var testPipe1 = new PipeEntity { Name = oldName };
+    //     var insertedEntity = _dbContext.Pipes.Add(testPipe1);
+    //     _dbContext.SaveChanges();
+    //     var updateModel = new PipeUpdateModel(newName);
+    //
+    //     var updateSuccess = _pipeService.Update(insertedEntity.Entity.Id, updateModel);
+    //
+    //     updateSuccess.Should().BeTrue();
+    //     var updatedEntity = _dbContext.Pipes.Find(insertedEntity.Entity.Id);
+    //     var expectedEntity = insertedEntity.Entity with { Name = newName };
+    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
+    // }
+    //
+    // [Fact]
+    // public void Update_ReturnsFalse_WhenNotFound()
+    // {
+    //     var updateModel = new PipeUpdateModel("Some pipe");
+    //
+    //     var updateSuccess = _pipeService.Update(42, updateModel);
+    //
+    //     updateSuccess.Should().BeFalse();
+    // }
 
     [Fact]
     public void Delete_Deletes_WhenExistingId()

@@ -6,9 +6,8 @@ public record CompositionCreateModel(
     decimal Amount
 );
 
-public record CompositionReadAllModel(
+public record CompositionListModel(
     int SaleItemId,
-    int StoreItemId,
-    StoreItemReadAllModel StoreItem,
+    StoreItemListModel StoreItem,
     decimal Amount
 );

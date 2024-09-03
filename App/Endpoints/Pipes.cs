@@ -23,7 +23,7 @@ public static class Pipes
         return createdId;
     }
 
-    private static List<PipeReadAllModel> ReadAll(IPipeService cashBoxService)
+    private static List<PipeListModel> ReadAll(IPipeService cashBoxService)
     {
         return cashBoxService.ReadAll();
     }
@@ -31,7 +31,7 @@ public static class Pipes
     private static Results<Ok, NotFound> Update(
         IPipeService cashBoxService,
         int id,
-        PipeUpdateModel updateModel)
+        PipeCreateModel updateModel)
     {
         return cashBoxService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
     }

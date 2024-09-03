@@ -6,11 +6,11 @@ namespace KisV4.BL.Common.Services;
 
 public interface ICashBoxService
 {
-    public List<CashBoxReadAllModel> ReadAll(bool? deleted);
-    public CashBoxReadModel Create(CashBoxCreateModel createModel);
-    public OneOf<Success, NotFound> Update(CashBoxUpdateModel updateModel);
+    public List<CashBoxListModel> ReadAll(bool? deleted);
+    public CashBoxDetailModel Create(CashBoxCreateModel createModel);
+    public OneOf<Success, NotFound> Update(int id, CashBoxCreateModel updateModel);
 
-    public OneOf<CashBoxReadModel, NotFound> Read(
+    public OneOf<CashBoxDetailModel, NotFound> Read(
         int id,
         DateTimeOffset? startDate = null,
         DateTimeOffset? endDate = null);

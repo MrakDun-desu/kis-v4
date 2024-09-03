@@ -6,8 +6,8 @@ namespace KisV4.BL.Common.Services;
 
 public interface ICategoryService
 {
-    public CategoryReadAllModel Create(CategoryCreateModel createModel);
-    public List<CategoryReadAllModel> ReadAll();
-    public OneOf<Success, NotFound> Update(CategoryUpdateModel updateModel);
+    public CategoryListModel Create(CategoryCreateModel createModel);
+    public List<CategoryListModel> ReadAll();
+    public OneOf<Success, NotFound> Update(int id, CategoryCreateModel updateModel);
     public OneOf<Success, NotFound> Delete(int id);
 }

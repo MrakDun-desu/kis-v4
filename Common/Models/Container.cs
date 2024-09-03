@@ -5,16 +5,15 @@ public record ContainerCreateModel(
     int PipeId
 );
 
-public record ContainerReadAllModel(
+public record ContainerListModel(
     int Id,
     DateTimeOffset OpenSince,
-    PipeReadAllModel? Pipe,
+    PipeListModel? Pipe,
     bool Deleted,
-    ContainerTemplateReadAllModel Template,
+    ContainerTemplateListModel Template,
     decimal CurrentAmount
 );
 
-public record ContainerUpdateModel(
-    int Id,
+public record ContainerPatchModel(
     int? PipeId
 );

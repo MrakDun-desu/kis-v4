@@ -1,7 +1,7 @@
 namespace KisV4.Common.Models;
 
-public record TransactionPriceModel(
-    CurrencyReadAllModel Currency,
+public record TransactionPriceListModel(
+    CurrencyListModel Currency,
     int SaleTransactionItemId,
     decimal Amount,
     bool Cancelled

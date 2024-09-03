@@ -23,7 +23,7 @@ public static class Stores
         return createdId;
     }
 
-    private static List<StoreReadAllModel> ReadAll(IStoreService cashBoxService)
+    private static List<StoreListModel> ReadAll(IStoreService cashBoxService)
     {
         return cashBoxService.ReadAll();
     }
@@ -31,7 +31,7 @@ public static class Stores
     private static Results<Ok, NotFound> Update(
         IStoreService cashBoxService,
         int id,
-        StoreUpdateModel updateModel)
+        StoreCreateModel updateModel)
     {
         return cashBoxService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
     }

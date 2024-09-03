@@ -13,31 +13,15 @@ public class SaleItemService(KisDbContext dbContext)
 {
     public int Create(SaleItemCreateModel createModel)
     {
-        var categories = new List<ProductCategoryEntity>();
-        var newCategories = new List<CategoryReadAllModel>();
-
-        foreach (var categoryModel in createModel.Categories)
-        {
-            var categoryEntity = dbContext.ProductCategories.Find(categoryModel.Id);
-            // if category didn't exist, then add a new category to the database
-            // otherwise just add the entity itself
-            if (categoryEntity is null)
-                newCategories.Add(categoryModel with { Id = 0 });
-            else
-                categories.Add(categoryEntity);
-        }
-
-        var entity = (createModel with { Categories = newCategories }).ToEntity();
-        var insertedEntity = dbContext.SaleItems.Add(entity);
-
-        foreach (var category in categories) insertedEntity.Entity.Categories.Add(category);
+        var entity = createModel.ToEntity();
+        dbContext.SaleItems.Add(entity);
 
         dbContext.SaveChanges();
 
-        return insertedEntity.Entity.Id;
+        return entity.Id;
     }
 
-    public List<SaleItemReadAllModel> ReadAll()
+    public List<SaleItemListModel> ReadAll()
     {
         return dbContext.SaleItems
             .Where(e => !e.Deleted)
@@ -46,36 +30,18 @@ public class SaleItemService(KisDbContext dbContext)
             .ToList().ToModels();
     }
 
-    public SaleItemReadModel? Read(int id)
+    public SaleItemDetailModel? Read(int id)
     {
         return dbContext.SaleItems.Find(id).ToModel();
     }
 
-    public bool Update(int id, SaleItemUpdateModel updateModel)
+    public bool Update(int id, SaleItemCreateModel updateModel)
     {
-        var entity = dbContext.SaleItems.Find(id);
-        if (entity is null)
+        if (dbContext.SaleItems.Any(si => si.Id == id))
             return false;
 
-        if (updateModel.Name is not null) entity.Name = updateModel.Name;
-
-        if (updateModel.Image is not null) entity.Image = updateModel.Image;
-
-        if (updateModel.Categories is not null)
-        {
-            entity.Categories.Clear();
-            foreach (var categoryModel in updateModel.Categories)
-            {
-                var categoryEntity = dbContext.ProductCategories.Find(categoryModel.Id);
-                // if category didn't exist, then add a new category to the database
-                // otherwise just add the entity itself
-                entity.Categories.Add(
-                    categoryEntity ??
-                    (categoryModel with { Id = 0 }).ToEntity());
-            }
-        }
-
-        if (updateModel.ShowOnWeb.HasValue) entity.ShowOnWeb = updateModel.ShowOnWeb.Value;
+        var entity = updateModel.ToEntity();
+        entity.Id = id;
 
         dbContext.SaleItems.Update(entity);
         dbContext.SaveChanges();

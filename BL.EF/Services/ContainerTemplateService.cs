@@ -12,7 +12,7 @@ namespace KisV4.BL.EF.Services;
 public class ContainerTemplateService(
     KisDbContext dbContext) : IContainerTemplateService, IScopedService
 {
-    public OneOf<ICollection<ContainerTemplateReadAllModel>, Dictionary<string, string[]>> ReadAll(
+    public OneOf<ICollection<ContainerTemplateListModel>, Dictionary<string, string[]>> ReadAll(
         bool? deleted,
         int? containedItemId)
     {
@@ -53,7 +53,7 @@ public class ContainerTemplateService(
         return query.Include(ct => ct.ContainedItem).ToList().ToModels();
     }
 
-    public OneOf<ContainerTemplateReadAllModel, Dictionary<string, string[]>> Create(
+    public OneOf<ContainerTemplateListModel, Dictionary<string, string[]>> Create(
         ContainerTemplateCreateModel createModel)
     {
         var errors = new Dictionary<string, string[]>();
@@ -96,9 +96,10 @@ public class ContainerTemplateService(
         return entity.ToModel();
     }
 
-    public OneOf<Success, NotFound, Dictionary<string, string[]>> Update(ContainerTemplateUpdateModel updateModel)
+    public OneOf<Success, NotFound, Dictionary<string, string[]>> Update(int id,
+        ContainerTemplateCreateModel updateModel)
     {
-        if (!dbContext.ContainerTemplates.Any(ct => ct.Id == updateModel.Id)) return new NotFound();
+        if (!dbContext.ContainerTemplates.Any(ct => ct.Id == id)) return new NotFound();
 
         var containedItem = dbContext.StoreItems.Find(updateModel.ContainedItemId);
         var errors = new Dictionary<string, string[]>();
@@ -128,11 +129,13 @@ public class ContainerTemplateService(
 
         var entity = updateModel.ToEntity();
         entity.Deleted = false;
+        entity.Id = id;
         dbContext.ContainerTemplates.Update(entity);
         dbContext.SaveChanges();
 
         return new Success();
     }
+
 
     public OneOf<Success, NotFound> Delete(int id)
     {

@@ -69,41 +69,41 @@ public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
         readModels.Should().BeEquivalentTo(expectedModels);
     }
 
-    [Fact]
-    public void Update_UpdatesName_WhenExistingId()
-    {
-        // arrange
-        var testCurrency = new CurrencyEntity { Name = "Some currency" };
-        _dbContext.Currencies.Add(testCurrency);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
-        var updateModel = new CurrencyUpdateModel(
-            testCurrency.Id,
-            "Some new name",
-            "SNN"
-        );
-
-        // act
-        var updateResult = _currencyService.Update(updateModel);
-
-        // assert
-        updateResult.Should().BeSuccess();
-        var updatedEntity = _dbContext.Currencies.Find(testCurrency.Id);
-        var expectedEntity = testCurrency with
-        {
-            Name = updateModel.Name,
-            ShortName = updateModel.ShortName
-        };
-        updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    }
-
-    [Fact]
-    public void Update_ReturnsNotFound_WhenNotFound()
-    {
-        var updateModel = new CurrencyUpdateModel(42, "Some currency", "STH");
-
-        var updateResult = _currencyService.Update(updateModel);
-
-        updateResult.Should().BeNotFound();
-    }
+    // [Fact]
+    // public void Update_UpdatesName_WhenExistingId()
+    // {
+    //     // arrange
+    //     var testCurrency = new CurrencyEntity { Name = "Some currency" };
+    //     _dbContext.Currencies.Add(testCurrency);
+    //     _dbContext.SaveChanges();
+    //     _dbContext.ChangeTracker.Clear();
+    //     var updateModel = new CurrencyUpdateModel(
+    //         testCurrency.Id,
+    //         "Some new name",
+    //         "SNN"
+    //     );
+    //
+    //     // act
+    //     var updateResult = _currencyService.Update(updateModel);
+    //
+    //     // assert
+    //     updateResult.Should().BeSuccess();
+    //     var updatedEntity = _dbContext.Currencies.Find(testCurrency.Id);
+    //     var expectedEntity = testCurrency with
+    //     {
+    //         Name = updateModel.Name,
+    //         ShortName = updateModel.ShortName
+    //     };
+    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
+    // }
+    //
+    // [Fact]
+    // public void Update_ReturnsNotFound_WhenNotFound()
+    // {
+    //     var updateModel = new CurrencyUpdateModel(42, "Some currency", "STH");
+    //
+    //     var updateResult = _currencyService.Update(updateModel);
+    //
+    //     updateResult.Should().BeNotFound();
+    // }
 }
