@@ -10,17 +10,6 @@ namespace KisV4.BL.EF.Services;
 public class DiscountService(KisDbContext dbContext)
     : IDiscountService, IScopedService
 {
-    public OneOf<DiscountReadModel, NotFound> Read(int id)
-    {
-        var entity = dbContext.Discounts.Find(id);
-        if (entity is null)
-        {
-            return new NotFound();
-        }
-
-        return entity.ToModel();
-    }
-
     public List<DiscountReadAllModel> ReadAll()
     {
         return dbContext.Discounts.ToList().ToModels();

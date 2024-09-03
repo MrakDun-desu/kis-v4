@@ -9,7 +9,7 @@ public abstract record TransactionEntity
 {
     public int Id { get; set; }
 
-    public int? ResponsibleUserId { get; set; }
+    public int ResponsibleUserId { get; set; }
 
     /// <summary>
     ///     User that initiated this transaction in the system. Can be barman for sale transactions and

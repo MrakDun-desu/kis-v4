@@ -1,4 +1,4 @@
-using KisV4.BL.Common;
+using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -15,8 +15,10 @@ public static class DiscountUsages
     private static Results<Ok<DiscountUsageReadModel>, NotFound> Read
         (IDiscountUsageService discountUsageService, int id)
     {
-        var discountUsage = discountUsageService.Read(id);
-
-        return discountUsage is null ? TypedResults.NotFound() : TypedResults.Ok(discountUsage);
+        return discountUsageService.Read(id)
+            .Match<Results<Ok<DiscountUsageReadModel>, NotFound>>(
+                result => TypedResults.Ok(result),
+                _ => TypedResults.NotFound()
+            );
     }
 }

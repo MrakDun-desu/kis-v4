@@ -10,22 +10,10 @@ public static class Discounts
     {
         var group = routeBuilder.MapGroup("discounts");
         group.MapGet(string.Empty, ReadAll);
-        group.MapGet("{id:int}", Read);
     }
 
     private static List<DiscountReadAllModel> ReadAll(IDiscountService discountService)
     {
         return discountService.ReadAll();
-    }
-
-    private static Results<Ok<DiscountReadModel>, NotFound> Read(
-        IDiscountService discountService,
-        int id)
-    {
-        return discountService.Read(id)
-            .Match<Results<Ok<DiscountReadModel>, NotFound>>(
-                result => TypedResults.Ok(result),
-                _ => TypedResults.NotFound()
-            );
     }
 }

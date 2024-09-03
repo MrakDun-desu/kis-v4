@@ -53,7 +53,6 @@ public static partial class Mapper
     public static partial CompositionEntity ToEntity(this CompositionCreateModel model);
 
     public static partial ContainerEntity ToEntity(this ContainerCreateModel model);
-    public static partial ContainerEntity ToEntity(this ContainerUpdateModel model);
 
     public static ContainerReadAllModel ToModel(this ContainerIntermediateModel model)
     {
@@ -83,7 +82,6 @@ public static partial class Mapper
     public static partial CurrencyReadAllModel ToModel(this CurrencyEntity entity);
     public static partial CurrencyEntity ToEntity(this CurrencyUpdateModel model);
 
-    public static partial DiscountReadModel ToModel(this DiscountEntity entity);
     public static partial List<DiscountReadAllModel> ToModels(this List<DiscountEntity> entities);
 
     public static partial ModifierEntity ToEntity(this ModifierCreateModel model);

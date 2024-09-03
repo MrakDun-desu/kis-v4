@@ -3,7 +3,6 @@ namespace KisV4.Common.Models;
 public record CostReadAllModel(
     int Id,
     int ProductId,
-    int CurrencyId,
     CurrencyReadAllModel Currency,
     DateTimeOffset ValidSince,
     decimal Amount,
