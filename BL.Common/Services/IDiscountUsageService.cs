@@ -15,6 +15,6 @@ public interface IDiscountUsageService
         int discountId,
         int saleTransactionId
     );
-    
+
     public OneOf<DiscountUsageReadModel, NotFound> Read(int id);
 }

@@ -7,6 +7,7 @@ public record DiscountEntity
 {
     public int Id { get; init; }
     public string Name { get; set; } = string.Empty;
+    public bool Deleted { get; set; }
 
     /// <summary>
     ///     Each single time this discount was used.

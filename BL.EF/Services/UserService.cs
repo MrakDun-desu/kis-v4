@@ -11,13 +11,10 @@ public class UserService(KisDbContext dbContext) : IScopedService, IUserService
     public int CreateOrGetId(string userName)
     {
         var user = dbContext.UserAccounts.SingleOrDefault(ua => ua.UserName == userName);
-        if (user is not null)
-        {
-            return user.Id;
-        }
+        if (user is not null) return user.Id;
         user = new UserAccountEntity
         {
-            UserName = userName,
+            UserName = userName
         };
         dbContext.UserAccounts.Add(user);
         dbContext.SaveChanges();

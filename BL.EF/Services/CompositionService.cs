@@ -13,25 +13,18 @@ public class CompositionService(KisDbContext dbContext) : ICompositionService, I
     {
         var errors = new Dictionary<string, string[]>();
         if (!dbContext.SaleItems.Any(si => si.Id == createModel.SaleItemId))
-        {
             errors.AddItemOrCreate(
                 nameof(createModel.SaleItemId),
                 $"Sale item with id {createModel.SaleItemId} doesn't exist"
             );
-        }
 
         if (!dbContext.StoreItems.Any(si => si.Id == createModel.StoreItemId))
-        {
             errors.AddItemOrCreate(
                 nameof(createModel.StoreItemId),
                 $"Store item with id {createModel.StoreItemId} doesn't exist"
             );
-        }
 
-        if (errors.Count != 0)
-        {
-            return errors;
-        }
+        if (errors.Count != 0) return errors;
 
         var composition =
             dbContext.Compositions.Find(createModel.SaleItemId, createModel.StoreItemId);

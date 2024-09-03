@@ -49,7 +49,8 @@ public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
         return new Success();
     }
 
-    public OneOf<CashBoxReadModel, NotFound> Read(int id, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
+    public OneOf<CashBoxReadModel, NotFound> Read(int id, DateTimeOffset? startDate = null,
+        DateTimeOffset? endDate = null)
     {
         // needs to do AsNoTracking because otherwise currency changes will get included by lazy loading
         var cashBox = dbContext.CashBoxes.AsNoTracking()

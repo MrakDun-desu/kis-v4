@@ -27,10 +27,7 @@ public class CategoryService(KisDbContext dbContext) : ICategoryService, IScoped
 
     public OneOf<Success, NotFound> Update(CategoryUpdateModel updateModel)
     {
-        if (!dbContext.ProductCategories.Any(pc => pc.Id == updateModel.Id))
-        {
-            return new NotFound();
-        }
+        if (!dbContext.ProductCategories.Any(pc => pc.Id == updateModel.Id)) return new NotFound();
 
         var entity = updateModel.ToEntity();
 
@@ -43,10 +40,7 @@ public class CategoryService(KisDbContext dbContext) : ICategoryService, IScoped
     public OneOf<Success, NotFound> Delete(int id)
     {
         var entity = dbContext.ProductCategories.Find(id);
-        if (entity is null)
-        {
-            return new NotFound();
-        }
+        if (entity is null) return new NotFound();
 
         dbContext.ProductCategories.Remove(entity);
         dbContext.SaveChanges();

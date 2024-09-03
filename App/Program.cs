@@ -1,5 +1,4 @@
 using System.Data;
-using KisV4.App;
 using KisV4.App.Configuration;
 using KisV4.App.Endpoints;
 using KisV4.BL.EF;

@@ -17,10 +17,7 @@ public class ContainerTemplateService(
         int? containedItemId)
     {
         var query = dbContext.ContainerTemplates.AsQueryable();
-        if (deleted.HasValue)
-        {
-            query = query.Where(c => c.Deleted == deleted.Value);
-        }
+        if (deleted.HasValue) query = query.Where(c => c.Deleted == deleted.Value);
 
         if (containedItemId.HasValue)
         {
@@ -36,20 +33,16 @@ public class ContainerTemplateService(
             }
 
             if (containedItem.Deleted)
-            {
                 errors.AddItemOrCreate(
                     nameof(containedItemId),
                     "Store item with id {containedItemId} has been marked as deleted"
                 );
-            }
 
             if (!containedItem.IsContainerItem)
-            {
                 errors.AddItemOrCreate(
                     nameof(containedItemId),
                     $"Store item with id {containedItemId} is not a container item"
                 );
-            }
 
             if (errors.Count != 0)
                 return errors;
@@ -66,43 +59,32 @@ public class ContainerTemplateService(
         var errors = new Dictionary<string, string[]>();
 
         if (createModel.Amount <= 0)
-        {
             errors.AddItemOrCreate(
                 nameof(createModel.Amount),
                 $"Amount of a container template needs to be more than 0. Received value: {createModel.Amount}"
             );
-        }
 
         var containedItem = dbContext.StoreItems.Find(createModel.ContainedItemId);
         if (containedItem is null)
-        {
             errors.AddItemOrCreate(
                 nameof(createModel.ContainedItemId),
                 $"Store item with id {createModel.ContainedItemId} doesn't exist"
             );
-        }
 
         // returning errors here because can't check for more errors with contained item being null
-        if (errors.Count > 0)
-        {
-            return errors;
-        }
+        if (errors.Count > 0) return errors;
 
         if (containedItem!.Deleted)
-        {
             errors.AddItemOrCreate(
                 nameof(createModel.ContainedItemId),
                 $"Store item with id {createModel.ContainedItemId} has been marked as deleted"
             );
-        }
 
         if (!containedItem.IsContainerItem)
-        {
             errors.AddItemOrCreate(
                 nameof(createModel.ContainedItemId),
                 $"Store item with id {createModel.ContainedItemId} is not a container item"
             );
-        }
 
         if (errors.Count != 0)
             return errors;
@@ -116,10 +98,7 @@ public class ContainerTemplateService(
 
     public OneOf<Success, NotFound, Dictionary<string, string[]>> Update(ContainerTemplateUpdateModel updateModel)
     {
-        if (!dbContext.ContainerTemplates.Any(ct => ct.Id == updateModel.Id))
-        {
-            return new NotFound();
-        }
+        if (!dbContext.ContainerTemplates.Any(ct => ct.Id == updateModel.Id)) return new NotFound();
 
         var containedItem = dbContext.StoreItems.Find(updateModel.ContainedItemId);
         var errors = new Dictionary<string, string[]>();
@@ -133,20 +112,16 @@ public class ContainerTemplateService(
         }
 
         if (containedItem.Deleted)
-        {
             errors.AddItemOrCreate(
                 nameof(updateModel.ContainedItemId),
                 $"Store item with id {updateModel.ContainedItemId} has been marked as deleted"
             );
-        }
 
         if (!containedItem.IsContainerItem)
-        {
             errors.AddItemOrCreate(
                 nameof(updateModel.ContainedItemId),
                 $"Store item with id {updateModel.ContainedItemId} is not a container item"
             );
-        }
 
         if (errors.Count != 0)
             return errors;
@@ -162,10 +137,7 @@ public class ContainerTemplateService(
     public OneOf<Success, NotFound> Delete(int id)
     {
         var entity = dbContext.ContainerTemplates.Find(id);
-        if (entity is null)
-        {
-            return new NotFound();
-        }
+        if (entity is null) return new NotFound();
 
         entity.Deleted = true;
         dbContext.ContainerTemplates.Update(entity);

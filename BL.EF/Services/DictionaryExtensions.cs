@@ -9,12 +9,8 @@ public static class DictionaryExtensions
     ) where TKey : notnull
     {
         if (dict.TryGetValue(key, out var arr))
-        {
             dict[key] = [..arr, value];
-        }
         else
-        {
             dict[key] = [value];
-        }
     }
 }

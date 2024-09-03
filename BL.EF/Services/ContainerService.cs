@@ -24,20 +24,15 @@ public class ContainerService(
         int? pipeId)
     {
         var query = dbContext.Containers.AsQueryable();
-        if (deleted.HasValue)
-        {
-            query = query.Where(c => c.Deleted == deleted.Value);
-        }
+        if (deleted.HasValue) query = query.Where(c => c.Deleted == deleted.Value);
 
         if (pipeId.HasValue)
         {
             if (!dbContext.Pipes.Any(p => p.Id == pipeId))
-            {
                 return new Dictionary<string, string[]>
                 {
                     { nameof(pipeId), [$"Pipe with id {pipeId} doesn't exist"] }
                 };
-            }
 
             query = query.Where(c => c.PipeId == pipeId.Value);
         }
@@ -63,32 +58,23 @@ public class ContainerService(
         var errors = new Dictionary<string, string[]>();
         var template = dbContext.ContainerTemplates.Find(createModel.TemplateId);
         if (template is null)
-        {
             errors.AddItemOrCreate(
                 nameof(createModel.TemplateId),
                 $"Container template with id {createModel.TemplateId} doesn't exist"
             );
-        }
         else if (template.Deleted)
-        {
             errors.AddItemOrCreate(
                 nameof(createModel.TemplateId),
                 $"Container template with id {createModel.TemplateId} is currently marked as deleted"
             );
-        }
 
         if (!dbContext.Pipes.Any(p => p.Id == createModel.PipeId))
-        {
             errors.AddItemOrCreate(
                 nameof(createModel.PipeId),
                 $"Pipe with id {createModel.PipeId} doesn't exist"
             );
-        }
 
-        if (errors.Count != 0)
-        {
-            return errors;
-        }
+        if (errors.Count != 0) return errors;
 
         var creationTime = timeProvider.GetUtcNow();
         var container = createModel.ToEntity();
@@ -116,19 +102,14 @@ public class ContainerService(
     public OneOf<Success, NotFound, Dictionary<string, string[]>> Update(ContainerUpdateModel updateModel)
     {
         var container = dbContext.Containers.Find(updateModel.Id);
-        if (container is null)
-        {
-            return new NotFound();
-        }
+        if (container is null) return new NotFound();
 
         if (updateModel.PipeId.HasValue)
-        {
             if (!dbContext.Pipes.Any(p => p.Id == updateModel.PipeId.Value))
                 return new Dictionary<string, string[]>
                 {
                     { nameof(updateModel.PipeId), [$"Pipe with id {updateModel.PipeId} doesn't exist"] }
                 };
-        }
 
         container.PipeId = updateModel.PipeId;
         // updating automatically restores entities from deletion
@@ -145,10 +126,7 @@ public class ContainerService(
             .Include(c => c.Template)
             .SingleOrDefault(c => c.Id == id);
 
-        if (container is null)
-        {
-            return new NotFound();
-        }
+        if (container is null) return new NotFound();
 
         var writeOffTime = timeProvider.GetUtcNow();
 
@@ -158,7 +136,6 @@ public class ContainerService(
             .Sum(sti => sti.ItemAmount);
 
         if (leftoverAmount > 0)
-        {
             dbContext.StoreTransactionItems.Add(
                 new StoreTransactionItemEntity
                 {
@@ -173,7 +150,6 @@ public class ContainerService(
                     }
                 }
             );
-        }
 
         container.Deleted = true;
         container.PipeId = null;

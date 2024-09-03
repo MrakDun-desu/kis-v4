@@ -44,7 +44,7 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         result.Should().HaveValue(new Dictionary<string, string[]>
         {
             { nameof(createModel.SaleItemId), [$"Sale item with id {createModel.SaleItemId} doesn't exist"] },
-            { nameof(createModel.StoreItemId), [$"Store item with id {createModel.StoreItemId} doesn't exist"] },
+            { nameof(createModel.StoreItemId), [$"Store item with id {createModel.StoreItemId} doesn't exist"] }
         });
     }
 

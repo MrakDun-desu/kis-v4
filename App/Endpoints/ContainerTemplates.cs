@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;

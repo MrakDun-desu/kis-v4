@@ -29,14 +29,14 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
         );
     }
 
-    public void Dispose()
-    {
-        _dbContext.Dispose();
-    }
-
     public async ValueTask DisposeAsync()
     {
         await _dbContext.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some container",
             Instances =
             {
-                new ContainerEntity() { Deleted = true },
+                new ContainerEntity { Deleted = true },
                 new ContainerEntity()
             }
         };
@@ -69,7 +69,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some other container",
             Instances =
             {
-                new ContainerEntity() { Pipe = testPipe },
+                new ContainerEntity { Pipe = testPipe },
                 new ContainerEntity()
             }
         };
@@ -109,7 +109,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some container",
             Instances =
             {
-                new ContainerEntity() { Deleted = true },
+                new ContainerEntity { Deleted = true },
                 new ContainerEntity()
             }
         };
@@ -120,7 +120,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some other container",
             Instances =
             {
-                new ContainerEntity() { Pipe = testPipe },
+                new ContainerEntity { Pipe = testPipe },
                 new ContainerEntity()
             }
         };
@@ -178,7 +178,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some container",
             Instances =
             {
-                new ContainerEntity() { Deleted = true },
+                new ContainerEntity { Deleted = true },
                 new ContainerEntity()
             }
         };
@@ -189,7 +189,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some other container",
             Instances =
             {
-                new ContainerEntity() { Pipe = testPipe },
+                new ContainerEntity { Pipe = testPipe },
                 new ContainerEntity()
             }
         };
@@ -241,7 +241,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                             StoreTransaction = new StoreTransactionEntity
                             {
                                 Timestamp = DateTimeOffset.UtcNow,
-                                ResponsibleUser = new UserAccountEntity { UserName = "Some user" },
+                                ResponsibleUser = new UserAccountEntity { UserName = "Some user" }
                             }
                         },
                         new StoreTransactionItemEntity
@@ -252,7 +252,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                             StoreTransaction = new StoreTransactionEntity
                             {
                                 Timestamp = DateTimeOffset.UtcNow,
-                                ResponsibleUser = new UserAccountEntity { UserName = "Some another user" },
+                                ResponsibleUser = new UserAccountEntity { UserName = "Some another user" }
                             }
                         },
                         new StoreTransactionItemEntity
@@ -262,12 +262,12 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                             StoreTransaction = new StoreTransactionEntity
                             {
                                 Timestamp = DateTimeOffset.UtcNow,
-                                ResponsibleUser = new UserAccountEntity { UserName = "Some other user" },
+                                ResponsibleUser = new UserAccountEntity { UserName = "Some other user" }
                             }
                         }
                     },
                     Pipe = testPipe
-                },
+                }
             }
         };
         _dbContext.ContainerTemplates.Add(testContainerTemplate1);
@@ -296,7 +296,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
         {
             Amount = 10,
             ContainedItem = testStoreItem,
-            Name = "Some container",
+            Name = "Some container"
         };
         var testPipe = new PipeEntity { Name = "Some pipe" };
         _dbContext.ContainerTemplates.Add(testContainerTemplate);
@@ -422,7 +422,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 }
             },
             Pipe = testPipe,
-            Name = "Some template",
+            Name = "Some template"
         };
         _dbContext.Containers.Add(testContainer1);
         _dbContext.Pipes.Add(testPipe2);
@@ -468,7 +468,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 }
             },
             Pipe = testPipe,
-            Name = "Some template",
+            Name = "Some template"
         };
         _dbContext.Containers.Add(testContainer1);
         _dbContext.SaveChanges();
@@ -527,7 +527,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                     {
                         Timestamp = DateTimeOffset.UtcNow,
                         TransactionReason = TransactionReason.AddingToStore,
-                        ResponsibleUser = new UserAccountEntity { UserName = "Some user" },
+                        ResponsibleUser = new UserAccountEntity { UserName = "Some user" }
                     }
                 },
                 new StoreTransactionItemEntity
@@ -539,7 +539,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                     {
                         Timestamp = DateTimeOffset.UtcNow,
                         TransactionReason = TransactionReason.AddingToStore,
-                        ResponsibleUser = new UserAccountEntity { UserName = "Some another user" },
+                        ResponsibleUser = new UserAccountEntity { UserName = "Some another user" }
                     }
                 },
                 new StoreTransactionItemEntity
@@ -550,7 +550,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                     {
                         Timestamp = DateTimeOffset.UtcNow,
                         TransactionReason = TransactionReason.Sale,
-                        ResponsibleUser = new UserAccountEntity { UserName = "Some other user" },
+                        ResponsibleUser = new UserAccountEntity { UserName = "Some other user" }
                     }
                 }
             },

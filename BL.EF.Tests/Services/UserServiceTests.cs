@@ -7,8 +7,8 @@ namespace BL.EF.Tests.Services;
 
 public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
-    private readonly UserService _userService;
     private readonly KisDbContext _dbContext;
+    private readonly UserService _userService;
 
     public UserServiceTests(KisDbContextFactory dbContextFactory)
     {
@@ -55,6 +55,5 @@ public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
 
         // assert
         userId.Should().Be(entity.Entity.Id);
-        
     }
 }

@@ -6,6 +6,14 @@ namespace KisV4.DAL.EF.Entities;
 public record CurrencyEntity
 {
     public int Id { get; init; }
+
+    /// <summary>
+    ///     Long name of the given currency - for example "czech crowns".
+    /// </summary>
     public string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Short name of the given currency - for example "CZK".
+    /// </summary>
     public string ShortName { get; set; } = string.Empty;
 }

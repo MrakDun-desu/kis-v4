@@ -12,17 +12,14 @@ public static class IQueryableExtensions
         Func<List<TSource>, List<TTarget>> mapping)
     {
         if (page < 1)
-        {
             return new Dictionary<string, string[]>
             {
                 { nameof(page), [$"Page is required to be higher than 0. Received value: {page}"] }
             };
-        }
 
         var totalCount = source.Count();
         var pageCount = totalCount / pageSize + 1;
         if (totalCount > 0 && page > pageCount)
-        {
             return new Dictionary<string, string[]>
             {
                 {
@@ -30,7 +27,6 @@ public static class IQueryableExtensions
                     [$"Page is required to be lower or equal to page count ({pageCount}). Received value: {page}"]
                 }
             };
-        }
 
         var skipped = (page - 1) * pageSize;
         var data = source.Skip(skipped).Take(pageSize).ToList();

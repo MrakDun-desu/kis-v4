@@ -52,7 +52,7 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
             currencyAmount,
             costDescription
         );
-        
+
         // act
         var createdModel = _costService.Create(createModel);
 

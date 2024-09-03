@@ -27,10 +27,7 @@ public class CurrencyService(KisDbContext dbContext) : ICurrencyService, IScoped
 
     public OneOf<Success, NotFound> Update(CurrencyUpdateModel updateModel)
     {
-        if (!dbContext.Currencies.Any(c => c.Id == updateModel.Id))
-        {
-            return new NotFound();
-        }
+        if (!dbContext.Currencies.Any(c => c.Id == updateModel.Id)) return new NotFound();
 
         var entity = updateModel.ToEntity();
 

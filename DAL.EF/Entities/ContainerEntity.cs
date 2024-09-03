@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.DAL.EF.Entities;

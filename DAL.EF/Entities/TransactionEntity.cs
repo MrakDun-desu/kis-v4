@@ -17,7 +17,12 @@ public abstract record TransactionEntity
     /// </summary>
     public virtual UserAccountEntity? ResponsibleUser { get; set; }
 
-    [Precision(0)] public DateTimeOffset Timestamp { get; set; }
+    /// <summary>
+    ///     When this transaction was finished. For incomplete sale transactions, this timestamp shows
+    ///     when they were first opened.
+    /// </summary>
+    [Precision(0)]
+    public DateTimeOffset Timestamp { get; set; }
 
     public bool Cancelled { get; set; }
 }

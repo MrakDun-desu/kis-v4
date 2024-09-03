@@ -134,7 +134,7 @@ public class
         // arrange
         const string oldName = "Some cash box";
         const string newName = "Some cash box 2";
-        var testEntity = new CashBoxEntity { Name = oldName, Deleted = true};
+        var testEntity = new CashBoxEntity { Name = oldName, Deleted = true };
         var insertedEntity = _dbContext.CashBoxes.Add(testEntity);
         _dbContext.SaveChanges();
         var id = insertedEntity.Entity.Id;
@@ -147,7 +147,7 @@ public class
         // assert
         updateResult.Should().BeSuccess();
         var updatedEntity = _dbContext.CashBoxes.Find(id);
-        var expectedEntity = insertedEntity.Entity with { Name = newName, Deleted = false};
+        var expectedEntity = insertedEntity.Entity with { Name = newName, Deleted = false };
         updatedEntity.Should().BeEquivalentTo(expectedEntity);
     }
 

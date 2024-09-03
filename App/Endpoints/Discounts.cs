@@ -1,6 +1,5 @@
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace KisV4.App.Endpoints;
 

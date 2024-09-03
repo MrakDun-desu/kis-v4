@@ -13,8 +13,8 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     IDisposable,
     IAsyncDisposable
 {
-    private readonly ContainerTemplateService _templateService;
     private readonly KisDbContext _dbContext;
+    private readonly ContainerTemplateService _templateService;
 
     public ContainerTemplateServiceTests(KisDbContextFactory dbContextFactory)
     {
@@ -22,14 +22,14 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         _templateService = new ContainerTemplateService(_dbContext);
     }
 
-    public void Dispose()
-    {
-        _dbContext.Dispose();
-    }
-
     public async ValueTask DisposeAsync()
     {
         await _dbContext.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         {
             Amount = 10,
             ContainedItem = testStoreItem1,
-            Name = "Some container",
+            Name = "Some container"
         };
         var testTemplate2 = new ContainerTemplateEntity
         {
@@ -92,7 +92,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         {
             Amount = 10,
             ContainedItem = testStoreItem1,
-            Name = "Some container",
+            Name = "Some container"
         };
         var testTemplate2 = new ContainerTemplateEntity
         {
@@ -135,7 +135,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         {
             Amount = 10,
             ContainedItem = testStoreItem1,
-            Name = "Some container",
+            Name = "Some container"
         };
         var testTemplate2 = new ContainerTemplateEntity
         {
@@ -207,7 +207,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
             Name = createModel.Name,
             Amount = createModel.Amount,
             ContainedItem = testStoreItem,
-            ContainedItemId = testStoreItem.Id,
+            ContainedItemId = testStoreItem.Id
         };
 
         createdEntity.Should().BeEquivalentTo(expectedEntity);
@@ -244,7 +244,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
                     $"Store item with id {createModel.ContainedItemId} has been marked as deleted",
                     $"Store item with id {createModel.ContainedItemId} is not a container item"
                 ]
-            },
+            }
         });
     }
 
@@ -255,12 +255,12 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         var testStoreItem1 = new StoreItemEntity
         {
             Name = "Some store item",
-            IsContainerItem = true,
+            IsContainerItem = true
         };
         var testStoreItem2 = new StoreItemEntity
         {
             Name = "Some store item",
-            IsContainerItem = true,
+            IsContainerItem = true
         };
         var testTemplate = new ContainerTemplateEntity
         {
@@ -322,7 +322,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         var testStoreItem1 = new StoreItemEntity
         {
             Name = "Some store item",
-            IsContainerItem = true,
+            IsContainerItem = true
         };
         var testStoreItem2 = new StoreItemEntity
         {
@@ -371,7 +371,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         var testStoreItem1 = new StoreItemEntity
         {
             Name = "Some store item",
-            IsContainerItem = true,
+            IsContainerItem = true
         };
         var testTemplate = new ContainerTemplateEntity
         {
@@ -383,10 +383,10 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         _dbContext.ContainerTemplates.Add(testTemplate);
         _dbContext.SaveChanges();
         _dbContext.ChangeTracker.Clear();
-        
+
         // act
         var deleteResult = _templateService.Delete(testTemplate.Id);
-        
+
         // assert
         deleteResult.Should().BeSuccess();
         var deletedEntity = _dbContext.ContainerTemplates.Find(testTemplate.Id);
@@ -400,7 +400,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     {
         // act
         var deleteResult = _templateService.Delete(42);
-        
+
         // assert
         deleteResult.Should().BeNotFound();
     }

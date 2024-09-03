@@ -1,4 +1,3 @@
-using KisV4.BL.Common;
 using KisV4.BL.Common.Services;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
@@ -23,10 +22,7 @@ public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageServic
     public OneOf<DiscountUsageReadModel, NotFound> Read(int id)
     {
         var output = dbContext.DiscountUsages.Find(id).ToModel();
-        if (output is not null)
-        {
-            return output;
-        }
+        if (output is not null) return output;
 
         return new NotFound();
     }

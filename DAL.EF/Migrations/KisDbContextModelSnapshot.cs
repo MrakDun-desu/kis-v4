@@ -88,7 +88,7 @@ namespace KisV4.DAL.EF.Migrations
 
                     b.HasIndex("ContainedItemId");
 
-                    b.ToTable("ContainerTemplateEntity");
+                    b.ToTable("ContainerTemplates");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.CurrencyChangeEntity", b =>
@@ -181,6 +181,9 @@ namespace KisV4.DAL.EF.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -448,7 +451,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<bool>("Cancelled")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("ResponsibleUserId")
+                    b.Property<int>("ResponsibleUserId")
                         .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("Timestamp")
@@ -557,7 +560,7 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     b.HasBaseType("KisV4.DAL.EF.Entities.StoreEntity");
 
-                    b.Property<DateTimeOffset?>("OpenSince")
+                    b.Property<DateTimeOffset>("OpenSince")
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
@@ -829,7 +832,9 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     b.HasOne("KisV4.DAL.EF.Entities.UserAccountEntity", "ResponsibleUser")
                         .WithMany("Transactions")
-                        .HasForeignKey("ResponsibleUserId");
+                        .HasForeignKey("ResponsibleUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ResponsibleUser");
                 });
