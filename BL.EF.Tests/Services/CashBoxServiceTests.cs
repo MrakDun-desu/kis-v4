@@ -136,10 +136,16 @@ public class
         // arrange
         const string oldName = "Some cash box";
         const string newName = "Some cash box 2";
-        var testEntity = new CashBoxEntity { Name = oldName, Deleted = true };
-        var insertedEntity = _dbContext.CashBoxes.Add(testEntity);
+        var stockTaking = new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow };
+        var testEntity = new CashBoxEntity
+        {
+            Name = oldName, Deleted = true,
+            StockTakings = { stockTaking }
+        };
+        stockTaking.CashBox = testEntity;
+        _dbContext.CashBoxes.Add(testEntity);
         _dbContext.SaveChanges();
-        var id = insertedEntity.Entity.Id;
+        var id = testEntity.Id;
         var updateModel = new CashBoxCreateModel(newName);
         _dbContext.ChangeTracker.Clear();
 
@@ -147,10 +153,11 @@ public class
         var updateResult = _cashBoxService.Update(id, updateModel);
 
         // assert
-        updateResult.Should().BeSuccess();
         var updatedEntity = _dbContext.CashBoxes.Find(id);
-        var expectedEntity = insertedEntity.Entity with { Name = newName, Deleted = false };
-        updatedEntity.Should().BeEquivalentTo(expectedEntity);
+        testEntity.Deleted = false;
+        testEntity.Name = newName;
+        updatedEntity.Should().BeEquivalentTo(testEntity, opts => opts.IgnoringCyclicReferences());
+        updateResult.Should().HaveValue(testEntity.ToModel());
     }
 
     [Fact]
@@ -159,10 +166,11 @@ public class
         // arrange
         const string oldName = "Some cash box";
         const string newName = "Some cash box 2";
-        var testEntity = new CashBoxEntity { Name = oldName };
-        var insertedEntity = _dbContext.CashBoxes.Add(testEntity);
+        var testEntity = new CashBoxEntity
+            { Name = oldName, StockTakings = { new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow } } };
+        _dbContext.CashBoxes.Add(testEntity);
         _dbContext.SaveChanges();
-        var id = insertedEntity.Entity.Id;
+        var id = testEntity.Id;
         var updateModel = new CashBoxCreateModel(newName);
         _dbContext.ChangeTracker.Clear();
 
@@ -170,10 +178,10 @@ public class
         var updateResult = _cashBoxService.Update(id, updateModel);
 
         // assert
-        updateResult.Should().BeSuccess();
         var updatedEntity = _dbContext.CashBoxes.Find(id);
-        var expectedEntity = insertedEntity.Entity with { Name = newName };
-        updatedEntity.Should().BeEquivalentTo(expectedEntity);
+        testEntity.Name = newName;
+        updatedEntity.Should().BeEquivalentTo(testEntity, opts => opts.IgnoringCyclicReferences());
+        updateResult.Should().HaveValue(testEntity.ToModel());
     }
 
     [Fact]
@@ -396,20 +404,11 @@ public class
         var insertedEntity = _dbContext.CashBoxes.Add(testCashBox1);
         _dbContext.SaveChanges();
 
-        var deleteResult = _cashBoxService.Delete(insertedEntity.Entity.Id);
+        _cashBoxService.Delete(insertedEntity.Entity.Id);
 
-        deleteResult.Should().BeSuccess();
         var deletedEntity = _dbContext.CashBoxes.Find(insertedEntity.Entity.Id);
         var expectedEntity = insertedEntity.Entity with { Deleted = true };
         deletedEntity.Should().BeEquivalentTo(expectedEntity);
-    }
-
-    [Fact]
-    public void Delete_ReturnsNotFound_WhenNotFound()
-    {
-        var deleteResult = _cashBoxService.Delete(42);
-
-        deleteResult.Should().BeNotFound();
     }
 
     [Fact]

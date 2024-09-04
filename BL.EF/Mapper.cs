@@ -8,6 +8,7 @@ namespace KisV4.BL.EF;
 public static partial class Mapper
 {
     public static partial CashBoxEntity ToEntity(this CashBoxCreateModel model);
+    public static partial void UpdateEntity(this CashBoxCreateModel model, CashBoxEntity source);
 
     public static CashBoxDetailModel ToModel(this CashBoxEntity entity)
     {
@@ -57,6 +58,7 @@ public static partial class Mapper
 
     public static partial CompositionEntity ToEntity(this CompositionCreateModel model);
 
+    public static partial CompositionListModel ToModel(this CompositionEntity entity);
     public static partial ContainerEntity ToEntity(this ContainerCreateModel model);
 
     public static ContainerListModel ToModel(this ContainerIntermediateModel model)

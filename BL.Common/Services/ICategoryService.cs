@@ -8,6 +8,6 @@ public interface ICategoryService
 {
     public CategoryListModel Create(CategoryCreateModel createModel);
     public List<CategoryListModel> ReadAll();
-    public OneOf<Success, NotFound> Update(int id, CategoryCreateModel updateModel);
-    public OneOf<Success, NotFound> Delete(int id);
+    public OneOf<CategoryListModel, NotFound> Update(int id, CategoryCreateModel updateModel);
+    public void Delete(int id);
 }

@@ -1,5 +1,6 @@
 using BL.EF.Tests.Extensions;
 using FluentAssertions;
+using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
@@ -36,7 +37,7 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var createModel = new CompositionCreateModel(1, 2, 0);
 
         // act
-        var result = _compositionService.Create(createModel);
+        var result = _compositionService.CreateOrUpdate(createModel);
 
         // assert
         var createdEntity = _dbContext.Compositions.Find(createModel.SaleItemId, createModel.StoreItemId);
@@ -62,19 +63,20 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 42);
 
         // act
-        var result = _compositionService.Create(createModel);
+        var result = _compositionService.CreateOrUpdate(createModel);
 
         // assert
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
-        createdEntity.Should().Be(new CompositionEntity
+        var expectedEntity = new CompositionEntity
         {
             Amount = createModel.Amount,
             SaleItemId = saleItemId,
             StoreItemId = storeItemId,
             SaleItem = insertedSaleItem.Entity,
             StoreItem = insertedStoreItem.Entity
-        });
-        result.Should().BeSuccess();
+        };
+        createdEntity.Should().Be(expectedEntity);
+        result.Should().HaveValue(expectedEntity.ToModel());
     }
 
     [Fact]
@@ -96,7 +98,7 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 0);
 
         // act
-        var result = _compositionService.Create(createModel);
+        var result = _compositionService.CreateOrUpdate(createModel);
 
         // assert
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
@@ -123,18 +125,19 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 52);
 
         // act
-        var result = _compositionService.Create(createModel);
+        var result = _compositionService.CreateOrUpdate(createModel);
 
         // assert
         var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
-        createdEntity.Should().Be(new CompositionEntity
+        var expectedEntity = new CompositionEntity
         {
             Amount = createModel.Amount,
             SaleItemId = saleItemId,
             StoreItemId = storeItemId,
             SaleItem = insertedSaleItem.Entity,
             StoreItem = insertedStoreItem.Entity
-        });
-        result.Should().BeSuccess();
+        };
+        createdEntity.Should().Be(expectedEntity);
+        result.Should().HaveValue(expectedEntity.ToModel());
     }
 }

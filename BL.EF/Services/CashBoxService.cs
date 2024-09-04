@@ -37,20 +37,19 @@ public class CashBoxService(
         return entity.ToModel();
     }
 
-    public OneOf<Success, NotFound> Update(int id, CashBoxCreateModel updateModel)
+    public OneOf<CashBoxDetailModel, NotFound> Update(int id, CashBoxCreateModel updateModel)
     {
-        if (!dbContext.CashBoxes.Any(cb => cb.Id == id))
+        var entity = dbContext.CashBoxes.Include(cb => cb.StockTakings).SingleOrDefault(cb => cb.Id == id);
+        if (entity is null)
             return new NotFound();
 
-        var entity = updateModel.ToEntity();
         // updating automatically restores entities from deletion
-        entity.Id = id;
+        updateModel.UpdateEntity(entity);
         entity.Deleted = false;
-
-        dbContext.CashBoxes.Update(entity);
+        
         dbContext.SaveChanges();
 
-        return new Success();
+        return Read(id).AsT0;
     }
 
     public OneOf<CashBoxDetailModel, NotFound, Dictionary<string, string[]>> Read(
@@ -70,7 +69,7 @@ public class CashBoxService(
 
         var realStartDate = startDate ?? lastTimestamp;
         var realEndDate = endDate ?? timeProvider.GetUtcNow();
-        
+
         var totalCurrencyChanges = dbContext.CurrencyChanges
             .Include(cc => cc.SaleTransaction)
             .Include(cc => cc.Currency)
@@ -96,15 +95,12 @@ public class CashBoxService(
             .ToDetailModel();
     }
 
-    public OneOf<Success, NotFound> Delete(int id)
+    public void Delete(int id)
     {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null) return new NotFound();
-
+        if (entity is null) return;
         entity.Deleted = true;
         dbContext.SaveChanges();
-
-        return new Success();
     }
 
     public OneOf<Success, NotFound> AddStockTaking(int id)

@@ -78,10 +78,10 @@ public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
         var updateResult = _categoryService.Update(testCategory1.Id, updateModel);
     
         // assert
-        updateResult.Should().BeSuccess();
         var updatedEntity = _dbContext.ProductCategories.Find(testCategory1.Id);
         var expectedEntity = testCategory1 with { Name = newName };
         updatedEntity.Should().BeEquivalentTo(expectedEntity);
+        updateResult.Should().HaveValue(expectedEntity.ToModel());
     }
     
     [Fact]
@@ -106,10 +106,9 @@ public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
         _dbContext.SaveChanges();
     
         // act
-        var deleteResult = _categoryService.Delete(insertedEntity.Entity.Id);
+        _categoryService.Delete(insertedEntity.Entity.Id);
     
         // assert
-        deleteResult.Should().BeSuccess();
         var deletedEntity = _dbContext.ProductCategories.Find(insertedEntity.Entity.Id);
         deletedEntity.Should().BeNull();
     }
@@ -135,22 +134,11 @@ public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
         _dbContext.SaveChanges();
     
         // act
-        var deleteResult = _categoryService.Delete(insertedEntity.Entity.Id);
+        _categoryService.Delete(insertedEntity.Entity.Id);
     
         // assert
-        deleteResult.Should().BeSuccess();
         var deletedEntity = _dbContext.ProductCategories.Find(insertedEntity.Entity.Id);
         deletedEntity.Should().BeNull();
         saleItem.Categories.Should().BeEmpty();
-    }
-    
-    [Fact]
-    public void Delete_ReturnsNotFound_WhenNotFound()
-    {
-        // act
-        var deleteResult = _categoryService.Delete(42);
-    
-        // assert
-        deleteResult.Should().BeNotFound();
     }
 }

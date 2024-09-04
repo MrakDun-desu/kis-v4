@@ -8,13 +8,13 @@ public interface ICashBoxService
 {
     public List<CashBoxListModel> ReadAll(bool? deleted);
     public CashBoxDetailModel Create(CashBoxCreateModel createModel);
-    public OneOf<Success, NotFound> Update(int id, CashBoxCreateModel updateModel);
+    public OneOf<CashBoxDetailModel, NotFound> Update(int id, CashBoxCreateModel updateModel);
 
     public OneOf<CashBoxDetailModel, NotFound, Dictionary<string, string[]>> Read(
         int id,
         DateTimeOffset? startDate = null,
         DateTimeOffset? endDate = null);
 
-    public OneOf<Success, NotFound> Delete(int id);
+    public void Delete(int id);
     public OneOf<Success, NotFound> AddStockTaking(int id);
 }

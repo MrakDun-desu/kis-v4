@@ -41,14 +41,11 @@ public static class Categories
             );
     }
 
-    private static Results<NoContent, NotFound> Delete(
+    private static NoContent Delete(
         ICategoryService categoryService,
         int id)
     {
-        return categoryService.Delete(id)
-            .Match<Results<NoContent, NotFound>>(
-                _ => TypedResults.NoContent(),
-                _ => TypedResults.NotFound()
-            );
+        categoryService.Delete(id);
+        return TypedResults.NoContent();
     }
 }

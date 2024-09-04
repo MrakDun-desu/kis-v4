@@ -6,5 +6,5 @@ namespace KisV4.BL.Common.Services;
 
 public interface ICompositionService
 {
-    public OneOf<Success, Dictionary<string, string[]>> Create(CompositionCreateModel createModel);
+    public OneOf<Success, CompositionListModel, Dictionary<string, string[]>> CreateOrUpdate(CompositionCreateModel createModel);
 }

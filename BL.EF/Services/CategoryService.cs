@@ -25,7 +25,7 @@ public class CategoryService(KisDbContext dbContext) : ICategoryService, IScoped
         return dbContext.ProductCategories.ToList().ToModels();
     }
 
-    public OneOf<Success, NotFound> Update(int id, CategoryCreateModel updateModel)
+    public OneOf<CategoryListModel, NotFound> Update(int id, CategoryCreateModel updateModel)
     {
         if (!dbContext.ProductCategories.Any(pc => pc.Id == id)) 
             return new NotFound();
@@ -36,17 +36,16 @@ public class CategoryService(KisDbContext dbContext) : ICategoryService, IScoped
         dbContext.ProductCategories.Update(entity);
         dbContext.SaveChanges();
 
-        return new Success();
+        return entity.ToModel();
     }
 
-    public OneOf<Success, NotFound> Delete(int id)
+    public void Delete(int id)
     {
         var entity = dbContext.ProductCategories.Find(id);
-        if (entity is null) return new NotFound();
+        if (entity is null)
+            return;
 
         dbContext.ProductCategories.Remove(entity);
         dbContext.SaveChanges();
-
-        return new Success();
     }
 }

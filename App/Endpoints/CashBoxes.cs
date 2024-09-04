@@ -62,15 +62,12 @@ public static class CashBoxes
             );
     }
 
-    private static Results<NoContent, NotFound> Delete(
+    private static NoContent Delete(
         ICashBoxService cashBoxService,
         int id)
     {
-        return cashBoxService.Delete(id)
-            .Match<Results<NoContent, NotFound>>(
-                _ => TypedResults.NoContent(),
-                _ => TypedResults.NotFound()
-            );
+        cashBoxService.Delete(id);
+        return TypedResults.NoContent();
     }
 
     private static Results<Ok, NotFound> AddStockTaking(

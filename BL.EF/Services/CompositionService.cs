@@ -9,7 +9,7 @@ namespace KisV4.BL.EF.Services;
 
 public class CompositionService(KisDbContext dbContext) : ICompositionService, IScopedService
 {
-    public OneOf<Success, Dictionary<string, string[]>> Create(CompositionCreateModel createModel)
+    public OneOf<Success, CompositionListModel, Dictionary<string, string[]>> CreateOrUpdate(CompositionCreateModel createModel)
     {
         var errors = new Dictionary<string, string[]>();
         if (!dbContext.SaleItems.Any(si => si.Id == createModel.SaleItemId))
@@ -33,23 +33,23 @@ public class CompositionService(KisDbContext dbContext) : ICompositionService, I
         {
             if (createModel.Amount == 0) return new Success();
 
-            var entity = createModel.ToEntity();
-            dbContext.Compositions.Add(entity);
+            composition = createModel.ToEntity();
+            dbContext.Compositions.Add(composition);
         }
         else
         {
             if (createModel.Amount == 0)
             {
                 dbContext.Compositions.Remove(composition);
+                dbContext.SaveChanges();
+                return new Success();
             }
-            else
-            {
-                composition.Amount = createModel.Amount;
-                dbContext.Update(composition);
-            }
+
+            composition.Amount = createModel.Amount;
+            dbContext.Update(composition);
         }
 
         dbContext.SaveChanges();
-        return new Success();
+        return composition.ToModel();
     }
 }
