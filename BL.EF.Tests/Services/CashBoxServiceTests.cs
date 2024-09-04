@@ -6,6 +6,7 @@ using KisV4.Common;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Time.Testing;
 
 namespace BL.EF.Tests.Services;
@@ -400,15 +401,20 @@ public class
     [Fact]
     public void Delete_Deletes_WhenExistingId()
     {
-        var testCashBox1 = new CashBoxEntity { Name = "Some category" };
-        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox1);
+        var testCashBox1 = new CashBoxEntity
+            { Name = "Some category", StockTakings = { new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow } } };
+        _dbContext.CashBoxes.Add(testCashBox1);
         _dbContext.SaveChanges();
+        _dbContext.ChangeTracker.Clear();
 
-        _cashBoxService.Delete(insertedEntity.Entity.Id);
+        var deleteResult = _cashBoxService.Delete(testCashBox1.Id);
 
-        var deletedEntity = _dbContext.CashBoxes.Find(insertedEntity.Entity.Id);
-        var expectedEntity = insertedEntity.Entity with { Deleted = true };
-        deletedEntity.Should().BeEquivalentTo(expectedEntity);
+        var deletedEntity = _dbContext.CashBoxes
+            .Include(cb => cb.StockTakings)
+            .Single(cb => cb.Id == testCashBox1.Id);
+        testCashBox1.Deleted = true;
+        deletedEntity.Should().BeEquivalentTo(testCashBox1, opts => opts.IgnoringCyclicReferences());
+        deleteResult.Should().HaveValue(testCashBox1.ToModel());
     }
 
     [Fact]

@@ -39,7 +39,7 @@ public class ContainerService(
 
         var intermediateQuery = query
             .Include(c => c.StoreTransactionItems)
-            .Include(c => c.Template)
+            .Include(c => c.Template).ThenInclude(ct => ct!.ContainedItem)
             .Include(c => c.Pipe)
             .Select(c =>
                 new ContainerIntermediateModel(c,
@@ -99,7 +99,8 @@ public class ContainerService(
         return new ContainerIntermediateModel(container, template.Amount).ToModel();
     }
 
-    public OneOf<Success, NotFound, Dictionary<string, string[]>> Patch(int id, ContainerPatchModel updateModel)
+    public OneOf<ContainerListModel, NotFound, Dictionary<string, string[]>> Patch(int id,
+        ContainerPatchModel updateModel)
     {
         var container = dbContext.Containers.Find(id);
         if (container is null) return new NotFound();
@@ -117,10 +118,10 @@ public class ContainerService(
 
         dbContext.SaveChanges();
 
-        return new Success();
+        return Read(id);
     }
 
-    public OneOf<Success, NotFound> Delete(int id, string userName)
+    public OneOf<ContainerListModel, NotFound> Delete(int id, string userName)
     {
         var container = dbContext.Containers
             .Include(c => c.Template)
@@ -156,6 +157,22 @@ public class ContainerService(
         dbContext.Containers.Update(container);
         dbContext.SaveChanges();
 
-        return new Success();
+        return Read(id);
+    }
+
+    private ContainerListModel Read(int id)
+    {
+        return dbContext.Containers
+            .Where(c => c.Id == id)
+            .Include(c => c.StoreTransactionItems)
+            .Include(c => c.Template).ThenInclude(ct => ct!.ContainedItem)
+            .Include(c => c.Pipe)
+            .Select(c =>
+                new ContainerIntermediateModel(c,
+                    c.StoreTransactionItems
+                        .Where(sti => !sti.Cancelled)
+                        .Sum(sti => sti.ItemAmount)))
+            .Single()
+            .ToModel();
     }
 }

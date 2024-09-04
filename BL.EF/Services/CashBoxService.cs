@@ -46,7 +46,7 @@ public class CashBoxService(
         // updating automatically restores entities from deletion
         updateModel.UpdateEntity(entity);
         entity.Deleted = false;
-        
+
         dbContext.SaveChanges();
 
         return Read(id).AsT0;
@@ -95,12 +95,14 @@ public class CashBoxService(
             .ToDetailModel();
     }
 
-    public void Delete(int id)
+    public OneOf<CashBoxDetailModel, NotFound> Delete(int id)
     {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null) return;
+        if (entity is null) return new NotFound();
         entity.Deleted = true;
         dbContext.SaveChanges();
+
+        return Read(id).AsT0;
     }
 
     public OneOf<Success, NotFound> AddStockTaking(int id)

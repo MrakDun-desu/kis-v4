@@ -16,6 +16,6 @@ public interface IContainerService
         ContainerCreateModel createModel,
         string userName);
 
-    public OneOf<Success, NotFound, Dictionary<string, string[]>> Patch(int id, ContainerPatchModel updateModel);
-    public OneOf<Success, NotFound> Delete(int id, string userName);
+    public OneOf<ContainerListModel, NotFound, Dictionary<string, string[]>> Patch(int id, ContainerPatchModel updateModel);
+    public OneOf<ContainerListModel, NotFound> Delete(int id, string userName);
 }

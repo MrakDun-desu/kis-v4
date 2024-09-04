@@ -47,28 +47,28 @@ public static class Containers
         );
     }
 
-    private static Results<NoContent, NotFound, ValidationProblem> Update(
+    private static Results<Ok<ContainerListModel>, NotFound, ValidationProblem> Update(
         IContainerService containerService,
         ContainerPatchModel updateModel,
         int id)
     {
         return containerService.Patch(id, updateModel)
-            .Match<Results<NoContent, NotFound, ValidationProblem>>(
-                _ => TypedResults.NoContent(),
+            .Match<Results<Ok<ContainerListModel>, NotFound, ValidationProblem>>(
+                model => TypedResults.Ok(model),
                 _ => TypedResults.NotFound(),
                 errors => TypedResults.ValidationProblem(errors)
             );
     }
 
-    private static Results<NoContent, NotFound> Delete(
+    private static Results<Ok<ContainerListModel>, NotFound> Delete(
         IContainerService containerService,
         int id,
         ClaimsPrincipal claims
     )
     {
         return containerService.Delete(id, claims.Identity!.Name!)
-            .Match<Results<NoContent, NotFound>>(
-                _ => TypedResults.NoContent(),
+            .Match<Results<Ok<ContainerListModel>, NotFound>>(
+                model => TypedResults.Ok(model),
                 _ => TypedResults.NotFound()
             );
     }

@@ -15,6 +15,6 @@ public interface ICashBoxService
         DateTimeOffset? startDate = null,
         DateTimeOffset? endDate = null);
 
-    public void Delete(int id);
+    public OneOf<CashBoxDetailModel, NotFound> Delete(int id);
     public OneOf<Success, NotFound> AddStockTaking(int id);
 }
