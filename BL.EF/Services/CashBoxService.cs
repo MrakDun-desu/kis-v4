@@ -10,7 +10,10 @@ using OneOf.Types;
 namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
-public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
+public class CashBoxService(
+    KisDbContext dbContext,
+    ICurrencyChangeService currencyChangeService,
+    TimeProvider timeProvider)
     : ICashBoxService, IScopedService
 {
     public List<CashBoxListModel> ReadAll(bool? deleted)
@@ -27,11 +30,11 @@ public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
         {
             Timestamp = timeProvider.GetUtcNow()
         });
-        var insertedEntity = dbContext.CashBoxes.Add(entity);
+        dbContext.CashBoxes.Add(entity);
 
         dbContext.SaveChanges();
 
-        return insertedEntity.Entity.ToModel();
+        return entity.ToModel();
     }
 
     public OneOf<Success, NotFound> Update(int id, CashBoxCreateModel updateModel)
@@ -50,36 +53,47 @@ public class CashBoxService(KisDbContext dbContext, TimeProvider timeProvider)
         return new Success();
     }
 
-    public OneOf<CashBoxDetailModel, NotFound> Read(int id, DateTimeOffset? startDate = null,
+    public OneOf<CashBoxDetailModel, NotFound, Dictionary<string, string[]>> Read(
+        int id,
+        DateTimeOffset? startDate = null,
         DateTimeOffset? endDate = null)
     {
         // needs to do AsNoTracking because otherwise currency changes will get included by lazy loading
         var cashBox = dbContext.CashBoxes.AsNoTracking()
             .Include(cb => cb.StockTakings)
             .SingleOrDefault(cb => cb.Id == id);
-        if (cashBox is null) return new NotFound();
+
+        if (cashBox is null)
+            return new NotFound();
 
         var lastTimestamp = cashBox.StockTakings.Last().Timestamp;
 
-        // need to use explicit querying here because query is too complex to utilize lazy loading
         var realStartDate = startDate ?? lastTimestamp;
         var realEndDate = endDate ?? timeProvider.GetUtcNow();
-        var currencyChanges = dbContext.CurrencyChanges
+        
+        var totalCurrencyChanges = dbContext.CurrencyChanges
             .Include(cc => cc.SaleTransaction)
             .Include(cc => cc.Currency)
             .Where(cc => cc.AccountId == id)
-            .Where(cc => cc.SaleTransaction!.Timestamp > realStartDate && cc.SaleTransaction.Timestamp < realEndDate);
-
-        var totalCurrencyChanges = currencyChanges
-            .GroupBy(cc => cc.Currency)
-            .Select(s =>
+            .Where(cc => !cc.Cancelled)
+            .Where(cc => cc.SaleTransaction!.Timestamp > realStartDate && cc.SaleTransaction.Timestamp < realEndDate)
+            .GroupBy(cc => cc.Currency).Select(s =>
                 new TotalCurrencyChangeListModel(
                     s.Key!.ToModel(),
                     s.Sum(cc => cc.Amount))
             );
 
-        return new CashBoxIntermediateModel(cashBox, currencyChanges.ToList(),
-            totalCurrencyChanges.ToList()).ToReadModel();
+        var currencyChangesPage =
+            currencyChangeService.ReadAll(null, null, id, false, realStartDate, realEndDate);
+
+        if (currencyChangesPage.IsT1)
+            return currencyChangesPage.AsT1;
+
+        return new CashBoxIntermediateModel(
+                cashBox,
+                currencyChangesPage.AsT0,
+                totalCurrencyChanges.ToList())
+            .ToDetailModel();
     }
 
     public OneOf<Success, NotFound> Delete(int id)

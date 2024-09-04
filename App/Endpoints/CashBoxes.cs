@@ -48,16 +48,17 @@ public static class CashBoxes
             );
     }
 
-    private static Results<Ok<CashBoxDetailModel>, NotFound> Read(
+    private static Results<Ok<CashBoxDetailModel>, NotFound, ValidationProblem> Read(
         ICashBoxService cashBoxService,
         int id,
         [FromQuery] DateTimeOffset? startDate,
         [FromQuery] DateTimeOffset? endDate)
     {
         return cashBoxService.Read(id, startDate, endDate)
-            .Match<Results<Ok<CashBoxDetailModel>, NotFound>>(
+            .Match<Results<Ok<CashBoxDetailModel>, NotFound, ValidationProblem>>(
                 readModel => TypedResults.Ok(readModel),
-                _ => TypedResults.NotFound()
+                _ => TypedResults.NotFound(),
+                errors => TypedResults.ValidationProblem(errors)
             );
     }
 

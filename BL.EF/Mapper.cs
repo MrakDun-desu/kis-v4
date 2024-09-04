@@ -9,24 +9,30 @@ public static partial class Mapper
 {
     public static partial CashBoxEntity ToEntity(this CashBoxCreateModel model);
 
-    public static partial CashBoxDetailModel ToModel(this CashBoxEntity entity);
-
-    public static CashBoxDetailModel ToReadModel(this CashBoxIntermediateModel model)
+    public static CashBoxDetailModel ToModel(this CashBoxEntity entity)
     {
-        throw new NotImplementedException();
-        // return new CashBoxDetailModel(
-        //     model.Entity.Id,
-        //     model.Entity.Name,
-        //     model.Entity.Deleted,
-        //     model.CurrencyChanges.ToModels(),
-        //     model.TotalCurrencyChanges,
-        //     model.Entity.StockTakings.ToList().ToModels()
-        // );
+        return new CashBoxIntermediateModel(
+                entity,
+                Page<CurrencyChangeListModel>.Empty,
+                [])
+            .ToDetailModel();
+    }
+
+    public static CashBoxDetailModel ToDetailModel(this CashBoxIntermediateModel model)
+    {
+        return new CashBoxDetailModel(
+            model.Entity.Id,
+            model.Entity.Name,
+            model.Entity.Deleted,
+            model.CurrencyChanges,
+            model.TotalCurrencyChanges,
+            model.Entity.StockTakings.ToList().ToModels()
+        );
     }
 
     public static partial CategoryListModel ToModel(this ProductCategoryEntity entity);
 
-    private static partial List<CurrencyChangeListModel> ToModels(this List<CurrencyChangeEntity> entities);
+    public static partial List<CurrencyChangeListModel> ToModels(this List<CurrencyChangeEntity> entities);
     private static partial List<StockTakingModel> ToModels(this List<StockTakingEntity> entities);
 
     public static partial List<CashBoxListModel> ToModels(this List<CashBoxEntity> entities);
@@ -93,7 +99,7 @@ public static partial class Mapper
 
 public record CashBoxIntermediateModel(
     CashBoxEntity Entity,
-    List<CurrencyChangeEntity> CurrencyChanges,
+    Page<CurrencyChangeListModel> CurrencyChanges,
     List<TotalCurrencyChangeListModel> TotalCurrencyChanges
 );
 

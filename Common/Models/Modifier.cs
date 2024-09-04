@@ -14,8 +14,11 @@ public record ModifierListModel(
     bool ShowOnWeb,
     int ModificationTargetId,
     bool Deleted,
-    IEnumerable<CostListModel> CurrentCosts
-);
+    IEnumerable<CostListModel>? CurrentCosts = null
+)
+{
+    public IEnumerable<CostListModel> CurrentCosts = new List<CostListModel>();
+}
 
 public record ModifierDetailModel(
     int Id,

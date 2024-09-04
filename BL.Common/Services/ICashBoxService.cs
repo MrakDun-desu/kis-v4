@@ -10,7 +10,7 @@ public interface ICashBoxService
     public CashBoxDetailModel Create(CashBoxCreateModel createModel);
     public OneOf<Success, NotFound> Update(int id, CashBoxCreateModel updateModel);
 
-    public OneOf<CashBoxDetailModel, NotFound> Read(
+    public OneOf<CashBoxDetailModel, NotFound, Dictionary<string, string[]>> Read(
         int id,
         DateTimeOffset? startDate = null,
         DateTimeOffset? endDate = null);
