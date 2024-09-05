@@ -7,6 +7,6 @@ namespace KisV4.BL.Common.Services;
 public interface ICurrencyService
 {
     public CurrencyListModel Create(CurrencyCreateModel createModel);
-    public List<CurrencyListModel> ReadAll();
-    public OneOf<Success, NotFound> Update(int id, CurrencyCreateModel updateModel);
+    public IEnumerable<CurrencyListModel> ReadAll();
+    public OneOf<CurrencyListModel, NotFound> Update(int id, CurrencyCreateModel updateModel);
 }

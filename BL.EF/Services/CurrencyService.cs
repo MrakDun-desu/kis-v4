@@ -20,12 +20,12 @@ public class CurrencyService(KisDbContext dbContext) : ICurrencyService, IScoped
         return entity.ToModel();
     }
 
-    public List<CurrencyListModel> ReadAll()
+    public IEnumerable<CurrencyListModel> ReadAll()
     {
         return dbContext.Currencies.ToList().ToModels();
     }
 
-    public OneOf<Success, NotFound> Update(int id, CurrencyCreateModel updateModel)
+    public OneOf<CurrencyListModel, NotFound> Update(int id, CurrencyCreateModel updateModel)
     {
         if (!dbContext.Currencies.Any(c => c.Id == id)) 
             return new NotFound();
@@ -36,6 +36,6 @@ public class CurrencyService(KisDbContext dbContext) : ICurrencyService, IScoped
         dbContext.Currencies.Update(entity);
         dbContext.SaveChanges();
 
-        return new Success();
+        return entity.ToModel();
     }
 }

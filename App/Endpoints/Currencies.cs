@@ -21,19 +21,19 @@ public static class Currencies
         return currencyService.Create(createModel);
     }
 
-    private static List<CurrencyListModel> ReadAll(ICurrencyService currencyService)
+    private static IEnumerable<CurrencyListModel> ReadAll(ICurrencyService currencyService)
     {
         return currencyService.ReadAll();
     }
 
-    private static Results<NoContent, NotFound> Update(
+    private static Results<Ok<CurrencyListModel>, NotFound> Update(
         ICurrencyService currencyService,
         CurrencyCreateModel updateModel,
         int id)
     {
         return currencyService.Update(id, updateModel)
-            .Match<Results<NoContent, NotFound>>(
-                _ => TypedResults.NoContent(),
+            .Match<Results<Ok<CurrencyListModel>, NotFound>>(
+                model => TypedResults.Ok(model),
                 _ => TypedResults.NotFound()
             );
     }
