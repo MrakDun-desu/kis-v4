@@ -248,160 +248,213 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         });
     }
 
-    // [Fact]
-    // public void Update_Updates_WhenDataIsValid()
-    // {
-    //     // arrange
-    //     var testStoreItem1 = new StoreItemEntity
-    //     {
-    //         Name = "Some store item",
-    //         IsContainerItem = true
-    //     };
-    //     var testStoreItem2 = new StoreItemEntity
-    //     {
-    //         Name = "Some store item",
-    //         IsContainerItem = true
-    //     };
-    //     var testTemplate = new ContainerTemplateEntity
-    //     {
-    //         Name = "Some container item",
-    //         Amount = 10,
-    //         ContainedItem = testStoreItem1,
-    //         Deleted = true
-    //     };
-    //     _dbContext.ContainerTemplates.Add(testTemplate);
-    //     _dbContext.StoreItems.Add(testStoreItem2);
-    //     _dbContext.SaveChanges();
-    //     _dbContext.ChangeTracker.Clear();
-    //     var updateModel = new ContainerTemplateUpdateModel(
-    //         testTemplate.Id,
-    //         "Some container template",
-    //         testStoreItem2.Id,
-    //         15
-    //     );
-    //
-    //     // act
-    //     var updateResult = _templateService.Update(updateModel);
-    //
-    //     // assert
-    //     updateResult.Should().BeSuccess();
-    //     var updatedEntity = _dbContext.ContainerTemplates.Find(testTemplate.Id);
-    //     var expectedEntity = testTemplate with
-    //     {
-    //         Name = updateModel.Name,
-    //         Amount = updateModel.Amount,
-    //         ContainedItem = testStoreItem2,
-    //         ContainedItemId = testStoreItem2.Id,
-    //         Deleted = false
-    //     };
-    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    // }
-    //
-    // [Fact]
-    // public void Update_ReturnsNotFound_WhenTemplateIsNotFound()
-    // {
-    //     // arrange
-    //     var updateModel = new ContainerTemplateUpdateModel(
-    //         42,
-    //         "Some container template",
-    //         42,
-    //         15
-    //     );
-    //
-    //     // act
-    //     var updateResult = _templateService.Update(updateModel);
-    //
-    //     // assert
-    //     updateResult.Should().BeNotFound();
-    // }
-    //
-    // [Fact]
-    // public void Update_ReturnsErrors_WhenStoreItemIsInvalid()
-    // {
-    //     // arrange
-    //     var testStoreItem1 = new StoreItemEntity
-    //     {
-    //         Name = "Some store item",
-    //         IsContainerItem = true
-    //     };
-    //     var testStoreItem2 = new StoreItemEntity
-    //     {
-    //         Name = "Some store item",
-    //         IsContainerItem = false,
-    //         Deleted = true
-    //     };
-    //     var testTemplate = new ContainerTemplateEntity
-    //     {
-    //         Name = "Some container item",
-    //         Amount = 10,
-    //         ContainedItem = testStoreItem1,
-    //         Deleted = true
-    //     };
-    //     _dbContext.ContainerTemplates.Add(testTemplate);
-    //     _dbContext.StoreItems.Add(testStoreItem2);
-    //     _dbContext.SaveChanges();
-    //     _dbContext.ChangeTracker.Clear();
-    //     var updateModel = new ContainerTemplateUpdateModel(
-    //         testTemplate.Id,
-    //         "Some container template",
-    //         testStoreItem2.Id,
-    //         15
-    //     );
-    //
-    //     // act
-    //     var updateResult = _templateService.Update(updateModel);
-    //
-    //     // assert
-    //     updateResult.Should().HaveValue(new Dictionary<string, string[]>
-    //     {
-    //         {
-    //             nameof(updateModel.ContainedItemId),
-    //             [
-    //                 $"Store item with id {updateModel.ContainedItemId} has been marked as deleted",
-    //                 $"Store item with id {updateModel.ContainedItemId} is not a container item"
-    //             ]
-    //         }
-    //     });
-    // }
-    //
-    // [Fact]
-    // public void Delete_Deletes_WhenExistingId()
-    // {
-    //     // arrange
-    //     var testStoreItem1 = new StoreItemEntity
-    //     {
-    //         Name = "Some store item",
-    //         IsContainerItem = true
-    //     };
-    //     var testTemplate = new ContainerTemplateEntity
-    //     {
-    //         Name = "Some container item",
-    //         Amount = 10,
-    //         ContainedItem = testStoreItem1,
-    //         Deleted = false
-    //     };
-    //     _dbContext.ContainerTemplates.Add(testTemplate);
-    //     _dbContext.SaveChanges();
-    //     _dbContext.ChangeTracker.Clear();
-    //
-    //     // act
-    //     var deleteResult = _templateService.Delete(testTemplate.Id);
-    //
-    //     // assert
-    //     deleteResult.Should().BeSuccess();
-    //     var deletedEntity = _dbContext.ContainerTemplates.Find(testTemplate.Id);
-    //     var expectedEntity = testTemplate with { Deleted = true };
-    //     deletedEntity.Should().BeEquivalentTo(expectedEntity, opts =>
-    //         opts.Excluding(ct => ct.ContainedItem));
-    // }
-    //
-    // [Fact]
-    // public void Delete_ReturnsNotFound_WhenNotFound()
-    // {
-    //     // act
-    //     var deleteResult = _templateService.Delete(42);
-    //
-    //     // assert
-    //     deleteResult.Should().BeNotFound();
-    // }
+    [Fact]
+    public void Update_Updates_WhenDataIsValid()
+    {
+        // arrange
+        var testStoreItem1 = new StoreItemEntity
+        {
+            Name = "Some store item",
+            IsContainerItem = true
+        };
+        var testStoreItem2 = new StoreItemEntity
+        {
+            Name = "Some store item",
+            IsContainerItem = true
+        };
+        var testTemplate = new ContainerTemplateEntity
+        {
+            Name = "Some container item",
+            Amount = 10,
+            ContainedItem = testStoreItem1,
+            Deleted = true
+        };
+        _dbContext.ContainerTemplates.Add(testTemplate);
+        _dbContext.StoreItems.Add(testStoreItem2);
+        _dbContext.SaveChanges();
+        _dbContext.ChangeTracker.Clear();
+        var updateModel = new ContainerTemplateCreateModel(
+            "Some container template",
+            testStoreItem2.Id,
+            15
+        );
+
+        // act
+        var updateResult = _templateService.Update(testTemplate.Id, updateModel);
+
+        // assert
+        var updatedEntity = _dbContext.ContainerTemplates.Find(testTemplate.Id);
+        testTemplate.ContainedItem = testStoreItem2;
+        testTemplate.ContainedItemId = testStoreItem2.Id;
+        testTemplate.Amount = 15;
+        testTemplate.Name = updateModel.Name;
+        testTemplate.Deleted = false;
+        updatedEntity.Should().BeEquivalentTo(testTemplate);
+        updateResult.Should().HaveValue(testTemplate.ToModel());
+    }
+
+    [Fact]
+    public void Update_ReturnsNotFound_WhenTemplateIsNotFound()
+    {
+        // arrange
+        var updateModel = new ContainerTemplateCreateModel(
+            "Some container template",
+            42,
+            15
+        );
+
+        // act
+        var updateResult = _templateService.Update(42, updateModel);
+
+        // assert
+        updateResult.Should().BeNotFound();
+    }
+
+    [Fact]
+    public void Update_ReturnsErrors_WhenStoreItemIsInvalid()
+    {
+        // arrange
+        var testStoreItem1 = new StoreItemEntity
+        {
+            Name = "Some store item",
+            IsContainerItem = true
+        };
+        var testStoreItem2 = new StoreItemEntity
+        {
+            Name = "Some store item",
+            IsContainerItem = false,
+            Deleted = true
+        };
+        var testTemplate = new ContainerTemplateEntity
+        {
+            Name = "Some container item",
+            Amount = 10,
+            ContainedItem = testStoreItem1,
+            Deleted = true
+        };
+        _dbContext.ContainerTemplates.Add(testTemplate);
+        _dbContext.StoreItems.Add(testStoreItem2);
+        _dbContext.SaveChanges();
+        _dbContext.ChangeTracker.Clear();
+        var updateModel = new ContainerTemplateCreateModel(
+            "Some container template",
+            testStoreItem2.Id,
+            15
+        );
+
+        // act
+        var updateResult = _templateService.Update(testTemplate.Id, updateModel);
+
+        // assert
+        updateResult.Should().HaveValue(new Dictionary<string, string[]>
+        {
+            {
+                nameof(updateModel.ContainedItemId),
+                [
+                    $"Store item with id {updateModel.ContainedItemId} has been marked as deleted",
+                    $"Store item with id {updateModel.ContainedItemId} is not a container item"
+                ]
+            }
+        });
+    }
+
+    [Fact]
+    public void Update_ReturnsErrors_WhenUpdatingFixedFields()
+    {
+        // arrange
+        var testStoreItem1 = new StoreItemEntity
+        {
+            Name = "Some store item",
+            IsContainerItem = true
+        };
+        var testStoreItem2 = new StoreItemEntity
+        {
+            Name = "Some store item",
+            IsContainerItem = true
+        };
+        var testTemplate = new ContainerTemplateEntity
+        {
+            Name = "Some container item",
+            Amount = 10,
+            ContainedItem = testStoreItem1,
+            Deleted = true,
+            Instances =
+            {
+                new ContainerEntity
+                {
+                    Name = "Some container"
+                }
+            }
+        };
+        _dbContext.ContainerTemplates.Add(testTemplate);
+        _dbContext.StoreItems.Add(testStoreItem2);
+        _dbContext.SaveChanges();
+        _dbContext.ChangeTracker.Clear();
+        var updateModel = new ContainerTemplateCreateModel(
+            "Some container template",
+            testStoreItem2.Id,
+            15
+        );
+
+        // act
+        var updateResult = _templateService.Update(testTemplate.Id, updateModel);
+
+        // assert
+        var updatedEntity = _dbContext.ContainerTemplates.Find(testTemplate.Id);
+        updatedEntity.Should().BeEquivalentTo(testTemplate, opts =>
+            opts.Excluding(ct => ct.Instances).Excluding(ct => ct.ContainedItem)
+        );
+        updateResult.Should().HaveValue(new Dictionary<string, string[]>
+        {
+            {
+                nameof(updateModel.ContainedItemId),
+                ["Cannot update contained item of a container template that has instances"]
+            },
+            {
+                nameof(updateModel.Amount),
+                ["Cannot update amount of a container template that has instances"]
+            }
+        });
+    }
+
+    [Fact]
+    public void Delete_Deletes_WhenExistingId()
+    {
+        // arrange
+        var testStoreItem1 = new StoreItemEntity
+        {
+            Name = "Some store item",
+            IsContainerItem = true
+        };
+        var testTemplate = new ContainerTemplateEntity
+        {
+            Name = "Some container item",
+            Amount = 10,
+            ContainedItem = testStoreItem1,
+            Deleted = false
+        };
+        _dbContext.ContainerTemplates.Add(testTemplate);
+        _dbContext.SaveChanges();
+        _dbContext.ChangeTracker.Clear();
+
+        // act
+        var deleteResult = _templateService.Delete(testTemplate.Id);
+
+        // assert
+        var deletedEntity = _dbContext.ContainerTemplates.Find(testTemplate.Id);
+        testTemplate.Deleted = true;
+        deleteResult.Should().HaveValue(testTemplate.ToModel());
+        deletedEntity.Should().BeEquivalentTo(testTemplate, opts =>
+            opts.Excluding(ct => ct.ContainedItem));
+    }
+
+    [Fact]
+    public void Delete_ReturnsNotFound_WhenNotFound()
+    {
+        // act
+        var deleteResult = _templateService.Delete(42);
+
+        // assert
+        deleteResult.Should().BeNotFound();
+    }
 }

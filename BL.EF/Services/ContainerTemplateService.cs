@@ -35,7 +35,7 @@ public class ContainerTemplateService(
             if (containedItem.Deleted)
                 errors.AddItemOrCreate(
                     nameof(containedItemId),
-                    "Store item with id {containedItemId} has been marked as deleted"
+                    $"Store item with id {containedItemId} has been marked as deleted"
                 );
 
             if (!containedItem.IsContainerItem)
@@ -66,15 +66,15 @@ public class ContainerTemplateService(
 
         var containedItem = dbContext.StoreItems.Find(createModel.ContainedItemId);
         if (containedItem is null)
+        {
             errors.AddItemOrCreate(
                 nameof(createModel.ContainedItemId),
                 $"Store item with id {createModel.ContainedItemId} doesn't exist"
             );
+            return errors;
+        }
 
-        // returning errors here because can't check for more errors with contained item being null
-        if (errors.Count > 0) return errors;
-
-        if (containedItem!.Deleted)
+        if (containedItem.Deleted)
             errors.AddItemOrCreate(
                 nameof(createModel.ContainedItemId),
                 $"Store item with id {createModel.ContainedItemId} has been marked as deleted"
@@ -96,10 +96,14 @@ public class ContainerTemplateService(
         return entity.ToModel();
     }
 
-    public OneOf<Success, NotFound, Dictionary<string, string[]>> Update(int id,
+    public OneOf<ContainerTemplateListModel, NotFound, Dictionary<string, string[]>> Update(int id,
         ContainerTemplateCreateModel updateModel)
     {
-        if (!dbContext.ContainerTemplates.Any(ct => ct.Id == id)) return new NotFound();
+        var entity = dbContext.ContainerTemplates.Find(id);
+        if (entity == null)
+        {
+            return new NotFound();
+        }
 
         var containedItem = dbContext.StoreItems.Find(updateModel.ContainedItemId);
         var errors = new Dictionary<string, string[]>();
@@ -124,28 +128,56 @@ public class ContainerTemplateService(
                 $"Store item with id {updateModel.ContainedItemId} is not a container item"
             );
 
+        bool? hasInstances = null;
+        if (updateModel.ContainedItemId != entity.ContainedItemId)
+        {
+            hasInstances ??= dbContext.Containers.Any(c => c.TemplateId == id);
+            if (hasInstances.Value)
+            {
+                errors.AddItemOrCreate(
+                    nameof(updateModel.ContainedItemId),
+                    "Cannot update contained item of a container template that has instances"
+                );
+            }
+        }
+
+        if (updateModel.Amount != entity.Amount)
+        {
+            hasInstances ??= dbContext.Containers.Any(c => c.TemplateId == id);
+            if (hasInstances.Value)
+            {
+                errors.AddItemOrCreate(
+                    nameof(updateModel.Amount),
+                    "Cannot update amount of a container template that has instances"
+                );
+            }
+        }
+
         if (errors.Count != 0)
             return errors;
 
-        var entity = updateModel.ToEntity();
+        updateModel.UpdateEntity(entity);
+        // updating automatically restores entity from deletion
         entity.Deleted = false;
-        entity.Id = id;
+
         dbContext.ContainerTemplates.Update(entity);
         dbContext.SaveChanges();
 
-        return new Success();
+        return entity.ToModel();
     }
 
 
-    public OneOf<Success, NotFound> Delete(int id)
+    public OneOf<ContainerTemplateListModel, NotFound> Delete(int id)
     {
-        var entity = dbContext.ContainerTemplates.Find(id);
+        var entity = dbContext.ContainerTemplates
+            .Include(ct => ct.ContainedItem)
+            .SingleOrDefault(ct => ct.Id == id);
         if (entity is null) return new NotFound();
 
         entity.Deleted = true;
         dbContext.ContainerTemplates.Update(entity);
         dbContext.SaveChanges();
 
-        return new Success();
+        return entity.ToModel();
     }
 }

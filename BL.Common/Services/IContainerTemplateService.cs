@@ -13,6 +13,6 @@ public interface IContainerTemplateService
     public OneOf<ContainerTemplateListModel, Dictionary<string, string[]>> Create(
         ContainerTemplateCreateModel createModel);
 
-    public OneOf<Success, NotFound, Dictionary<string, string[]>> Update(int id, ContainerTemplateCreateModel updateModel);
-    public OneOf<Success, NotFound> Delete(int id);
+    public OneOf<ContainerTemplateListModel, NotFound, Dictionary<string, string[]>> Update(int id, ContainerTemplateCreateModel updateModel);
+    public OneOf<ContainerTemplateListModel, NotFound> Delete(int id);
 }
