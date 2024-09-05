@@ -1,4 +1,5 @@
 using KisV4.BL.Common.Services;
+using KisV4.Common;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
@@ -9,9 +10,43 @@ namespace KisV4.BL.EF.Services;
 
 public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageService, IScopedService
 {
-    public OneOf<List<DiscountUsageListModel>, Dictionary<string, string[]>> ReadAll(int? discountId, int? userId)
+    public OneOf<Page<DiscountUsageListModel>, Dictionary<string, string[]>> ReadAll(
+        int? page,
+        int? pageSize,
+        int? discountId,
+        int? userId)
     {
-        throw new NotImplementedException();
+        var query = dbContext.DiscountUsages.AsQueryable();
+        var errors = new Dictionary<string, string[]>();
+        if (discountId.HasValue)
+        {
+            if (!dbContext.Discounts.Any(dc => dc.Id == discountId))
+            {
+                errors.AddItemOrCreate(
+                    nameof(discountId),
+                    $"Discount with id {discountId} doesn't exist"
+                );
+            }
+
+            query = query.Where(du => du.DiscountId == discountId.Value);
+        }
+
+        if (userId.HasValue)
+        {
+            if (!dbContext.UserAccounts.Any(ua => ua.Id == userId.Value))
+            {
+                errors.AddItemOrCreate(
+                    nameof(userId),
+                    $"User with id {userId} doesn't exist"
+                );
+            }
+
+            query = query.Where(du => du.UserId == userId.Value);
+        }
+
+        return errors.Count > 0
+            ? errors
+            : query.Page(page ?? 1, pageSize ?? Constants.DefaultPageSize, Mapper.ToModels);
     }
 
     public OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(int discountId, int saleTransactionId)

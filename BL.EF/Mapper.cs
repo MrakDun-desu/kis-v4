@@ -89,6 +89,18 @@ public static partial class Mapper
 
     public static partial List<DiscountListModel> ToModels(this List<DiscountEntity> entities);
 
+    public static DiscountDetailModel ToModel(this DiscountIntermediateModel model)
+    {
+        return new DiscountDetailModel(
+            model.Entity.Id,
+            model.Entity.Name,
+            model.Entity.Deleted,
+            model.DiscountUsages
+        );
+    }
+
+    public static partial List<DiscountUsageListModel> ToModels(this List<DiscountUsageEntity> entities);
+
     public static partial ModifierEntity ToEntity(this ModifierCreateModel model);
     public static partial ModifierDetailModel? ToModel(this ModifierEntity? entity);
     public static partial List<ModifierListModel> ToModels(this List<ModifierEntity> entities);
@@ -109,4 +121,9 @@ public record CashBoxIntermediateModel(
 public record ContainerIntermediateModel(
     ContainerEntity Entity,
     decimal CurrentAmount
+);
+
+public record DiscountIntermediateModel(
+    DiscountEntity Entity,
+    Page<DiscountUsageListModel> DiscountUsages
 );

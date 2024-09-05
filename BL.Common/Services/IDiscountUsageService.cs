@@ -6,7 +6,9 @@ namespace KisV4.BL.Common.Services;
 
 public interface IDiscountUsageService
 {
-    public OneOf<List<DiscountUsageListModel>, Dictionary<string, string[]>> ReadAll(
+    public OneOf<Page<DiscountUsageListModel>, Dictionary<string, string[]>> ReadAll(
+        int? page,
+        int? pageSize,
         int? discountId,
         int? userId
     );
