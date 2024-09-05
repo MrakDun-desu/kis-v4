@@ -94,6 +94,7 @@ Containers.MapEndpoints(app);
 ContainerTemplates.MapEndpoints(app);
 Costs.MapEndpoints(app);
 Currencies.MapEndpoints(app);
+CurrencyChanges.MapEndpoints(app);
 Discounts.MapEndpoints(app);
 DiscountUsages.MapEndpoints(app);
 Images.MapEndpoints(app);

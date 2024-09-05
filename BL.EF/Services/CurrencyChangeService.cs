@@ -32,11 +32,10 @@ public class CurrencyChangeService(KisDbContext dbContext) : ICurrencyChangeServ
                 errors.AddItemOrCreate(
                     nameof(accountId),
                     $"Account with id {accountId} doesn't exist");
+                return errors;
             }
-            else
-            {
-                query = query.Where(cc => cc.AccountId == accountId.Value);
-            }
+
+            query = query.Where(cc => cc.AccountId == accountId.Value);
         }
 
         if (cancelled.HasValue)
