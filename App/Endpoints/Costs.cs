@@ -1,5 +1,6 @@
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace KisV4.App.Endpoints;
 
@@ -11,10 +12,14 @@ public static class Costs
         group.MapPost(string.Empty, Create);
     }
 
-    private static CostListModel Create(
+    private static Results<Ok<CostListModel>, ValidationProblem> Create(
         ICostService costService,
         CostCreateModel createModel)
     {
-        return costService.Create(createModel);
+        return costService.Create(createModel)
+            .Match<Results<Ok<CostListModel>, ValidationProblem>>(
+                model => TypedResults.Ok(model),
+                errors => TypedResults.ValidationProblem(errors)
+            );
     }
 }
