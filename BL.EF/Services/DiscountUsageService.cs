@@ -49,8 +49,10 @@ public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageServic
             : query.Page(page ?? 1, pageSize ?? Constants.DefaultPageSize, Mapper.ToModels);
     }
 
-    public OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(int discountId, int saleTransactionId)
+    public OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(DiscountUsageCreateModel createModel)
     {
+        // will be implemented with cs-script, executing custom scripts
+        // on the database. Not very important for start
         throw new NotImplementedException();
     }
 
