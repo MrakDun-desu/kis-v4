@@ -16,12 +16,8 @@ public record StoreItemListModel(
     bool Deleted,
     string UnitName,
     bool BarmanCanStock,
-    bool IsContainerItem,
-    IEnumerable<CostListModel>? CurrentCosts = null
-)
-{
-    public IEnumerable<CostListModel> CurrentCosts = new List<CostListModel>();
-}
+    bool IsContainerItem
+);
 
 public record StoreItemDetailModel(
     int Id,
@@ -33,8 +29,10 @@ public record StoreItemDetailModel(
     bool IsContainerItem,
     IEnumerable<CategoryListModel> Categories,
     IEnumerable<CostListModel> Costs,
-    IEnumerable<StoreAmountListModel>? StoreAmounts = null
+    IEnumerable<CostListModel>? CurrentCosts = null,
+    IEnumerable<StoreAmountStoreItemListModel>? StoreAmounts = null
 )
 {
-    public IEnumerable<StoreAmountListModel> StoreAmounts = new List<StoreAmountListModel>();
+    public IEnumerable<CostListModel> CurrentCosts = new List<CostListModel>();
+    public IEnumerable<StoreAmountStoreItemListModel> StoreAmounts = new List<StoreAmountStoreItemListModel>();
 }

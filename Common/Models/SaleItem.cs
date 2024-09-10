@@ -29,8 +29,8 @@ public record SaleItemDetailModel(
     IEnumerable<CostListModel> Costs,
     IEnumerable<CompositionListModel> Composition,
     IEnumerable<ModifierListModel> AvailableModifiers,
-    IEnumerable<StoreAmountListModel>? StoreAmounts = null
+    IEnumerable<StoreAmountSaleItemListModel>? StoreAmounts = null
 )
 {
-    public IEnumerable<StoreAmountListModel> StoreAmounts = new List<StoreAmountListModel>();
+    public IEnumerable<StoreAmountSaleItemListModel> StoreAmounts = new List<StoreAmountSaleItemListModel>();
 }

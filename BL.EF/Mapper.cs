@@ -55,6 +55,7 @@ public static partial class Mapper
 
     public static partial StoreEntity ToEntity(this StoreCreateModel model);
     public static partial List<StoreListModel> ToModels(this List<StoreEntity> entities);
+    public static partial StoreListModel ToListModel(this StoreEntity entity);
 
     public static partial CompositionEntity ToEntity(this CompositionCreateModel model);
 
@@ -84,6 +85,7 @@ public static partial class Mapper
     public static partial void UpdateEntity(this ContainerTemplateCreateModel model, ContainerTemplateEntity entity);
     public static partial CurrencyCostEntity ToEntity(this CostCreateModel createModel);
     public static partial CostListModel ToModel(this CurrencyCostEntity entity);
+    public static partial List<CostListModel> ToModels(this List<CurrencyCostEntity> entities);
 
     public static partial CurrencyListModel ToModel(this CurrencyEntity entity);
 
@@ -105,8 +107,28 @@ public static partial class Mapper
     public static partial ModifierDetailModel? ToModel(this ModifierEntity? entity);
     public static partial List<ModifierListModel> ToModels(this List<ModifierEntity> entities);
 
+    [MapperIgnoreSource(nameof(StoreItemCreateModel.CategoryIds))]
     public static partial StoreItemEntity ToEntity(this StoreItemCreateModel model);
-    public static partial StoreItemDetailModel? ToModel(this StoreItemEntity? entity);
+    [MapperIgnoreSource(nameof(StoreItemCreateModel.CategoryIds))]
+    public static partial void UpdateEntity(this StoreItemCreateModel model, StoreItemEntity entity);
+
+    public static StoreItemDetailModel ToModel(this StoreItemIntermediateModel model)
+    {
+        return new StoreItemDetailModel(
+            model.Entity.Id,
+            model.Entity.Name,
+            model.Entity.Image,
+            model.Entity.Deleted,
+            model.Entity.UnitName,
+            model.Entity.BarmanCanStock,
+            model.Entity.IsContainerItem,
+            model.Entity.Categories.ToList().ToModels(),
+            model.Entity.Costs.ToList().ToModels(),
+            model.CurrentCosts,
+            model.StoreAmounts
+        );
+    }
+
     public static partial List<StoreItemListModel> ToModels(this List<StoreItemEntity> entities);
 
     public static partial DiscountUsageDetailModel? ToModel(this DiscountUsageEntity? entity);
@@ -126,4 +148,10 @@ public record ContainerIntermediateModel(
 public record DiscountIntermediateModel(
     DiscountEntity Entity,
     Page<DiscountUsageListModel> DiscountUsages
+);
+
+public record StoreItemIntermediateModel(
+    StoreItemEntity Entity,
+    List<CostListModel> CurrentCosts,
+    List<StoreAmountStoreItemListModel> StoreAmounts
 );
