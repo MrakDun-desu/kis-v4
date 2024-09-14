@@ -12,12 +12,8 @@ public record SaleItemListModel(
     string Name,
     string Image,
     bool Deleted,
-    bool ShowOnWeb,
-    IEnumerable<CostListModel>? CurrentCosts = null
-)
-{
-    public IEnumerable<CostListModel> CurrentCosts = new List<CostListModel>();
-}
+    bool ShowOnWeb
+);
 
 public record SaleItemDetailModel(
     int Id,
@@ -26,11 +22,15 @@ public record SaleItemDetailModel(
     bool Deleted,
     bool ShowOnWeb,
     IEnumerable<CategoryListModel> Categories,
-    IEnumerable<CostListModel> Costs,
     IEnumerable<CompositionListModel> Composition,
     IEnumerable<ModifierListModel> AvailableModifiers,
+    IEnumerable<CostListModel> Costs,
+    IEnumerable<CostListModel>? CurrentCosts = null,
     IEnumerable<StoreAmountSaleItemListModel>? StoreAmounts = null
 )
 {
-    public IEnumerable<StoreAmountSaleItemListModel> StoreAmounts = new List<StoreAmountSaleItemListModel>();
+    public IEnumerable<CostListModel> CurrentCosts = 
+        CurrentCosts ?? new List<CostListModel>();
+    public IEnumerable<StoreAmountSaleItemListModel> StoreAmounts = 
+        StoreAmounts ?? new List<StoreAmountSaleItemListModel>();
 }

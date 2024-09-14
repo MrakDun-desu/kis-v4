@@ -50,7 +50,24 @@ public static partial class Mapper
     public static partial List<PipeListModel> ToModels(this List<PipeEntity> entities);
 
     public static partial SaleItemEntity ToEntity(this SaleItemCreateModel model);
-    public static partial SaleItemDetailModel? ToModel(this SaleItemEntity? entity);
+    public static partial void UpdateEntity(this SaleItemCreateModel model, SaleItemEntity entity);
+
+    public static SaleItemDetailModel ToModel(this SaleItemIntermediateModel model)
+    {
+        return new SaleItemDetailModel(
+            model.Entity.Id,
+            model.Entity.Name,
+            model.Entity.Image,
+            model.Entity.Deleted,
+            model.Entity.ShowOnWeb,
+            model.Entity.Categories.ToList().ToModels(),
+            model.Entity.Composition.ToList().ToModels(),
+            model.Entity.AvailableModifiers.ToList().ToModels(),
+            model.Entity.Costs.ToList().ToModels(),
+            model.CurrentCosts,
+            model.StoreAmounts
+        );
+    }
     public static partial List<SaleItemListModel> ToModels(this List<SaleItemEntity> entities);
 
     public static partial StoreEntity ToEntity(this StoreCreateModel model);
@@ -60,6 +77,7 @@ public static partial class Mapper
     public static partial CompositionEntity ToEntity(this CompositionCreateModel model);
 
     public static partial CompositionListModel ToModel(this CompositionEntity entity);
+    public static partial List<CompositionListModel> ToModels(this List<CompositionEntity> entities);
     public static partial ContainerEntity ToEntity(this ContainerCreateModel model);
 
     public static ContainerListModel ToModel(this ContainerIntermediateModel model)
@@ -154,4 +172,10 @@ public record StoreItemIntermediateModel(
     StoreItemEntity Entity,
     List<CostListModel> CurrentCosts,
     List<StoreAmountStoreItemListModel> StoreAmounts
+);
+
+public record SaleItemIntermediateModel(
+    SaleItemEntity Entity,
+    List<CostListModel> CurrentCosts,
+    List<StoreAmountSaleItemListModel> StoreAmounts
 );

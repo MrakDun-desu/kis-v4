@@ -109,6 +109,7 @@ public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, ID
         };
         _dbContext.CurrencyChanges.Add(testCurrencyChange1);
         _dbContext.CurrencyChanges.Add(testCurrencyChange2);
+        _dbContext.SaveChanges();
 
         // act
         var readResult = _currencyChangeService.ReadAll(null, null, testAccount1.Id, null, null, null);

@@ -17,7 +17,8 @@ public record ModifierListModel(
     IEnumerable<CostListModel>? CurrentCosts = null
 )
 {
-    public IEnumerable<CostListModel> CurrentCosts = new List<CostListModel>();
+    public IEnumerable<CostListModel> CurrentCosts = 
+        CurrentCosts ?? new List<CostListModel>();
 }
 
 public record ModifierDetailModel(

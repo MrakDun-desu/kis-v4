@@ -33,6 +33,8 @@ public record StoreItemDetailModel(
     IEnumerable<StoreAmountStoreItemListModel>? StoreAmounts = null
 )
 {
-    public IEnumerable<CostListModel> CurrentCosts = new List<CostListModel>();
-    public IEnumerable<StoreAmountStoreItemListModel> StoreAmounts = new List<StoreAmountStoreItemListModel>();
+    public IEnumerable<CostListModel> CurrentCosts = 
+        CurrentCosts ?? new List<CostListModel>();
+    public IEnumerable<StoreAmountStoreItemListModel> StoreAmounts = 
+        StoreAmounts ?? new List<StoreAmountStoreItemListModel>();
 }

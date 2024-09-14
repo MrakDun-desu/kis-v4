@@ -1,6 +1,9 @@
+using BL.EF.Tests.Extensions;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
+using KisV4.Common;
+using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
@@ -16,6 +19,10 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     {
         _dbContext = dbContextFactory.CreateDbContext();
         _saleItemService = new SaleItemService(_dbContext);
+        AssertionOptions.AssertEquivalencyUsing(options =>
+            options.Using<DateTimeOffset>(ctx =>
+                ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
+        );
     }
 
     public async ValueTask DisposeAsync()
@@ -29,154 +36,595 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     }
 
     [Fact]
-    public void Create_CreatesSaleItem_WhenDataIsValid()
+    public void ReadAll_ReadsAll_WhenNoFilters()
     {
-        var createModel = new SaleItemCreateModel("Some saleItem", string.Empty, [], true);
-        var createdId = _saleItemService.Create(createModel);
+        // arrange
+        var drinkCategory = new ProductCategoryEntity { Name = "Drink" };
+        var foodCategory = new ProductCategoryEntity { Name = "Food" };
+        var testUser = new UserAccountEntity { UserName = "Some user" };
+        var testStore1 = new StoreEntity { Name = "Kachna 1" };
+        var testStore2 = new StoreEntity { Name = "Kachna 2" };
+        var testSaleItem1 = new SaleItemEntity
+        {
+            Name = "Toast",
+            Categories = { foodCategory },
+            Composition =
+            {
+                new CompositionEntity
+                {
+                    Amount = 10,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Šunka",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore1,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                },
+                new CompositionEntity
+                {
+                    Amount = 1,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Chleba",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore1,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            ShowOnWeb = true
+        };
+        var testSaleItem2 = new SaleItemEntity
+        {
+            Name = "Plzen flaska 0.5",
+            Categories = { drinkCategory },
+            Composition =
+            {
+                new CompositionEntity
+                {
+                    Amount = 1,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Plzen",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore2,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                },
+            },
+            ShowOnWeb = false
+        };
 
-        var createdEntity = _dbContext.SaleItems.Find(createdId);
+        _dbContext.SaleItems.Add(testSaleItem1);
+        _dbContext.SaleItems.Add(testSaleItem2);
+        _dbContext.SaveChanges();
+
+        // act
+        var readResult = _saleItemService.ReadAll(null, null, null, null, null);
+
+        // assert
+        readResult.IsT0.Should().BeTrue();
+        var resultAsT0 = readResult.AsT0;
+        resultAsT0.Should().BeEquivalentTo(
+            new Page<SaleItemListModel>(
+                new List<SaleItemListModel>
+                {
+                    new(
+                        testSaleItem1.Id,
+                        testSaleItem1.Name,
+                        testSaleItem1.Image,
+                        testSaleItem1.Deleted,
+                        testSaleItem1.ShowOnWeb
+                    ),
+                    new(
+                        testSaleItem2.Id,
+                        testSaleItem2.Name,
+                        testSaleItem2.Image,
+                        testSaleItem2.Deleted,
+                        testSaleItem2.ShowOnWeb
+                    ),
+                }, new PageMeta(
+                    1, Constants.DefaultPageSize, 1, 2, 2, 1)));
+    }
+
+    [Fact]
+    public void ReadAll_ReadsAll_WhenFilteringByCategory()
+    {
+        // arrange
+        var drinkCategory = new ProductCategoryEntity { Name = "Drink" };
+        var foodCategory = new ProductCategoryEntity { Name = "Food" };
+        var testUser = new UserAccountEntity { UserName = "Some user" };
+        var testStore1 = new StoreEntity { Name = "Kachna 1" };
+        var testStore2 = new StoreEntity { Name = "Kachna 2" };
+        var testSaleItem1 = new SaleItemEntity
+        {
+            Name = "Toast",
+            Categories = { foodCategory },
+            Composition =
+            {
+                new CompositionEntity
+                {
+                    Amount = 10,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Šunka",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore1,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                },
+                new CompositionEntity
+                {
+                    Amount = 1,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Chleba",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore1,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            ShowOnWeb = true
+        };
+        var testSaleItem2 = new SaleItemEntity
+        {
+            Name = "Plzen flaska 0.5",
+            Categories = { drinkCategory },
+            Composition =
+            {
+                new CompositionEntity
+                {
+                    Amount = 1,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Plzen",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore2,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                },
+            },
+            ShowOnWeb = false
+        };
+
+        _dbContext.SaleItems.Add(testSaleItem1);
+        _dbContext.SaleItems.Add(testSaleItem2);
+        _dbContext.SaveChanges();
+
+        // act
+        var readResult = _saleItemService.ReadAll(null, null, null, foodCategory.Id, null);
+
+        // assert
+        readResult.IsT0.Should().BeTrue();
+        var resultAsT0 = readResult.AsT0;
+        resultAsT0.Should().BeEquivalentTo(
+            new Page<SaleItemListModel>(
+                new List<SaleItemListModel>
+                {
+                    new(
+                        testSaleItem1.Id,
+                        testSaleItem1.Name,
+                        testSaleItem1.Image,
+                        testSaleItem1.Deleted,
+                        testSaleItem1.ShowOnWeb
+                    ),
+                }, new PageMeta(
+                    1, Constants.DefaultPageSize, 1, 1, 1, 1)));
+    }
+
+    [Fact]
+    public void Read_ReadsCorrectly_WhenNoTransactionsInStore()
+    {
+        // arrange
+        var foodCategory = new ProductCategoryEntity { Name = "Food" };
+        var testUser = new UserAccountEntity { UserName = "Some user" };
+        var testStore1 = new StoreEntity { Name = "Kachna 1" };
+        var testStore2 = new StoreEntity { Name = "Kachna 2" };
+        var testCurrency = new CurrencyEntity { Name = "Czech crowns" };
+        var testSaleItem1 = new SaleItemEntity
+        {
+            Name = "Toast",
+            Categories = { foodCategory },
+            Costs =
+            {
+                new CurrencyCostEntity
+                {
+                    Currency = testCurrency,
+                    Amount = 30,
+                    ValidSince = DateTimeOffset.UtcNow.AddDays(-10)
+                },
+                new CurrencyCostEntity
+                {
+                    Currency = testCurrency,
+                    Amount = 50,
+                    ValidSince = DateTimeOffset.UtcNow.AddDays(-5)
+                }
+            },
+            Composition =
+            {
+                new CompositionEntity
+                {
+                    Amount = 10,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Šunka",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore1,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                },
+                new CompositionEntity
+                {
+                    Amount = 1,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Chleba",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore1,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            ShowOnWeb = true
+        };
+
+        _dbContext.SaleItems.Add(testSaleItem1);
+        _dbContext.Stores.Add(testStore2);
+        _dbContext.SaveChanges();
+
+        // act
+        var readResult = _saleItemService.Read(testSaleItem1.Id);
+
+        // assert
+        var expectedResult = new SaleItemDetailModel(
+            testSaleItem1.Id,
+            testSaleItem1.Name,
+            testSaleItem1.Image,
+            testSaleItem1.Deleted,
+            testSaleItem1.ShowOnWeb,
+            testSaleItem1.Categories.ToList().ToModels(),
+            testSaleItem1.Composition.ToList().ToModels(),
+            [],
+            testSaleItem1.Costs.ToList().ToModels(),
+            new List<CostListModel>
+            {
+                testSaleItem1.Costs.ElementAt(1).ToModel()
+            },
+            new List<StoreAmountSaleItemListModel>
+            {
+                new(
+                    testStore1.ToListModel(),
+                    testSaleItem1.Id,
+                    4
+                ),
+                new(
+                    testStore2.ToListModel(),
+                    testSaleItem1.Id,
+                    0
+                )
+            }
+        );
+        readResult.Should().HaveValue(expectedResult);
+    }
+
+    [Fact]
+    public void Read_ReadsCorrectly_WhenNoTransactionsForStoreItem()
+    {
+        // arrange
+        var foodCategory = new ProductCategoryEntity { Name = "Food" };
+        var testUser = new UserAccountEntity { UserName = "Some user" };
+        var testStore1 = new StoreEntity { Name = "Kachna 1" };
+        var testStore2 = new StoreEntity { Name = "Kachna 2" };
+        var testCurrency = new CurrencyEntity { Name = "Czech crowns" };
+        var testSaleItem1 = new SaleItemEntity
+        {
+            Name = "Toast",
+            Categories = { foodCategory },
+            Costs =
+            {
+                new CurrencyCostEntity
+                {
+                    Currency = testCurrency,
+                    Amount = 30,
+                    ValidSince = DateTimeOffset.UtcNow.AddDays(-10)
+                },
+                new CurrencyCostEntity
+                {
+                    Currency = testCurrency,
+                    Amount = 50,
+                    ValidSince = DateTimeOffset.UtcNow.AddDays(-5)
+                }
+            },
+            Composition =
+            {
+                new CompositionEntity
+                {
+                    Amount = 10,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Šunka"
+                    }
+                },
+                new CompositionEntity
+                {
+                    Amount = 1,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Chleba",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore1,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            ShowOnWeb = true
+        };
+
+        _dbContext.SaleItems.Add(testSaleItem1);
+        _dbContext.Stores.Add(testStore2);
+        _dbContext.SaveChanges();
+
+        // act
+        var readResult = _saleItemService.Read(testSaleItem1.Id);
+
+        // assert
+        var expectedResult = new SaleItemDetailModel(
+            testSaleItem1.Id,
+            testSaleItem1.Name,
+            testSaleItem1.Image,
+            testSaleItem1.Deleted,
+            testSaleItem1.ShowOnWeb,
+            testSaleItem1.Categories.ToList().ToModels(),
+            testSaleItem1.Composition.ToList().ToModels(),
+            [],
+            testSaleItem1.Costs.ToList().ToModels(),
+            new List<CostListModel>
+            {
+                testSaleItem1.Costs.ElementAt(1).ToModel()
+            },
+            new List<StoreAmountSaleItemListModel>
+            {
+                new(
+                    testStore1.ToListModel(),
+                    testSaleItem1.Id,
+                    0
+                ),
+                new(
+                    testStore2.ToListModel(),
+                    testSaleItem1.Id,
+                    0
+                )
+            }
+        );
+        readResult.Should().HaveValue(expectedResult);
+    }
+
+    [Fact]
+    public void Create_Creates_WhenDataIsValid()
+    {
+        // arrange
+        var testCategory = new ProductCategoryEntity { Name = "Food" };
+        _dbContext.ProductCategories.Add(testCategory);
+        _dbContext.SaveChanges();
+        var createModel = new SaleItemCreateModel(
+            "Some sale item",
+            string.Empty,
+            [testCategory.Id],
+            true
+        );
+
+        // act
+        var createResult = _saleItemService.Create(createModel);
+
+        // assert
+        createResult.IsT0.Should().BeTrue();
+        var createdEntity = _dbContext.SaleItems.Find(createResult.AsT0.Id);
+        createdEntity.Should().BeEquivalentTo(new SaleItemEntity
+        {
+            Id = createResult.AsT0.Id,
+            Categories = { testCategory },
+            Name = createModel.Name,
+            ShowOnWeb = true
+        });
+        createResult.Should().HaveValue(new SaleItemDetailModel(
+            createResult.AsT0.Id,
+            createModel.Name,
+            createModel.Image,
+            false,
+            createModel.ShowOnWeb,
+            [testCategory.ToModel()],
+            [],
+            [],
+            []
+        ));
+    }
+
+    [Fact]
+    public void Create_ReturnsErrors_WhenDataIsNotValid()
+    {
+        // arrange
+        var createModel = new SaleItemCreateModel(
+            "Some sale item",
+            string.Empty,
+            [42],
+            true
+        );
+
+        // act
+        var createResult = _saleItemService.Create(createModel);
+
+        // assert
+        createResult.Should().HaveValue(new Dictionary<string, string[]>
+        {
+            {
+                nameof(createModel.CategoryIds),
+                ["Some of the submitted categories do not exist"]
+            }
+        });
+    }
+
+    [Fact]
+    public void Update_Updates_WhenDataIsValid()
+    {
+        // arrange
+        var testSaleItem = new SaleItemEntity
+        {
+            Name = "Beer",
+            Image = "Some image",
+            Categories = { new ProductCategoryEntity { Name = "Drink" } },
+            ShowOnWeb = false,
+            Costs =
+            {
+                new CurrencyCostEntity
+                {
+                    Amount = 42,
+                    Currency = new CurrencyEntity { ShortName = "Czk" },
+                    ValidSince = DateTimeOffset.UtcNow
+                }
+            }
+        };
+        var testCategory = new ProductCategoryEntity { Name = "Food" };
+        _dbContext.ProductCategories.Add(testCategory);
+        _dbContext.SaleItems.Add(testSaleItem);
+        _dbContext.SaveChanges();
+        _dbContext.ChangeTracker.Clear();
+        var updateModel = new SaleItemCreateModel(
+            "Some sale item",
+            string.Empty,
+            [testCategory.Id],
+            true
+        );
+
+        // act
+        var createResult = _saleItemService.Update(testSaleItem.Id, updateModel);
+
+        // assert
+        createResult.IsT0.Should().BeTrue();
+        var createdEntity = _dbContext.SaleItems.Find(testSaleItem.Id);
         var expectedEntity = new SaleItemEntity
         {
-            Id = createdId,
-            Name = createModel.Name,
-            ShowOnWeb = createModel.ShowOnWeb
+            Id = testSaleItem.Id,
+            Categories = { testCategory },
+            Costs = { testSaleItem.Costs.ElementAt(0) },
+            Name = updateModel.Name,
+            ShowOnWeb = true
         };
-        createdEntity.Should().BeEquivalentTo(expectedEntity);
-    }
-
-    [Fact]
-    public void ReadAll_ReadsAll()
-    {
-        var testSaleItem1 = new SaleItemEntity { Name = "Some saleItem" };
-        var testSaleItem2 = new SaleItemEntity { Name = "Some saleItem 2" };
-        _dbContext.SaleItems.Add(testSaleItem1);
-        _dbContext.SaleItems.Add(testSaleItem2);
-        _dbContext.SaveChanges();
-
-        var readModels = _saleItemService.ReadAll();
-        var mappedModels = _dbContext.SaleItems.Where(si => !si.Deleted).ToList().ToModels();
-
-        readModels.Should().BeEquivalentTo(mappedModels);
-    }
-
-    [Fact]
-    public void ReadAll_DoesntRead_Deleted()
-    {
-        var testSaleItem1 = new SaleItemEntity { Name = "Some saleItem" };
-        var testSaleItem2 = new SaleItemEntity { Name = "Some saleItem 2", Deleted = true };
-        _dbContext.SaleItems.Add(testSaleItem1);
-        _dbContext.SaleItems.Add(testSaleItem2);
-        _dbContext.SaveChanges();
-
-        var readModels = _saleItemService.ReadAll();
-        var mappedModels = _dbContext.SaleItems.Where(si => !si.Deleted).ToList().ToModels();
-
-        readModels.Should().BeEquivalentTo(mappedModels);
-    }
-
-    // [Fact]
-    // public void Update_UpdatesName_WhenExistingId()
-    // {
-    //     const string oldName = "Some saleItem";
-    //     const string newName = "Some saleItem 2";
-    //     var testSaleItem1 = new SaleItemEntity { Name = oldName };
-    //     var insertedEntity = _dbContext.SaleItems.Add(testSaleItem1);
-    //     _dbContext.SaveChanges();
-    //     var updateModel = new SaleItemUpdateModel(newName, null, null, null);
-    //
-    //     var updateSuccess = _saleItemService.Update(insertedEntity.Entity.Id, updateModel);
-    //
-    //     updateSuccess.Should().BeTrue();
-    //     var updatedEntity = _dbContext.SaleItems.Find(insertedEntity.Entity.Id);
-    //     var expectedEntity = insertedEntity.Entity with { Name = newName };
-    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    // }
-    //
-    // [Fact]
-    // public void Update_UpdatesImage_WhenExistingId()
-    // {
-    //     const string oldImage = "Some saleItem";
-    //     const string newImage = "Some saleItem 2";
-    //     var testSaleItem1 = new SaleItemEntity { Name = "Test sale item", Image = oldImage };
-    //     var insertedEntity = _dbContext.SaleItems.Add(testSaleItem1);
-    //     _dbContext.SaveChanges();
-    //     var updateModel = new SaleItemUpdateModel(null, newImage, null, null);
-    //
-    //     var updateSuccess = _saleItemService.Update(insertedEntity.Entity.Id, updateModel);
-    //
-    //     updateSuccess.Should().BeTrue();
-    //     var updatedEntity = _dbContext.SaleItems.Find(insertedEntity.Entity.Id);
-    //     var expectedEntity = insertedEntity.Entity with { Image = newImage };
-    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    // }
-    //
-    // [Fact]
-    // public void Update_UpdatesCategories_WhenExistingId()
-    // {
-    //     var newCategory = _dbContext.ProductCategories.Add(new ProductCategoryEntity { Name = "test category 2" });
-    //     var saleItem = new SaleItemEntity { Name = "Test sale item" };
-    //     saleItem.Categories.Add(new ProductCategoryEntity { Name = "test category 1" });
-    //     var insertedEntity = _dbContext.SaleItems.Add(saleItem);
-    //
-    //     _dbContext.SaveChanges();
-    //     var updateModel = new SaleItemUpdateModel(null, null,
-    //         [new CategoryListModel(newCategory.Entity.Id, "Category 1")], null);
-    //
-    //     var updateSuccess = _saleItemService.Update(insertedEntity.Entity.Id, updateModel);
-    //
-    //     updateSuccess.Should().BeTrue();
-    //     var updatedEntity = _dbContext.SaleItems.Find(insertedEntity.Entity.Id);
-    //     var expectedEntity = insertedEntity.Entity with { };
-    //     expectedEntity.Categories.Clear();
-    //     expectedEntity.Categories.Add(newCategory.Entity);
-    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    // }
-    //
-    // [Fact]
-    // public void Update_UpdatesShowOnWeb_WhenExistingId()
-    // {
-    //     var testSaleItem1 = new SaleItemEntity { Name = "Test name" };
-    //     var insertedEntity = _dbContext.SaleItems.Add(testSaleItem1);
-    //     _dbContext.SaveChanges();
-    //     var updateModel = new SaleItemUpdateModel(null, null, null, true);
-    //
-    //     var updateSuccess = _saleItemService.Update(insertedEntity.Entity.Id, updateModel);
-    //
-    //     updateSuccess.Should().BeTrue();
-    //     var updatedEntity = _dbContext.SaleItems.Find(insertedEntity.Entity.Id);
-    //     var expectedEntity = insertedEntity.Entity with { ShowOnWeb = true };
-    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    // }
-    //
-    // [Fact]
-    // public void Update_ReturnsFalse_WhenNotFound()
-    // {
-    //     var updateModel = new SaleItemUpdateModel("Some saleItem", null, null, null);
-    //
-    //     var updateSuccess = _saleItemService.Update(42, updateModel);
-    //
-    //     updateSuccess.Should().BeFalse();
-    // }
-
-    [Fact]
-    public void Delete_Deletes_WhenExistingId()
-    {
-        var testSaleItem1 = new SaleItemEntity { Name = "Some saleItem" };
-        var insertedEntity = _dbContext.SaleItems.Add(testSaleItem1);
-        _dbContext.SaveChanges();
-
-        var deleteSuccess = _saleItemService.Delete(insertedEntity.Entity.Id);
-
-        deleteSuccess.Should().BeTrue();
-        var deletedEntity = _dbContext.SaleItems.Find(insertedEntity.Entity.Id);
-        deletedEntity!.Deleted.Should().BeTrue();
-    }
-
-    [Fact]
-    public void Delete_ReturnsFalse_WhenNotFound()
-    {
-        var deleteSuccess = _saleItemService.Delete(42);
-
-        deleteSuccess.Should().BeFalse();
+        testCategory.Products.Add(expectedEntity);
+        expectedEntity.Costs.ElementAt(0).Product = expectedEntity;
+        createdEntity.Should().BeEquivalentTo(expectedEntity,
+            opts => opts.IgnoringCyclicReferences());
+        createResult.AsT0.Should().BeEquivalentTo(new SaleItemDetailModel(
+            createResult.AsT0.Id,
+            updateModel.Name,
+            updateModel.Image,
+            false,
+            updateModel.ShowOnWeb,
+            [testCategory.ToModel()],
+            [],
+            [],
+            [testSaleItem.Costs.ElementAt(0).ToModel()],
+            [testSaleItem.Costs.ElementAt(0).ToModel()]
+        ), opts => opts.IgnoringCyclicReferences());
     }
 }
