@@ -1,3 +1,4 @@
+using BL.EF.Tests.Extensions;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -32,10 +33,10 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     public void Create_CreatesPipe_WhenDataIsValid()
     {
         var createModel = new PipeCreateModel("Some pipe");
-        var createdId = _pipeService.Create(createModel);
+        var createdModel = _pipeService.Create(createModel);
 
-        var createdEntity = _dbContext.Pipes.Find(createdId);
-        var expectedEntity = new PipeEntity { Id = createdId, Name = createModel.Name };
+        var createdEntity = _dbContext.Pipes.Find(createdModel.Id);
+        var expectedEntity = new PipeEntity { Id = createdModel.Id, Name = createModel.Name };
         createdEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
@@ -54,33 +55,33 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
-    // [Fact]
-    // public void Update_UpdatesName_WhenExistingId()
-    // {
-    //     const string oldName = "Some pipe";
-    //     const string newName = "Some pipe 2";
-    //     var testPipe1 = new PipeEntity { Name = oldName };
-    //     var insertedEntity = _dbContext.Pipes.Add(testPipe1);
-    //     _dbContext.SaveChanges();
-    //     var updateModel = new PipeUpdateModel(newName);
-    //
-    //     var updateSuccess = _pipeService.Update(insertedEntity.Entity.Id, updateModel);
-    //
-    //     updateSuccess.Should().BeTrue();
-    //     var updatedEntity = _dbContext.Pipes.Find(insertedEntity.Entity.Id);
-    //     var expectedEntity = insertedEntity.Entity with { Name = newName };
-    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    // }
-    //
-    // [Fact]
-    // public void Update_ReturnsFalse_WhenNotFound()
-    // {
-    //     var updateModel = new PipeUpdateModel("Some pipe");
-    //
-    //     var updateSuccess = _pipeService.Update(42, updateModel);
-    //
-    //     updateSuccess.Should().BeFalse();
-    // }
+    [Fact]
+    public void Update_UpdatesName_WhenExistingId()
+    {
+        const string oldName = "Some pipe";
+        const string newName = "Some pipe 2";
+        var testPipe1 = new PipeEntity { Name = oldName };
+        var insertedEntity = _dbContext.Pipes.Add(testPipe1);
+        _dbContext.SaveChanges();
+        var updateModel = new PipeCreateModel(newName);
+
+        var updateResult = _pipeService.Update(insertedEntity.Entity.Id, updateModel);
+
+        updateResult.Should().HaveValue(new PipeListModel(testPipe1.Id, newName));
+        var updatedEntity = _dbContext.Pipes.Find(insertedEntity.Entity.Id);
+        var expectedEntity = insertedEntity.Entity with { Name = newName };
+        updatedEntity.Should().BeEquivalentTo(expectedEntity);
+    }
+
+    [Fact]
+    public void Update_ReturnsFalse_WhenNotFound()
+    {
+        var updateModel = new PipeCreateModel("Some pipe");
+
+        var updateResult = _pipeService.Update(42, updateModel);
+
+        updateResult.Should().BeNotFound();
+    }
 
     [Fact]
     public void Delete_Deletes_WhenExistingId()
@@ -91,9 +92,35 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
 
         var deleteSuccess = _pipeService.Delete(insertedEntity.Entity.Id);
 
-        deleteSuccess.Should().BeTrue();
+        deleteSuccess.Should().BeSuccess();
         var deletedEntity = _dbContext.Pipes.Find(insertedEntity.Entity.Id);
         deletedEntity.Should().BeNull();
+    }
+
+    [Fact]
+    public void Delete_ReturnsError_WhenHasContainers()
+    {
+        var testPipe1 = new PipeEntity { Name = "Some pipe" };
+        var testContainer = new ContainerEntity
+        {
+            Name = "Some container",
+            Pipe = testPipe1,
+            Template = new ContainerTemplateEntity
+            {
+                ContainedItem = new StoreItemEntity { Name = "Some store item" },
+                Amount = 10,
+                Name = "Some container template"
+            }
+        };
+        _dbContext.Containers.Add(testContainer);
+        var insertedEntity = _dbContext.Pipes.Add(testPipe1);
+        _dbContext.SaveChanges();
+
+        var deleteResult = _pipeService.Delete(insertedEntity.Entity.Id);
+
+        deleteResult.Should().HaveValue(
+            $"Pipe with id {testPipe1.Id} cannot be deleted, currently has a " +
+                                         $"container active");
     }
 
     [Fact]
@@ -101,6 +128,6 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     {
         var deleteSuccess = _pipeService.Delete(42);
 
-        deleteSuccess.Should().BeFalse();
+        deleteSuccess.Should().BeNotFound();
     }
 }

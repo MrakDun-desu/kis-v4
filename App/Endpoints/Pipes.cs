@@ -15,12 +15,11 @@ public static class Pipes
         group.MapDelete("{id:int}", Delete);
     }
 
-    private static int Create(
+    private static PipeListModel Create(
         IPipeService cashBoxService,
         PipeCreateModel createModel)
     {
-        var createdId = cashBoxService.Create(createModel);
-        return createdId;
+        return cashBoxService.Create(createModel);
     }
 
     private static List<PipeListModel> ReadAll(IPipeService cashBoxService)
@@ -28,18 +27,27 @@ public static class Pipes
         return cashBoxService.ReadAll();
     }
 
-    private static Results<Ok, NotFound> Update(
+    private static Results<Ok<PipeListModel>, NotFound> Update(
         IPipeService cashBoxService,
         int id,
         PipeCreateModel updateModel)
     {
-        return cashBoxService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
+        return cashBoxService.Update(id, updateModel)
+            .Match<Results<Ok<PipeListModel>, NotFound>>(
+                output => TypedResults.Ok(output),
+                _ => TypedResults.NotFound()
+            );
     }
 
-    private static Results<Ok, NotFound> Delete(
+    private static Results<Ok, NotFound, BadRequest<string>> Delete(
         IPipeService cashBoxService,
         int id)
     {
-        return cashBoxService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
+        return cashBoxService.Delete(id)
+            .Match<Results<Ok, NotFound, BadRequest<string>>>(
+                _ => TypedResults.Ok(),
+                _ => TypedResults.NotFound(),
+                error => TypedResults.BadRequest(error)
+            );
     }
 }

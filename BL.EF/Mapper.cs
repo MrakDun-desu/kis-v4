@@ -46,7 +46,8 @@ public static partial class Mapper
     public static partial List<CurrencyListModel> ToModels(this List<CurrencyEntity> entities);
 
     public static partial PipeEntity ToEntity(this PipeCreateModel model);
-    public static partial PipeListModel? ToModel(this PipeEntity? entity);
+    public static partial void UpdateEntity(this PipeCreateModel model, PipeEntity entity);
+    public static partial PipeListModel ToModel(this PipeEntity entity);
     public static partial List<PipeListModel> ToModels(this List<PipeEntity> entities);
 
     public static partial SaleItemEntity ToEntity(this SaleItemCreateModel model);
