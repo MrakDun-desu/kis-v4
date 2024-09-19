@@ -1,4 +1,5 @@
 using BL.EF.Tests.Extensions;
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -21,8 +22,8 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
 
     public ContainerServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _containerService = new ContainerService(_dbContext, _timeProvider, new UserService(_dbContext));
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _containerService = new ContainerService(dbContextFactory.CreateDbContext(), _timeProvider, new UserService(_dbContext));
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()

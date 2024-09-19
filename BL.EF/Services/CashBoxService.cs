@@ -65,7 +65,9 @@ public class CashBoxService(
         if (cashBox is null)
             return new NotFound();
 
-        var lastTimestamp = cashBox.StockTakings.Last().Timestamp;
+        var lastTimestamp = cashBox.StockTakings
+            .OrderBy(st => st.Timestamp)
+            .First().Timestamp;
 
         var realStartDate = startDate ?? lastTimestamp;
         var realEndDate = endDate ?? timeProvider.GetUtcNow();

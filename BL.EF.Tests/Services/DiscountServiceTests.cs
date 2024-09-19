@@ -1,4 +1,5 @@
 using BL.EF.Tests.Extensions;
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -16,9 +17,9 @@ public class
 
     public DiscountServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _discountUsageService = new DiscountUsageService(_dbContext);
-        _discountService = new DiscountService(_dbContext, _discountUsageService);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _discountUsageService = new DiscountUsageService(dbContextFactory.CreateDbContext());
+        _discountService = new DiscountService(dbContextFactory.CreateDbContext(), _discountUsageService);
     }
 
     public async ValueTask DisposeAsync()

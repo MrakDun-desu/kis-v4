@@ -1,4 +1,5 @@
 using BL.EF.Tests.Extensions;
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
@@ -14,8 +15,8 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
 
     public CostServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _costService = new CostService(_dbContext);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _costService = new CostService(dbContextFactory.CreateDbContext());
     }
 
     public async ValueTask DisposeAsync()

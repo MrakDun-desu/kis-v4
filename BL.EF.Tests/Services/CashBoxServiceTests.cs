@@ -1,4 +1,5 @@
 using BL.EF.Tests.Extensions;
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -20,8 +21,8 @@ public class
 
     public CashBoxServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _cashBoxService = new CashBoxService(_dbContext, new CurrencyChangeService(_dbContext), _timeProvider);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _cashBoxService = new CashBoxService(dbContextFactory.CreateDbContext(), new CurrencyChangeService(_dbContext), _timeProvider);
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()

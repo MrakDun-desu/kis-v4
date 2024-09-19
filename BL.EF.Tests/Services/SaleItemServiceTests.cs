@@ -1,4 +1,5 @@
 using BL.EF.Tests.Extensions;
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -17,8 +18,8 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
 
     public SaleItemServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _saleItemService = new SaleItemService(_dbContext);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _saleItemService = new SaleItemService(dbContextFactory.CreateDbContext());
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()

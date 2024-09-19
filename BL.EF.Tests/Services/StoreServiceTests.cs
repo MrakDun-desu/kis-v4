@@ -1,3 +1,4 @@
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -14,8 +15,8 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
 
     public StoreServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _storeService = new StoreService(_dbContext);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _storeService = new StoreService(dbContextFactory.CreateDbContext());
     }
 
     public async ValueTask DisposeAsync()

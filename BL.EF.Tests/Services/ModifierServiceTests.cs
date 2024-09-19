@@ -1,3 +1,4 @@
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -14,8 +15,8 @@ public class ModifierServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
 
     public ModifierServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _modifierService = new ModifierService(_dbContext);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _modifierService = new ModifierService(dbContextFactory.CreateDbContext());
     }
 
     public async ValueTask DisposeAsync()

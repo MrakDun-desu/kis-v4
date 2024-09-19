@@ -1,4 +1,5 @@
 using BL.EF.Tests.Extensions;
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -18,8 +19,8 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
 
     public ContainerTemplateServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _templateService = new ContainerTemplateService(_dbContext);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _templateService = new ContainerTemplateService(dbContextFactory.CreateDbContext());
     }
 
     public async ValueTask DisposeAsync()

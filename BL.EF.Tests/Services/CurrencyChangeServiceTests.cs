@@ -1,4 +1,5 @@
 using BL.EF.Tests.Extensions;
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -17,8 +18,8 @@ public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, ID
 
     public CurrencyChangeServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _currencyChangeService = new CurrencyChangeService(_dbContext);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _currencyChangeService = new CurrencyChangeService(dbContextFactory.CreateDbContext());
     }
 
     public async ValueTask DisposeAsync()

@@ -1,4 +1,5 @@
 using BL.EF.Tests.Extensions;
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -15,8 +16,8 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
 
     public PipeServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _pipeService = new PipeService(_dbContext);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _pipeService = new PipeService(dbContextFactory.CreateDbContext());
     }
 
     public async ValueTask DisposeAsync()

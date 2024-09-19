@@ -1,4 +1,5 @@
 using BL.EF.Tests.Extensions;
+using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -15,8 +16,8 @@ public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
 
     public CategoryServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
-        _categoryService = new CategoryService(_dbContext);
+        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
+        _categoryService = new CategoryService(dbContextFactory.CreateDbContext());
     }
 
     public async ValueTask DisposeAsync()
