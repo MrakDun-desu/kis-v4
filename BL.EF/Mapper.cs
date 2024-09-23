@@ -1,5 +1,6 @@
 using KisV4.Common.Models;
 using KisV4.DAL.EF.Entities;
+using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
 
 namespace KisV4.BL.EF;
@@ -69,6 +70,7 @@ public static partial class Mapper
             model.StoreAmounts
         );
     }
+
     public static partial List<SaleItemListModel> ToModels(this List<SaleItemEntity> entities);
 
     public static partial StoreEntity ToEntity(this StoreCreateModel model);
@@ -86,7 +88,7 @@ public static partial class Mapper
         return new ContainerListModel(
             model.Entity.Id,
             model.Entity.OpenSince,
-            model.Entity.Pipe.ToModel(),
+            model.Entity.Pipe!.ToModel(),
             model.Entity.Deleted,
             model.Entity.Template!.ToModel(),
             model.CurrentAmount
@@ -128,9 +130,11 @@ public static partial class Mapper
 
     [MapperIgnoreSource(nameof(StoreItemCreateModel.CategoryIds))]
     public static partial StoreItemEntity ToEntity(this StoreItemCreateModel model);
+
     [MapperIgnoreSource(nameof(StoreItemCreateModel.CategoryIds))]
     public static partial void UpdateEntity(this StoreItemCreateModel model, StoreItemEntity entity);
 
+    public static partial StoreItemListModel ToListModel(this StoreItemEntity entity);
     public static StoreItemDetailModel ToModel(this StoreItemIntermediateModel model)
     {
         return new StoreItemDetailModel(
@@ -151,6 +155,30 @@ public static partial class Mapper
     public static partial List<StoreItemListModel> ToModels(this List<StoreItemEntity> entities);
 
     public static partial DiscountUsageDetailModel? ToModel(this DiscountUsageEntity? entity);
+
+    public static partial List<StoreTransactionListModel> ToModels(this List<StoreTransactionEntity> entities);
+    public static partial StoreTransactionDetailModel ToModel(this StoreTransactionEntity entity);
+
+    public static partial List<StoreTransactionItemListModel> ToModels(this List<StoreTransactionItemEntity> entities);
+
+    public static partial UserListModel ToListModel(this UserAccountEntity entity);
+
+    public static UserDetailModel ToModel(this UserIntermediateModel model)
+    {
+        return new UserDetailModel(
+            model.Entity.Id,
+            model.Entity.UserName,
+            model.Entity.Deleted,
+            model.CurrencyAmounts,
+            model.CurrencyChanges,
+            model.DiscountUsages
+        );
+    }
+    public static partial List<UserListModel> ToModels(this List<UserAccountEntity> entity);
+
+    public static partial List<SaleTransactionListModel> ToModels(this List<SaleTransactionEntity> entities);
+    public static partial SaleTransactionDetailModel ToModel(this SaleTransactionEntity entity);
+    public static partial SaleTransactionListModel ToListModel(this SaleTransactionEntity entity);
 }
 
 public record CashBoxIntermediateModel(
@@ -179,4 +207,11 @@ public record SaleItemIntermediateModel(
     SaleItemEntity Entity,
     List<CostListModel> CurrentCosts,
     List<StoreAmountSaleItemListModel> StoreAmounts
+);
+
+public record UserIntermediateModel(
+    UserAccountEntity Entity,
+    List<TotalCurrencyChangeListModel> CurrencyAmounts,
+    Page<CurrencyChangeListModel> CurrencyChanges,
+    Page<DiscountUsageListModel> DiscountUsages
 );

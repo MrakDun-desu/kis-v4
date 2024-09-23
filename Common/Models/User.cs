@@ -9,7 +9,18 @@ public record UserListModel(
 public record UserDetailModel(
     int Id,
     string UserName,
-    IEnumerable<TotalCurrencyChangeListModel> CurrencyAmounts,
-    Page<CurrencyChangeListModel> CurrencyChanges,
-    Page<DiscountUsageListModel> DiscountUsages
-);
+    bool Deleted,
+    IEnumerable<TotalCurrencyChangeListModel>? CurrencyAmounts = null,
+    Page<CurrencyChangeListModel>? CurrencyChanges = null,
+    Page<DiscountUsageListModel>? DiscountUsages = null
+)
+{
+    public IEnumerable<TotalCurrencyChangeListModel> CurrencyAmounts =
+        CurrencyAmounts ?? Array.Empty<TotalCurrencyChangeListModel>();
+
+    public Page<CurrencyChangeListModel> CurrencyChanges =
+        CurrencyChanges ?? Page<CurrencyChangeListModel>.Empty;
+
+    public Page<DiscountUsageListModel> DiscountUsages =
+        DiscountUsages ?? Page<DiscountUsageListModel>.Empty;
+}

@@ -102,6 +102,7 @@ Modifiers.MapEndpoints(app);
 Pipes.MapEndpoints(app);
 SaleItems.MapEndpoints(app);
 StoreItems.MapEndpoints(app);
+StoreTransactions.MapEndpoints(app);
 Stores.MapEndpoints(app);
 
 app.Run();
