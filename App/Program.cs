@@ -4,7 +4,6 @@ using KisV4.App.Endpoints;
 using KisV4.BL.EF;
 using KisV4.DAL.EF;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -78,11 +77,6 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(imageDirectory),
-    RequestPath = "/images"
-});
 app.UseAuthentication();
 app.UseAuthorization();
 
