@@ -11,23 +11,26 @@ namespace BL.EF.Tests.Services;
 
 public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
     private readonly PipeService _pipeService;
 
     public PipeServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _pipeService = new PipeService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _pipeService = new PipeService(_normalDbContext);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -36,7 +39,7 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         var createModel = new PipeCreateModel("Some pipe");
         var createdModel = _pipeService.Create(createModel);
 
-        var createdEntity = _dbContext.Pipes.Find(createdModel.Id);
+        var createdEntity = _referenceDbContext.Pipes.Find(createdModel.Id);
         var expectedEntity = new PipeEntity { Id = createdModel.Id, Name = createModel.Name };
         createdEntity.Should().BeEquivalentTo(expectedEntity);
     }
@@ -46,12 +49,12 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     {
         var testPipe1 = new PipeEntity { Name = "Some pipe" };
         var testPipe2 = new PipeEntity { Name = "Some pipe 2" };
-        _dbContext.Pipes.Add(testPipe1);
-        _dbContext.Pipes.Add(testPipe2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.Pipes.Add(testPipe1);
+        _referenceDbContext.Pipes.Add(testPipe2);
+        _referenceDbContext.SaveChanges();
 
         var readModels = _pipeService.ReadAll();
-        var mappedModels = _dbContext.Pipes.ToList().ToModels();
+        var mappedModels = _referenceDbContext.Pipes.ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
@@ -62,14 +65,15 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         const string oldName = "Some pipe";
         const string newName = "Some pipe 2";
         var testPipe1 = new PipeEntity { Name = oldName };
-        var insertedEntity = _dbContext.Pipes.Add(testPipe1);
-        _dbContext.SaveChanges();
+        var insertedEntity = _referenceDbContext.Pipes.Add(testPipe1);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var updateModel = new PipeCreateModel(newName);
 
         var updateResult = _pipeService.Update(insertedEntity.Entity.Id, updateModel);
 
         updateResult.Should().HaveValue(new PipeListModel(testPipe1.Id, newName));
-        var updatedEntity = _dbContext.Pipes.Find(insertedEntity.Entity.Id);
+        var updatedEntity = _referenceDbContext.Pipes.Find(insertedEntity.Entity.Id);
         var expectedEntity = insertedEntity.Entity with { Name = newName };
         updatedEntity.Should().BeEquivalentTo(expectedEntity);
     }
@@ -88,13 +92,14 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     public void Delete_Deletes_WhenExistingId()
     {
         var testPipe1 = new PipeEntity { Name = "Some pipe" };
-        var insertedEntity = _dbContext.Pipes.Add(testPipe1);
-        _dbContext.SaveChanges();
+        var insertedEntity = _referenceDbContext.Pipes.Add(testPipe1);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
 
         var deleteSuccess = _pipeService.Delete(insertedEntity.Entity.Id);
 
         deleteSuccess.Should().BeSuccess();
-        var deletedEntity = _dbContext.Pipes.Find(insertedEntity.Entity.Id);
+        var deletedEntity = _referenceDbContext.Pipes.Find(insertedEntity.Entity.Id);
         deletedEntity.Should().BeNull();
     }
 
@@ -113,9 +118,9 @@ public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
                 Name = "Some container template"
             }
         };
-        _dbContext.Containers.Add(testContainer);
-        var insertedEntity = _dbContext.Pipes.Add(testPipe1);
-        _dbContext.SaveChanges();
+        _referenceDbContext.Containers.Add(testContainer);
+        var insertedEntity = _referenceDbContext.Pipes.Add(testPipe1);
+        _referenceDbContext.SaveChanges();
 
         var deleteResult = _pipeService.Delete(insertedEntity.Entity.Id);
 

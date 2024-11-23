@@ -88,7 +88,7 @@ public static partial class Mapper
         return new ContainerListModel(
             model.Entity.Id,
             model.Entity.OpenSince,
-            model.Entity.Pipe!.ToModel(),
+            model.Entity.Pipe?.ToModel(),
             model.Entity.Deleted,
             model.Entity.Template!.ToModel(),
             model.CurrentAmount

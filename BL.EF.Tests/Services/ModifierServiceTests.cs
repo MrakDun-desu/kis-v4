@@ -10,23 +10,26 @@ namespace BL.EF.Tests.Services;
 
 public class ModifierServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
     private readonly ModifierService _modifierService;
 
     public ModifierServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _modifierService = new ModifierService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _modifierService = new ModifierService(_normalDbContext);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     // [Fact]

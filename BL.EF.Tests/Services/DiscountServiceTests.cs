@@ -13,23 +13,26 @@ public class
 {
     private readonly DiscountService _discountService;
     private readonly DiscountUsageService _discountUsageService;
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
 
     public DiscountServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _discountUsageService = new DiscountUsageService(dbContextFactory.CreateDbContext());
-        _discountService = new DiscountService(dbContextFactory.CreateDbContext(), _discountUsageService);
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _discountUsageService = new DiscountUsageService(_normalDbContext);
+        _discountService = new DiscountService(_normalDbContext, _discountUsageService);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -38,16 +41,16 @@ public class
         // arrange
         var testDiscount1 = new DiscountEntity { Name = "Some discount box" };
         var testDiscount2 = new DiscountEntity { Name = "Some discount box 2", Deleted = true };
-        _dbContext.Discounts.Add(testDiscount1);
-        _dbContext.Discounts.Add(testDiscount2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.Discounts.Add(testDiscount1);
+        _referenceDbContext.Discounts.Add(testDiscount2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readModels = _discountService.ReadAll(null);
 
         // assert
         var mappedModels =
-            _dbContext.Discounts.ToList().ToModels();
+            _referenceDbContext.Discounts.ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
@@ -58,16 +61,16 @@ public class
         // arrange
         var testDiscount1 = new DiscountEntity { Name = "Some discount box" };
         var testDiscount2 = new DiscountEntity { Name = "Some discount box 2", Deleted = true };
-        _dbContext.Discounts.Add(testDiscount1);
-        _dbContext.Discounts.Add(testDiscount2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.Discounts.Add(testDiscount1);
+        _referenceDbContext.Discounts.Add(testDiscount2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readModels = _discountService.ReadAll(false);
 
         // assert
         var mappedModels =
-            _dbContext.Discounts.Where(dc => !dc.Deleted).ToList().ToModels();
+            _referenceDbContext.Discounts.Where(dc => !dc.Deleted).ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
@@ -98,8 +101,8 @@ public class
                 }
             }
         };
-        _dbContext.Discounts.Add(testDiscount1);
-        _dbContext.SaveChanges();
+        _referenceDbContext.Discounts.Add(testDiscount1);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _discountService.Read(testDiscount1.Id);
@@ -123,9 +126,9 @@ public class
             Name = "Some discount",
             Deleted = true
         };
-        _dbContext.Discounts.Add(testDiscount1);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.Discounts.Add(testDiscount1);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
 
         // act
         var patchResult = _discountService.Patch(testDiscount1.Id);
@@ -138,7 +141,7 @@ public class
                         _discountUsageService.ReadAll(null, null, testDiscount1.Id, null).AsT0)
                     .ToModel()
             );
-        _dbContext.Discounts.Find(testDiscount1.Id)!.Deleted.Should().BeFalse();
+        _referenceDbContext.Discounts.Find(testDiscount1.Id)!.Deleted.Should().BeFalse();
     }
 
     [Fact]
@@ -149,9 +152,9 @@ public class
         {
             Name = "Some discount",
         };
-        _dbContext.Discounts.Add(testDiscount1);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.Discounts.Add(testDiscount1);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
 
         // act
         var deleteResult = _discountService.Delete(testDiscount1.Id);
@@ -164,6 +167,6 @@ public class
                         _discountUsageService.ReadAll(null, null, testDiscount1.Id, null).AsT0)
                     .ToModel()
             );
-        _dbContext.Discounts.Find(testDiscount1.Id)!.Deleted.Should().BeTrue();
+        _referenceDbContext.Discounts.Find(testDiscount1.Id)!.Deleted.Should().BeTrue();
     }
 }

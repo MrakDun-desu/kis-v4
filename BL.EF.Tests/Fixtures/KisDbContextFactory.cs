@@ -4,7 +4,7 @@ using Testcontainers.PostgreSql;
 
 namespace BL.EF.Tests.Fixtures;
 
-public class KisDbContextFactory : IDbContextFactory<KisDbContext>, IAsyncLifetime
+public class KisDbContextFactory : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _databaseContainer = new PostgreSqlBuilder()
         .WithUsername("postgres")
@@ -22,21 +22,21 @@ public class KisDbContextFactory : IDbContextFactory<KisDbContext>, IAsyncLifeti
         await _databaseContainer.StopAsync();
     }
 
-    public KisDbContext CreateDbContextAndResetDb()
+    public (KisDbContext, KisDbContext) CreateDbContextAndReference()
     {
-        var dbContext = CreateDbContext();
+        // reference context can just have npgsql and no lazy loading
+        var optionsBuilder = new DbContextOptionsBuilder<KisDbContext>()
+            .UseNpgsql(_databaseContainer.GetConnectionString());
+        var refContext = new KisDbContext(optionsBuilder.Options);
         // delete and create database between every dbcontext creation so the test cases are perfectly isolated from each other
-        dbContext.Database.EnsureDeleted();
-        dbContext.Database.EnsureCreated();
+        refContext.Database.EnsureDeleted();
+        refContext.Database.EnsureCreated();
 
-        return dbContext;
-    }
-    
-    public KisDbContext CreateDbContext()
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<KisDbContext>();
-        optionsBuilder.UseNpgsql(_databaseContainer.GetConnectionString());
-        var dbContext = new KisDbContext(optionsBuilder.Options);
-        return dbContext;
+        // for normal dbcontext, the options need to be the same as the main application does
+        // (same as in ServiceCollectionExtensions in DAL.EF)
+        optionsBuilder.UseLazyLoadingProxies();
+        var normalContext = new KisDbContext(optionsBuilder.Options);
+
+        return (refContext, normalContext);
     }
 }

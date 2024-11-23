@@ -16,13 +16,14 @@ public class
     CashBoxServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
     private readonly CashBoxService _cashBoxService;
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
     private readonly FakeTimeProvider _timeProvider = new();
 
     public CashBoxServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _cashBoxService = new CashBoxService(dbContextFactory.CreateDbContext(), new CurrencyChangeService(_dbContext), _timeProvider);
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _cashBoxService = new CashBoxService(_normalDbContext, new CurrencyChangeService(_normalDbContext), _timeProvider);
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
@@ -31,12 +32,14 @@ public class
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -45,16 +48,16 @@ public class
         // arrange
         var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
         var testCashBox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
-        _dbContext.CashBoxes.Add(testCashBox1);
-        _dbContext.CashBoxes.Add(testCashBox2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.CashBoxes.Add(testCashBox1);
+        _referenceDbContext.CashBoxes.Add(testCashBox2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readModels = _cashBoxService.ReadAll(null);
 
         // assert
         var mappedModels =
-            _dbContext.CashBoxes.ToList().ToModels();
+            _referenceDbContext.CashBoxes.ToList().ToModels();
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
@@ -64,16 +67,16 @@ public class
         // arrange
         var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
         var testCashBox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
-        _dbContext.CashBoxes.Add(testCashBox1);
-        _dbContext.CashBoxes.Add(testCashBox2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.CashBoxes.Add(testCashBox1);
+        _referenceDbContext.CashBoxes.Add(testCashBox2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readModels = _cashBoxService.ReadAll(false);
 
         // assert
         var mappedModels =
-            _dbContext.CashBoxes.Where(cb => !cb.Deleted).ToList().ToModels();
+            _referenceDbContext.CashBoxes.Where(cb => !cb.Deleted).ToList().ToModels();
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
@@ -83,16 +86,16 @@ public class
         // arrange
         var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
         var testCashBox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
-        _dbContext.CashBoxes.Add(testCashBox1);
-        _dbContext.CashBoxes.Add(testCashBox2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.CashBoxes.Add(testCashBox1);
+        _referenceDbContext.CashBoxes.Add(testCashBox2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readModels = _cashBoxService.ReadAll(true);
 
         // assert
         var mappedModels =
-            _dbContext.CashBoxes.Where(cb => cb.Deleted).ToList().ToModels();
+            _referenceDbContext.CashBoxes.Where(cb => cb.Deleted).ToList().ToModels();
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
@@ -109,7 +112,9 @@ public class
         var createdCashBox = _cashBoxService.Create(createModel);
 
         // assert
-        var createdEntity = _dbContext.CashBoxes.Find(createdCashBox.Id);
+        var createdEntity = _referenceDbContext.CashBoxes
+            .Include(cb => cb.StockTakings)
+            .First(cb => cb.Id == createdCashBox.Id);
         var expectedEntity = new CashBoxEntity
         {
             Id = createdCashBox.Id,
@@ -145,17 +150,19 @@ public class
             StockTakings = { stockTaking }
         };
         stockTaking.CashBox = testEntity;
-        _dbContext.CashBoxes.Add(testEntity);
-        _dbContext.SaveChanges();
+        _referenceDbContext.CashBoxes.Add(testEntity);
+        _referenceDbContext.SaveChanges();
         var id = testEntity.Id;
         var updateModel = new CashBoxCreateModel(newName);
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.ChangeTracker.Clear();
 
         // act
         var updateResult = _cashBoxService.Update(id, updateModel);
 
         // assert
-        var updatedEntity = _dbContext.CashBoxes.Find(id);
+        var updatedEntity = _referenceDbContext.CashBoxes
+            .Include(cb => cb.StockTakings)
+            .First(cb => cb.Id == id);
         testEntity.Deleted = false;
         testEntity.Name = newName;
         updatedEntity.Should().BeEquivalentTo(testEntity, opts => opts.IgnoringCyclicReferences());
@@ -170,17 +177,19 @@ public class
         const string newName = "Some cash box 2";
         var testEntity = new CashBoxEntity
             { Name = oldName, StockTakings = { new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow } } };
-        _dbContext.CashBoxes.Add(testEntity);
-        _dbContext.SaveChanges();
+        _referenceDbContext.CashBoxes.Add(testEntity);
+        _referenceDbContext.SaveChanges();
         var id = testEntity.Id;
         var updateModel = new CashBoxCreateModel(newName);
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.ChangeTracker.Clear();
 
         // act
         var updateResult = _cashBoxService.Update(id, updateModel);
 
         // assert
-        var updatedEntity = _dbContext.CashBoxes.Find(id);
+        var updatedEntity = _referenceDbContext.CashBoxes
+            .Include(cb => cb.StockTakings)
+            .First(cb => cb.Id == id);
         testEntity.Name = newName;
         updatedEntity.Should().BeEquivalentTo(testEntity, opts => opts.IgnoringCyclicReferences());
         updateResult.Should().HaveValue(testEntity.ToModel());
@@ -219,8 +228,8 @@ public class
             Name = "Test cash box",
             StockTakings = { new StockTakingEntity { Timestamp = timestamp } }
         };
-        _dbContext.CashBoxes.Add(testCashBox);
-        _dbContext.SaveChanges();
+        _referenceDbContext.CashBoxes.Add(testCashBox);
+        _referenceDbContext.SaveChanges();
         var id = testCashBox.Id;
 
         // act
@@ -269,8 +278,8 @@ public class
         };
         testCashBox.CurrencyChanges.Add(currencyChange1);
         testCashBox.CurrencyChanges.Add(currencyChange2);
-        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
-        _dbContext.SaveChanges();
+        var insertedEntity = _referenceDbContext.CashBoxes.Add(testCashBox);
+        _referenceDbContext.SaveChanges();
         var id = insertedEntity.Entity.Id;
 
         // act
@@ -324,8 +333,8 @@ public class
         };
         testCashBox.CurrencyChanges.Add(currencyChange1);
         testCashBox.CurrencyChanges.Add(currencyChange2);
-        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
-        _dbContext.SaveChanges();
+        var insertedEntity = _referenceDbContext.CashBoxes.Add(testCashBox);
+        _referenceDbContext.SaveChanges();
         var id = insertedEntity.Entity.Id;
 
         // act
@@ -380,8 +389,8 @@ public class
         };
         testCashBox.CurrencyChanges.Add(currencyChange1);
         testCashBox.CurrencyChanges.Add(currencyChange2);
-        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox);
-        _dbContext.SaveChanges();
+        var insertedEntity = _referenceDbContext.CashBoxes.Add(testCashBox);
+        _referenceDbContext.SaveChanges();
         var id = insertedEntity.Entity.Id;
 
         // act
@@ -404,13 +413,13 @@ public class
     {
         var testCashBox1 = new CashBoxEntity
             { Name = "Some category", StockTakings = { new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow } } };
-        _dbContext.CashBoxes.Add(testCashBox1);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.CashBoxes.Add(testCashBox1);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
 
         var deleteResult = _cashBoxService.Delete(testCashBox1.Id);
 
-        var deletedEntity = _dbContext.CashBoxes
+        var deletedEntity = _referenceDbContext.CashBoxes
             .Include(cb => cb.StockTakings)
             .Single(cb => cb.Id == testCashBox1.Id);
         testCashBox1.Deleted = true;
@@ -422,8 +431,8 @@ public class
     public void AddStockTaking_AddsStockTaking_WhenExistingId()
     {
         var testCashBox1 = new CashBoxEntity { Name = "Some category" };
-        var insertedEntity = _dbContext.CashBoxes.Add(testCashBox1);
-        _dbContext.SaveChanges();
+        var insertedEntity = _referenceDbContext.CashBoxes.Add(testCashBox1);
+        _referenceDbContext.SaveChanges();
         var returnedDateTime = DateTimeOffset.UtcNow;
         _timeProvider.SetUtcNow(returnedDateTime);
 
@@ -431,7 +440,7 @@ public class
 
         stockTakingSuccess.Should().BeSuccess();
         var createdEntity =
-            _dbContext.StockTakings
+            _referenceDbContext.StockTakings
                 .First(st => st.CashBoxId == insertedEntity.Entity.Id);
         var expectedEntity = new StockTakingEntity
         {

@@ -67,12 +67,12 @@ public class StoreTransactionService(
     public OneOf<StoreTransactionDetailModel, NotFound> Read(int id)
     {
         var entity = dbContext.StoreTransactions
-            .Include(st => st.ResponsibleUser)
-            .Include(st => st.SaleTransaction)
-            .Include(st => st.StoreTransactionItems)
-            .ThenInclude(sti => sti.StoreItem)
-            .Include(st => st.StoreTransactionItems)
-            .ThenInclude(sti => sti.Store)
+            // .Include(st => st.ResponsibleUser)
+            // .Include(st => st.SaleTransaction)
+            // .Include(st => st.StoreTransactionItems)
+            // .ThenInclude(sti => sti.StoreItem)
+            // .Include(st => st.StoreTransactionItems)
+            // .ThenInclude(sti => sti.Store)
             .FirstOrDefault(st => st.Id == id);
         return entity is null ? new NotFound() : entity.ToModel();
     }
@@ -128,6 +128,7 @@ public class StoreTransactionService(
 
         dbContext.StoreTransactions.Add(newTransaction);
         dbContext.SaveChanges();
+        dbContext.ChangeTracker.Clear();
 
         return Read(newTransaction.Id).AsT0;
     }

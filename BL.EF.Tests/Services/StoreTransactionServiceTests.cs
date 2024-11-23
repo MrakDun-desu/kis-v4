@@ -17,13 +17,14 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
     private readonly StoreTransactionService _storeTransactionService;
     private readonly UserService _userService;
     private readonly FakeTimeProvider _timeProvider = new();
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
 
     public StoreTransactionServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _userService = new UserService(dbContextFactory.CreateDbContext());
-        _storeTransactionService = new StoreTransactionService(dbContextFactory.CreateDbContext(), _userService, _timeProvider);
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _userService = new UserService(_normalDbContext);
+        _storeTransactionService = new StoreTransactionService(_normalDbContext, _userService, _timeProvider);
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
@@ -32,12 +33,14 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     [Fact]
@@ -100,10 +103,10 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
             }
         };
 
-        _dbContext.StoreTransactions.Add(testTransaction1);
-        _dbContext.StoreTransactions.Add(testTransaction2);
-        _dbContext.StoreTransactions.Add(testTransaction3);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreTransactions.Add(testTransaction1);
+        _referenceDbContext.StoreTransactions.Add(testTransaction2);
+        _referenceDbContext.StoreTransactions.Add(testTransaction3);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _storeTransactionService.ReadAll(null, null, null, null, null);
@@ -182,10 +185,10 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
             }
         };
 
-        _dbContext.StoreTransactions.Add(testTransaction1);
-        _dbContext.StoreTransactions.Add(testTransaction2);
-        _dbContext.StoreTransactions.Add(testTransaction3);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreTransactions.Add(testTransaction1);
+        _referenceDbContext.StoreTransactions.Add(testTransaction2);
+        _referenceDbContext.StoreTransactions.Add(testTransaction3);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _storeTransactionService.ReadAll(
@@ -266,10 +269,10 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
             }
         };
 
-        _dbContext.StoreTransactions.Add(testTransaction1);
-        _dbContext.StoreTransactions.Add(testTransaction2);
-        _dbContext.StoreTransactions.Add(testTransaction3);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreTransactions.Add(testTransaction1);
+        _referenceDbContext.StoreTransactions.Add(testTransaction2);
+        _referenceDbContext.StoreTransactions.Add(testTransaction3);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _storeTransactionService.ReadAll(null, null, null, null, false);
@@ -347,10 +350,10 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
             }
         };
 
-        _dbContext.StoreTransactions.Add(testTransaction1);
-        _dbContext.StoreTransactions.Add(testTransaction2);
-        _dbContext.StoreTransactions.Add(testTransaction3);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreTransactions.Add(testTransaction1);
+        _referenceDbContext.StoreTransactions.Add(testTransaction2);
+        _referenceDbContext.StoreTransactions.Add(testTransaction3);
+        _referenceDbContext.SaveChanges();
         _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
 
         // act
@@ -390,9 +393,9 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        _dbContext.StoreTransactions.Add(testTransaction1);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.StoreTransactions.Add(testTransaction1);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
 
         // act
@@ -418,10 +421,11 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
         var testStore1 = new StoreEntity { Name = "Kachna" };
         var testStoreItem1 = new StoreItemEntity { Name = "Beer" };
         var testUser = new UserAccountEntity { UserName = "Some user" };
-        _dbContext.Stores.Add(testStore1);
-        _dbContext.StoreItems.Add(testStoreItem1);
-        _dbContext.UserAccounts.Add(testUser);
-        _dbContext.SaveChanges();
+        _referenceDbContext.Stores.Add(testStore1);
+        _referenceDbContext.StoreItems.Add(testStoreItem1);
+        _referenceDbContext.UserAccounts.Add(testUser);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
 
         var creationTime = DateTimeOffset.UtcNow;
         _timeProvider.SetUtcNow(creationTime);
@@ -468,8 +472,8 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
             Name = "Beer",
             IsContainerItem = true
         };
-        _dbContext.StoreItems.Add(testStoreItem1);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem1);
+        _referenceDbContext.SaveChanges();
 
         var creationTime = DateTimeOffset.UtcNow;
         _timeProvider.SetUtcNow(creationTime);
@@ -533,9 +537,9 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        _dbContext.StoreTransactions.Add(testTransaction1);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.StoreTransactions.Add(testTransaction1);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
 
         // act

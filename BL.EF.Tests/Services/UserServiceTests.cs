@@ -8,37 +8,40 @@ namespace BL.EF.Tests.Services;
 
 public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
     private readonly UserService _userService;
 
     public UserServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _userService = new UserService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _userService = new UserService(_normalDbContext);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
     public void Create_Creates_WhenUserDoesntExist()
     {
         // arrange
-        _dbContext.UserAccounts.RemoveRange(_dbContext.UserAccounts);
+        _referenceDbContext.UserAccounts.RemoveRange(_referenceDbContext.UserAccounts);
         const string username = "Some user";
 
         // act
         var userId = _userService.CreateOrGetId(username);
 
         // assert
-        var user = _dbContext.UserAccounts.Find(userId);
+        var user = _referenceDbContext.UserAccounts.Find(userId);
         user.Should().NotBeNull();
         user!.UserName.Should().Be(username);
     }
@@ -48,8 +51,8 @@ public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     {
         // arrange
         const string username = "Some user";
-        var entity = _dbContext.UserAccounts.Add(new UserAccountEntity { UserName = username });
-        _dbContext.SaveChanges();
+        var entity = _referenceDbContext.UserAccounts.Add(new UserAccountEntity { UserName = username });
+        _referenceDbContext.SaveChanges();
 
         // act
         var userId = _userService.CreateOrGetId(username);

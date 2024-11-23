@@ -68,7 +68,8 @@ public class ContainerService(
                 $"Container template with id {createModel.TemplateId} is currently marked as deleted"
             );
 
-        if (!dbContext.Pipes.Any(p => p.Id == createModel.PipeId))
+        var pipe = dbContext.Pipes.Find(createModel.PipeId);
+        if (pipe is null)
             errors.AddItemOrCreate(
                 nameof(createModel.PipeId),
                 $"Pipe with id {createModel.PipeId} doesn't exist"
@@ -80,6 +81,7 @@ public class ContainerService(
         var container = createModel.ToEntity();
         container.Name = template!.Name;
         container.OpenSince = creationTime;
+        container.Pipe = pipe;
         container.StoreTransactionItems.Add(
             new StoreTransactionItemEntity
             {

@@ -8,28 +8,32 @@ using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BL.EF.Tests.Services;
 
 public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
     private readonly StoreItemService _storeItemService;
 
     public StoreItemServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _storeItemService = new StoreItemService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _storeItemService = new StoreItemService(_normalDbContext);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -134,9 +138,9 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
             }
         };
 
-        _dbContext.StoreItems.Add(testStoreItem1);
-        _dbContext.StoreItems.Add(testStoreItem2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem1);
+        _referenceDbContext.StoreItems.Add(testStoreItem2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _storeItemService.ReadAll(null, null, null, null, null);
@@ -272,9 +276,9 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
             }
         };
 
-        _dbContext.StoreItems.Add(testStoreItem1);
-        _dbContext.StoreItems.Add(testStoreItem2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem1);
+        _referenceDbContext.StoreItems.Add(testStoreItem2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _storeItemService.ReadAll(null, null, null, foodCategory.Id, testStore.Id);
@@ -387,9 +391,9 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
             }
         };
 
-        _dbContext.StoreItems.Add(testStoreItem1);
-        _dbContext.StoreItems.Add(testStoreItem2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem1);
+        _referenceDbContext.StoreItems.Add(testStoreItem2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _storeItemService.ReadAll(null, null, null, null, testStore.Id);
@@ -447,8 +451,8 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
             new() { Name = "Drinks" },
             new() { Name = "Food" }
         };
-        _dbContext.ProductCategories.AddRange(categories);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ProductCategories.AddRange(categories);
+        _referenceDbContext.SaveChanges();
 
         var createModel = new StoreItemCreateModel(
             "Beer",
@@ -463,7 +467,9 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
         var createResult = _storeItemService.Create(createModel);
 
         // assert
-        var createdEntity = _dbContext.StoreItems.Find(createResult.AsT0.Id);
+        var createdEntity = _referenceDbContext.StoreItems
+            .Include(si => si.Categories)
+            .First(si => si.Id == createResult.AsT0.Id);
         var expectedEntity = new StoreItemEntity
         {
             Id = createResult.AsT0.Id,
@@ -570,8 +576,8 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
             }
         };
 
-        _dbContext.StoreItems.Add(testStoreItem1);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem1);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _storeItemService.Read(testStoreItem1.Id);
@@ -610,14 +616,15 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
         {
             Name = "Some store item"
         };
-        _dbContext.StoreItems.Add(testStoreItem);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         
         // act
         var deleteResult = _storeItemService.Delete(testStoreItem.Id);
 
         // assert
-        var updatedEntity = _dbContext.StoreItems.Find(testStoreItem.Id);
+        var updatedEntity = _referenceDbContext.StoreItems.Find(testStoreItem.Id);
         updatedEntity!.Deleted.Should().BeTrue();
         deleteResult.IsT0.Should().BeTrue();
         deleteResult.AsT0.Deleted.Should().BeTrue();
@@ -710,9 +717,9 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
             }
         };
 
-        _dbContext.StoreItems.Add(testStoreItem1);
-        _dbContext.ProductCategories.Add(foodCategory);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem1);
+        _referenceDbContext.ProductCategories.Add(foodCategory);
+        _referenceDbContext.SaveChanges();
 
         var updateModel = new StoreItemCreateModel(
             "Beer",
@@ -800,9 +807,9 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
             }
         };
 
-        _dbContext.StoreItems.Add(testStoreItem1);
-        _dbContext.ProductCategories.Add(foodCategory);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem1);
+        _referenceDbContext.ProductCategories.Add(foodCategory);
+        _referenceDbContext.SaveChanges();
 
         var updateModel = new StoreItemCreateModel(
             "Beer",

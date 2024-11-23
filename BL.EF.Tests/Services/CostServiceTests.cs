@@ -5,28 +5,36 @@ using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BL.EF.Tests.Services;
 
 public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
     private readonly CostService _costService;
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
 
     public CostServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _costService = new CostService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _costService = new CostService(_normalDbContext);
+        AssertionOptions.AssertEquivalencyUsing(options =>
+            options.Using<DateTimeOffset>(ctx =>
+                ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
+        );
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -41,9 +49,10 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         {
             Name = "Test currency"
         };
-        _dbContext.StoreItems.Add(testStoreItem);
-        _dbContext.Currencies.Add(testCurrency);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem);
+        _referenceDbContext.Currencies.Add(testCurrency);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         const decimal currencyAmount = 42;
         const string costDescription = "Testing cost";
         var costValidSince = DateTimeOffset.Now;
@@ -61,7 +70,10 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         // assert
         creationResult.IsT0.Should().BeTrue();
         var id = creationResult.AsT0.Id;
-        var createdEntity = _dbContext.CurrencyCosts.Find(id);
+        var createdEntity = _referenceDbContext.CurrencyCosts
+            .Include(c => c.Product)
+            .Include(c => c.Currency)
+            .First(c => c.Id == id);
         var expectedEntity = new CurrencyCostEntity
         {
             Id = id,
@@ -73,7 +85,9 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
             Description = costDescription,
             ValidSince = costValidSince.ToUniversalTime()
         };
-        createdEntity.Should().BeEquivalentTo(expectedEntity);
+        createdEntity.Should().BeEquivalentTo(expectedEntity, opts => 
+            opts.Excluding(entity => entity.Product!.Costs)
+            );
     }
 
     [Fact]

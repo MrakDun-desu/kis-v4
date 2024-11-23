@@ -9,8 +9,10 @@ public static class ServiceCollectionExtensions
         string connectionString)
     {
         serviceCollection.AddDbContext<KisDbContext>(options =>
-            options.UseNpgsql(connectionString)
-                .UseLazyLoadingProxies());
+            options
+                .UseLazyLoadingProxies()
+                .UseNpgsql(connectionString)
+            );
         // using lazy loading to ease the development. Can switch to eager with .Include() calls
         // for critical sections of the code
     }

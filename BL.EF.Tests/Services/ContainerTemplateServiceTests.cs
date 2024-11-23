@@ -14,23 +14,26 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     IDisposable,
     IAsyncDisposable
 {
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
     private readonly ContainerTemplateService _templateService;
 
     public ContainerTemplateServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _templateService = new ContainerTemplateService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _templateService = new ContainerTemplateService(_normalDbContext);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -60,15 +63,15 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some container",
             Deleted = true
         };
-        _dbContext.ContainerTemplates.Add(testTemplate1);
-        _dbContext.ContainerTemplates.Add(testTemplate2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ContainerTemplates.Add(testTemplate1);
+        _referenceDbContext.ContainerTemplates.Add(testTemplate2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _templateService.ReadAll(null, null);
 
         // assert
-        var expectedModels = _dbContext.ContainerTemplates
+        var expectedModels = _referenceDbContext.ContainerTemplates
             .Include(ct => ct.ContainedItem)
             .ToList().ToModels();
 
@@ -102,15 +105,15 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some container",
             Deleted = true
         };
-        _dbContext.ContainerTemplates.Add(testTemplate1);
-        _dbContext.ContainerTemplates.Add(testTemplate2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ContainerTemplates.Add(testTemplate1);
+        _referenceDbContext.ContainerTemplates.Add(testTemplate2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _templateService.ReadAll(true, null);
 
         // assert
-        var expectedModels = _dbContext.ContainerTemplates
+        var expectedModels = _referenceDbContext.ContainerTemplates
             .Where(ct => ct.Deleted)
             .Include(ct => ct.ContainedItem)
             .ToList().ToModels();
@@ -145,15 +148,15 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some container",
             Deleted = true
         };
-        _dbContext.ContainerTemplates.Add(testTemplate1);
-        _dbContext.ContainerTemplates.Add(testTemplate2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ContainerTemplates.Add(testTemplate1);
+        _referenceDbContext.ContainerTemplates.Add(testTemplate2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _templateService.ReadAll(null, testStoreItem1.Id);
 
         // assert
-        var expectedModels = _dbContext.ContainerTemplates
+        var expectedModels = _referenceDbContext.ContainerTemplates
             .Where(ct => ct.ContainedItemId == testStoreItem1.Id)
             .Include(ct => ct.ContainedItem)
             .ToList().ToModels();
@@ -187,8 +190,8 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
             IsContainerItem = true,
             Deleted = false
         };
-        _dbContext.StoreItems.Add(testStoreItem);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem);
+        _referenceDbContext.SaveChanges();
         var createModel = new ContainerTemplateCreateModel(
             "Some container template",
             testStoreItem.Id,
@@ -201,7 +204,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         // assert
         creationResult.IsT0.Should().BeTrue();
         var createdModel = creationResult.AsT0;
-        var createdEntity = _dbContext.ContainerTemplates.Find(createdModel.Id);
+        var createdEntity = _referenceDbContext.ContainerTemplates.Find(createdModel.Id);
         var expectedEntity = new ContainerTemplateEntity
         {
             Id = createdModel.Id,
@@ -225,8 +228,8 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
             IsContainerItem = false,
             Deleted = true
         };
-        _dbContext.StoreItems.Add(testStoreItem);
-        _dbContext.SaveChanges();
+        _referenceDbContext.StoreItems.Add(testStoreItem);
+        _referenceDbContext.SaveChanges();
         var createModel = new ContainerTemplateCreateModel(
             "Some container template",
             testStoreItem.Id,
@@ -270,10 +273,10 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
             ContainedItem = testStoreItem1,
             Deleted = true
         };
-        _dbContext.ContainerTemplates.Add(testTemplate);
-        _dbContext.StoreItems.Add(testStoreItem2);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.ContainerTemplates.Add(testTemplate);
+        _referenceDbContext.StoreItems.Add(testStoreItem2);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var updateModel = new ContainerTemplateCreateModel(
             "Some container template",
             testStoreItem2.Id,
@@ -284,7 +287,9 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         var updateResult = _templateService.Update(testTemplate.Id, updateModel);
 
         // assert
-        var updatedEntity = _dbContext.ContainerTemplates.Find(testTemplate.Id);
+        var updatedEntity = _referenceDbContext.ContainerTemplates
+            .Include(ct => ct.ContainedItem)
+            .First(ct => ct.Id == testTemplate.Id);
         testTemplate.ContainedItem = testStoreItem2;
         testTemplate.ContainedItemId = testStoreItem2.Id;
         testTemplate.Amount = 15;
@@ -333,10 +338,10 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
             ContainedItem = testStoreItem1,
             Deleted = true
         };
-        _dbContext.ContainerTemplates.Add(testTemplate);
-        _dbContext.StoreItems.Add(testStoreItem2);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.ContainerTemplates.Add(testTemplate);
+        _referenceDbContext.StoreItems.Add(testStoreItem2);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var updateModel = new ContainerTemplateCreateModel(
             "Some container template",
             testStoreItem2.Id,
@@ -387,10 +392,10 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
                 }
             }
         };
-        _dbContext.ContainerTemplates.Add(testTemplate);
-        _dbContext.StoreItems.Add(testStoreItem2);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.ContainerTemplates.Add(testTemplate);
+        _referenceDbContext.StoreItems.Add(testStoreItem2);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var updateModel = new ContainerTemplateCreateModel(
             "Some container template",
             testStoreItem2.Id,
@@ -401,7 +406,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         var updateResult = _templateService.Update(testTemplate.Id, updateModel);
 
         // assert
-        var updatedEntity = _dbContext.ContainerTemplates.Find(testTemplate.Id);
+        var updatedEntity = _referenceDbContext.ContainerTemplates.Find(testTemplate.Id);
         updatedEntity.Should().BeEquivalentTo(testTemplate, opts =>
             opts.Excluding(ct => ct.Instances).Excluding(ct => ct.ContainedItem)
         );
@@ -434,15 +439,15 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
             ContainedItem = testStoreItem1,
             Deleted = false
         };
-        _dbContext.ContainerTemplates.Add(testTemplate);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.ContainerTemplates.Add(testTemplate);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
 
         // act
         var deleteResult = _templateService.Delete(testTemplate.Id);
 
         // assert
-        var deletedEntity = _dbContext.ContainerTemplates.Find(testTemplate.Id);
+        var deletedEntity = _referenceDbContext.ContainerTemplates.Find(testTemplate.Id);
         testTemplate.Deleted = true;
         deleteResult.Should().HaveValue(testTemplate.ToModel());
         deletedEntity.Should().BeEquivalentTo(testTemplate, opts =>

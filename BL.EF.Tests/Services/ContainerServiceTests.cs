@@ -17,13 +17,14 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     IDisposable, IAsyncDisposable
 {
     private readonly ContainerService _containerService;
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
     private readonly FakeTimeProvider _timeProvider = new();
 
     public ContainerServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _containerService = new ContainerService(dbContextFactory.CreateDbContext(), _timeProvider, new UserService(_dbContext));
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _containerService = new ContainerService(_normalDbContext, _timeProvider, new UserService(_normalDbContext));
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
@@ -32,12 +33,14 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -74,9 +77,10 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 new ContainerEntity()
             }
         };
-        _dbContext.ContainerTemplates.Add(testContainerTemplate1);
-        _dbContext.ContainerTemplates.Add(testContainerTemplate2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ContainerTemplates.Add(testContainerTemplate1);
+        _referenceDbContext.ContainerTemplates.Add(testContainerTemplate2);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
 
         // act
         var readPage =
@@ -84,7 +88,10 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
 
         // assert
         var expectedPage =
-            _dbContext.Containers
+            _referenceDbContext.Containers
+            .Include(c => c.StoreTransactionItems)
+            .Include(c => c.Template).ThenInclude(ct => ct!.ContainedItem)
+            .Include(c => c.Pipe)
                 .Select(c => new ContainerIntermediateModel(c, 0))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
 
@@ -125,9 +132,10 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 new ContainerEntity()
             }
         };
-        _dbContext.ContainerTemplates.Add(testContainerTemplate1);
-        _dbContext.ContainerTemplates.Add(testContainerTemplate2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ContainerTemplates.Add(testContainerTemplate1);
+        _referenceDbContext.ContainerTemplates.Add(testContainerTemplate2);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
 
         // act
         var readPage =
@@ -135,7 +143,10 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
 
         // assert
         var expectedPage =
-            _dbContext.Containers
+            _referenceDbContext.Containers
+            .Include(c => c.StoreTransactionItems)
+            .Include(c => c.Template).ThenInclude(ct => ct!.ContainedItem)
+            .Include(c => c.Pipe)
                 .Where(c => c.Deleted)
                 .Select(c => new ContainerIntermediateModel(c, 0))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
@@ -194,9 +205,9 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 new ContainerEntity()
             }
         };
-        _dbContext.ContainerTemplates.Add(testContainerTemplate1);
-        _dbContext.ContainerTemplates.Add(testContainerTemplate2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ContainerTemplates.Add(testContainerTemplate1);
+        _referenceDbContext.ContainerTemplates.Add(testContainerTemplate2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readPage =
@@ -204,7 +215,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
 
         // assert
         var expectedPage =
-            _dbContext.Containers
+            _referenceDbContext.Containers
                 .Where(c => c.PipeId == testPipe.Id)
                 .Select(c => new ContainerIntermediateModel(c, 0))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
@@ -271,8 +282,8 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 }
             }
         };
-        _dbContext.ContainerTemplates.Add(testContainerTemplate1);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ContainerTemplates.Add(testContainerTemplate1);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readPage =
@@ -280,7 +291,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
 
         // assert
         var expectedPage =
-            _dbContext.Containers
+            _referenceDbContext.Containers
                 .Where(c => c.PipeId == testPipe.Id)
                 .Select(c => new ContainerIntermediateModel(c, 8))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
@@ -300,9 +311,10 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some container"
         };
         var testPipe = new PipeEntity { Name = "Some pipe" };
-        _dbContext.ContainerTemplates.Add(testContainerTemplate);
-        _dbContext.Pipes.Add(testPipe);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ContainerTemplates.Add(testContainerTemplate);
+        _referenceDbContext.Pipes.Add(testPipe);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var timestamp = DateTimeOffset.UtcNow;
         _timeProvider.SetUtcNow(timestamp);
         var createModel = new ContainerCreateModel(testContainerTemplate.Id, testPipe.Id);
@@ -374,18 +386,20 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some template",
             Deleted = true
         };
-        _dbContext.Containers.Add(testContainer1);
-        _dbContext.Pipes.Add(testPipe2);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.Containers.Add(testContainer1);
+        _referenceDbContext.Pipes.Add(testPipe2);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var updateModel = new ContainerPatchModel(testPipe2.Id);
 
         // act
         var updateResult = _containerService.Patch(testContainer1.Id, updateModel);
 
         // assert
-        var updatedEntity = _dbContext.Containers
+        var updatedEntity = _referenceDbContext.Containers
             .Include(ce => ce.Pipe)
+            .Include(ce => ce.Template)
+            .ThenInclude(ct => ct!.ContainedItem)
             .Single(ce => ce.Id == testContainer1.Id);
         testContainer1.PipeId = testPipe2.Id;
         testContainer1.Pipe = testPipe2;
@@ -419,18 +433,20 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Pipe = testPipe,
             Name = "Some template"
         };
-        _dbContext.Containers.Add(testContainer1);
-        _dbContext.Pipes.Add(testPipe2);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.Containers.Add(testContainer1);
+        _referenceDbContext.Pipes.Add(testPipe2);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var updateModel = new ContainerPatchModel(testPipe2.Id);
 
         // act
         var updateResult = _containerService.Patch(testContainer1.Id, updateModel);
 
         // assert
-        var updatedEntity = _dbContext.Containers
+        var updatedEntity = _referenceDbContext.Containers
             .Include(ce => ce.Pipe)
+            .Include(ce => ce.Template)
+            .ThenInclude(ct => ct!.ContainedItem)
             .Single(ce => ce.Id == testContainer1.Id);
         testContainer1.PipeId = testPipe2.Id;
         testContainer1.Pipe = testPipe2;
@@ -459,9 +475,9 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Pipe = testPipe,
             Name = "Some template"
         };
-        _dbContext.Containers.Add(testContainer1);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.Containers.Add(testContainer1);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var updateModel = new ContainerPatchModel(42);
 
         // act
@@ -552,18 +568,24 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             Name = "Some container",
             Instances = { testContainer }
         };
-        _dbContext.ContainerTemplates.Add(testContainerTemplate);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ContainerTemplates.Add(testContainerTemplate);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
 
         // act
         var deleteResult =
             _containerService.Delete(testContainer.Id, "Some user");
 
         // assert
+        testContainer = _referenceDbContext.Containers
+            .Include(con => con.StoreTransactionItems)
+            .ThenInclude(sti => sti.StoreTransaction)
+            .First(con => con.Id == testContainer.Id);
         testContainer.Deleted.Should().BeTrue();
         testContainer.PipeId.Should().BeNull();
-        var lastStoreTransaction = testContainer.StoreTransactionItems.Last();
-        lastStoreTransaction.Should().BeEquivalentTo(new StoreTransactionItemEntity
+        var lastTransactionItem = testContainer.StoreTransactionItems
+            .Last();
+        lastTransactionItem.Should().BeEquivalentTo(new StoreTransactionItemEntity
             {
                 StoreItemId = testStoreItem.Id,
                 StoreItem = testStoreItem,

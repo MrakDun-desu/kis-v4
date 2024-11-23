@@ -12,22 +12,25 @@ namespace BL.EF.Tests.Services;
 public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
     private readonly CurrencyService _currencyService;
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
 
     public CurrencyServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _currencyService = new CurrencyService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _currencyService = new CurrencyService(_normalDbContext);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -40,7 +43,7 @@ public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
         var createdModel = _currencyService.Create(createModel);
 
         // assert
-        var createdEntity = _dbContext.Currencies.Find(createdModel.Id);
+        var createdEntity = _referenceDbContext.Currencies.Find(createdModel.Id);
         var expectedEntity = new CurrencyEntity
         {
             Name = createModel.Name,
@@ -57,15 +60,15 @@ public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
         // arrange
         var testCurrency1 = new CurrencyEntity { Name = "Some currency" };
         var testCurrency2 = new CurrencyEntity { Name = "Some currency 2" };
-        _dbContext.Currencies.Add(testCurrency1);
-        _dbContext.Currencies.Add(testCurrency2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.Currencies.Add(testCurrency1);
+        _referenceDbContext.Currencies.Add(testCurrency2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readModels = _currencyService.ReadAll();
 
         // assert
-        var expectedModels = _dbContext.Currencies.ToList().ToModels();
+        var expectedModels = _referenceDbContext.Currencies.ToList().ToModels();
 
         readModels.Should().BeEquivalentTo(expectedModels);
     }
@@ -75,9 +78,9 @@ public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     {
         // arrange
         var testCurrency = new CurrencyEntity { Name = "Some currency" };
-        _dbContext.Currencies.Add(testCurrency);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.Currencies.Add(testCurrency);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var updateModel = new CurrencyCreateModel(
             "Some new name",
             "SNN"
@@ -87,7 +90,7 @@ public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
         var updateResult = _currencyService.Update(testCurrency.Id, updateModel);
     
         // assert
-        var updatedEntity = _dbContext.Currencies.Find(testCurrency.Id);
+        var updatedEntity = _referenceDbContext.Currencies.Find(testCurrency.Id);
         var expectedEntity = testCurrency with
         {
             Name = updateModel.Name,

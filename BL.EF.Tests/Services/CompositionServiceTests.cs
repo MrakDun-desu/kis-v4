@@ -13,22 +13,25 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
     IAsyncDisposable
 {
     private readonly CompositionService _compositionService;
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
 
     public CompositionServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _compositionService = new CompositionService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _compositionService = new CompositionService(_normalDbContext);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -41,7 +44,7 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var result = _compositionService.CreateOrUpdate(createModel);
 
         // assert
-        var createdEntity = _dbContext.Compositions.Find(createModel.SaleItemId, createModel.StoreItemId);
+        var createdEntity = _referenceDbContext.Compositions.Find(createModel.SaleItemId, createModel.StoreItemId);
         createdEntity.Should().BeNull();
         result.Should().HaveValue(new Dictionary<string, string[]>
         {
@@ -56,9 +59,10 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         // arrange
         var saleItemEntity = new SaleItemEntity { Name = "Test sale item" };
         var storeItemEntity = new StoreItemEntity { Name = "Test store item" };
-        var insertedSaleItem = _dbContext.SaleItems.Add(saleItemEntity);
-        var insertedStoreItem = _dbContext.StoreItems.Add(storeItemEntity);
-        _dbContext.SaveChanges();
+        var insertedSaleItem = _referenceDbContext.SaleItems.Add(saleItemEntity);
+        var insertedStoreItem = _referenceDbContext.StoreItems.Add(storeItemEntity);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var saleItemId = insertedSaleItem.Entity.Id;
         var storeItemId = insertedStoreItem.Entity.Id;
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 42);
@@ -67,7 +71,7 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var result = _compositionService.CreateOrUpdate(createModel);
 
         // assert
-        var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
+        var createdEntity = _referenceDbContext.Compositions.Find(saleItemId, storeItemId);
         var expectedEntity = new CompositionEntity
         {
             Amount = createModel.Amount,
@@ -76,7 +80,9 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
             SaleItem = insertedSaleItem.Entity,
             StoreItem = insertedStoreItem.Entity
         };
-        createdEntity.Should().Be(expectedEntity);
+        createdEntity.Should().BeEquivalentTo(expectedEntity, opts => 
+                opts.Excluding(entity => entity.SaleItem)
+                    .Excluding(entity => entity.StoreItem));
         result.Should().HaveValue(expectedEntity.ToModel());
     }
 
@@ -90,10 +96,11 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         {
             Amount = 42, SaleItem = saleItemEntity, StoreItem = storeItemEntity
         };
-        var insertedSaleItem = _dbContext.SaleItems.Add(saleItemEntity);
-        var insertedStoreItem = _dbContext.StoreItems.Add(storeItemEntity);
-        _dbContext.Compositions.Add(compositionEntity);
-        _dbContext.SaveChanges();
+        var insertedSaleItem = _referenceDbContext.SaleItems.Add(saleItemEntity);
+        var insertedStoreItem = _referenceDbContext.StoreItems.Add(storeItemEntity);
+        _referenceDbContext.Compositions.Add(compositionEntity);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var saleItemId = insertedSaleItem.Entity.Id;
         var storeItemId = insertedStoreItem.Entity.Id;
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 0);
@@ -102,7 +109,7 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var result = _compositionService.CreateOrUpdate(createModel);
 
         // assert
-        var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
+        var createdEntity = _referenceDbContext.Compositions.Find(saleItemId, storeItemId);
         createdEntity.Should().BeNull();
         result.Should().BeSuccess();
     }
@@ -117,10 +124,11 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         {
             Amount = 42, SaleItem = saleItemEntity, StoreItem = storeItemEntity
         };
-        var insertedSaleItem = _dbContext.SaleItems.Add(saleItemEntity);
-        var insertedStoreItem = _dbContext.StoreItems.Add(storeItemEntity);
-        _dbContext.Compositions.Add(compositionEntity);
-        _dbContext.SaveChanges();
+        var insertedSaleItem = _referenceDbContext.SaleItems.Add(saleItemEntity);
+        var insertedStoreItem = _referenceDbContext.StoreItems.Add(storeItemEntity);
+        _referenceDbContext.Compositions.Add(compositionEntity);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var saleItemId = insertedSaleItem.Entity.Id;
         var storeItemId = insertedStoreItem.Entity.Id;
         var createModel = new CompositionCreateModel(saleItemId, storeItemId, 52);
@@ -129,16 +137,20 @@ public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisp
         var result = _compositionService.CreateOrUpdate(createModel);
 
         // assert
-        var createdEntity = _dbContext.Compositions.Find(saleItemId, storeItemId);
+        var createdEntity = _referenceDbContext.Compositions.Find(saleItemId, storeItemId);
         var expectedEntity = new CompositionEntity
         {
             Amount = createModel.Amount,
             SaleItemId = saleItemId,
             StoreItemId = storeItemId,
-            SaleItem = insertedSaleItem.Entity,
-            StoreItem = insertedStoreItem.Entity
+            SaleItem = saleItemEntity,
+            StoreItem = storeItemEntity
         };
-        createdEntity.Should().Be(expectedEntity);
+        createdEntity.Should().BeEquivalentTo(expectedEntity, opts =>
+            opts
+                .Excluding(entity => entity.SaleItem)
+                .Excluding(entity => entity.StoreItem)
+        );
         result.Should().HaveValue(expectedEntity.ToModel());
     }
 }

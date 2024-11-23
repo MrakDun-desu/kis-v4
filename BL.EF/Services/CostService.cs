@@ -19,7 +19,9 @@ public class CostService(KisDbContext dbContext)
                 $"Product with id {createModel.ProductId} doesn't exist"
                 );
         }
-        if (!dbContext.Currencies.Any(p => p.Id == createModel.CurrencyId))
+
+        var currency = dbContext.Currencies.Find(createModel.CurrencyId);
+        if (currency is null)
         {
             errors.AddItemOrCreate(
                 nameof(createModel.CurrencyId),
@@ -36,6 +38,7 @@ public class CostService(KisDbContext dbContext)
         {
             ValidSince = createModel.ValidSince.ToUniversalTime()
         }).ToEntity();
+        entity.Currency = currency;
 
         dbContext.CurrencyCosts.Add(entity);
 

@@ -8,18 +8,20 @@ using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BL.EF.Tests.Services;
 
 public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
     private readonly SaleItemService _saleItemService;
 
     public SaleItemServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _saleItemService = new SaleItemService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _saleItemService = new SaleItemService(_normalDbContext);
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
@@ -28,12 +30,14 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -130,9 +134,9 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
             ShowOnWeb = false
         };
 
-        _dbContext.SaleItems.Add(testSaleItem1);
-        _dbContext.SaleItems.Add(testSaleItem2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.SaleItems.Add(testSaleItem1);
+        _referenceDbContext.SaleItems.Add(testSaleItem2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _saleItemService.ReadAll(null, null, null, null, null);
@@ -256,9 +260,9 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
             ShowOnWeb = false
         };
 
-        _dbContext.SaleItems.Add(testSaleItem1);
-        _dbContext.SaleItems.Add(testSaleItem2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.SaleItems.Add(testSaleItem1);
+        _referenceDbContext.SaleItems.Add(testSaleItem2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _saleItemService.ReadAll(null, null, null, foodCategory.Id, null);
@@ -359,9 +363,9 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
             ShowOnWeb = true
         };
 
-        _dbContext.SaleItems.Add(testSaleItem1);
-        _dbContext.Stores.Add(testStore2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.SaleItems.Add(testSaleItem1);
+        _referenceDbContext.Stores.Add(testStore2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _saleItemService.Read(testSaleItem1.Id);
@@ -462,9 +466,9 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
             ShowOnWeb = true
         };
 
-        _dbContext.SaleItems.Add(testSaleItem1);
-        _dbContext.Stores.Add(testStore2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.SaleItems.Add(testSaleItem1);
+        _referenceDbContext.Stores.Add(testStore2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _saleItemService.Read(testSaleItem1.Id);
@@ -506,8 +510,8 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     {
         // arrange
         var testCategory = new ProductCategoryEntity { Name = "Food" };
-        _dbContext.ProductCategories.Add(testCategory);
-        _dbContext.SaveChanges();
+        _referenceDbContext.ProductCategories.Add(testCategory);
+        _referenceDbContext.SaveChanges();
         var createModel = new SaleItemCreateModel(
             "Some sale item",
             string.Empty,
@@ -520,7 +524,9 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
 
         // assert
         createResult.IsT0.Should().BeTrue();
-        var createdEntity = _dbContext.SaleItems.Find(createResult.AsT0.Id);
+        var createdEntity = _referenceDbContext.SaleItems
+            .Include(si => si.Categories)
+            .First(si => si.Id == createResult.AsT0.Id);
         createdEntity.Should().BeEquivalentTo(new SaleItemEntity
         {
             Id = createResult.AsT0.Id,
@@ -586,10 +592,10 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
             }
         };
         var testCategory = new ProductCategoryEntity { Name = "Food" };
-        _dbContext.ProductCategories.Add(testCategory);
-        _dbContext.SaleItems.Add(testSaleItem);
-        _dbContext.SaveChanges();
-        _dbContext.ChangeTracker.Clear();
+        _referenceDbContext.ProductCategories.Add(testCategory);
+        _referenceDbContext.SaleItems.Add(testSaleItem);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
         var updateModel = new SaleItemCreateModel(
             "Some sale item",
             string.Empty,
@@ -602,7 +608,11 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
 
         // assert
         createResult.IsT0.Should().BeTrue();
-        var createdEntity = _dbContext.SaleItems.Find(testSaleItem.Id);
+        var createdEntity = _referenceDbContext.SaleItems
+            .Include(si => si.Categories)
+            .Include(si => si.Costs)
+            .ThenInclude(c => c.Currency)
+            .First(si => si.Id == createResult.AsT0.Id);
         var expectedEntity = new SaleItemEntity
         {
             Id = testSaleItem.Id,

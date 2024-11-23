@@ -2,6 +2,7 @@ using KisV4.BL.Common.Services;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
+using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
 
@@ -9,7 +10,8 @@ namespace KisV4.BL.EF.Services;
 
 public class CompositionService(KisDbContext dbContext) : ICompositionService, IScopedService
 {
-    public OneOf<Success, CompositionListModel, Dictionary<string, string[]>> CreateOrUpdate(CompositionCreateModel createModel)
+    public OneOf<Success, CompositionListModel, Dictionary<string, string[]>> CreateOrUpdate(
+        CompositionCreateModel createModel)
     {
         var errors = new Dictionary<string, string[]>();
         if (!dbContext.SaleItems.Any(si => si.Id == createModel.SaleItemId))
@@ -50,6 +52,11 @@ public class CompositionService(KisDbContext dbContext) : ICompositionService, I
         }
 
         dbContext.SaveChanges();
-        return composition.ToModel();
+        return dbContext.Compositions
+            .Include(comp => comp.StoreItem)
+            .Include(comp => comp.SaleItem)
+            .First(comp => comp.SaleItemId == createModel.SaleItemId &&
+                           comp.StoreItemId == createModel.StoreItemId)
+            .ToModel();
     }
 }

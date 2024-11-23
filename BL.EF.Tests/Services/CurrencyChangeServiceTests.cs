@@ -14,22 +14,25 @@ namespace BL.EF.Tests.Services;
 public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
     private readonly CurrencyChangeService _currencyChangeService;
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
 
     public CurrencyChangeServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _currencyChangeService = new CurrencyChangeService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _currencyChangeService = new CurrencyChangeService(_normalDbContext);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -62,14 +65,14 @@ public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, ID
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-5)
             }
         };
-        _dbContext.CurrencyChanges.Add(testCurrencyChange1);
-        _dbContext.CurrencyChanges.Add(testCurrencyChange2);
+        _referenceDbContext.CurrencyChanges.Add(testCurrencyChange1);
+        _referenceDbContext.CurrencyChanges.Add(testCurrencyChange2);
 
         // act
         var readResult = _currencyChangeService.ReadAll(null, null, null, null, null, null);
 
         // assert
-        var expectedPage = _dbContext.CurrencyChanges
+        var expectedPage = _referenceDbContext.CurrencyChanges
             .Include(cc => cc.SaleTransaction)
             .Include(cc => cc.Currency)
             .OrderByDescending(cc => cc.SaleTransaction!.Timestamp)
@@ -108,15 +111,15 @@ public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, ID
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-5)
             }
         };
-        _dbContext.CurrencyChanges.Add(testCurrencyChange1);
-        _dbContext.CurrencyChanges.Add(testCurrencyChange2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.CurrencyChanges.Add(testCurrencyChange1);
+        _referenceDbContext.CurrencyChanges.Add(testCurrencyChange2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _currencyChangeService.ReadAll(null, null, testAccount1.Id, null, null, null);
 
         // assert
-        var expectedPage = _dbContext.CurrencyChanges
+        var expectedPage = _referenceDbContext.CurrencyChanges
             .Include(cc => cc.SaleTransaction)
             .Include(cc => cc.Currency)
             .OrderByDescending(cc => cc.SaleTransaction!.Timestamp)
@@ -156,14 +159,14 @@ public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, ID
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-5)
             }
         };
-        _dbContext.CurrencyChanges.Add(testCurrencyChange1);
-        _dbContext.CurrencyChanges.Add(testCurrencyChange2);
+        _referenceDbContext.CurrencyChanges.Add(testCurrencyChange1);
+        _referenceDbContext.CurrencyChanges.Add(testCurrencyChange2);
 
         // act
         var readResult = _currencyChangeService.ReadAll(null, null, null, true, null, null);
 
         // assert
-        var expectedPage = _dbContext.CurrencyChanges
+        var expectedPage = _referenceDbContext.CurrencyChanges
             .Include(cc => cc.SaleTransaction)
             .Include(cc => cc.Currency)
             .OrderByDescending(cc => cc.SaleTransaction!.Timestamp)
@@ -203,8 +206,8 @@ public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, ID
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-5)
             }
         };
-        _dbContext.CurrencyChanges.Add(testCurrencyChange1);
-        _dbContext.CurrencyChanges.Add(testCurrencyChange2);
+        _referenceDbContext.CurrencyChanges.Add(testCurrencyChange1);
+        _referenceDbContext.CurrencyChanges.Add(testCurrencyChange2);
         const int accountId = 42;
 
         // act

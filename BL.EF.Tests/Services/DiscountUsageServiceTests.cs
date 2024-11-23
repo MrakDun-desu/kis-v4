@@ -13,22 +13,25 @@ namespace BL.EF.Tests.Services;
 public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
 {
     private readonly DiscountUsageService _discountUsageService;
-    private readonly KisDbContext _dbContext;
+    private readonly KisDbContext _referenceDbContext;
+    private readonly KisDbContext _normalDbContext;
 
     public DiscountUsageServiceTests(KisDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContextAndResetDb();
-        _discountUsageService = new DiscountUsageService(dbContextFactory.CreateDbContext());
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+        _discountUsageService = new DiscountUsageService(_normalDbContext);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await _referenceDbContext.DisposeAsync();
+        await _normalDbContext.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        _referenceDbContext.Dispose();
+        _normalDbContext.Dispose();
     }
 
     [Fact]
@@ -51,9 +54,9 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser2
         };
-        _dbContext.DiscountUsages.Add(testDiscountUsage1);
-        _dbContext.DiscountUsages.Add(testDiscountUsage2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.DiscountUsages.Add(testDiscountUsage1);
+        _referenceDbContext.DiscountUsages.Add(testDiscountUsage2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _discountUsageService.ReadAll(null, null, null, null);
@@ -87,9 +90,9 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser2
         };
-        _dbContext.DiscountUsages.Add(testDiscountUsage1);
-        _dbContext.DiscountUsages.Add(testDiscountUsage2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.DiscountUsages.Add(testDiscountUsage1);
+        _referenceDbContext.DiscountUsages.Add(testDiscountUsage2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _discountUsageService.ReadAll(null, null, testDiscount1.Id, null);
@@ -122,9 +125,9 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser2
         };
-        _dbContext.DiscountUsages.Add(testDiscountUsage1);
-        _dbContext.DiscountUsages.Add(testDiscountUsage2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.DiscountUsages.Add(testDiscountUsage1);
+        _referenceDbContext.DiscountUsages.Add(testDiscountUsage2);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _discountUsageService.ReadAll(null, null, null, testUser1.Id);
@@ -157,9 +160,9 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser2
         };
-        _dbContext.DiscountUsages.Add(testDiscountUsage1);
-        _dbContext.DiscountUsages.Add(testDiscountUsage2);
-        _dbContext.SaveChanges();
+        _referenceDbContext.DiscountUsages.Add(testDiscountUsage1);
+        _referenceDbContext.DiscountUsages.Add(testDiscountUsage2);
+        _referenceDbContext.SaveChanges();
         const int userId = 42;
 
         // act
@@ -229,14 +232,14 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
                 testUsageItem
             }
         };
-        _dbContext.DiscountUsages.Add(testDiscountUsage1);
-        _dbContext.SaveChanges();
+        _referenceDbContext.DiscountUsages.Add(testDiscountUsage1);
+        _referenceDbContext.SaveChanges();
 
         // act
         var readResult = _discountUsageService.Read(testDiscountUsage1.Id);
 
         // assert
         readResult.IsT0.Should().BeTrue();
-        readResult.AsT0.Should().BeEquivalentTo(_dbContext.DiscountUsages.Find(testDiscountUsage1.Id).ToModel());
+        readResult.AsT0.Should().BeEquivalentTo(_referenceDbContext.DiscountUsages.Find(testDiscountUsage1.Id).ToModel());
     }
 }
