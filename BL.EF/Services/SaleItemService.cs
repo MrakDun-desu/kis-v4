@@ -3,7 +3,6 @@ using KisV4.Common;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
-using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
@@ -110,7 +109,7 @@ public class SaleItemService(KisDbContext dbContext)
                 .OrderByDescending(cc => cc.ValidSince)
                 .First())
             .ToList().ToModels();
-
+        
         var composition = entity.Composition
             .ToDictionary(
                 comp => comp.StoreItemId,

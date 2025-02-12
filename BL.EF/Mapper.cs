@@ -64,7 +64,7 @@ public static partial class Mapper
             model.Entity.ShowOnWeb,
             model.Entity.Categories.ToList().ToModels(),
             model.Entity.Composition.ToList().ToModels(),
-            model.Entity.AvailableModifiers.ToList().ToModels(),
+            model.Entity.AvailableModifiers.Where(mod => !mod.Deleted).ToList().ToModels(),
             model.Entity.Costs.ToList().ToModels(),
             model.CurrentCosts,
             model.StoreAmounts
@@ -125,7 +125,8 @@ public static partial class Mapper
     public static partial List<DiscountUsageListModel> ToModels(this List<DiscountUsageEntity> entities);
 
     public static partial ModifierEntity ToEntity(this ModifierCreateModel model);
-    public static partial ModifierDetailModel? ToModel(this ModifierEntity? entity);
+    public static partial void UpdateEntity(this ModifierCreateModel model, ModifierEntity entity);
+    public static partial ModifierDetailModel ToModel(this ModifierEntity entity);
     public static partial List<ModifierListModel> ToModels(this List<ModifierEntity> entities);
 
     [MapperIgnoreSource(nameof(StoreItemCreateModel.CategoryIds))]

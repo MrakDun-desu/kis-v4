@@ -4,6 +4,8 @@ using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;
+using OneOf;
+using OneOf.Types;
 
 namespace KisV4.BL.EF.Services;
 
@@ -11,52 +13,80 @@ namespace KisV4.BL.EF.Services;
 public class ModifierService(KisDbContext dbContext)
     : IModifierService, IScopedService
 {
-    public int Create(ModifierCreateModel createModel)
+    public OneOf<ModifierDetailModel, Dictionary<string, string[]>> Create(ModifierCreateModel createModel)
     {
+        if (!dbContext.SaleItems.Any(si => si.Id == createModel
+                .ModificationTargetId))
+        {
+            return new Dictionary<string, string[]>
+            {
+                {
+                    nameof(createModel.ModificationTargetId),
+                    [$"Sale item with id {createModel.ModificationTargetId} doesn't exist."]
+                }
+            };
+        }
+
         var entity = createModel.ToEntity();
         var insertedEntity = dbContext.Modifiers.Add(entity);
 
         dbContext.SaveChanges();
 
-        return insertedEntity.Entity.Id;
+        return Read(insertedEntity.Entity.Id).AsT0;
     }
 
-    public ModifierDetailModel? Read(int id)
+    public OneOf<ModifierDetailModel, NotFound> Read(int id)
     {
-        return Mapper.ToModel(dbContext.Modifiers.Find(id));
+        var entity = dbContext.Modifiers
+            .Include(m => m.ModificationTarget)
+            .Include(m => m.Costs)
+            .Include(m => m.Composition)
+            .SingleOrDefault(m => m.Id == id);
+        
+        if (entity is null)
+        {
+            return new NotFound();
+        }
+        
+        return entity.ToModel();
     }
 
-    public bool Update(int id, ModifierCreateModel updateModel)
+    public OneOf<ModifierDetailModel, NotFound, Dictionary<string, string[]>> Update(int id, ModifierCreateModel updateModel)
     {
-        if (dbContext.Modifiers.Any(m => m.Id == id))
-            return false;
+        var entity = dbContext.Modifiers.Find(id);
+        if (entity is null)
+            return new NotFound();
+        
+        if (!dbContext.SaleItems.Any(si => si.Id == updateModel
+                .ModificationTargetId))
+        {
+            return new Dictionary<string, string[]>
+            {
+                {
+                    nameof(updateModel.ModificationTargetId),
+                    [$"Sale item with id {updateModel.ModificationTargetId} doesn't exist."]
+                }
+            };
+        }
 
-        var entity = updateModel.ToEntity();
-        entity.Id = id;
+        updateModel.UpdateEntity(entity);
+        entity.Deleted = false;
 
         dbContext.Modifiers.Update(entity);
         dbContext.SaveChanges();
 
-        return true;
+        return entity.ToModel();
     }
 
-    public bool Delete(int id)
+    public OneOf<ModifierDetailModel, NotFound> Delete(int id)
     {
         var entity = dbContext.Modifiers.Find(id);
-        if (entity is null) return false;
+        if (entity is null) return new NotFound();
 
+        dbContext.Modifiers.Update(entity);
         entity.Deleted = true;
         dbContext.SaveChanges();
 
-        return true;
-    }
-
-    public List<ModifierListModel> ReadAll()
-    {
-        return dbContext.Modifiers
-            .Where(e => !e.Deleted)
-            // including categories to prevent lazy loading from sending ton of db queries
-            .Include(e => e.Categories)
-            .ToList().ToModels();
+        return entity.ToModel();
     }
 }

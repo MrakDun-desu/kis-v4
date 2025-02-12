@@ -15,33 +15,48 @@ public static class Modifiers
         group.MapDelete("{id:int}", Delete);
     }
 
-    private static int Create(
+    private static Results<Ok<ModifierDetailModel>, ValidationProblem> Create(
         IModifierService modifierService,
         ModifierCreateModel createModel)
     {
-        var createdId = modifierService.Create(createModel);
-        return createdId;
+        return modifierService.Create(createModel)
+            .Match<Results<Ok<ModifierDetailModel>, ValidationProblem>>(
+                output => TypedResults.Ok(output),
+                errors => TypedResults.ValidationProblem(errors)
+            );
     }
 
-    private static Results<Ok<ModifierDetailModel>, NotFound> Read(IModifierService modifierService, int id)
+    private static Results<Ok<ModifierDetailModel>, NotFound> Read(
+        IModifierService modifierService, int id)
     {
-        var modifierModel = modifierService.Read(id);
-
-        return modifierModel is null ? TypedResults.NotFound() : TypedResults.Ok(modifierModel);
+        return modifierService.Read(id)
+            .Match<Results<Ok<ModifierDetailModel>, NotFound>>(
+                output => TypedResults.Ok(output),
+                _ => TypedResults.NotFound()
+            );
     }
 
-    private static Results<Ok, NotFound> Update(
+    private static Results<Ok<ModifierDetailModel>, NotFound, ValidationProblem> Update(
         IModifierService modifierService,
         int id,
         ModifierCreateModel updateModel)
     {
-        return modifierService.Update(id, updateModel) ? TypedResults.Ok() : TypedResults.NotFound();
+        return modifierService.Update(id, updateModel)
+            .Match<Results<Ok<ModifierDetailModel>, NotFound, ValidationProblem>>(
+                output => TypedResults.Ok(output),
+                _ => TypedResults.NotFound(),
+                errors => TypedResults.ValidationProblem(errors)
+            );
     }
 
-    private static Results<Ok, NotFound> Delete(
+    private static Results<Ok<ModifierDetailModel>, NotFound> Delete(
         IModifierService modifierService,
         int id)
     {
-        return modifierService.Delete(id) ? TypedResults.Ok() : TypedResults.NotFound();
+        return modifierService.Delete(id)
+            .Match<Results<Ok<ModifierDetailModel>, NotFound>>(
+                output => TypedResults.Ok(output),
+                _ => TypedResults.NotFound()
+            );
     }
 }

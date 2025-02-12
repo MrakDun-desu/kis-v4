@@ -286,6 +286,128 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     }
 
     [Fact]
+    public void Read_ReadsCorrectly_WithModifiers()
+    {
+        // arrange
+        var foodCategory = new ProductCategoryEntity { Name = "Food" };
+        var testUser = new UserAccountEntity { UserName = "Some user" };
+        var testStore1 = new StoreEntity { Name = "Kachna 1" };
+        var testStore2 = new StoreEntity { Name = "Kachna 2" };
+        var testCurrency = new CurrencyEntity { Name = "Czech crowns" };
+        var testSaleItem1 = new SaleItemEntity
+        {
+            Name = "Toast",
+            Categories = { foodCategory },
+            Costs =
+            {
+                new CurrencyCostEntity
+                {
+                    Currency = testCurrency,
+                    Amount = 30,
+                    ValidSince = DateTimeOffset.UtcNow.AddDays(-10)
+                },
+                new CurrencyCostEntity
+                {
+                    Currency = testCurrency,
+                    Amount = 50,
+                    ValidSince = DateTimeOffset.UtcNow.AddDays(-5)
+                }
+            },
+            Composition =
+            {
+                new CompositionEntity
+                {
+                    Amount = 10,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Šunka",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore1,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                },
+                new CompositionEntity
+                {
+                    Amount = 1,
+                    StoreItem = new StoreItemEntity
+                    {
+                        Name = "Chleba",
+                        StoreTransactionItems =
+                        {
+                            new StoreTransactionItemEntity
+                            {
+                                Store = testStore1,
+                                ItemAmount = 42,
+                                StoreTransaction = new StoreTransactionEntity
+                                {
+                                    ResponsibleUser = testUser,
+                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    TransactionReason = TransactionReason.AddingToStore
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            ShowOnWeb = true,
+            AvailableModifiers =
+            {
+                new ModifierEntity { Name = "Some modifier" },
+                new ModifierEntity { Name = "Some other modifier", Deleted = true }
+            }
+        };
+
+        _referenceDbContext.SaleItems.Add(testSaleItem1);
+        _referenceDbContext.Stores.Add(testStore2);
+        _referenceDbContext.SaveChanges();
+
+        // act
+        var readResult = _saleItemService.Read(testSaleItem1.Id);
+
+        // assert
+        var expectedResult = new SaleItemDetailModel(
+            testSaleItem1.Id,
+            testSaleItem1.Name,
+            testSaleItem1.Image,
+            testSaleItem1.Deleted,
+            testSaleItem1.ShowOnWeb,
+            testSaleItem1.Categories.ToList().ToModels(),
+            testSaleItem1.Composition.ToList().ToModels(),
+            testSaleItem1.AvailableModifiers.Where(mod => !mod.Deleted).ToList().ToModels(),
+            testSaleItem1.Costs.ToList().ToModels(),
+            new List<CostListModel>
+            {
+                testSaleItem1.Costs.ElementAt(1).ToModel()
+            },
+            new List<StoreAmountSaleItemListModel>
+            {
+                new(
+                    testStore1.ToListModel(),
+                    testSaleItem1.Id,
+                    4
+                ),
+                new(
+                    testStore2.ToListModel(),
+                    testSaleItem1.Id,
+                    0
+                )
+            }
+        );
+        readResult.Should().HaveValue(expectedResult);
+    }
+
+    [Fact]
     public void Read_ReadsCorrectly_WhenNoTransactionsInStore()
     {
         // arrange
