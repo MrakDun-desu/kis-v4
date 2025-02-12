@@ -1,10 +1,10 @@
 using BL.EF.Tests.Fixtures;
+using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
-using Shouldly;
 
 namespace BL.EF.Tests.Services;
 
@@ -49,7 +49,7 @@ public class ModifierServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
             Name = createModel.Name,
             ShowOnWeb = createModel.ShowOnWeb
         };
-        createdEntity.ShouldBeEquivalentTo(expectedEntity);
+        createdEntity.Should().BeEquivalentTo(expectedEntity);
     }
     
     [Fact]
@@ -65,9 +65,9 @@ public class ModifierServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     
         var updateResult = _modifierService.Update(insertedEntity.Entity.Id, updateModel);
     
-        updateResult.IsT0.ShouldBeTrue();
+        updateResult.IsT0.Should().BeTrue();
         var expectedEntity = insertedEntity.Entity with { Name = newName };
-        updateResult.AsT0.ShouldBeEquivalentTo(expectedEntity.ToModel());
+        updateResult.AsT0.Should().BeEquivalentTo(expectedEntity.ToModel());
     }
     
     [Fact]
@@ -84,9 +84,9 @@ public class ModifierServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     
         var updateResult = _modifierService.Update(insertedEntity.Entity.Id, updateModel);
 
-        updateResult.IsT0.ShouldBeTrue();
+        updateResult.IsT0.Should().BeTrue();
         var expectedEntity = insertedEntity.Entity with { Image = newImage };
-        updateResult.AsT0.ShouldBeEquivalentTo(expectedEntity.ToModel());
+        updateResult.AsT0.Should().BeEquivalentTo(expectedEntity.ToModel());
     }
     
     [Fact]
@@ -100,9 +100,9 @@ public class ModifierServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     
         var updateResult = _modifierService.Update(insertedEntity.Entity.Id, updateModel);
 
-        updateResult.IsT0.ShouldBeTrue();
+        updateResult.IsT0.Should().BeTrue();
         var expectedEntity = insertedEntity.Entity with { ShowOnWeb = true };
-        updateResult.AsT0.ShouldBeEquivalentTo(expectedEntity.ToModel());
+        updateResult.AsT0.Should().BeEquivalentTo(expectedEntity.ToModel());
     }
     
     [Fact]
@@ -112,7 +112,7 @@ public class ModifierServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     
         var updateResult = _modifierService.Update(42, updateModel);
     
-        updateResult.IsT1.ShouldBeTrue();
+        updateResult.IsT1.Should().BeTrue();
     }
     
     [Fact]
@@ -126,10 +126,10 @@ public class ModifierServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     
         var deleteResult = _modifierService.Delete(insertedEntity.Entity.Id);
     
-        deleteResult.IsT0.ShouldBeTrue();
-        deleteResult.AsT0.Deleted.ShouldBeTrue();
+        deleteResult.IsT0.Should().BeTrue();
+        deleteResult.AsT0.Deleted.Should().BeTrue();
         var deletedEntity = _referenceDbContext.Modifiers.Find(insertedEntity.Entity.Id);
-        deletedEntity!.Deleted.ShouldBeTrue();
+        deletedEntity!.Deleted.Should().BeTrue();
     }
     
     [Fact]
@@ -137,6 +137,6 @@ public class ModifierServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     {
         var deleteResult = _modifierService.Delete(42);
 
-        deleteResult.IsT1.ShouldBeTrue();
+        deleteResult.IsT1.Should().BeTrue();
     }
 }
