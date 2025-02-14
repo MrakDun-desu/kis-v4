@@ -23,7 +23,11 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
     public StoreTransactionServiceTests(KisDbContextFactory dbContextFactory)
     {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
-        _userService = new UserService(_normalDbContext);
+        _userService = new UserService(
+                _normalDbContext, 
+                new CurrencyChangeService(_normalDbContext),
+                new DiscountUsageService(_normalDbContext)
+            );
         _storeTransactionService = new StoreTransactionService(_normalDbContext, _userService, _timeProvider);
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>

@@ -98,5 +98,6 @@ SaleItems.MapEndpoints(app);
 StoreItems.MapEndpoints(app);
 StoreTransactions.MapEndpoints(app);
 Stores.MapEndpoints(app);
+Users.MapEndpoints(app);
 
 app.Run();

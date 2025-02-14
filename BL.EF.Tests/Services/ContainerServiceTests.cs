@@ -24,7 +24,14 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     public ContainerServiceTests(KisDbContextFactory dbContextFactory)
     {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
-        _containerService = new ContainerService(_normalDbContext, _timeProvider, new UserService(_normalDbContext));
+        _containerService = new ContainerService(
+            _normalDbContext, 
+            _timeProvider, 
+            new UserService(
+                _normalDbContext, 
+                new CurrencyChangeService(_normalDbContext),
+                new DiscountUsageService(_normalDbContext))
+            );
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()

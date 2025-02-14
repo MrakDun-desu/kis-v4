@@ -62,7 +62,7 @@ public class
     }
 
     [Fact]
-    public void ReadAll_DoesntReadDeleted_WhenDeletedFilterIsFalse()
+    public void ReadAll_DoesntReadDeleted()
     {
         // arrange
         var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
@@ -77,25 +77,6 @@ public class
         // assert
         var mappedModels =
             _referenceDbContext.CashBoxes.Where(cb => !cb.Deleted).ToList().ToModels();
-        readModels.Should().BeEquivalentTo(mappedModels);
-    }
-
-    [Fact]
-    public void ReadAll_ReadsOnlyDeleted_WhenDeletedFilterIsTrue()
-    {
-        // arrange
-        var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
-        var testCashBox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
-        _referenceDbContext.CashBoxes.Add(testCashBox1);
-        _referenceDbContext.CashBoxes.Add(testCashBox2);
-        _referenceDbContext.SaveChanges();
-
-        // act
-        var readModels = _cashBoxService.ReadAll(true);
-
-        // assert
-        var mappedModels =
-            _referenceDbContext.CashBoxes.Where(cb => cb.Deleted).ToList().ToModels();
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 
