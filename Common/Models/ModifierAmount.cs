@@ -6,8 +6,5 @@ public record ModifierAmountListModel(
     int Amount
 );
 
-public record ModifierAmountCreateModel(
-    int ModifierId,
-    int SaleTransactionItemId,
-    int Amount
-);
+public record ModifierAmountCreateModel(int ModifierId, int Amount);
+
