@@ -3,7 +3,8 @@ namespace KisV4.Common.Models;
 public record SaleTransactionItemCreateModel(
     int SaleItemId,
     IEnumerable<ModifierAmountCreateModel> ModifierAmounts,
-    int ItemAmount
+    int ItemAmount,
+    int? StoreId
 );
 
 public record SaleTransactionItemListModel(

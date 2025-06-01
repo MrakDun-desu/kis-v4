@@ -1,7 +1,8 @@
 namespace KisV4.Common.Models;
 
 public record SaleTransactionCreateModel(
-    IEnumerable<SaleTransactionItemCreateModel> SaleTransactionItems
+    IEnumerable<SaleTransactionItemCreateModel> SaleTransactionItems,
+    int StoreId
 );
 
 public record SaleTransactionListModel(
@@ -20,3 +21,4 @@ public record SaleTransactionDetailModel(
     IEnumerable<StoreTransactionListModel> StoreTransactions,
     IEnumerable<CurrencyChangeListModel> CurrencyChanges
 );
+
