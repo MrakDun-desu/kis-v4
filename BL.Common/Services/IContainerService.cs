@@ -4,18 +4,17 @@ using OneOf.Types;
 
 namespace KisV4.BL.Common.Services;
 
-public interface IContainerService
-{
-    public OneOf<Page<ContainerListModel>, Dictionary<string, string[]>> ReadAll(
+public interface IContainerService {
+    OneOf<Page<ContainerListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
         int? pageSize,
         bool? deleted,
         int? pipeId);
 
-    public OneOf<ContainerListModel, Dictionary<string, string[]>> Create(
+    OneOf<ContainerListModel, Dictionary<string, string[]>> Create(
         ContainerCreateModel createModel,
         string userName);
 
-    public OneOf<ContainerListModel, NotFound, Dictionary<string, string[]>> Patch(int id, ContainerPatchModel updateModel);
-    public OneOf<ContainerListModel, NotFound> Delete(int id, string userName);
+    OneOf<ContainerListModel, NotFound, Dictionary<string, string[]>> Patch(int id, ContainerPatchModel updateModel);
+    OneOf<ContainerListModel, NotFound> Delete(int id, string userName);
 }

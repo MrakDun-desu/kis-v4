@@ -6,10 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.App.Endpoints;
 
-public static class Containers
-{
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
-    {
+public static class Containers {
+    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("containers");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
@@ -22,8 +20,7 @@ public static class Containers
         [FromQuery] int? page,
         [FromQuery] int? pageSize,
         [FromQuery] bool? deleted,
-        [FromQuery] int? pipeId)
-    {
+        [FromQuery] int? pipeId) {
         return containerService
             .ReadAll(page, pageSize, deleted, pipeId)
             .Match<Results<Ok<Page<ContainerListModel>>, ValidationProblem>>(
@@ -36,8 +33,7 @@ public static class Containers
         IContainerService containerService,
         ContainerCreateModel createModel,
         HttpRequest request,
-        ClaimsPrincipal claims)
-    {
+        ClaimsPrincipal claims) {
         var creationResult = containerService.Create(createModel, claims.Identity!.Name!);
         return creationResult.Match<Results<Created<ContainerListModel>, ValidationProblem>>(
             createdModel => TypedResults.Created(
@@ -50,8 +46,7 @@ public static class Containers
     private static Results<Ok<ContainerListModel>, NotFound, ValidationProblem> Update(
         IContainerService containerService,
         ContainerPatchModel updateModel,
-        int id)
-    {
+        int id) {
         return containerService.Patch(id, updateModel)
             .Match<Results<Ok<ContainerListModel>, NotFound, ValidationProblem>>(
                 model => TypedResults.Ok(model),
@@ -64,8 +59,7 @@ public static class Containers
         IContainerService containerService,
         int id,
         ClaimsPrincipal claims
-    )
-    {
+    ) {
         return containerService.Delete(id, claims.Identity!.Name!)
             .Match<Results<Ok<ContainerListModel>, NotFound>>(
                 model => TypedResults.Ok(model),

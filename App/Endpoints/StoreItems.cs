@@ -2,14 +2,11 @@ using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace KisV4.App.Endpoints;
 
-public static class StoreItems
-{
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
-    {
+public static class StoreItems {
+    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("store-items");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
@@ -25,8 +22,7 @@ public static class StoreItems
         [FromQuery] bool? deleted,
         [FromQuery] int? categoryId,
         [FromQuery] int? storeId
-    )
-    {
+    ) {
         return storeItemService.ReadAll(page, pageSize, deleted, categoryId, storeId)
             .Match<Results<Ok<Page<StoreItemListModel>>, ValidationProblem>>(
                 output => TypedResults.Ok(output),
@@ -36,8 +32,7 @@ public static class StoreItems
 
     private static Results<Ok<StoreItemDetailModel>, ValidationProblem> Create(
         IStoreItemService storeItemService,
-        StoreItemCreateModel createModel)
-    {
+        StoreItemCreateModel createModel) {
         return storeItemService.Create(createModel)
             .Match<Results<Ok<StoreItemDetailModel>, ValidationProblem>>(
                 output => TypedResults.Ok(output),
@@ -47,8 +42,7 @@ public static class StoreItems
 
     private static Results<Ok<StoreItemDetailModel>, NotFound> Read(
         IStoreItemService storeItemService,
-        int id)
-    {
+        int id) {
         return storeItemService.Read(id)
             .Match<Results<Ok<StoreItemDetailModel>, NotFound>>(
                 output => TypedResults.Ok(output),
@@ -59,8 +53,7 @@ public static class StoreItems
     private static Results<Ok<StoreItemDetailModel>, NotFound, ValidationProblem> Update(
         IStoreItemService storeItemService,
         StoreItemCreateModel updateModel,
-        int id)
-    {
+        int id) {
         return storeItemService.Update(id, updateModel)
             .Match<Results<Ok<StoreItemDetailModel>, NotFound, ValidationProblem>>(
                 output => TypedResults.Ok(output),
@@ -71,8 +64,7 @@ public static class StoreItems
 
     private static Results<Ok<StoreItemDetailModel>, NotFound> Delete(
         IStoreItemService storeItemService,
-        int id)
-    {
+        int id) {
         return storeItemService.Delete(id)
             .Match<Results<Ok<StoreItemDetailModel>, NotFound>>(
                 output => TypedResults.Ok(output),

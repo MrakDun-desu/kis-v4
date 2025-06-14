@@ -14,20 +14,16 @@ public class CashBoxService(
     KisDbContext dbContext,
     ICurrencyChangeService currencyChangeService,
     TimeProvider timeProvider)
-    : ICashBoxService, IScopedService
-{
-    public List<CashBoxListModel> ReadAll(bool? deleted)
-    {
+    : ICashBoxService, IScopedService {
+    public List<CashBoxListModel> ReadAll(bool? deleted) {
         return deleted.HasValue
             ? dbContext.CashBoxes.Where(cb => cb.Deleted == deleted).ToList().ToModels()
             : dbContext.CashBoxes.ToList().ToModels();
     }
 
-    public CashBoxDetailModel Create(CashBoxCreateModel createModel)
-    {
+    public CashBoxDetailModel Create(CashBoxCreateModel createModel) {
         var entity = createModel.ToEntity();
-        entity.StockTakings.Add(new StockTakingEntity
-        {
+        entity.StockTakings.Add(new StockTakingEntity {
             Timestamp = timeProvider.GetUtcNow()
         });
         dbContext.CashBoxes.Add(entity);
@@ -37,8 +33,7 @@ public class CashBoxService(
         return entity.ToModel();
     }
 
-    public OneOf<CashBoxDetailModel, NotFound> Update(int id, CashBoxCreateModel updateModel)
-    {
+    public OneOf<CashBoxDetailModel, NotFound> Update(int id, CashBoxCreateModel updateModel) {
         var entity = dbContext.CashBoxes.Include(cb => cb.StockTakings).SingleOrDefault(cb => cb.Id == id);
         if (entity is null)
             return new NotFound();
@@ -55,8 +50,7 @@ public class CashBoxService(
     public OneOf<CashBoxDetailModel, NotFound, Dictionary<string, string[]>> Read(
         int id,
         DateTimeOffset? startDate = null,
-        DateTimeOffset? endDate = null)
-    {
+        DateTimeOffset? endDate = null) {
         // needs to do AsNoTracking because otherwise currency changes will get included by lazy loading
         var cashBox = dbContext.CashBoxes.AsNoTracking()
             .Include(cb => cb.StockTakings)
@@ -87,18 +81,16 @@ public class CashBoxService(
         var currencyChangesPage =
             currencyChangeService.ReadAll(null, null, id, false, realStartDate, realEndDate);
 
-        if (currencyChangesPage.IsT1)
-            return currencyChangesPage.AsT1;
-
-        return new CashBoxIntermediateModel(
+        return currencyChangesPage.IsT1
+            ? (OneOf<CashBoxDetailModel, NotFound, Dictionary<string, string[]>>)currencyChangesPage.AsT1
+            : (OneOf<CashBoxDetailModel, NotFound, Dictionary<string, string[]>>)new CashBoxIntermediateModel(
                 cashBox,
                 currencyChangesPage.AsT0,
-                totalCurrencyChanges.ToList())
+                [.. totalCurrencyChanges])
             .ToDetailModel();
     }
 
-    public OneOf<CashBoxDetailModel, NotFound> Delete(int id)
-    {
+    public OneOf<CashBoxDetailModel, NotFound> Delete(int id) {
         var entity = dbContext.CashBoxes.Find(id);
         if (entity is null) return new NotFound();
         entity.Deleted = true;
@@ -107,8 +99,7 @@ public class CashBoxService(
         return Read(id).AsT0;
     }
 
-    public OneOf<Success, NotFound> AddStockTaking(int id)
-    {
+    public OneOf<Success, NotFound> AddStockTaking(int id) {
         var entity = dbContext.CashBoxes.Find(id);
         if (entity is null) return new NotFound();
 

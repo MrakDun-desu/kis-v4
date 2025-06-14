@@ -9,35 +9,32 @@ using KisV4.DAL.EF.Entities;
 namespace BL.EF.Tests.Services;
 
 public class
-    DiscountServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
-{
+    DiscountServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly DiscountService _discountService;
     private readonly DiscountUsageService _discountUsageService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
 
-    public DiscountServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public DiscountServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _discountUsageService = new DiscountUsageService(_normalDbContext);
         _discountService = new DiscountService(_normalDbContext, _discountUsageService);
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenNoFilters()
-    {
+    public void ReadAll_ReadsAll_WhenNoFilters() {
         // arrange
         var testDiscount1 = new DiscountEntity { Name = "Some discount box" };
         var testDiscount2 = new DiscountEntity { Name = "Some discount box 2", Deleted = true };
@@ -56,8 +53,7 @@ public class
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByDeleted()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByDeleted() {
         // arrange
         var testDiscount1 = new DiscountEntity { Name = "Some discount box" };
         var testDiscount2 = new DiscountEntity { Name = "Some discount box 2", Deleted = true };
@@ -76,8 +72,7 @@ public class
     }
 
     [Fact]
-    public void Read_ReturnsNotFound_WhenNotFound()
-    {
+    public void Read_ReturnsNotFound_WhenNotFound() {
         // act
         var readResult = _discountService.Read(42);
 
@@ -86,11 +81,9 @@ public class
     }
 
     [Fact]
-    public void Read_ReadsCorrectly_WhenComplex()
-    {
+    public void Read_ReadsCorrectly_WhenComplex() {
         // arrange
-        var testDiscount1 = new DiscountEntity
-        {
+        var testDiscount1 = new DiscountEntity {
             Name = "Some discount box",
             DiscountUsages =
             {
@@ -118,11 +111,9 @@ public class
     }
 
     [Fact]
-    public void Patch_RestoresDiscount_FromDeletion()
-    {
+    public void Patch_RestoresDiscount_FromDeletion() {
         // arrange
-        var testDiscount1 = new DiscountEntity
-        {
+        var testDiscount1 = new DiscountEntity {
             Name = "Some discount",
             Deleted = true
         };
@@ -145,11 +136,9 @@ public class
     }
 
     [Fact]
-    public void Delete_DeletesDiscount_IfFound()
-    {
+    public void Delete_DeletesDiscount_IfFound() {
         // arrange
-        var testDiscount1 = new DiscountEntity
-        {
+        var testDiscount1 = new DiscountEntity {
             Name = "Some discount",
         };
         _referenceDbContext.Discounts.Add(testDiscount1);

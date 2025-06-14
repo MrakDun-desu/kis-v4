@@ -3,8 +3,7 @@ namespace KisV4.DAL.EF.Entities;
 /// <summary>
 ///     Represents a sale transaction item.
 /// </summary>
-public record SaleTransactionItemEntity
-{
+public record SaleTransactionItemEntity {
     public int Id { get; init; }
     public int SaleItemId { get; init; }
     public virtual SaleItemEntity? SaleItem { get; set; }
@@ -18,20 +17,17 @@ public record SaleTransactionItemEntity
     /// <summary>
     ///     Modifiers applied to the sale item of this sale transaction item.
     /// </summary>
-    public virtual ICollection<ModifierAmountEntity> ModifierAmounts { get; private set; } =
-        new List<ModifierAmountEntity>();
+    public virtual ICollection<ModifierAmountEntity> ModifierAmounts { get; private set; } = [];
 
     /// <summary>
     ///     Prices paid for this transaction item with various currencies.
     /// </summary>
-    public virtual ICollection<TransactionPriceEntity> TransactionPrices { get; private set; } =
-        new List<TransactionPriceEntity>();
+    public virtual ICollection<TransactionPriceEntity> TransactionPrices { get; private set; } = [];
 
     /// <summary>
     ///     Discount usage items that have been used on this sale transaction item.
     /// </summary>
-    public virtual ICollection<DiscountUsageItemEntity> DiscountUsageItems { get; private set; } =
-        new List<DiscountUsageItemEntity>();
+    public virtual ICollection<DiscountUsageItemEntity> DiscountUsageItems { get; private set; } = [];
 
     /// <summary>
     ///     Amount of a sale item that has been sold in this transaction.

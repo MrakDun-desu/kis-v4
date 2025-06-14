@@ -4,10 +4,9 @@ using OneOf.Types;
 
 namespace KisV4.BL.Common.Services;
 
-public interface IDiscountService
-{
-    public IEnumerable<DiscountListModel> ReadAll(bool? deleted);
-    public OneOf<DiscountDetailModel, NotFound> Read(int id);
-    public OneOf<DiscountDetailModel, NotFound> Patch(int id);
-    public OneOf<DiscountDetailModel, NotFound> Delete(int id);
+public interface IDiscountService {
+    IEnumerable<DiscountListModel> ReadAll(bool? deleted);
+    OneOf<DiscountDetailModel, NotFound> Read(int id);
+    OneOf<DiscountDetailModel, NotFound> Patch(int id);
+    OneOf<DiscountDetailModel, NotFound> Delete(int id);
 }

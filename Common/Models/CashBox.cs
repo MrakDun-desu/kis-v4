@@ -11,13 +11,12 @@ public record CashBoxDetailModel(
     Page<CurrencyChangeListModel> CurrencyChanges,
     IEnumerable<TotalCurrencyChangeListModel>? TotalCurrencyChanges = null,
     IEnumerable<StockTakingModel>? StockTakings = null
-)
-{
+) {
     public IEnumerable<TotalCurrencyChangeListModel> TotalCurrencyChanges { get; init; } =
-        TotalCurrencyChanges ?? new List<TotalCurrencyChangeListModel>();
+        TotalCurrencyChanges ?? [];
 
     public IEnumerable<StockTakingModel> StockTakings { get; init; } =
-        StockTakings ?? new List<StockTakingModel>();
+        StockTakings ?? [];
 }
 
 public record StockTakingModel(

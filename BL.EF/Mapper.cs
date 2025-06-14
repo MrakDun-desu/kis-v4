@@ -6,13 +6,11 @@ using Riok.Mapperly.Abstractions;
 namespace KisV4.BL.EF;
 
 [Mapper]
-public static partial class Mapper
-{
+public static partial class Mapper {
     public static partial CashBoxEntity ToEntity(this CashBoxCreateModel model);
     public static partial void UpdateEntity(this CashBoxCreateModel model, CashBoxEntity source);
 
-    public static CashBoxDetailModel ToModel(this CashBoxEntity entity)
-    {
+    public static CashBoxDetailModel ToModel(this CashBoxEntity entity) {
         return new CashBoxIntermediateModel(
                 entity,
                 Page<CurrencyChangeListModel>.Empty,
@@ -20,8 +18,7 @@ public static partial class Mapper
             .ToDetailModel();
     }
 
-    public static CashBoxDetailModel ToDetailModel(this CashBoxIntermediateModel model)
-    {
+    public static CashBoxDetailModel ToDetailModel(this CashBoxIntermediateModel model) {
         return new CashBoxDetailModel(
             model.Entity.Id,
             model.Entity.Name,
@@ -54,8 +51,7 @@ public static partial class Mapper
     public static partial SaleItemEntity ToEntity(this SaleItemCreateModel model);
     public static partial void UpdateEntity(this SaleItemCreateModel model, SaleItemEntity entity);
 
-    public static SaleItemDetailModel ToModel(this SaleItemIntermediateModel model)
-    {
+    public static SaleItemDetailModel ToModel(this SaleItemIntermediateModel model) {
         return new SaleItemDetailModel(
             model.Entity.Id,
             model.Entity.Name,
@@ -83,8 +79,7 @@ public static partial class Mapper
     public static partial List<CompositionListModel> ToModels(this List<CompositionEntity> entities);
     public static partial ContainerEntity ToEntity(this ContainerCreateModel model);
 
-    public static ContainerListModel ToModel(this ContainerIntermediateModel model)
-    {
+    public static ContainerListModel ToModel(this ContainerIntermediateModel model) {
         return new ContainerListModel(
             model.Entity.Id,
             model.Entity.OpenSince,
@@ -95,9 +90,8 @@ public static partial class Mapper
         );
     }
 
-    public static List<ContainerListModel> ToModels(this List<ContainerIntermediateModel> models)
-    {
-        return models.Select(m => m.ToModel()).ToList();
+    public static List<ContainerListModel> ToModels(this List<ContainerIntermediateModel> models) {
+        return [.. models.Select(m => m.ToModel())];
     }
 
     public static partial ContainerTemplateListModel ToModel(this ContainerTemplateEntity entity);
@@ -112,8 +106,7 @@ public static partial class Mapper
 
     public static partial List<DiscountListModel> ToModels(this List<DiscountEntity> entities);
 
-    public static DiscountDetailModel ToModel(this DiscountIntermediateModel model)
-    {
+    public static DiscountDetailModel ToModel(this DiscountIntermediateModel model) {
         return new DiscountDetailModel(
             model.Entity.Id,
             model.Entity.Name,
@@ -136,8 +129,7 @@ public static partial class Mapper
     public static partial void UpdateEntity(this StoreItemCreateModel model, StoreItemEntity entity);
 
     public static partial StoreItemListModel ToListModel(this StoreItemEntity entity);
-    public static StoreItemDetailModel ToModel(this StoreItemIntermediateModel model)
-    {
+    public static StoreItemDetailModel ToModel(this StoreItemIntermediateModel model) {
         return new StoreItemDetailModel(
             model.Entity.Id,
             model.Entity.Name,
@@ -164,8 +156,7 @@ public static partial class Mapper
 
     public static partial UserListModel ToListModel(this UserAccountEntity entity);
 
-    public static UserDetailModel ToModel(this UserIntermediateModel model)
-    {
+    public static UserDetailModel ToModel(this UserIntermediateModel model) {
         return new UserDetailModel(
             model.Entity.Id,
             model.Entity.UserName,

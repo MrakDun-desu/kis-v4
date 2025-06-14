@@ -9,14 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BL.EF.Tests.Services;
 
-public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
-{
+public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly CostService _costService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
 
-    public CostServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public CostServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _costService = new CostService(_normalDbContext);
         AssertionOptions.AssertEquivalencyUsing(options =>
@@ -25,28 +23,25 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         );
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void Create_Creates_WhenDataIsValid()
-    {
+    public void Create_Creates_WhenDataIsValid() {
         // arrange
-        var testStoreItem = new StoreItemEntity
-        {
+        var testStoreItem = new StoreItemEntity {
             Name = "Test store item"
         };
-        var testCurrency = new CurrencyEntity
-        {
+        var testCurrency = new CurrencyEntity {
             Name = "Test currency"
         };
         _referenceDbContext.StoreItems.Add(testStoreItem);
@@ -74,8 +69,7 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
             .Include(c => c.Product)
             .Include(c => c.Currency)
             .First(c => c.Id == id);
-        var expectedEntity = new CurrencyCostEntity
-        {
+        var expectedEntity = new CurrencyCostEntity {
             Id = id,
             CurrencyId = testCurrency.Id,
             Currency = testCurrency,
@@ -85,14 +79,13 @@ public class CostServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
             Description = costDescription,
             ValidSince = costValidSince.ToUniversalTime()
         };
-        createdEntity.Should().BeEquivalentTo(expectedEntity, opts => 
+        createdEntity.Should().BeEquivalentTo(expectedEntity, opts =>
             opts.Excluding(entity => entity.Product!.Costs)
             );
     }
 
     [Fact]
-    public void Create_ReturnsErrors_WhenDataIsNotValid()
-    {
+    public void Create_ReturnsErrors_WhenDataIsNotValid() {
         // arrange
         var createModel = new CostCreateModel(
             42,

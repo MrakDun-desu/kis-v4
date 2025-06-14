@@ -4,10 +4,9 @@ using OneOf.Types;
 
 namespace KisV4.BL.Common.Services;
 
-public interface ICategoryService
-{
-    public CategoryListModel Create(CategoryCreateModel createModel);
-    public List<CategoryListModel> ReadAll();
-    public OneOf<CategoryListModel, NotFound> Update(int id, CategoryCreateModel updateModel);
-    public void Delete(int id);
+public interface ICategoryService {
+    CategoryListModel Create(CategoryCreateModel createModel);
+    List<CategoryListModel> ReadAll();
+    OneOf<CategoryListModel, NotFound> Update(int id, CategoryCreateModel updateModel);
+    void Delete(int id);
 }

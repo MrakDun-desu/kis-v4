@@ -13,10 +13,9 @@ public record UserDetailModel(
     IEnumerable<TotalCurrencyChangeListModel>? CurrencyAmounts = null,
     Page<CurrencyChangeListModel>? CurrencyChanges = null,
     Page<DiscountUsageListModel>? DiscountUsages = null
-)
-{
+) {
     public IEnumerable<TotalCurrencyChangeListModel> CurrencyAmounts =
-        CurrencyAmounts ?? Array.Empty<TotalCurrencyChangeListModel>();
+        CurrencyAmounts ?? [];
 
     public Page<CurrencyChangeListModel> CurrencyChanges =
         CurrencyChanges ?? Page<CurrencyChangeListModel>.Empty;

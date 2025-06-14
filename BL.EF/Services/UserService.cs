@@ -14,14 +14,11 @@ namespace KisV4.BL.EF.Services;
 public class UserService(
     KisDbContext dbContext,
     ICurrencyChangeService currencyChangeService,
-    IDiscountUsageService discountUsageService) : IScopedService, IUserService
-{
-    public int CreateOrGetId(string userName)
-    {
+    IDiscountUsageService discountUsageService) : IScopedService, IUserService {
+    public int CreateOrGetId(string userName) {
         var user = dbContext.UserAccounts.SingleOrDefault(ua => ua.UserName == userName);
         if (user is not null) return user.Id;
-        user = new UserAccountEntity
-        {
+        user = new UserAccountEntity {
             UserName = userName
         };
         dbContext.UserAccounts.Add(user);
@@ -29,19 +26,16 @@ public class UserService(
         return user.Id;
     }
 
-    public OneOf<Page<UserListModel>, Dictionary<string, string[]>> ReadAll(int? page, int? pageSize, bool? deleted)
-    {
+    public OneOf<Page<UserListModel>, Dictionary<string, string[]>> ReadAll(int? page, int? pageSize, bool? deleted) {
         var query = dbContext.UserAccounts.AsQueryable();
-        if (deleted is { } realDeleted)
-        {
+        if (deleted is { } realDeleted) {
             query = query.Where(u => u.Deleted == realDeleted);
         }
 
         return query.Page(page ?? 1, pageSize ?? Constants.DefaultPageSize, Mapper.ToModels);
     }
 
-    public OneOf<UserDetailModel, NotFound, Dictionary<string, string[]>> Read(int id)
-    {
+    public OneOf<UserDetailModel, NotFound, Dictionary<string, string[]>> Read(int id) {
         // needs to do AsNoTracking because otherwise currency changes will get included by lazy loading
         var user = dbContext.UserAccounts.AsNoTracking()
             .SingleOrDefault(u => u.Id == id);
@@ -73,7 +67,7 @@ public class UserService(
 
         return new UserIntermediateModel(
             user,
-            totalCurrencyChanges.ToList(),
+            [.. totalCurrencyChanges],
             currencyChangesPage.AsT0,
             discountUsagesPage.AsT0
         ).ToModel();

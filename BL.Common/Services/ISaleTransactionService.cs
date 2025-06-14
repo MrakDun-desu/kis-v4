@@ -4,9 +4,8 @@ using OneOf.Types;
 
 namespace KisV4.BL.Common.Services;
 
-public interface ISaleTransactionService
-{
-    List<SaleTransactionListModel> ReadAll(
+public interface ISaleTransactionService {
+    OneOf<Page<SaleTransactionListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
         int? pageSize,
         DateTimeOffset? startDate,
@@ -14,15 +13,17 @@ public interface ISaleTransactionService
         bool? cancelled
     );
 
-    List<SaleTransactionListModel> ReadSelfCancellable();
+    IEnumerable<SaleTransactionListModel> ReadSelfCancellable(string userName);
 
     OneOf<SaleTransactionDetailModel, Dictionary<string, string[]>> Create(
         SaleTransactionCreateModel createModel,
         string userName
     );
 
-    OneOf<SaleTransactionDetailModel, Dictionary<string, string[]>> Put(
-        IEnumerable<SaleTransactionItemCreateModel> items
+    OneOf<SaleTransactionDetailModel, NotFound, Dictionary<string, string[]>> Patch(
+        int id,
+        SaleTransactionCreateModel updateModel,
+        string userName
     );
 
     OneOf<SaleTransactionDetailModel, NotFound> Read(int id);

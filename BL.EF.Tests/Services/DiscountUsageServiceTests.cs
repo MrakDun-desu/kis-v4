@@ -10,46 +10,41 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
-{
+public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly DiscountUsageService _discountUsageService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
 
-    public DiscountUsageServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public DiscountUsageServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _discountUsageService = new DiscountUsageService(_normalDbContext);
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenNoFilters()
-    {
+    public void ReadAll_ReadsAll_WhenNoFilters() {
         // arrange
         var testDiscount1 = new DiscountEntity { Name = "Some discount" };
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testDiscount2 = new DiscountEntity { Name = "Some other discount" };
         var testUser2 = new UserAccountEntity { UserName = "Some other user" };
-        var testDiscountUsage1 = new DiscountUsageEntity
-        {
+        var testDiscountUsage1 = new DiscountUsageEntity {
             Discount = testDiscount1,
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser1
         };
-        var testDiscountUsage2 = new DiscountUsageEntity
-        {
+        var testDiscountUsage2 = new DiscountUsageEntity {
             Discount = testDiscount2,
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser2
@@ -71,21 +66,18 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByDiscount()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByDiscount() {
         // arrange
         var testDiscount1 = new DiscountEntity { Name = "Some discount" };
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testDiscount2 = new DiscountEntity { Name = "Some other discount" };
         var testUser2 = new UserAccountEntity { UserName = "Some other user" };
-        var testDiscountUsage1 = new DiscountUsageEntity
-        {
+        var testDiscountUsage1 = new DiscountUsageEntity {
             Discount = testDiscount1,
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser1
         };
-        var testDiscountUsage2 = new DiscountUsageEntity
-        {
+        var testDiscountUsage2 = new DiscountUsageEntity {
             Discount = testDiscount2,
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser2
@@ -106,21 +98,18 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByUser()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByUser() {
         // arrange
         var testDiscount1 = new DiscountEntity { Name = "Some discount" };
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testDiscount2 = new DiscountEntity { Name = "Some other discount" };
         var testUser2 = new UserAccountEntity { UserName = "Some other user" };
-        var testDiscountUsage1 = new DiscountUsageEntity
-        {
+        var testDiscountUsage1 = new DiscountUsageEntity {
             Discount = testDiscount1,
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser1
         };
-        var testDiscountUsage2 = new DiscountUsageEntity
-        {
+        var testDiscountUsage2 = new DiscountUsageEntity {
             Discount = testDiscount2,
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser2
@@ -141,21 +130,18 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
     }
 
     [Fact]
-    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentUser()
-    {
+    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentUser() {
         // arrange
         var testDiscount1 = new DiscountEntity { Name = "Some discount" };
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testDiscount2 = new DiscountEntity { Name = "Some other discount" };
         var testUser2 = new UserAccountEntity { UserName = "Some other user" };
-        var testDiscountUsage1 = new DiscountUsageEntity
-        {
+        var testDiscountUsage1 = new DiscountUsageEntity {
             Discount = testDiscount1,
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser1
         };
-        var testDiscountUsage2 = new DiscountUsageEntity
-        {
+        var testDiscountUsage2 = new DiscountUsageEntity {
             Discount = testDiscount2,
             Timestamp = DateTimeOffset.UtcNow,
             User = testUser2
@@ -179,8 +165,7 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
     }
 
     [Fact]
-    public void Read_ReturnsNotFound_WhenDiscountUsageNotFound()
-    {
+    public void Read_ReturnsNotFound_WhenDiscountUsageNotFound() {
         // act
         var readResult = _discountUsageService.Read(42);
 
@@ -189,15 +174,12 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
     }
 
     [Fact]
-    public void Read_ReadsCorrectly_WhenComplex()
-    {
+    public void Read_ReadsCorrectly_WhenComplex() {
         var testCurrency = new CurrencyEntity { Name = "Czech crowns" };
         var testUser = new UserAccountEntity { UserName = "Some user" };
-        var testSaleTransactionItem = new SaleTransactionItemEntity
-        {
+        var testSaleTransactionItem = new SaleTransactionItemEntity {
             ItemAmount = 1,
-            SaleItem = new SaleItemEntity
-            {
+            SaleItem = new SaleItemEntity {
                 Name = "Some sale item",
                 Costs =
                 {
@@ -209,21 +191,18 @@ public class DiscountUsageServiceTests : IClassFixture<KisDbContextFactory>, IDi
                     }
                 }
             },
-            SaleTransaction = new SaleTransactionEntity
-            {
+            SaleTransaction = new SaleTransactionEntity {
                 Timestamp = DateTimeOffset.UtcNow,
                 ResponsibleUser = testUser
             }
         };
         var testUsageItem =
-            new DiscountUsageItemEntity
-            {
+            new DiscountUsageItemEntity {
                 Amount = -15,
                 Currency = testCurrency,
                 SaleTransactionItem = testSaleTransactionItem
             };
-        var testDiscountUsage1 = new DiscountUsageEntity
-        {
+        var testDiscountUsage1 = new DiscountUsageEntity {
             Discount = new DiscountEntity { Name = "Some discount" },
             Timestamp = DateTimeOffset.UtcNow,
             User = new UserAccountEntity { UserName = "Some other user" },

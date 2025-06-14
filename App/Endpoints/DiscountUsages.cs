@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.App.Endpoints;
 
-public static class DiscountUsages
-{
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
-    {
+public static class DiscountUsages {
+    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("discount-usages");
         group.MapGet(string.Empty, ReadAll);
         // group.MapPost(string.Empty, Create);
@@ -21,8 +19,7 @@ public static class DiscountUsages
         [FromQuery] int? pageSize,
         [FromQuery] int? discountId,
         [FromQuery] int? userId
-    )
-    {
+    ) {
         return discountUsageService.ReadAll(page, pageSize, discountId, userId)
             .Match<Results<Ok<Page<DiscountUsageListModel>>, ValidationProblem>>(
                 output => TypedResults.Ok(output),
@@ -42,8 +39,7 @@ public static class DiscountUsages
     // }
     //
     private static Results<Ok<DiscountUsageDetailModel>, NotFound> Read
-        (IDiscountUsageService discountUsageService, int id)
-    {
+        (IDiscountUsageService discountUsageService, int id) {
         return discountUsageService.Read(id)
             .Match<Results<Ok<DiscountUsageDetailModel>, NotFound>>(
                 result => TypedResults.Ok(result),

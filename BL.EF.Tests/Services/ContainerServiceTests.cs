@@ -14,21 +14,19 @@ using Microsoft.Extensions.Time.Testing;
 namespace BL.EF.Tests.Services;
 
 public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
-    IDisposable, IAsyncDisposable
-{
+    IDisposable, IAsyncDisposable {
     private readonly ContainerService _containerService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly FakeTimeProvider _timeProvider = new();
 
-    public ContainerServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public ContainerServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _containerService = new ContainerService(
-            _normalDbContext, 
-            _timeProvider, 
+            _normalDbContext,
+            _timeProvider,
             new UserService(
-                _normalDbContext, 
+                _normalDbContext,
                 new CurrencyChangeService(_normalDbContext),
                 new DiscountUsageService(_normalDbContext))
             );
@@ -38,32 +36,28 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
         );
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenNoFilters()
-    {
+    public void ReadAll_ReadsAll_WhenNoFilters() {
         // arrange
-        var testStoreItem = new StoreItemEntity
-        {
+        var testStoreItem = new StoreItemEntity {
             Name = "Test store item"
         };
-        var testPipe = new PipeEntity
-        {
+        var testPipe = new PipeEntity {
             Name = "Some pipe"
         };
-        var testContainerTemplate1 = new ContainerTemplateEntity
-        {
+        var testContainerTemplate1 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem,
             Name = "Some container",
@@ -73,8 +67,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 new ContainerEntity()
             }
         };
-        var testContainerTemplate2 = new ContainerTemplateEntity
-        {
+        var testContainerTemplate2 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem,
             Name = "Some other container",
@@ -106,19 +99,15 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByDeleted()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByDeleted() {
         // arrange
-        var testStoreItem = new StoreItemEntity
-        {
+        var testStoreItem = new StoreItemEntity {
             Name = "Test store item"
         };
-        var testPipe = new PipeEntity
-        {
+        var testPipe = new PipeEntity {
             Name = "Some pipe"
         };
-        var testContainerTemplate1 = new ContainerTemplateEntity
-        {
+        var testContainerTemplate1 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem,
             Name = "Some container",
@@ -128,8 +117,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 new ContainerEntity()
             }
         };
-        var testContainerTemplate2 = new ContainerTemplateEntity
-        {
+        var testContainerTemplate2 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem,
             Name = "Some other container",
@@ -162,8 +150,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentPipe()
-    {
+    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentPipe() {
         // arrange
         const int pipeId = 42;
 
@@ -179,19 +166,15 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByPipe()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByPipe() {
         // arrange
-        var testStoreItem = new StoreItemEntity
-        {
+        var testStoreItem = new StoreItemEntity {
             Name = "Test store item"
         };
-        var testPipe = new PipeEntity
-        {
+        var testPipe = new PipeEntity {
             Name = "Some pipe"
         };
-        var testContainerTemplate1 = new ContainerTemplateEntity
-        {
+        var testContainerTemplate1 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem,
             Name = "Some container",
@@ -201,8 +184,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 new ContainerEntity()
             }
         };
-        var testContainerTemplate2 = new ContainerTemplateEntity
-        {
+        var testContainerTemplate2 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem,
             Name = "Some other container",
@@ -231,19 +213,15 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenAggregating()
-    {
+    public void ReadAll_ReadsCorrectly_WhenAggregating() {
         // arrange
-        var testStoreItem = new StoreItemEntity
-        {
+        var testStoreItem = new StoreItemEntity {
             Name = "Test store item"
         };
-        var testPipe = new PipeEntity
-        {
+        var testPipe = new PipeEntity {
             Name = "Some pipe"
         };
-        var testContainerTemplate1 = new ContainerTemplateEntity
-        {
+        var testContainerTemplate1 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem,
             Name = "Some container",
@@ -307,12 +285,10 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Create_Creates_WhenDataIsValid()
-    {
+    public void Create_Creates_WhenDataIsValid() {
         // arrange
         var testStoreItem = new StoreItemEntity { Name = "Some store item" };
-        var testContainerTemplate = new ContainerTemplateEntity
-        {
+        var testContainerTemplate = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem,
             Name = "Some container"
@@ -342,8 +318,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Create_ReturnsErrors_WhenDataIsNotValid()
-    {
+    public void Create_ReturnsErrors_WhenDataIsNotValid() {
         // arrange
         var createModel = new ContainerCreateModel(42, 42);
 
@@ -367,25 +342,19 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Update_RestoresEntity_IfWasDeleted()
-    {
+    public void Update_RestoresEntity_IfWasDeleted() {
         // arrange
-        var testPipe = new PipeEntity
-        {
+        var testPipe = new PipeEntity {
             Name = "Some pipe"
         };
-        var testPipe2 = new PipeEntity
-        {
+        var testPipe2 = new PipeEntity {
             Name = "Some pipe 2"
         };
-        var testContainer1 = new ContainerEntity
-        {
-            Template = new ContainerTemplateEntity
-            {
+        var testContainer1 = new ContainerEntity {
+            Template = new ContainerTemplateEntity {
                 Name = "Some template",
                 Amount = 10,
-                ContainedItem = new StoreItemEntity
-                {
+                ContainedItem = new StoreItemEntity {
                     Name = "Some store item"
                 }
             },
@@ -415,25 +384,19 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Update_UpdatesPipe_WhenExistingId()
-    {
+    public void Update_UpdatesPipe_WhenExistingId() {
         // arrange
-        var testPipe = new PipeEntity
-        {
+        var testPipe = new PipeEntity {
             Name = "Some pipe"
         };
-        var testPipe2 = new PipeEntity
-        {
+        var testPipe2 = new PipeEntity {
             Name = "Some pipe 2"
         };
-        var testContainer1 = new ContainerEntity
-        {
-            Template = new ContainerTemplateEntity
-            {
+        var testContainer1 = new ContainerEntity {
+            Template = new ContainerTemplateEntity {
                 Name = "Some template",
                 Amount = 10,
-                ContainedItem = new StoreItemEntity
-                {
+                ContainedItem = new StoreItemEntity {
                     Name = "Some store item"
                 }
             },
@@ -461,21 +424,16 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Update_ReturnsErrors_WhenNonexistentPipe()
-    {
+    public void Update_ReturnsErrors_WhenNonexistentPipe() {
         // arrange
-        var testPipe = new PipeEntity
-        {
+        var testPipe = new PipeEntity {
             Name = "Some pipe"
         };
-        var testContainer1 = new ContainerEntity
-        {
-            Template = new ContainerTemplateEntity
-            {
+        var testContainer1 = new ContainerEntity {
+            Template = new ContainerTemplateEntity {
                 Name = "Some template",
                 Amount = 10,
-                ContainedItem = new StoreItemEntity
-                {
+                ContainedItem = new StoreItemEntity {
                     Name = "Some store item"
                 }
             },
@@ -499,8 +457,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Update_ReturnsNotFound_WhenNotFoundContainer()
-    {
+    public void Update_ReturnsNotFound_WhenNotFoundContainer() {
         // arrange
         var updateModel = new ContainerPatchModel(42);
 
@@ -512,8 +469,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Delete_ReturnsNotFound_WhenNotFoundContainer()
-    {
+    public void Delete_ReturnsNotFound_WhenNotFoundContainer() {
         // act
         var deleteResult = _containerService.Delete(42, "Some user");
 
@@ -522,13 +478,11 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Delete_MakesLeftoverAmount0_WhenDeleting()
-    {
+    public void Delete_MakesLeftoverAmount0_WhenDeleting() {
         // arrange
         var testStoreItem = new StoreItemEntity { Name = "Test store item" };
         var testPipe = new PipeEntity { Name = "Some pipe" };
-        var testContainer = new ContainerEntity
-        {
+        var testContainer = new ContainerEntity {
             StoreTransactionItems =
             {
                 new StoreTransactionItemEntity
@@ -568,8 +522,7 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
             },
             Pipe = testPipe
         };
-        var testContainerTemplate = new ContainerTemplateEntity
-        {
+        var testContainerTemplate = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem,
             Name = "Some container",
@@ -592,18 +545,16 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
         testContainer.PipeId.Should().BeNull();
         var lastTransactionItem = testContainer.StoreTransactionItems
             .Last();
-        lastTransactionItem.Should().BeEquivalentTo(new StoreTransactionItemEntity
-            {
-                StoreItemId = testStoreItem.Id,
-                StoreItem = testStoreItem,
-                ItemAmount = -8,
-                Store = testContainer,
-                StoreId = testContainer.Id,
-                StoreTransaction = new StoreTransactionEntity
-                {
-                    TransactionReason = TransactionReason.WriteOff
-                }
-            },
+        lastTransactionItem.Should().BeEquivalentTo(new StoreTransactionItemEntity {
+            StoreItemId = testStoreItem.Id,
+            StoreItem = testStoreItem,
+            ItemAmount = -8,
+            Store = testContainer,
+            StoreId = testContainer.Id,
+            StoreTransaction = new StoreTransactionEntity {
+                TransactionReason = TransactionReason.WriteOff
+            }
+        },
             opts => opts
                 .Excluding(st => st.Id)
                 .Excluding(st => st.StoreTransaction)

@@ -11,13 +11,10 @@ namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
 public class ModifierService(KisDbContext dbContext)
-    : IModifierService, IScopedService
-{
-    public OneOf<ModifierDetailModel, Dictionary<string, string[]>> Create(ModifierCreateModel createModel)
-    {
+    : IModifierService, IScopedService {
+    public OneOf<ModifierDetailModel, Dictionary<string, string[]>> Create(ModifierCreateModel createModel) {
         if (!dbContext.SaleItems.Any(si => si.Id == createModel
-                .ModificationTargetId))
-        {
+                .ModificationTargetId)) {
             return new Dictionary<string, string[]>
             {
                 {
@@ -35,31 +32,27 @@ public class ModifierService(KisDbContext dbContext)
         return Read(insertedEntity.Entity.Id).AsT0;
     }
 
-    public OneOf<ModifierDetailModel, NotFound> Read(int id)
-    {
+    public OneOf<ModifierDetailModel, NotFound> Read(int id) {
         var entity = dbContext.Modifiers
             .Include(m => m.ModificationTarget)
             .Include(m => m.Costs)
             .Include(m => m.Composition)
             .SingleOrDefault(m => m.Id == id);
-        
-        if (entity is null)
-        {
+
+        if (entity is null) {
             return new NotFound();
         }
-        
+
         return entity.ToModel();
     }
 
-    public OneOf<ModifierDetailModel, NotFound, Dictionary<string, string[]>> Update(int id, ModifierCreateModel updateModel)
-    {
+    public OneOf<ModifierDetailModel, NotFound, Dictionary<string, string[]>> Update(int id, ModifierCreateModel updateModel) {
         var entity = dbContext.Modifiers.Find(id);
         if (entity is null)
             return new NotFound();
-        
+
         if (!dbContext.SaleItems.Any(si => si.Id == updateModel
-                .ModificationTargetId))
-        {
+                .ModificationTargetId)) {
             return new Dictionary<string, string[]>
             {
                 {
@@ -78,8 +71,7 @@ public class ModifierService(KisDbContext dbContext)
         return entity.ToModel();
     }
 
-    public OneOf<ModifierDetailModel, NotFound> Delete(int id)
-    {
+    public OneOf<ModifierDetailModel, NotFound> Delete(int id) {
         var entity = dbContext.Modifiers.Find(id);
         if (entity is null) return new NotFound();
 

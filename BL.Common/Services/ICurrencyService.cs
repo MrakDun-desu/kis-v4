@@ -4,9 +4,8 @@ using OneOf.Types;
 
 namespace KisV4.BL.Common.Services;
 
-public interface ICurrencyService
-{
-    public CurrencyListModel Create(CurrencyCreateModel createModel);
-    public IEnumerable<CurrencyListModel> ReadAll();
-    public OneOf<CurrencyListModel, NotFound> Update(int id, CurrencyCreateModel updateModel);
+public interface ICurrencyService {
+    CurrencyListModel Create(CurrencyCreateModel createModel);
+    IEnumerable<CurrencyListModel> ReadAll();
+    OneOf<CurrencyListModel, NotFound> Update(int id, CurrencyCreateModel updateModel);
 }

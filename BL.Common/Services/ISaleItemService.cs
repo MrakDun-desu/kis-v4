@@ -4,9 +4,8 @@ using OneOf.Types;
 
 namespace KisV4.BL.Common.Services;
 
-public interface ISaleItemService
-{
-    public OneOf<Page<SaleItemListModel>, Dictionary<string, string[]>> ReadAll(
+public interface ISaleItemService {
+    OneOf<Page<SaleItemListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
         int? pageSize,
         bool? deleted,
@@ -14,16 +13,16 @@ public interface ISaleItemService
         bool? showOnWeb
     );
 
-    public OneOf<SaleItemDetailModel, Dictionary<string, string[]>> Create(
+    OneOf<SaleItemDetailModel, Dictionary<string, string[]>> Create(
         SaleItemCreateModel createModel
     );
 
-    public OneOf<SaleItemDetailModel, NotFound> Read(int id);
+    OneOf<SaleItemDetailModel, NotFound> Read(int id);
 
-    public OneOf<SaleItemDetailModel, NotFound, Dictionary<string, string[]>> Update(
+    OneOf<SaleItemDetailModel, NotFound, Dictionary<string, string[]>> Update(
         int id,
         SaleItemCreateModel updateModel
     );
 
-    public OneOf<SaleItemDetailModel, NotFound> Delete(int id);
+    OneOf<SaleItemDetailModel, NotFound> Delete(int id);
 }

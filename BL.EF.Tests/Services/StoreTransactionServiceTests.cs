@@ -12,19 +12,17 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace BL.EF.Tests.Services;
 
-public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
-{
+public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly StoreTransactionService _storeTransactionService;
     private readonly UserService _userService;
     private readonly FakeTimeProvider _timeProvider = new();
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
 
-    public StoreTransactionServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public StoreTransactionServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _userService = new UserService(
-                _normalDbContext, 
+                _normalDbContext,
                 new CurrencyChangeService(_normalDbContext),
                 new DiscountUsageService(_normalDbContext)
             );
@@ -35,28 +33,26 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
         );
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenNoFilters()
-    {
+    public void ReadAll_ReadsAll_WhenNoFilters() {
         // arrange
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testUser2 = new UserAccountEntity { UserName = "Some other user" };
         var testStoreItem = new StoreItemEntity { Name = "Beer" };
         var testStore = new StoreEntity { Name = "Kachna" };
-        var testTransaction1 = new StoreTransactionEntity
-        {
+        var testTransaction1 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
             Cancelled = false,
             ResponsibleUser = testUser1,
@@ -72,8 +68,7 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        var testTransaction2 = new StoreTransactionEntity
-        {
+        var testTransaction2 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-5),
             Cancelled = false,
             ResponsibleUser = testUser2,
@@ -89,8 +84,7 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        var testTransaction3 = new StoreTransactionEntity
-        {
+        var testTransaction3 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-1),
             Cancelled = true,
             ResponsibleUser = testUser1,
@@ -130,15 +124,13 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenFilteringByDate()
-    {
+    public void ReadAll_ReadsAll_WhenFilteringByDate() {
         // arrange
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testUser2 = new UserAccountEntity { UserName = "Some other user" };
         var testStoreItem = new StoreItemEntity { Name = "Beer" };
         var testStore = new StoreEntity { Name = "Kachna" };
-        var testTransaction1 = new StoreTransactionEntity
-        {
+        var testTransaction1 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
             Cancelled = false,
             ResponsibleUser = testUser1,
@@ -154,8 +146,7 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        var testTransaction2 = new StoreTransactionEntity
-        {
+        var testTransaction2 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-5),
             Cancelled = false,
             ResponsibleUser = testUser2,
@@ -171,8 +162,7 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        var testTransaction3 = new StoreTransactionEntity
-        {
+        var testTransaction3 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-1),
             Cancelled = true,
             ResponsibleUser = testUser1,
@@ -214,15 +204,13 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenFilteringByCancelled()
-    {
+    public void ReadAll_ReadsAll_WhenFilteringByCancelled() {
         // arrange
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testUser2 = new UserAccountEntity { UserName = "Some other user" };
         var testStoreItem = new StoreItemEntity { Name = "Beer" };
         var testStore = new StoreEntity { Name = "Kachna" };
-        var testTransaction1 = new StoreTransactionEntity
-        {
+        var testTransaction1 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
             Cancelled = false,
             ResponsibleUser = testUser1,
@@ -238,8 +226,7 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        var testTransaction2 = new StoreTransactionEntity
-        {
+        var testTransaction2 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-5),
             Cancelled = false,
             ResponsibleUser = testUser2,
@@ -255,8 +242,7 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        var testTransaction3 = new StoreTransactionEntity
-        {
+        var testTransaction3 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-1),
             Cancelled = true,
             ResponsibleUser = testUser1,
@@ -295,15 +281,13 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
     }
 
     [Fact]
-    public void ReadSelfCancellable_ReadsCorrectly()
-    {
+    public void ReadSelfCancellable_ReadsCorrectly() {
         // arrange
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testUser2 = new UserAccountEntity { UserName = "Some other user" };
         var testStoreItem = new StoreItemEntity { Name = "Beer" };
         var testStore = new StoreEntity { Name = "Kachna" };
-        var testTransaction1 = new StoreTransactionEntity
-        {
+        var testTransaction1 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
             Cancelled = false,
             ResponsibleUser = testUser1,
@@ -319,8 +303,7 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        var testTransaction2 = new StoreTransactionEntity
-        {
+        var testTransaction2 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddMinutes(-10),
             Cancelled = false,
             ResponsibleUser = testUser2,
@@ -336,8 +319,7 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 }
             }
         };
-        var testTransaction3 = new StoreTransactionEntity
-        {
+        var testTransaction3 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddMinutes(-10),
             Cancelled = false,
             ResponsibleUser = testUser1,
@@ -374,14 +356,12 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
     }
 
     [Fact]
-    public void Read_ReadsCorrectly()
-    {
+    public void Read_ReadsCorrectly() {
         // arrange
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testStoreItem = new StoreItemEntity { Name = "Beer" };
         var testStore = new StoreEntity { Name = "Kachna" };
-        var testTransaction1 = new StoreTransactionEntity
-        {
+        var testTransaction1 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
             Cancelled = false,
             ResponsibleUser = testUser1,
@@ -419,8 +399,7 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
     }
 
     [Fact]
-    public void Create_Creates_WhenDataIsValid()
-    {
+    public void Create_Creates_WhenDataIsValid() {
         // arrange
         var testStore1 = new StoreEntity { Name = "Kachna" };
         var testStoreItem1 = new StoreItemEntity { Name = "Beer" };
@@ -468,11 +447,9 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
     }
 
     [Fact]
-    public void Create_ReturnsErrors_WhenDataIsNotValid()
-    {
+    public void Create_ReturnsErrors_WhenDataIsNotValid() {
         // arrange
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Beer",
             IsContainerItem = true
         };
@@ -520,14 +497,12 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
     }
 
     [Fact]
-    public void Delete_DeletesCorrectly_WhenExistingId()
-    {
+    public void Delete_DeletesCorrectly_WhenExistingId() {
         // arrange
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testStoreItem = new StoreItemEntity { Name = "Beer" };
         var testStore = new StoreEntity { Name = "Kachna" };
-        var testTransaction1 = new StoreTransactionEntity
-        {
+        var testTransaction1 = new StoreTransactionEntity {
             Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
             ResponsibleUser = testUser1,
             TransactionReason = TransactionReason.Sale,
@@ -562,6 +537,6 @@ public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, 
                 null,
                 cancelledItems.ToModels()
             ));
-        
+
     }
 }

@@ -13,15 +13,13 @@ using Microsoft.Extensions.Time.Testing;
 namespace BL.EF.Tests.Services;
 
 public class
-    CashBoxServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
-{
+    CashBoxServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly CashBoxService _cashBoxService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly FakeTimeProvider _timeProvider = new();
 
-    public CashBoxServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public CashBoxServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _cashBoxService = new CashBoxService(_normalDbContext, new CurrencyChangeService(_normalDbContext), _timeProvider);
         AssertionOptions.AssertEquivalencyUsing(options =>
@@ -30,21 +28,20 @@ public class
         );
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenNoFilters()
-    {
+    public void ReadAll_ReadsAll_WhenNoFilters() {
         // arrange
         var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
         var testCashBox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
@@ -62,8 +59,7 @@ public class
     }
 
     [Fact]
-    public void ReadAll_DoesntReadDeleted()
-    {
+    public void ReadAll_DoesntReadDeleted() {
         // arrange
         var testCashBox1 = new CashBoxEntity { Name = "Some cash box" };
         var testCashBox2 = new CashBoxEntity { Name = "Some cash box 2", Deleted = true };
@@ -81,8 +77,7 @@ public class
     }
 
     [Fact]
-    public void Create_Creates_WhenDataIsValid()
-    {
+    public void Create_Creates_WhenDataIsValid() {
         // arrange
         const string name = "Some cash box";
         var createModel = new CashBoxCreateModel(name);
@@ -96,8 +91,7 @@ public class
         var createdEntity = _referenceDbContext.CashBoxes
             .Include(cb => cb.StockTakings)
             .First(cb => cb.Id == createdCashBox.Id);
-        var expectedEntity = new CashBoxEntity
-        {
+        var expectedEntity = new CashBoxEntity {
             Id = createdCashBox.Id,
             Name = name,
             StockTakings =
@@ -119,15 +113,14 @@ public class
     }
 
     [Fact]
-    public void Update_RestoresEntity_IfWasDeleted()
-    {
+    public void Update_RestoresEntity_IfWasDeleted() {
         // arrange
         const string oldName = "Some cash box";
         const string newName = "Some cash box 2";
         var stockTaking = new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow };
-        var testEntity = new CashBoxEntity
-        {
-            Name = oldName, Deleted = true,
+        var testEntity = new CashBoxEntity {
+            Name = oldName,
+            Deleted = true,
             StockTakings = { stockTaking }
         };
         stockTaking.CashBox = testEntity;
@@ -151,13 +144,11 @@ public class
     }
 
     [Fact]
-    public void Update_UpdatesName_WhenExistingId()
-    {
+    public void Update_UpdatesName_WhenExistingId() {
         // arrange
         const string oldName = "Some cash box";
         const string newName = "Some cash box 2";
-        var testEntity = new CashBoxEntity
-            { Name = oldName, StockTakings = { new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow } } };
+        var testEntity = new CashBoxEntity { Name = oldName, StockTakings = { new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow } } };
         _referenceDbContext.CashBoxes.Add(testEntity);
         _referenceDbContext.SaveChanges();
         var id = testEntity.Id;
@@ -177,8 +168,7 @@ public class
     }
 
     [Fact]
-    public void Update_ReturnsNotFound_WhenNotFound()
-    {
+    public void Update_ReturnsNotFound_WhenNotFound() {
         // arrange
         var updateModel = new CashBoxCreateModel("Some cash box");
 
@@ -190,8 +180,7 @@ public class
     }
 
     [Fact]
-    public void Read_ReturnsNotFound_WhenNotFound()
-    {
+    public void Read_ReturnsNotFound_WhenNotFound() {
         // act
         var returnedModel = _cashBoxService.Read(42);
 
@@ -200,12 +189,10 @@ public class
     }
 
     [Fact]
-    public void Read_ReadsCorrectly_WhenSimple()
-    {
+    public void Read_ReadsCorrectly_WhenSimple() {
         // arrange
         var timestamp = DateTimeOffset.UtcNow;
-        var testCashBox = new CashBoxEntity
-        {
+        var testCashBox = new CashBoxEntity {
             Name = "Test cash box",
             StockTakings = { new StockTakingEntity { Timestamp = timestamp } }
         };
@@ -222,8 +209,7 @@ public class
     }
 
     [Fact]
-    public void Read_ReadsCorrectly_WithoutFilters()
-    {
+    public void Read_ReadsCorrectly_WithoutFilters() {
         // arrange
         var testCashBox = new CashBoxEntity { Name = "Test cash box" };
         var stockTakingTimestamp = DateTimeOffset.UtcNow.AddDays(-2);
@@ -231,27 +217,21 @@ public class
         var currencyChangeTimestamp2 = DateTimeOffset.UtcNow.AddDays(-1);
         _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
         testCashBox.StockTakings.Add(new StockTakingEntity { Timestamp = stockTakingTimestamp });
-        var currencyChange1 = new CurrencyChangeEntity
-        {
+        var currencyChange1 = new CurrencyChangeEntity {
             Currency = new CurrencyEntity { Name = "Some currency" },
             Amount = 10,
-            SaleTransaction = new SaleTransactionEntity
-            {
-                ResponsibleUser = new UserAccountEntity
-                {
+            SaleTransaction = new SaleTransactionEntity {
+                ResponsibleUser = new UserAccountEntity {
                     UserName = "Some user"
                 },
                 Timestamp = currencyChangeTimestamp1
             }
         };
-        var currencyChange2 = new CurrencyChangeEntity
-        {
+        var currencyChange2 = new CurrencyChangeEntity {
             Currency = new CurrencyEntity { Name = "Some currency" },
             Amount = 10,
-            SaleTransaction = new SaleTransactionEntity
-            {
-                ResponsibleUser = new UserAccountEntity
-                {
+            SaleTransaction = new SaleTransactionEntity {
+                ResponsibleUser = new UserAccountEntity {
                     UserName = "Some other user"
                 },
                 Timestamp = currencyChangeTimestamp2
@@ -277,8 +257,7 @@ public class
     }
 
     [Fact]
-    public void Read_ReadsCorrectly_WithFilters()
-    {
+    public void Read_ReadsCorrectly_WithFilters() {
         // arrange
         var testCashBox = new CashBoxEntity { Name = "Test cash box" };
         var stockTakingTimestamp = DateTimeOffset.UtcNow.AddDays(-2);
@@ -286,27 +265,21 @@ public class
         var currencyChangeTimestamp2 = DateTimeOffset.UtcNow.AddDays(-1);
         _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
         testCashBox.StockTakings.Add(new StockTakingEntity { Timestamp = stockTakingTimestamp });
-        var currencyChange1 = new CurrencyChangeEntity
-        {
+        var currencyChange1 = new CurrencyChangeEntity {
             Currency = new CurrencyEntity { Name = "Some currency" },
             Amount = 10,
-            SaleTransaction = new SaleTransactionEntity
-            {
-                ResponsibleUser = new UserAccountEntity
-                {
+            SaleTransaction = new SaleTransactionEntity {
+                ResponsibleUser = new UserAccountEntity {
                     UserName = "Some user"
                 },
                 Timestamp = currencyChangeTimestamp1
             }
         };
-        var currencyChange2 = new CurrencyChangeEntity
-        {
+        var currencyChange2 = new CurrencyChangeEntity {
             Currency = new CurrencyEntity { Name = "Some currency" },
             Amount = 10,
-            SaleTransaction = new SaleTransactionEntity
-            {
-                ResponsibleUser = new UserAccountEntity
-                {
+            SaleTransaction = new SaleTransactionEntity {
+                ResponsibleUser = new UserAccountEntity {
                     UserName = "Some other user"
                 },
                 Timestamp = currencyChangeTimestamp2
@@ -332,8 +305,7 @@ public class
     }
 
     [Fact]
-    public void Read_ReadsCorrectly_WithAggregation()
-    {
+    public void Read_ReadsCorrectly_WithAggregation() {
         // arrange
         var testCashBox = new CashBoxEntity { Name = "Test cash box" };
         var stockTakingTimestamp = DateTimeOffset.UtcNow.AddDays(-3);
@@ -342,27 +314,21 @@ public class
         _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
         testCashBox.StockTakings.Add(new StockTakingEntity { Timestamp = stockTakingTimestamp });
         var currency = new CurrencyEntity { Name = "Some currency" };
-        var currencyChange1 = new CurrencyChangeEntity
-        {
+        var currencyChange1 = new CurrencyChangeEntity {
             Currency = currency,
             Amount = 10,
-            SaleTransaction = new SaleTransactionEntity
-            {
-                ResponsibleUser = new UserAccountEntity
-                {
+            SaleTransaction = new SaleTransactionEntity {
+                ResponsibleUser = new UserAccountEntity {
                     UserName = "Some user"
                 },
                 Timestamp = currencyChangeTimestamp1
             }
         };
-        var currencyChange2 = new CurrencyChangeEntity
-        {
+        var currencyChange2 = new CurrencyChangeEntity {
             Currency = currency,
             Amount = 10,
-            SaleTransaction = new SaleTransactionEntity
-            {
-                ResponsibleUser = new UserAccountEntity
-                {
+            SaleTransaction = new SaleTransactionEntity {
+                ResponsibleUser = new UserAccountEntity {
                     UserName = "Some other user"
                 },
                 Timestamp = currencyChangeTimestamp2
@@ -390,10 +356,8 @@ public class
     }
 
     [Fact]
-    public void Delete_Deletes_WhenExistingId()
-    {
-        var testCashBox1 = new CashBoxEntity
-            { Name = "Some category", StockTakings = { new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow } } };
+    public void Delete_Deletes_WhenExistingId() {
+        var testCashBox1 = new CashBoxEntity { Name = "Some category", StockTakings = { new StockTakingEntity { Timestamp = DateTimeOffset.UtcNow } } };
         _referenceDbContext.CashBoxes.Add(testCashBox1);
         _referenceDbContext.SaveChanges();
         _referenceDbContext.ChangeTracker.Clear();
@@ -409,8 +373,7 @@ public class
     }
 
     [Fact]
-    public void AddStockTaking_AddsStockTaking_WhenExistingId()
-    {
+    public void AddStockTaking_AddsStockTaking_WhenExistingId() {
         var testCashBox1 = new CashBoxEntity { Name = "Some category" };
         var insertedEntity = _referenceDbContext.CashBoxes.Add(testCashBox1);
         _referenceDbContext.SaveChanges();
@@ -423,8 +386,7 @@ public class
         var createdEntity =
             _referenceDbContext.StockTakings
                 .First(st => st.CashBoxId == insertedEntity.Entity.Id);
-        var expectedEntity = new StockTakingEntity
-        {
+        var expectedEntity = new StockTakingEntity {
             Timestamp = returnedDateTime,
             CashBox = insertedEntity.Entity,
             CashBoxId = insertedEntity.Entity.Id
@@ -433,8 +395,7 @@ public class
     }
 
     [Fact]
-    public void AddStockTaking_ReturnsNotFound_WhenNotFound()
-    {
+    public void AddStockTaking_ReturnsNotFound_WhenNotFound() {
         var stockTakingSuccess = _cashBoxService.AddStockTaking(42);
 
         stockTakingSuccess.Should().BeNotFound();

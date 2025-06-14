@@ -11,15 +11,13 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace BL.EF.Tests.Services;
 
-public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
-{
+public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly UserService _userService;
     private readonly FakeTimeProvider _timeProvider = new();
 
-    public UserServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public UserServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _userService = new UserService(
             _normalDbContext,
@@ -28,21 +26,20 @@ public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
         );
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void Create_Creates_WhenUserDoesntExist()
-    {
+    public void Create_Creates_WhenUserDoesntExist() {
         // arrange
         _referenceDbContext.UserAccounts.RemoveRange(_referenceDbContext.UserAccounts);
         const string username = "Some user";
@@ -57,8 +54,7 @@ public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void Create_GetsId_WhenUserExists()
-    {
+    public void Create_GetsId_WhenUserExists() {
         // arrange
         const string username = "Some user";
         var entity = _referenceDbContext.UserAccounts.Add(new UserAccountEntity { UserName = username });
@@ -72,8 +68,7 @@ public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenNoFilters()
-    {
+    public void ReadAll_ReadsAll_WhenNoFilters() {
         // arrange
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testUser2 = new UserAccountEntity { UserName = "Some user 2", Deleted = true };
@@ -92,8 +87,7 @@ public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void ReadAll_DoesntReadDeleted_WhenFilteringByDeleted()
-    {
+    public void ReadAll_DoesntReadDeleted_WhenFilteringByDeleted() {
         // arrange
         var testUser1 = new UserAccountEntity { UserName = "Some user" };
         var testUser2 = new UserAccountEntity { UserName = "Some user 2", Deleted = true };
@@ -113,8 +107,7 @@ public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void Read_ReturnsNotFound_WhenNotFound()
-    {
+    public void Read_ReturnsNotFound_WhenNotFound() {
         // act
         var returnedModel = _userService.Read(42);
 
@@ -123,11 +116,9 @@ public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void Read_ReadsCorrectly_WhenSimple()
-    {
+    public void Read_ReadsCorrectly_WhenSimple() {
         // arrange
-        var testUser = new UserAccountEntity
-        {
+        var testUser = new UserAccountEntity {
             UserName = "Test User",
         };
         _referenceDbContext.UserAccounts.Add(testUser);
@@ -148,34 +139,27 @@ public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
     }
 
     [Fact]
-    public void Read_ReadsCorrectly_WhenComplex()
-    {
+    public void Read_ReadsCorrectly_WhenComplex() {
         // arrange
         var testUser = new UserAccountEntity { UserName = "Test user" };
         var currencyChangeTimestamp1 = DateTimeOffset.UtcNow.AddDays(-3);
         var currencyChangeTimestamp2 = DateTimeOffset.UtcNow.AddDays(-1);
         _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
-        var currencyChange1 = new CurrencyChangeEntity
-        {
+        var currencyChange1 = new CurrencyChangeEntity {
             Currency = new CurrencyEntity { Name = "Some currency" },
             Amount = 10,
-            SaleTransaction = new SaleTransactionEntity
-            {
-                ResponsibleUser = new UserAccountEntity
-                {
+            SaleTransaction = new SaleTransactionEntity {
+                ResponsibleUser = new UserAccountEntity {
                     UserName = "Some user"
                 },
                 Timestamp = currencyChangeTimestamp1
             }
         };
-        var currencyChange2 = new CurrencyChangeEntity
-        {
+        var currencyChange2 = new CurrencyChangeEntity {
             Currency = currencyChange1.Currency,
             Amount = 10,
-            SaleTransaction = new SaleTransactionEntity
-            {
-                ResponsibleUser = new UserAccountEntity
-                {
+            SaleTransaction = new SaleTransactionEntity {
+                ResponsibleUser = new UserAccountEntity {
                     UserName = "Some other user"
                 },
                 Timestamp = currencyChangeTimestamp2

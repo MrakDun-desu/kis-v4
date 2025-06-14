@@ -15,41 +15,35 @@ namespace KisV4.BL.EF.Services;
 public class StoreTransactionService(
     KisDbContext dbContext,
     IUserService userService,
-    TimeProvider timeProvider) : IStoreTransactionService, IScopedService
-{
+    TimeProvider timeProvider) : IStoreTransactionService, IScopedService {
     public OneOf<Page<StoreTransactionListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
         int? pageSize,
         DateTimeOffset? startDate,
         DateTimeOffset? endDate,
-        bool? cancelled)
-    {
+        bool? cancelled) {
         var query = dbContext.StoreTransactions
             .Include(sti => sti.SaleTransaction)
             .Include(sti => sti.ResponsibleUser)
             .OrderByDescending(sti => sti.Timestamp)
             .AsQueryable();
 
-        if (startDate.HasValue)
-        {
+        if (startDate.HasValue) {
             query = query.Where(sti => sti.Timestamp > startDate.Value);
         }
 
-        if (endDate.HasValue)
-        {
+        if (endDate.HasValue) {
             query = query.Where(sti => sti.Timestamp < endDate.Value);
         }
 
-        if (cancelled.HasValue)
-        {
+        if (cancelled.HasValue) {
             query = query.Where(sti => sti.Cancelled == cancelled.Value);
         }
 
         return query.Page(page ?? 1, pageSize ?? Constants.DefaultPageSize, Mapper.ToModels);
     }
 
-    public IEnumerable<StoreTransactionListModel> ReadSelfCancellable(string userName)
-    {
+    public IEnumerable<StoreTransactionListModel> ReadSelfCancellable(string userName) {
         var userId = userService.CreateOrGetId(userName);
         var currentTime = timeProvider.GetUtcNow();
         var oldestCancellableTime = currentTime - Constants.SelfCancellableTime;
@@ -64,48 +58,34 @@ public class StoreTransactionService(
             .ToModels();
     }
 
-    public OneOf<StoreTransactionDetailModel, NotFound> Read(int id)
-    {
+    public OneOf<StoreTransactionDetailModel, NotFound> Read(int id) {
         var entity = dbContext.StoreTransactions
-            // .Include(st => st.ResponsibleUser)
-            // .Include(st => st.SaleTransaction)
-            // .Include(st => st.StoreTransactionItems)
-            // .ThenInclude(sti => sti.StoreItem)
-            // .Include(st => st.StoreTransactionItems)
-            // .ThenInclude(sti => sti.Store)
             .FirstOrDefault(st => st.Id == id);
         return entity is null ? new NotFound() : entity.ToModel();
     }
 
     public OneOf<StoreTransactionDetailModel, Dictionary<string, string[]>> Create(
         StoreTransactionCreateModel createModel,
-        string userName)
-    {
+        string userName) {
         ValidateCreateRequest(createModel, out var errors);
-        if (errors.Count > 0)
-        {
+        if (errors.Count > 0) {
             return errors;
         }
 
-        var newTransaction = new StoreTransactionEntity
-        {
+        var newTransaction = new StoreTransactionEntity {
             Timestamp = timeProvider.GetUtcNow(),
             ResponsibleUserId = userService.CreateOrGetId(userName),
             TransactionReason = createModel.TransactionReason
         };
-        foreach (var item in createModel.StoreTransactionItems)
-        {
-            switch (createModel.TransactionReason)
-            {
+        foreach (var item in createModel.StoreTransactionItems) {
+            switch (createModel.TransactionReason) {
                 case TransactionReason.MovingStores:
-                    newTransaction.StoreTransactionItems.Add(new StoreTransactionItemEntity
-                    {
+                    newTransaction.StoreTransactionItems.Add(new StoreTransactionItemEntity {
                         ItemAmount = -item.Amount,
                         StoreId = createModel.StoreId,
                         StoreItemId = item.StoreItemId
                     });
-                    newTransaction.StoreTransactionItems.Add(new StoreTransactionItemEntity
-                    {
+                    newTransaction.StoreTransactionItems.Add(new StoreTransactionItemEntity {
                         ItemAmount = item.Amount,
                         StoreId = createModel.DestinationStoreId!.Value,
                         StoreItemId = item.StoreItemId
@@ -114,8 +94,7 @@ public class StoreTransactionService(
                 case TransactionReason.AddingToStore:
                 case TransactionReason.Sale:
                 case TransactionReason.WriteOff:
-                    newTransaction.StoreTransactionItems.Add(new StoreTransactionItemEntity
-                    {
+                    newTransaction.StoreTransactionItems.Add(new StoreTransactionItemEntity {
                         ItemAmount = item.Amount,
                         StoreId = createModel.StoreId,
                         StoreItemId = item.StoreItemId
@@ -133,20 +112,17 @@ public class StoreTransactionService(
         return Read(newTransaction.Id).AsT0;
     }
 
-    public OneOf<StoreTransactionDetailModel, NotFound> Delete(int id)
-    {
+    public OneOf<StoreTransactionDetailModel, NotFound> Delete(int id) {
         var entity = dbContext.StoreTransactions
             .Include(sti => sti.StoreTransactionItems)
             .FirstOrDefault(sti => sti.Id == id);
 
-        if (entity is null)
-        {
+        if (entity is null) {
             return new NotFound();
         }
 
         entity.Cancelled = true;
-        foreach (var item in entity.StoreTransactionItems)
-        {
+        foreach (var item in entity.StoreTransactionItems) {
             item.Cancelled = true;
         }
 
@@ -158,18 +134,14 @@ public class StoreTransactionService(
 
     private void ValidateCreateRequest(
         StoreTransactionCreateModel createModel,
-        out Dictionary<string, string[]> errors)
-    {
-        errors = new Dictionary<string, string[]>();
-        if (!dbContext.Stores.Any(st => st.Id == createModel.StoreId))
-        {
+        out Dictionary<string, string[]> errors) {
+        errors = [];
+        if (!dbContext.Stores.Any(st => st.Id == createModel.StoreId)) {
             errors.AddItemOrCreate(
                 nameof(createModel.StoreId),
                 $"Store with id {createModel.StoreId} doesn't exist"
             );
-        }
-        else if (dbContext.Containers.Any(st => st.Id == createModel.StoreId))
-        {
+        } else if (dbContext.Containers.Any(st => st.Id == createModel.StoreId)) {
             errors.AddItemOrCreate(
                 nameof(createModel.StoreId),
                 $"Store with id {createModel.StoreId} is a container. " +
@@ -178,17 +150,13 @@ public class StoreTransactionService(
             );
         }
 
-        if (createModel.TransactionReason == TransactionReason.MovingStores)
-        {
-            if (!createModel.DestinationStoreId.HasValue)
-            {
+        if (createModel.TransactionReason == TransactionReason.MovingStores) {
+            if (!createModel.DestinationStoreId.HasValue) {
                 errors.AddItemOrCreate(
                     nameof(createModel.DestinationStoreId),
                     "Destination store has to be specified when moving stores"
                 );
-            }
-            else if (!dbContext.Stores.Any(st => st.Id == createModel.DestinationStoreId.Value))
-            {
+            } else if (!dbContext.Stores.Any(st => st.Id == createModel.DestinationStoreId.Value)) {
                 errors.AddItemOrCreate(
                     nameof(createModel.DestinationStoreId),
                     $"Store with id {createModel.DestinationStoreId.Value} doesn't exist"
@@ -203,16 +171,14 @@ public class StoreTransactionService(
         var realStoreItems = dbContext.StoreItems
             .Where(si => storeItemIds.Contains(si.Id))
             .ToList();
-        if (realStoreItems.Count != storeItemIds.Count)
-        {
+        if (realStoreItems.Count != storeItemIds.Count) {
             errors.AddItemOrCreate(
                 nameof(createModel.StoreTransactionItems),
                 "Some of the specified store items do not exist"
             );
         }
 
-        if (realStoreItems.Any(si => si.IsContainerItem))
-        {
+        if (realStoreItems.Any(si => si.IsContainerItem)) {
             errors.AddItemOrCreate(
                 nameof(createModel.StoreTransactionItems),
                 "Some of the specified store items are container items. " +

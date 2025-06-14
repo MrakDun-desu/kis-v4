@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.App.Endpoints;
 
-public static class CurrencyChanges
-{
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
-    {
+public static class CurrencyChanges {
+    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("currency-changes");
         group.MapGet(string.Empty, Create);
     }
@@ -21,8 +19,7 @@ public static class CurrencyChanges
         [FromQuery] bool? cancelled,
         [FromQuery] DateTimeOffset? startDate,
         [FromQuery] DateTimeOffset? endDate
-    )
-    {
+    ) {
         return currencyChangeService.ReadAll(page, pageSize, accountId, cancelled, startDate, endDate)
             .Match<Results<Ok<Page<CurrencyChangeListModel>>, ValidationProblem>>(
                 output => TypedResults.Ok(output),

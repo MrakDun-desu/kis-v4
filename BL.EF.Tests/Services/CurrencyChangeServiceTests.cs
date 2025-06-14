@@ -11,56 +11,49 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BL.EF.Tests.Services;
 
-public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
-{
+public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly CurrencyChangeService _currencyChangeService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
 
-    public CurrencyChangeServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public CurrencyChangeServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _currencyChangeService = new CurrencyChangeService(_normalDbContext);
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenNoFilters()
-    {
+    public void ReadAll_ReadsAll_WhenNoFilters() {
         // arrange
         var testAccount1 = new UserAccountEntity { UserName = "Some user" };
         var testAccount2 = new UserAccountEntity { UserName = "Some other user" };
         var testCurrency1 = new CurrencyEntity { Name = "Czech crowns" };
-        var testCurrencyChange1 = new CurrencyChangeEntity
-        {
+        var testCurrencyChange1 = new CurrencyChangeEntity {
             Currency = testCurrency1,
             Amount = 10,
             Account = testAccount1,
-            SaleTransaction = new SaleTransactionEntity
-            {
+            SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = testAccount2,
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-10)
             }
         };
-        var testCurrencyChange2 = new CurrencyChangeEntity
-        {
+        var testCurrencyChange2 = new CurrencyChangeEntity {
             Currency = testCurrency1,
             Amount = 10,
             Account = testAccount2,
             Cancelled = true,
-            SaleTransaction = new SaleTransactionEntity
-            {
+            SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = testAccount2,
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-5)
             }
@@ -82,31 +75,26 @@ public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, ID
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByAccount()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByAccount() {
         // arrange
         var testAccount1 = new UserAccountEntity { UserName = "Some user" };
         var testAccount2 = new UserAccountEntity { UserName = "Some other user" };
         var testCurrency1 = new CurrencyEntity { Name = "Czech crowns" };
-        var testCurrencyChange1 = new CurrencyChangeEntity
-        {
+        var testCurrencyChange1 = new CurrencyChangeEntity {
             Currency = testCurrency1,
             Amount = 10,
             Account = testAccount1,
-            SaleTransaction = new SaleTransactionEntity
-            {
+            SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = testAccount2,
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-10)
             }
         };
-        var testCurrencyChange2 = new CurrencyChangeEntity
-        {
+        var testCurrencyChange2 = new CurrencyChangeEntity {
             Currency = testCurrency1,
             Amount = 10,
             Account = testAccount2,
             Cancelled = true,
-            SaleTransaction = new SaleTransactionEntity
-            {
+            SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = testAccount2,
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-5)
             }
@@ -130,31 +118,26 @@ public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, ID
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByCancelled()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByCancelled() {
         // arrange
         var testAccount1 = new UserAccountEntity { UserName = "Some user" };
         var testAccount2 = new UserAccountEntity { UserName = "Some other user" };
         var testCurrency1 = new CurrencyEntity { Name = "Czech crowns" };
-        var testCurrencyChange1 = new CurrencyChangeEntity
-        {
+        var testCurrencyChange1 = new CurrencyChangeEntity {
             Currency = testCurrency1,
             Amount = 10,
             Account = testAccount1,
-            SaleTransaction = new SaleTransactionEntity
-            {
+            SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = testAccount2,
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-10)
             }
         };
-        var testCurrencyChange2 = new CurrencyChangeEntity
-        {
+        var testCurrencyChange2 = new CurrencyChangeEntity {
             Currency = testCurrency1,
             Amount = 10,
             Account = testAccount2,
             Cancelled = true,
-            SaleTransaction = new SaleTransactionEntity
-            {
+            SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = testAccount2,
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-5)
             }
@@ -177,31 +160,26 @@ public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, ID
     }
 
     [Fact]
-    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentAccount()
-    {
+    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentAccount() {
         // arrange
         var testAccount1 = new UserAccountEntity { UserName = "Some user" };
         var testAccount2 = new UserAccountEntity { UserName = "Some other user" };
         var testCurrency1 = new CurrencyEntity { Name = "Czech crowns" };
-        var testCurrencyChange1 = new CurrencyChangeEntity
-        {
+        var testCurrencyChange1 = new CurrencyChangeEntity {
             Currency = testCurrency1,
             Amount = 10,
             Account = testAccount1,
-            SaleTransaction = new SaleTransactionEntity
-            {
+            SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = testAccount2,
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-10)
             }
         };
-        var testCurrencyChange2 = new CurrencyChangeEntity
-        {
+        var testCurrencyChange2 = new CurrencyChangeEntity {
             Currency = testCurrency1,
             Amount = 10,
             Account = testAccount2,
             Cancelled = true,
-            SaleTransaction = new SaleTransactionEntity
-            {
+            SaleTransaction = new SaleTransactionEntity {
                 ResponsibleUser = testAccount2,
                 Timestamp = DateTimeOffset.UtcNow.AddDays(-5)
             }

@@ -3,14 +3,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace KisV4.DAL.EF.Migrations
-{
+namespace KisV4.DAL.EF.Migrations {
     /// <inheritdoc />
-    public partial class AddContainerTemplatesAndModificationAmounts : Migration
-    {
+    public partial class AddContainerTemplatesAndModificationAmounts : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropForeignKey(
                 name: "FK_Containers_StoreItems_ContainedItemId",
                 table: "Containers");
@@ -81,12 +78,11 @@ namespace KisV4.DAL.EF.Migrations
             migrationBuilder.AddPrimaryKey(
                 name: "PK_StockTakings",
                 table: "StockTakings",
-                columns: new[] { "Timestamp", "CashBoxId" });
+                columns: ["Timestamp", "CashBoxId"]);
 
             migrationBuilder.CreateTable(
                 name: "ContainerTemplateEntity",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
@@ -94,8 +90,7 @@ namespace KisV4.DAL.EF.Migrations
                     Deleted = table.Column<bool>(type: "boolean", nullable: false),
                     ContainedItemId = table.Column<int>(type: "integer", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_ContainerTemplateEntity", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ContainerTemplateEntity_StoreItems_ContainedItemId",
@@ -107,14 +102,12 @@ namespace KisV4.DAL.EF.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ModifierAmountEntity",
-                columns: table => new
-                {
+                columns: table => new {
                     ModifierId = table.Column<int>(type: "integer", nullable: false),
                     SaleTransactionItemId = table.Column<int>(type: "integer", nullable: false),
                     Amount = table.Column<int>(type: "integer", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_ModifierAmountEntity", x => new { x.ModifierId, x.SaleTransactionItemId });
                     table.ForeignKey(
                         name: "FK_ModifierAmountEntity_Modifiers_ModifierId",
@@ -158,8 +151,7 @@ namespace KisV4.DAL.EF.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropForeignKey(
                 name: "FK_Containers_ContainerTemplateEntity_TemplateId",
                 table: "Containers");
@@ -229,13 +221,11 @@ namespace KisV4.DAL.EF.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ModifierApplications",
-                columns: table => new
-                {
+                columns: table => new {
                     ApplicationsId = table.Column<int>(type: "integer", nullable: false),
                     ModifiersId = table.Column<int>(type: "integer", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_ModifierApplications", x => new { x.ApplicationsId, x.ModifiersId });
                     table.ForeignKey(
                         name: "FK_ModifierApplications_Modifiers_ModifiersId",

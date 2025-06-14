@@ -12,52 +12,45 @@ namespace BL.EF.Tests.Services;
 
 public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     IDisposable,
-    IAsyncDisposable
-{
+    IAsyncDisposable {
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly ContainerTemplateService _templateService;
 
-    public ContainerTemplateServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public ContainerTemplateServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _templateService = new ContainerTemplateService(_normalDbContext);
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenNoFilters()
-    {
+    public void ReadAll_ReadsAll_WhenNoFilters() {
         // arrange
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             IsContainerItem = true,
             Name = "Some container item"
         };
-        var testStoreItem2 = new StoreItemEntity
-        {
+        var testStoreItem2 = new StoreItemEntity {
             IsContainerItem = true,
             Name = "Some other container item"
         };
-        var testTemplate1 = new ContainerTemplateEntity
-        {
+        var testTemplate1 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem1,
             Name = "Some container"
         };
-        var testTemplate2 = new ContainerTemplateEntity
-        {
+        var testTemplate2 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem2,
             Name = "Some container",
@@ -79,27 +72,22 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByDeleted()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByDeleted() {
         // arrange
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             IsContainerItem = true,
             Name = "Some container item"
         };
-        var testStoreItem2 = new StoreItemEntity
-        {
+        var testStoreItem2 = new StoreItemEntity {
             IsContainerItem = true,
             Name = "Some other container item"
         };
-        var testTemplate1 = new ContainerTemplateEntity
-        {
+        var testTemplate1 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem1,
             Name = "Some container"
         };
-        var testTemplate2 = new ContainerTemplateEntity
-        {
+        var testTemplate2 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem2,
             Name = "Some container",
@@ -122,27 +110,22 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByStoreItemId()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByStoreItemId() {
         // arrange
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             IsContainerItem = true,
             Name = "Some container item"
         };
-        var testStoreItem2 = new StoreItemEntity
-        {
+        var testStoreItem2 = new StoreItemEntity {
             IsContainerItem = true,
             Name = "Some other container item"
         };
-        var testTemplate1 = new ContainerTemplateEntity
-        {
+        var testTemplate1 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem1,
             Name = "Some container"
         };
-        var testTemplate2 = new ContainerTemplateEntity
-        {
+        var testTemplate2 = new ContainerTemplateEntity {
             Amount = 10,
             ContainedItem = testStoreItem2,
             Name = "Some container",
@@ -165,8 +148,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentStoreItem()
-    {
+    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentStoreItem() {
         // arrange
         const int containedItemId = 42;
 
@@ -181,11 +163,9 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Create_Creates_WhenDataIsValid()
-    {
+    public void Create_Creates_WhenDataIsValid() {
         // arrange
-        var testStoreItem = new StoreItemEntity
-        {
+        var testStoreItem = new StoreItemEntity {
             Name = "Some store item",
             IsContainerItem = true,
             Deleted = false
@@ -205,8 +185,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         creationResult.IsT0.Should().BeTrue();
         var createdModel = creationResult.AsT0;
         var createdEntity = _referenceDbContext.ContainerTemplates.Find(createdModel.Id);
-        var expectedEntity = new ContainerTemplateEntity
-        {
+        var expectedEntity = new ContainerTemplateEntity {
             Id = createdModel.Id,
             Name = createModel.Name,
             Amount = createModel.Amount,
@@ -219,11 +198,9 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Create_ReturnsErrors_WhenStoreItemIsInvalid()
-    {
+    public void Create_ReturnsErrors_WhenStoreItemIsInvalid() {
         // arrange
-        var testStoreItem = new StoreItemEntity
-        {
+        var testStoreItem = new StoreItemEntity {
             Name = "Some store item",
             IsContainerItem = false,
             Deleted = true
@@ -253,21 +230,17 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Update_Updates_WhenDataIsValid()
-    {
+    public void Update_Updates_WhenDataIsValid() {
         // arrange
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Some store item",
             IsContainerItem = true
         };
-        var testStoreItem2 = new StoreItemEntity
-        {
+        var testStoreItem2 = new StoreItemEntity {
             Name = "Some store item",
             IsContainerItem = true
         };
-        var testTemplate = new ContainerTemplateEntity
-        {
+        var testTemplate = new ContainerTemplateEntity {
             Name = "Some container item",
             Amount = 10,
             ContainedItem = testStoreItem1,
@@ -300,8 +273,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Update_ReturnsNotFound_WhenTemplateIsNotFound()
-    {
+    public void Update_ReturnsNotFound_WhenTemplateIsNotFound() {
         // arrange
         var updateModel = new ContainerTemplateCreateModel(
             "Some container template",
@@ -317,22 +289,18 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Update_ReturnsErrors_WhenStoreItemIsInvalid()
-    {
+    public void Update_ReturnsErrors_WhenStoreItemIsInvalid() {
         // arrange
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Some store item",
             IsContainerItem = true
         };
-        var testStoreItem2 = new StoreItemEntity
-        {
+        var testStoreItem2 = new StoreItemEntity {
             Name = "Some store item",
             IsContainerItem = false,
             Deleted = true
         };
-        var testTemplate = new ContainerTemplateEntity
-        {
+        var testTemplate = new ContainerTemplateEntity {
             Name = "Some container item",
             Amount = 10,
             ContainedItem = testStoreItem1,
@@ -365,21 +333,17 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Update_ReturnsErrors_WhenUpdatingFixedFields()
-    {
+    public void Update_ReturnsErrors_WhenUpdatingFixedFields() {
         // arrange
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Some store item",
             IsContainerItem = true
         };
-        var testStoreItem2 = new StoreItemEntity
-        {
+        var testStoreItem2 = new StoreItemEntity {
             Name = "Some store item",
             IsContainerItem = true
         };
-        var testTemplate = new ContainerTemplateEntity
-        {
+        var testTemplate = new ContainerTemplateEntity {
             Name = "Some container item",
             Amount = 10,
             ContainedItem = testStoreItem1,
@@ -424,16 +388,13 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Delete_Deletes_WhenExistingId()
-    {
+    public void Delete_Deletes_WhenExistingId() {
         // arrange
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Some store item",
             IsContainerItem = true
         };
-        var testTemplate = new ContainerTemplateEntity
-        {
+        var testTemplate = new ContainerTemplateEntity {
             Name = "Some container item",
             Amount = 10,
             ContainedItem = testStoreItem1,
@@ -455,8 +416,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     }
 
     [Fact]
-    public void Delete_ReturnsNotFound_WhenNotFound()
-    {
+    public void Delete_ReturnsNotFound_WhenNotFound() {
         // act
         var deleteResult = _templateService.Delete(42);
 

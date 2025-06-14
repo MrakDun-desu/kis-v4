@@ -1,4 +1,6 @@
 using KisV4.BL.Common.Services;
+using KisV4.Common;
+using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
@@ -13,73 +15,183 @@ public class SaleTransactionService(
     IUserService userService,
     TimeProvider timeProvider
 ) : ISaleTransactionService {
+
+    public OneOf<Page<SaleTransactionListModel>, Dictionary<string, string[]>> ReadAll(
+        int? page,
+        int? pageSize,
+        DateTimeOffset? startDate,
+        DateTimeOffset? endDate,
+        bool? cancelled
+    ) {
+        var query = dbContext.SaleTransactions
+            .Include(st => st.ResponsibleUser)
+            .OrderByDescending(st => st.Timestamp)
+            .AsQueryable();
+
+        if (startDate.HasValue) {
+            query = query.Where(sti => sti.Timestamp > startDate.Value);
+        }
+
+        if (endDate.HasValue) {
+            query = query.Where(sti => sti.Timestamp < endDate.Value);
+        }
+
+        if (cancelled.HasValue) {
+            query = query.Where(sti => sti.Cancelled == cancelled.Value);
+        }
+
+        return query.Page(page ?? 1, pageSize ?? Constants.DefaultPageSize, Mapper.ToModels);
+    }
+
+    public IEnumerable<SaleTransactionListModel> ReadSelfCancellable(string userName) {
+        var currentTime = timeProvider.GetUtcNow();
+        return dbContext.SaleTransactions
+            .Include(st => st.ResponsibleUser)
+            .Where(st => st.Timestamp > (currentTime - Constants.SelfCancellableTime))
+            .Include(st => st.ResponsibleUser)
+            .Select(Mapper.ToListModel);
+    }
+
     public OneOf<SaleTransactionDetailModel, Dictionary<string, string[]>> Create(
         SaleTransactionCreateModel createModel,
         string userName
     ) {
-        var errors = ValidateCreateModel(createModel, out var saleItems, out var modifiers);
+        var errors = ValidateCreateModel(createModel, out var compositions);
         if (errors.Count > 0) {
             return errors;
         }
 
+        var newSaleTransaction = new SaleTransactionEntity();
         var responsibleUserId = userService.CreateOrGetId(userName);
-        var timestamp = timeProvider.GetUtcNow();
-        var newSaleTransaction = new SaleTransactionEntity {
-            Timestamp = timestamp,
-            ResponsibleUserId = responsibleUserId,
-        };
 
-        foreach (var item in createModel.SaleTransactionItems) {
-            var newItem = new SaleTransactionItemEntity {
-                ItemAmount = item.ItemAmount,
-                SaleItemId = item.SaleItemId,
-            };
-            foreach (ModifierAmountCreateModel modifier in item.ModifierAmounts) {
-                newItem.ModifierAmounts.Add(
-                    new ModifierAmountEntity {
-                        ModifierId = modifier.ModifierId,
-                        Amount = modifier.Amount,
-                    }
-                );
-            }
-            newSaleTransaction.SaleTransactionItems.Add(newItem);
-        }
+        UpdateSaleTransaction(
+                createModel,
+                newSaleTransaction,
+                compositions,
+                responsibleUserId,
+                out var newStoreTransaction
+        );
 
         // add the sale transaction itself
         dbContext.SaleTransactions.Add(newSaleTransaction);
         // add the incomplete transaction record
+        // TODO the user in incomplete transaction should be the *client*, not the barman like currently.
+        // Possible solution: make two endpoints, one called by the barman first and then
+        // second one called by the client. Not ideal, but I don't currently have a better idea
         dbContext.IncompleteTransactions.Add(
             new IncompleteTransactionEntity {
                 UserId = responsibleUserId,
                 SaleTransaction = newSaleTransaction,
             }
         );
+        dbContext.StoreTransactions.Add(newStoreTransaction);
 
-        // add the store transactions for the included items
-        var newStoreTransactions = new Dictionary<int, StoreTransactionEntity>();
-        foreach (var item in createModel.SaleTransactionItems) {
-            // for normal store items, it's necessary just to know how much to take out
-            // of the given store
-            var storeItemAmounts = new Dictionary<int, decimal>();
-
-            // for the container items, it's necessary to know which container to take from,
-            // and also how much
-            var containerItemAmounts = new Dictionary<int, Dictionary<int, decimal>>();
-        }
-        var newStoreTransaction = new StoreTransactionEntity {
-            Timestamp = timestamp,
-            ResponsibleUserId = responsibleUserId,
-            TransactionReason = KisV4.Common.Enums.TransactionReason.Sale,
-            SaleTransaction = newSaleTransaction,
-        };
         dbContext.SaveChanges();
         return Read(newSaleTransaction.Id).AsT0;
     }
 
+    public OneOf<SaleTransactionDetailModel, NotFound, Dictionary<string, string[]>> Patch(
+        int id,
+        SaleTransactionCreateModel updateModel,
+        string userName
+    ) {
+        var saleTransaction = dbContext.SaleTransactions.Find(id);
+        if (saleTransaction is null) {
+            return new NotFound();
+        }
+
+        if (!dbContext.IncompleteTransactions.Any(it => it.SaleTransactionId == id)) {
+            return new Dictionary<string, string[]> {
+                { nameof(id), ["Only incomplete transactions can be updated"] }
+            };
+        }
+
+        var errors = ValidateCreateModel(updateModel, out var compositions);
+        if (errors.Count > 0) {
+            return errors;
+        }
+
+        var responsibleUserId = userService.CreateOrGetId(userName);
+        UpdateSaleTransaction(
+            updateModel,
+            saleTransaction,
+            compositions,
+            responsibleUserId,
+            out var newStoreTransaction
+        );
+
+        dbContext.SaleTransactions.Update(saleTransaction);
+        dbContext.StoreTransactions.Add(newStoreTransaction);
+
+        dbContext.SaveChanges();
+        return Read(saleTransaction.Id).AsT0;
+    }
+
+    public OneOf<SaleTransactionDetailModel, NotFound, Dictionary<string, string[]>> Finish(
+        int id,
+        IEnumerable<CurrencyChangeListModel> currencyChanges
+    ) {
+        throw new NotImplementedException();
+    }
+
+    public OneOf<SaleTransactionDetailModel, NotFound> Read(int id) {
+        var output = dbContext.SaleTransactions
+            .Include(st => st.SaleTransactionItems)
+            .ThenInclude(sti => sti.TransactionPrices)
+            .Include(st => st.SaleTransactionItems)
+            .ThenInclude(sti => sti.ModifierAmounts)
+            .Include(st => st.StoreTransactions)
+            .Include(st => st.CurrencyChanges)
+            .AsSplitQuery()
+            .SingleOrDefault(st => st.Id == id);
+
+        return output is null ? new NotFound() : output.ToModel();
+    }
+
+    public OneOf<SaleTransactionDetailModel, NotFound> Delete(int id) {
+        var output = dbContext.SaleTransactions
+            .Include(st => st.SaleTransactionItems)
+            .ThenInclude(sti => sti.TransactionPrices)
+            .Include(st => st.SaleTransactionItems)
+            .ThenInclude(sti => sti.ModifierAmounts)
+            .Include(st => st.StoreTransactions)
+            .ThenInclude(st => st.StoreTransactionItems)
+            .Include(st => st.CurrencyChanges)
+            .AsSplitQuery()
+            .SingleOrDefault(st => st.Id == id);
+
+        if (output is null) {
+            return new NotFound();
+        }
+
+        foreach (var item in output.SaleTransactionItems) {
+            item.Cancelled = true;
+            foreach (var sth in item.TransactionPrices) {
+                sth.Cancelled = true;
+            }
+        }
+        foreach (var item in output.CurrencyChanges) {
+            item.Cancelled = true;
+        }
+        foreach (var item in output.StoreTransactions) {
+            item.Cancelled = true;
+            foreach (var transactionItem in item.StoreTransactionItems) {
+                transactionItem.Cancelled = true;
+            }
+        }
+
+        var incompleteTransaction = dbContext.IncompleteTransactions
+            .SingleOrDefault(it => it.SaleTransactionId == id);
+        if (incompleteTransaction is not null) {
+            dbContext.Remove(incompleteTransaction);
+        }
+        dbContext.Update(output);
+        return output.ToModel();
+    }
+
     public Dictionary<string, string[]> ValidateCreateModel(
         SaleTransactionCreateModel createModel,
-        out Dictionary<int, SaleItemEntity> saleItems,
-        out Dictionary<int, ModifierEntity> modifiers
+        out Dictionary<int, CompositionEntity[]> compositions
     ) {
         var errors = new Dictionary<string, string[]>();
         foreach (var item in createModel.SaleTransactionItems) {
@@ -112,18 +224,18 @@ public class SaleTransactionService(
 
         // making requests for the actual items to minimize the amount of DB calls
         // these items will be the passed down to the create/patch method to be used
-        saleItems = dbContext
+        var saleItems = dbContext
             .SaleItems.Where(si => saleItemIds.Contains(si.Id))
             .ToDictionary(item => item.Id);
-        modifiers = dbContext
+        var modifiers = dbContext
             .Modifiers.Where(m => modifierIds.Contains(m.Id))
             .ToDictionary(item => item.Id);
-        var compositions = dbContext
+        compositions = dbContext
             .Compositions.Where(c => compositionParents.Contains(c.SaleItemId))
             .GroupBy(c => c.SaleItemId)
-            .ToDictionary(g => g.Key, g => g.Select(c => c.StoreItemId).ToArray());
+            .ToDictionary(g => g.Key, g => g.ToArray());
 
-        var storeItemIds = compositions.Values.SelectMany(i => i);
+        var storeItemIds = compositions.Values.SelectMany(ce => ce.Select(i => i.StoreItemId));
         var storeItemsToIsContainer = dbContext
             .StoreItems.Where(si => storeItemIds.Contains(si.Id))
             .ToDictionary(si => si.Id, si => si.IsContainerItem);
@@ -178,21 +290,21 @@ public class SaleTransactionService(
             }
 
             if (item.StoreId is { } storeId) {
-                // all requested stores must exist
+                // all requested stores must exist (this checks all the not default stores)
                 if (!stores.TryGetValue(storeId, out var store)) {
                     errors.AddItemOrCreate(nameof(item.StoreId), $"Store {storeId} doesn't exist");
                 } else {
                     // we go over all the store items that this transaction item has
                     var containedStoreItems = new HashSet<int>();
                     if (compositions.TryGetValue(item.SaleItemId, out var composition)) {
-                        containedStoreItems = [.. containedStoreItems, .. composition];
+                        containedStoreItems = [.. containedStoreItems, .. composition.Select(c => c.StoreItemId)];
                     }
                     foreach (var mod in item.ModifierAmounts) {
                         if (!modifiers.ContainsKey(mod.ModifierId)) {
                             continue;
                         }
                         if (compositions.TryGetValue(mod.ModifierId, out composition)) {
-                            containedStoreItems = [.. containedStoreItems, .. composition];
+                            containedStoreItems = [.. containedStoreItems, .. composition.Select(c => c.StoreItemId)];
                         }
                     }
 
@@ -230,38 +342,83 @@ public class SaleTransactionService(
         return errors;
     }
 
-    public OneOf<SaleTransactionDetailModel, NotFound> Delete(int id) {
-        throw new NotImplementedException();
-    }
+    // extracted this into a method since the logic is shared between create and patch
+    private void UpdateSaleTransaction(
+            SaleTransactionCreateModel updateModel,
+            SaleTransactionEntity saleTransaction,
+            Dictionary<int, CompositionEntity[]> compositions,
+            int responsibleUserId,
+            out StoreTransactionEntity storeTransaction
+            ) {
+        var timestamp = timeProvider.GetUtcNow();
+        // update the sale transaction
+        // old timestamp and user still stay in the store transactions that have been done
+        // previously (user honestly shouldn't change anyways)
+        saleTransaction.ResponsibleUserId = responsibleUserId;
+        saleTransaction.Timestamp = timestamp;
+        foreach (var item in updateModel.SaleTransactionItems) {
+            var newItem = new SaleTransactionItemEntity {
+                ItemAmount = item.ItemAmount,
+                SaleItemId = item.SaleItemId,
+            };
+            foreach (var modifier in item.ModifierAmounts) {
+                newItem.ModifierAmounts.Add(
+                    new ModifierAmountEntity {
+                        ModifierId = modifier.ModifierId,
+                        Amount = modifier.Amount,
+                    }
+                );
+            }
+            saleTransaction.SaleTransactionItems.Add(newItem);
+        }
 
-    public OneOf<SaleTransactionDetailModel, NotFound, Dictionary<string, string[]>> Finish(
-        int id,
-        IEnumerable<CurrencyChangeListModel> currencyChanges
-    ) {
-        throw new NotImplementedException();
-    }
+        storeTransaction = new StoreTransactionEntity {
+            ResponsibleUserId = responsibleUserId,
+            SaleTransaction = saleTransaction,
+            Timestamp = timestamp,
+            TransactionReason = TransactionReason.Sale,
+        };
+        foreach (var item in updateModel.SaleTransactionItems) {
+            var storeId = item.StoreId ?? updateModel.StoreId;
+            // first add all the store item amounts from the sale item itself
+            var storeItemAmounts = compositions[item.SaleItemId]
+                .ToDictionary(comp => comp.StoreItemId, comp => comp.Amount * item.ItemAmount);
 
-    public OneOf<SaleTransactionDetailModel, Dictionary<string, string[]>> Put(
-        IEnumerable<SaleTransactionItemCreateModel> items
-    ) {
-        throw new NotImplementedException();
-    }
+            // then add all the modifier store item amounts
+            foreach (var (modId, modAmount) in item.ModifierAmounts) {
+                var modifierComp = compositions[modId];
+                foreach (var comp in modifierComp) {
+                    var amountModification = comp.Amount * modAmount;
+                    if (storeItemAmounts.ContainsKey(comp.StoreItemId)) {
+                        storeItemAmounts[comp.StoreItemId] += amountModification;
+                    } else {
+                        storeItemAmounts[comp.StoreItemId] = amountModification;
+                    }
+                }
+            }
 
-    public OneOf<SaleTransactionDetailModel, NotFound> Read(int id) {
-        throw new NotImplementedException();
-    }
+            // add all the new store item amounts to the transaction
+            foreach (var itemAmount in storeItemAmounts) {
+                var transactionItemOpt = storeTransaction
+                    .StoreTransactionItems
+                    .SingleOrDefault(sti => sti.StoreItemId == itemAmount.Key && sti.StoreId == storeId);
 
-    public List<SaleTransactionListModel> ReadAll(
-        int? page,
-        int? pageSize,
-        DateTimeOffset? startDate,
-        DateTimeOffset? endDate,
-        bool? cancelled
-    ) {
-        throw new NotImplementedException();
-    }
+                // if the item wasn't found (this store item wasn't added yet), create it
+                var transactionItem = transactionItemOpt ?? new StoreTransactionItemEntity {
+                    StoreId = storeId,
+                    StoreItemId = itemAmount.Key,
+                    StoreTransaction = storeTransaction,
+                    ItemAmount = 0,
+                };
+                // here it's needed to subtract because while the amounts of the sale items passed
+                // are positive, they're being *taken away* from the stores
+                transactionItem.ItemAmount -= itemAmount.Value;
 
-    public List<SaleTransactionListModel> ReadSelfCancellable() {
-        throw new NotImplementedException();
+                // add the item into the transaction only if it wasn't there yet
+                if (transactionItemOpt is null) {
+                    storeTransaction.StoreTransactionItems.Add(transactionItem);
+                }
+            }
+        }
     }
 }

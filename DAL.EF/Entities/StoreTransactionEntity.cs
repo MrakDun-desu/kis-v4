@@ -5,8 +5,7 @@ namespace KisV4.DAL.EF.Entities;
 /// <summary>
 ///     Represents a store transaction. Includes a reason for transaction and a list of transaction items.
 /// </summary>
-public record StoreTransactionEntity : TransactionEntity
-{
+public record StoreTransactionEntity : TransactionEntity {
     public TransactionReason TransactionReason { get; set; }
     public int? SaleTransactionId { get; set; }
 
@@ -19,5 +18,5 @@ public record StoreTransactionEntity : TransactionEntity
     ///     Store transaction items that are part of this store transaction.
     /// </summary>
     public virtual ICollection<StoreTransactionItemEntity> StoreTransactionItems { get; private set; } =
-        new List<StoreTransactionItemEntity>();
+        [];
 }

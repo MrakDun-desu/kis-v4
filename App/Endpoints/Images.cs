@@ -4,10 +4,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace KisV4.App.Endpoints;
 
-public static class Images
-{
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
-    {
+public static class Images {
+    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         // ignoring anti-forgery for now, maybe include it in the future?
         routeBuilder.MapPost("images", Upload).DisableAntiforgery();
         routeBuilder.MapGet("images/{filename}", Download).DisableAntiforgery();
@@ -16,17 +14,16 @@ public static class Images
     private static Results<Created, ValidationProblem> Upload(
         IFormFile image,
         ImageStorageConfiguration conf,
-        HttpRequest request)
-    {
+        HttpRequest request) {
         // validating the filetype with magic bytes
-        if (!FileTypeValidator.IsImage(image.OpenReadStream()))
+        if (!FileTypeValidator.IsImage(image.OpenReadStream())) {
             return TypedResults.ValidationProblem(new Dictionary<string, string[]>
                 { { nameof(image), ["File must be of type image"] } });
+        }
 
         string creationPath;
         string fileName;
-        do
-        {
+        do {
             // if file is actually an image, trust the extension to be correct,
             // so it's simpler to create a file with a correct extension
             fileName = Path.GetFileNameWithoutExtension(image.FileName) + "_" +
@@ -44,14 +41,12 @@ public static class Images
 
     private static Results<NotFound, PhysicalFileHttpResult> Download(
         string filename,
-        ImageStorageConfiguration conf)
-    {
+        ImageStorageConfiguration conf) {
         var filePath = Path.Combine(conf.Path, filename);
-        if (!File.Exists(filePath))
-        {
+        if (!File.Exists(filePath)) {
             return TypedResults.NotFound();
         }
-        
+
         var extension = Path.GetExtension(filePath);
         var mimetype = GetImageMimeType(extension);
         var lastModified = File.GetLastWriteTimeUtc(filePath);
@@ -59,8 +54,7 @@ public static class Images
         return TypedResults.PhysicalFile(filePath, mimetype, lastModified: lastModified);
     }
 
-    private static string GetImageMimeType(string extension) => extension switch
-    {
+    private static string GetImageMimeType(string extension) => extension switch {
         ".png" => "image/png",
         ".gif" => "image/gif",
         ".jpg" or ".jpeg" => "image/jpeg",

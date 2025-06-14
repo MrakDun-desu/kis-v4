@@ -4,18 +4,15 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace KisV4.App.Endpoints;
 
-public static class Costs
-{
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
-    {
+public static class Costs {
+    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("costs");
         group.MapPost(string.Empty, Create);
     }
 
     private static Results<Ok<CostListModel>, ValidationProblem> Create(
         ICostService costService,
-        CostCreateModel createModel)
-    {
+        CostCreateModel createModel) {
         return costService.Create(createModel)
             .Match<Results<Ok<CostListModel>, ValidationProblem>>(
                 model => TypedResults.Ok(model),

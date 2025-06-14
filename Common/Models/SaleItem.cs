@@ -27,10 +27,9 @@ public record SaleItemDetailModel(
     IEnumerable<CostListModel> Costs,
     IEnumerable<CostListModel>? CurrentCosts = null,
     IEnumerable<StoreAmountSaleItemListModel>? StoreAmounts = null
-)
-{
-    public IEnumerable<CostListModel> CurrentCosts = 
-        CurrentCosts ?? new List<CostListModel>();
-    public IEnumerable<StoreAmountSaleItemListModel> StoreAmounts = 
-        StoreAmounts ?? new List<StoreAmountSaleItemListModel>();
+) {
+    public IEnumerable<CostListModel> CurrentCosts =
+        CurrentCosts ?? [];
+    public IEnumerable<StoreAmountSaleItemListModel> StoreAmounts =
+        StoreAmounts ?? [];
 }

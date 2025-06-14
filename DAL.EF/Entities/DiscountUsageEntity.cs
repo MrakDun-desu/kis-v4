@@ -6,8 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 ///     Represents a single usage of a discount by a given user.
 ///     Can be used on multiple items to discount multiple currencies.
 /// </summary>
-public record DiscountUsageEntity
-{
+public record DiscountUsageEntity {
     public int Id { get; init; }
     public int UserId { get; init; }
 
@@ -29,5 +28,5 @@ public record DiscountUsageEntity
     ///     Each item and currency that this discount usage was applied on.
     /// </summary>
     public virtual ICollection<DiscountUsageItemEntity> UsageItems { get; private set; } =
-        new List<DiscountUsageItemEntity>();
+        [];
 }

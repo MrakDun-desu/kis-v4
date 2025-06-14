@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.App.Endpoints;
 
-public static class CashBoxes
-{
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
-    {
+public static class CashBoxes {
+    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("cashboxes");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
@@ -21,16 +19,14 @@ public static class CashBoxes
     private static List<CashBoxListModel> ReadAll(
         ICashBoxService cashBoxService,
         [FromQuery] bool? deleted = false
-    )
-    {
+    ) {
         return cashBoxService.ReadAll(deleted);
     }
 
     private static Created<CashBoxDetailModel> Create(
         ICashBoxService cashBoxService,
         CashBoxCreateModel createModel,
-        HttpRequest request)
-    {
+        HttpRequest request) {
         var createdModel = cashBoxService.Create(createModel);
         return TypedResults.Created(
             request.Host + request.Path + "/" + createdModel.Id, createdModel);
@@ -39,8 +35,7 @@ public static class CashBoxes
     private static Results<NoContent, NotFound> Update(
         ICashBoxService cashBoxService,
         CashBoxCreateModel createModel,
-        int id)
-    {
+        int id) {
         return cashBoxService.Update(id, createModel)
             .Match<Results<NoContent, NotFound>>(
                 _ => TypedResults.NoContent(),
@@ -52,8 +47,7 @@ public static class CashBoxes
         ICashBoxService cashBoxService,
         int id,
         [FromQuery] DateTimeOffset? startDate,
-        [FromQuery] DateTimeOffset? endDate)
-    {
+        [FromQuery] DateTimeOffset? endDate) {
         return cashBoxService.Read(id, startDate, endDate)
             .Match<Results<Ok<CashBoxDetailModel>, NotFound, ValidationProblem>>(
                 readModel => TypedResults.Ok(readModel),
@@ -64,16 +58,14 @@ public static class CashBoxes
 
     private static NoContent Delete(
         ICashBoxService cashBoxService,
-        int id)
-    {
+        int id) {
         cashBoxService.Delete(id);
         return TypedResults.NoContent();
     }
 
     private static Results<Ok, NotFound> AddStockTaking(
         ICashBoxService cashBoxService,
-        int id)
-    {
+        int id) {
         return cashBoxService.AddStockTaking(id)
             .Match<Results<Ok, NotFound>>(
                 _ => TypedResults.Ok(),

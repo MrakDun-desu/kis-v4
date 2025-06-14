@@ -12,41 +12,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BL.EF.Tests.Services;
 
-public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
-{
+public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly StoreItemService _storeItemService;
 
-    public StoreItemServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public StoreItemServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _storeItemService = new StoreItemService(_normalDbContext);
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void ReadAll_ReadsAll_WhenNoFilters()
-    {
+    public void ReadAll_ReadsAll_WhenNoFilters() {
         // arrange
         var drinkCategory = new ProductCategoryEntity { Name = "Drink" };
         var foodCategory = new ProductCategoryEntity { Name = "Food" };
         var testCurrency = new CurrencyEntity { Name = "Czech Crowns" };
         var testStore = new StoreEntity { Name = "Kachna 1" };
         var testUser = new UserAccountEntity { UserName = "Some user" };
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Plzen Beer",
             UnitName = "bottle",
             Categories = { drinkCategory },
@@ -91,8 +87,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
                 }
             }
         };
-        var testStoreItem2 = new StoreItemEntity
-        {
+        var testStoreItem2 = new StoreItemEntity {
             Name = "Bread",
             UnitName = "slice",
             Categories = { foodCategory },
@@ -150,8 +145,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
         var resultAsT0 = readResult.AsT0;
         resultAsT0.Should().BeEquivalentTo(
             new Page<StoreItemListModel>(
-                new List<StoreItemListModel>
-                {
+                [
                     new(
                         testStoreItem1.Id,
                         testStoreItem1.Name,
@@ -170,21 +164,19 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
                         testStoreItem2.BarmanCanStock,
                         testStoreItem2.IsContainerItem
                     ),
-                }, new PageMeta(
+                ], new PageMeta(
                     1, Constants.DefaultPageSize, 1, 2, 2, 1)));
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByCategoryAndStore()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByCategoryAndStore() {
         // arrange
         var drinkCategory = new ProductCategoryEntity { Name = "Drink" };
         var foodCategory = new ProductCategoryEntity { Name = "Food" };
         var testCurrency = new CurrencyEntity { Name = "Czech Crowns" };
         var testStore = new StoreEntity { Name = "Kachna 1" };
         var testUser = new UserAccountEntity { UserName = "Some user" };
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Plzen Beer",
             UnitName = "bottle",
             Categories = { drinkCategory },
@@ -229,8 +221,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
                 }
             }
         };
-        var testStoreItem2 = new StoreItemEntity
-        {
+        var testStoreItem2 = new StoreItemEntity {
             Name = "Bread",
             UnitName = "slice",
             Categories = { foodCategory },
@@ -290,16 +281,14 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void ReadAll_ReadsCorrectly_WhenFilteringByStore()
-    {
+    public void ReadAll_ReadsCorrectly_WhenFilteringByStore() {
         // arrange
         var drinkCategory = new ProductCategoryEntity { Name = "Drink" };
         var foodCategory = new ProductCategoryEntity { Name = "Food" };
         var testCurrency = new CurrencyEntity { Name = "Czech Crowns" };
         var testStore = new StoreEntity { Name = "Kachna 1" };
         var testUser = new UserAccountEntity { UserName = "Some user" };
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Plzen Beer",
             UnitName = "bottle",
             Categories = { drinkCategory },
@@ -344,8 +333,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
                 }
             }
         };
-        var testStoreItem2 = new StoreItemEntity
-        {
+        var testStoreItem2 = new StoreItemEntity {
             Name = "Bread",
             UnitName = "slice",
             Categories = { foodCategory },
@@ -403,8 +391,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
         var resultAsT0 = readResult.AsT0;
         resultAsT0.Should().BeEquivalentTo(
             new Page<StoreItemListModel>(
-                new List<StoreItemListModel>
-                {
+                [
                     new(
                         testStoreItem1.Id,
                         testStoreItem1.Name,
@@ -414,13 +401,12 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
                         testStoreItem1.BarmanCanStock,
                         testStoreItem1.IsContainerItem
                     )
-                }, new PageMeta(
+                ], new PageMeta(
                     1, Constants.DefaultPageSize, 1, 1, 1, 1)));
     }
 
     [Fact]
-    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentIds()
-    {
+    public void ReadAll_ReturnsErrors_WhenFilteringByNonexistentIds() {
         // arrange
         const int storeId = 42;
         const int categoryId = 42;
@@ -443,8 +429,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Create_Creates_WhenDataIsValid()
-    {
+    public void Create_Creates_WhenDataIsValid() {
         // arrange
         var categories = new List<ProductCategoryEntity>
         {
@@ -470,8 +455,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
         var createdEntity = _referenceDbContext.StoreItems
             .Include(si => si.Categories)
             .First(si => si.Id == createResult.AsT0.Id);
-        var expectedEntity = new StoreItemEntity
-        {
+        var expectedEntity = new StoreItemEntity {
             Id = createResult.AsT0.Id,
             BarmanCanStock = createModel.BarmanCanStock,
             Deleted = false,
@@ -486,8 +470,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Create_ReturnsErrors_WhenDataIsNotValid()
-    {
+    public void Create_ReturnsErrors_WhenDataIsNotValid() {
         // arrange
         var createModel = new StoreItemCreateModel(
             "Beer",
@@ -512,8 +495,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Read_ReturnsNotFound_WhenNonexistentId()
-    {
+    public void Read_ReturnsNotFound_WhenNonexistentId() {
         // act
         var readResult = _storeItemService.Read(42);
 
@@ -522,15 +504,13 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Read_ReadsCorrectly_WhenComplex()
-    {
+    public void Read_ReadsCorrectly_WhenComplex() {
         // arrange
         var drinkCategory = new ProductCategoryEntity { Name = "Drink" };
         var testCurrency = new CurrencyEntity { Name = "Czech Crowns" };
         var testStore = new StoreEntity { Name = "Kachna 1" };
         var testUser = new UserAccountEntity { UserName = "Some user" };
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Plzen Beer",
             UnitName = "bottle",
             Categories = { drinkCategory },
@@ -593,33 +573,29 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
             testStoreItem1.IsContainerItem,
             testStoreItem1.Categories.ToList().ToModels(),
             testStoreItem1.Costs.ToList().ToModels(),
-            new List<CostListModel>
-            {
+            [
                 testStoreItem1.Costs.ElementAt(1).ToModel()
-            },
-            new List<StoreAmountStoreItemListModel>
-            {
+            ],
+            [
                 new(
                     testStore.ToListModel(),
                     testStoreItem1.Id,
                     22
                 )
-            }
+            ]
         );
         readResult.Should().HaveValue(expectedModel);
     }
 
     [Fact]
-    public void Delete_Deletes_WhenExistingId()
-    {
-        var testStoreItem = new StoreItemEntity
-        {
+    public void Delete_Deletes_WhenExistingId() {
+        var testStoreItem = new StoreItemEntity {
             Name = "Some store item"
         };
         _referenceDbContext.StoreItems.Add(testStoreItem);
         _referenceDbContext.SaveChanges();
         _referenceDbContext.ChangeTracker.Clear();
-        
+
         // act
         var deleteResult = _storeItemService.Delete(testStoreItem.Id);
 
@@ -631,8 +607,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Delete_ReturnsNotFound_WhenNonexistentId()
-    {
+    public void Delete_ReturnsNotFound_WhenNonexistentId() {
         // act
         var deleteResult = _storeItemService.Delete(42);
 
@@ -641,8 +616,7 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Update_ReturnsNotFound_WhenNonexistentId()
-    {
+    public void Update_ReturnsNotFound_WhenNonexistentId() {
         // arrange
         var updateModel = new StoreItemCreateModel(
             "Beer",
@@ -661,16 +635,14 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Update_ReturnsErrors_WhenDataIsNotValid()
-    {
+    public void Update_ReturnsErrors_WhenDataIsNotValid() {
         // arrange
         var drinkCategory = new ProductCategoryEntity { Name = "Drink" };
         var foodCategory = new ProductCategoryEntity { Name = "food" };
         var testCurrency = new CurrencyEntity { Name = "Czech Crowns" };
         var testStore = new StoreEntity { Name = "Kachna 1" };
         var testUser = new UserAccountEntity { UserName = "Some user" };
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Plzen Beer",
             UnitName = "bottle",
             Deleted = true,
@@ -751,16 +723,14 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
     }
 
     [Fact]
-    public void Update_UpdatesCorrectly_WhenDataIsValid()
-    {
+    public void Update_UpdatesCorrectly_WhenDataIsValid() {
         // arrange
         var drinkCategory = new ProductCategoryEntity { Name = "Drink" };
         var foodCategory = new ProductCategoryEntity { Name = "food" };
         var testCurrency = new CurrencyEntity { Name = "Czech Crowns" };
         var testStore = new StoreEntity { Name = "Kachna 1" };
         var testUser = new UserAccountEntity { UserName = "Some user" };
-        var testStoreItem1 = new StoreItemEntity
-        {
+        var testStoreItem1 = new StoreItemEntity {
             Name = "Plzen Beer",
             UnitName = "bottle",
             Deleted = true,
@@ -837,18 +807,16 @@ public class StoreItemServiceTests : IClassFixture<KisDbContextFactory>, IDispos
                 foodCategory, drinkCategory
             }.ToModels(),
             testStoreItem1.Costs.ToList().ToModels(),
-            new List<CostListModel>
-            {
+            [
                 testStoreItem1.Costs.ElementAt(1).ToModel()
-            },
-            new List<StoreAmountStoreItemListModel>
-            {
+            ],
+            [
                 new(
                     testStore.ToListModel(),
                     testStoreItem1.Id,
                     22
                 )
-            }
+            ]
         );
         readResult.Should().HaveValue(expectedModel);
     }

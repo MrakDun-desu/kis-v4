@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.App.Endpoints;
 
-public static class ContainerTemplates
-{
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
-    {
+public static class ContainerTemplates {
+    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("container-templates");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
@@ -19,8 +17,7 @@ public static class ContainerTemplates
     private static Results<Ok<ICollection<ContainerTemplateListModel>>, ValidationProblem> ReadAll(
         IContainerTemplateService containerTemplateService,
         [FromQuery] bool? deleted,
-        [FromQuery] int? containedItemId)
-    {
+        [FromQuery] int? containedItemId) {
         return containerTemplateService
             .ReadAll(deleted, containedItemId)
             .Match<Results<Ok<ICollection<ContainerTemplateListModel>>, ValidationProblem>>(
@@ -32,8 +29,7 @@ public static class ContainerTemplates
     private static Results<Created<ContainerTemplateListModel>, ValidationProblem> Create(
         IContainerTemplateService containerTemplateService,
         ContainerTemplateCreateModel createModel,
-        HttpRequest request)
-    {
+        HttpRequest request) {
         var creationResult = containerTemplateService.Create(createModel);
         return creationResult.Match<Results<Created<ContainerTemplateListModel>, ValidationProblem>>(
             createdModel => TypedResults.Created(
@@ -46,8 +42,7 @@ public static class ContainerTemplates
     private static Results<Ok<ContainerTemplateListModel>, NotFound, ValidationProblem> Update(
         IContainerTemplateService containerTemplateService,
         ContainerTemplateCreateModel updateModel,
-        int id)
-    {
+        int id) {
         return containerTemplateService.Update(id, updateModel)
             .Match<Results<Ok<ContainerTemplateListModel>, NotFound, ValidationProblem>>(
                 model => TypedResults.Ok(model),
@@ -59,8 +54,7 @@ public static class ContainerTemplates
     private static Results<Ok<ContainerTemplateListModel>, NotFound> Delete(
         IContainerTemplateService containerTemplateService,
         int id
-    )
-    {
+    ) {
         return containerTemplateService.Delete(id)
             .Match<Results<Ok<ContainerTemplateListModel>, NotFound>>(
                 model => TypedResults.Ok(model),

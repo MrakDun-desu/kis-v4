@@ -8,33 +8,30 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable
-{
+public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly StoreService _storeService;
 
-    public StoreServiceTests(KisDbContextFactory dbContextFactory)
-    {
+    public StoreServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _storeService = new StoreService(_normalDbContext);
     }
 
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
+        GC.SuppressFinalize(this);
         await _referenceDbContext.DisposeAsync();
         await _normalDbContext.DisposeAsync();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
+        GC.SuppressFinalize(this);
         _referenceDbContext.Dispose();
         _normalDbContext.Dispose();
     }
 
     [Fact]
-    public void Create_CreatesStore_WhenDataIsValid()
-    {
+    public void Create_CreatesStore_WhenDataIsValid() {
         var createModel = new StoreCreateModel("Some store");
         var createdId = _storeService.Create(createModel);
 
@@ -44,8 +41,7 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
     }
 
     [Fact]
-    public void ReadAll_ReadsAll()
-    {
+    public void ReadAll_ReadsAll() {
         var testStore1 = new StoreEntity { Name = "Some store" };
         var testStore2 = new StoreEntity { Name = "Some store 2" };
         _referenceDbContext.Stores.Add(testStore1);
@@ -87,8 +83,7 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
     // }
 
     [Fact]
-    public void Delete_Deletes_WhenExistingId()
-    {
+    public void Delete_Deletes_WhenExistingId() {
         var testStore1 = new StoreEntity { Name = "Some store" };
         var insertedEntity = _referenceDbContext.Stores.Add(testStore1);
         _referenceDbContext.SaveChanges();
@@ -102,8 +97,7 @@ public class StoreServiceTests : IClassFixture<KisDbContextFactory>, IDisposable
     }
 
     [Fact]
-    public void Delete_ReturnsFalse_WhenNotFound()
-    {
+    public void Delete_ReturnsFalse_WhenNotFound() {
         var deleteSuccess = _storeService.Delete(42);
 
         deleteSuccess.Should().BeFalse();

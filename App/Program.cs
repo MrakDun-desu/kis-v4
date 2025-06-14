@@ -9,9 +9,8 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
-builder.Services.AddCors(opts =>
-{
-    opts.AddDefaultPolicy(policy =>
+builder.Services.AddCors(static opts => {
+    opts.AddDefaultPolicy(static policy =>
         policy.AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod());
@@ -29,10 +28,8 @@ builder.Services.AddAuthorizationBuilder()
 
 // OpenAPI/Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(o =>
-{
-    o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
+builder.Services.AddSwaggerGen(static o => {
+    o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
         Description = "JWT Authorization header using the bearer scheme",
         Name = "Authorization",
         In = ParameterLocation.Header,
@@ -95,6 +92,7 @@ Images.MapEndpoints(app);
 Modifiers.MapEndpoints(app);
 Pipes.MapEndpoints(app);
 SaleItems.MapEndpoints(app);
+SaleTransactions.MapEndpoints(app);
 StoreItems.MapEndpoints(app);
 StoreTransactions.MapEndpoints(app);
 Stores.MapEndpoints(app);

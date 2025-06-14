@@ -6,8 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 ///     Entity that serves as a template for containers. When creating containers, it should be done only
 ///     through "instantiating" these templates - name, starting amount, and contained item should be the same.
 /// </summary>
-public record ContainerTemplateEntity
-{
+public record ContainerTemplateEntity {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
 
@@ -28,5 +27,5 @@ public record ContainerTemplateEntity
     /// <summary>
     ///     Instances of this container - individual container entities.
     /// </summary>
-    public virtual ICollection<ContainerEntity> Instances { get; private set; } = new List<ContainerEntity>();
+    public virtual ICollection<ContainerEntity> Instances { get; private set; } = [];
 }
