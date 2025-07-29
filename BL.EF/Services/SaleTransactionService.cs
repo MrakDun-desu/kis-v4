@@ -1,5 +1,6 @@
 using KisV4.BL.Common.Services;
 using KisV4.Common;
+using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
@@ -14,7 +15,7 @@ public class SaleTransactionService(
     KisDbContext dbContext,
     IUserService userService,
     TimeProvider timeProvider
-) : ISaleTransactionService {
+) : ISaleTransactionService, IScopedService {
 
     public OneOf<Page<SaleTransactionListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
@@ -75,18 +76,16 @@ public class SaleTransactionService(
         // add the sale transaction itself
         dbContext.SaleTransactions.Add(newSaleTransaction);
         // add the incomplete transaction record
-        // TODO the user in incomplete transaction should be the *client*, not the barman like currently.
-        // Possible solution: make two endpoints, one called by the barman first and then
-        // second one called by the client. Not ideal, but I don't currently have a better idea
         dbContext.IncompleteTransactions.Add(
             new IncompleteTransactionEntity {
-                UserId = responsibleUserId,
+                UserId = userService.CreateOrGetId(createModel.ClientUserName),
                 SaleTransaction = newSaleTransaction,
             }
         );
         dbContext.StoreTransactions.Add(newStoreTransaction);
 
         dbContext.SaveChanges();
+        dbContext.ChangeTracker.Clear();
         return Read(newSaleTransaction.Id).AsT0;
     }
 
@@ -95,14 +94,23 @@ public class SaleTransactionService(
         SaleTransactionCreateModel updateModel,
         string userName
     ) {
-        var saleTransaction = dbContext.SaleTransactions.Find(id);
+        var saleTransaction = dbContext.SaleTransactions
+            .Include(st => st.SaleTransactionItems)
+            .ThenInclude(sti => sti.TransactionPrices)
+            .SingleOrDefault(st => st.Id == id);
         if (saleTransaction is null) {
             return new NotFound();
         }
 
-        if (!dbContext.IncompleteTransactions.Any(it => it.SaleTransactionId == id)) {
+        var incompleteTransaction = dbContext.IncompleteTransactions.SingleOrDefault(it => it.SaleTransactionId == id);
+
+        if (incompleteTransaction is null) {
             return new Dictionary<string, string[]> {
                 { nameof(id), ["Only incomplete transactions can be updated"] }
+            };
+        } else if (incompleteTransaction.UserId != userService.CreateOrGetId(updateModel.ClientUserName)) {
+            return new Dictionary<string, string[]> {
+                {nameof(updateModel.ClientUserName), ["This transaction has been started by a different client"]}
             };
         }
 
@@ -129,9 +137,73 @@ public class SaleTransactionService(
 
     public OneOf<SaleTransactionDetailModel, NotFound, Dictionary<string, string[]>> Finish(
         int id,
-        IEnumerable<CurrencyChangeListModel> currencyChanges
+        IEnumerable<CurrencyChangeCreateModel> currencyChanges
     ) {
-        throw new NotImplementedException();
+        var requestTime = timeProvider.GetUtcNow();
+
+        var incompleteTransaction = dbContext.IncompleteTransactions
+            .Include(it => it.SaleTransaction)
+            .SingleOrDefault(it => it.SaleTransactionId == id);
+
+        var saleTransaction = incompleteTransaction?.SaleTransaction ?? dbContext.SaleTransactions.Find(id);
+
+        if (saleTransaction is null) {
+            return new NotFound();
+        }
+
+        var currencyIds = currencyChanges.Select(cc => cc.CurrencyId).ToArray();
+        var accountIds = currencyChanges.Select(cc => cc.AccountId).ToArray();
+
+        var errors = new Dictionary<string, string[]>();
+
+        if (incompleteTransaction is null &&
+                requestTime > saleTransaction.Timestamp + Constants.FinishedTransactionChangeTime
+                ) {
+            errors.AddItemOrCreate(
+                    "RequestTime",
+                    "Can't change transaction later than " +
+                    $"{Constants.FinishedTransactionChangeTime.TotalMinutes} minutes after finishing"
+                );
+        }
+
+        var realCurrencyIds = dbContext.Currencies.Where(cc => currencyIds.Contains(cc.Id)).Select(cc => cc.Id).ToArray();
+        var realAccountIds = dbContext.Accounts.Where(a => accountIds.Contains(a.Id)).Select(a => a.Id).ToArray();
+
+        foreach (var currencyId in currencyIds) {
+            if (!realCurrencyIds.Contains(currencyId)) {
+                errors.AddItemOrCreate("CurrencyId", $"Currency {currencyId} doesn't exist");
+            }
+        }
+        foreach (var accountId in accountIds) {
+            if (!realAccountIds.Contains(accountId)) {
+                errors.AddItemOrCreate("AccountId", $"Account {accountId} doesn't exist");
+            }
+        }
+
+        if (errors.Count != 0) {
+            return errors;
+        }
+
+        if (incompleteTransaction is not null) {
+            dbContext.IncompleteTransactions.Remove(incompleteTransaction);
+        }
+
+        // delete old currency changes if any
+        dbContext.CurrencyChanges
+            .Where(cc => cc.SaleTransactionId == id)
+            .ExecuteDelete();
+
+        dbContext.CurrencyChanges.AddRange(currencyChanges.Select(
+            cc => new CurrencyChangeEntity {
+                AccountId = cc.AccountId,
+                Amount = cc.Amount,
+                CurrencyId = cc.CurrencyId,
+            }
+        ));
+
+        dbContext.SaveChanges();
+
+        return Read(saleTransaction.Id).AsT0;
     }
 
     public OneOf<SaleTransactionDetailModel, NotFound> Read(int id) {
@@ -166,8 +238,8 @@ public class SaleTransactionService(
 
         foreach (var item in output.SaleTransactionItems) {
             item.Cancelled = true;
-            foreach (var sth in item.TransactionPrices) {
-                sth.Cancelled = true;
+            foreach (var price in item.TransactionPrices) {
+                price.Cancelled = true;
             }
         }
         foreach (var item in output.CurrencyChanges) {
@@ -214,9 +286,8 @@ public class SaleTransactionService(
             .Distinct()
             .ToArray();
         var modifierIds = createModel
-            .SaleTransactionItems.SelectMany(sti =>
-                sti.ModifierAmounts.Select(mod => mod.ModifierId)
-            )
+            .SaleTransactionItems.SelectMany(sti => sti.ModifierAmounts)
+            .Select(mod => mod.ModifierId)
             .Distinct()
             .ToArray();
 
@@ -351,41 +422,91 @@ public class SaleTransactionService(
             out StoreTransactionEntity storeTransaction
             ) {
         var timestamp = timeProvider.GetUtcNow();
-        // update the sale transaction
+
+        // first get the prices of everything so it's possible to compute what they should be in the
+        // sale transaction items
+        var saleItemIds = updateModel.SaleTransactionItems
+            .Select(sti => sti.SaleItemId)
+            .Distinct();
+        var modifierIds = updateModel.SaleTransactionItems
+            .SelectMany(sti => sti.ModifierAmounts)
+            .Select(ma => ma.ModifierId)
+            .Distinct();
+
+        var priceItemIds = saleItemIds.Concat(modifierIds);
+
+        var currentCosts = dbContext.CurrencyCosts
+            .Where(cc => priceItemIds.Contains(cc.ProductId))
+            .Where(cc => cc.ValidSince < timestamp)
+            .GroupBy(cc => cc.ProductId)
+            .Select(g => new {
+                ProductId = g.Key,
+                CurrentCosts = g.GroupBy(cc => cc.CurrencyId)
+                    .Select(gg => new {
+                        CurrencyId = gg.Key,
+                        CurrentCost = gg.OrderByDescending(cc => cc.ValidSince)
+                                .First().Amount
+                    })
+            })
+        .ToArray()
+        .ToDictionary(i => i.ProductId, i => i.CurrentCosts);
+
+        // update the sale transaction (mainly prices)
         // old timestamp and user still stay in the store transactions that have been done
         // previously (user honestly shouldn't change anyways)
         saleTransaction.ResponsibleUserId = responsibleUserId;
         saleTransaction.Timestamp = timestamp;
         foreach (var item in updateModel.SaleTransactionItems) {
-            var newItem = new SaleTransactionItemEntity {
+            var newStItem = new SaleTransactionItemEntity {
                 ItemAmount = item.ItemAmount,
                 SaleItemId = item.SaleItemId,
             };
+            addToTransactionPrice(item.SaleItemId, item.ItemAmount);
             foreach (var modifier in item.ModifierAmounts) {
-                newItem.ModifierAmounts.Add(
+                newStItem.ModifierAmounts.Add(
                     new ModifierAmountEntity {
                         ModifierId = modifier.ModifierId,
                         Amount = modifier.Amount,
                     }
                 );
+                addToTransactionPrice(modifier.ModifierId, modifier.Amount);
             }
-            saleTransaction.SaleTransactionItems.Add(newItem);
+            saleTransaction.SaleTransactionItems.Add(newStItem);
+
+            void addToTransactionPrice(int productId, int productAmount) {
+                foreach (var currencyCost in currentCosts[item.SaleItemId]) {
+                    var currencyId = currencyCost.CurrencyId;
+                    var cost = currencyCost.CurrentCost;
+                    var priceEntityOpt = newStItem
+                        .TransactionPrices
+                        .SingleOrDefault(tp => tp.CurrencyId == currencyId);
+                    var priceEntity = priceEntityOpt ?? new TransactionPriceEntity {
+                        Amount = 0,
+                        CurrencyId = currencyId
+                    };
+                    priceEntity.Amount += cost;
+                    if (priceEntityOpt is null) {
+                        newStItem.TransactionPrices.Add(priceEntity);
+                    }
+                }
+            }
         }
 
+        // add new store transaction
         storeTransaction = new StoreTransactionEntity {
             ResponsibleUserId = responsibleUserId,
             SaleTransaction = saleTransaction,
             Timestamp = timestamp,
             TransactionReason = TransactionReason.Sale,
         };
-        foreach (var item in updateModel.SaleTransactionItems) {
-            var storeId = item.StoreId ?? updateModel.StoreId;
+        foreach (var saleItem in updateModel.SaleTransactionItems) {
+            var storeId = saleItem.StoreId ?? updateModel.StoreId;
             // first add all the store item amounts from the sale item itself
-            var storeItemAmounts = compositions[item.SaleItemId]
-                .ToDictionary(comp => comp.StoreItemId, comp => comp.Amount * item.ItemAmount);
+            var storeItemAmounts = compositions[saleItem.SaleItemId]
+                .ToDictionary(comp => comp.StoreItemId, comp => comp.Amount * saleItem.ItemAmount);
 
             // then add all the modifier store item amounts
-            foreach (var (modId, modAmount) in item.ModifierAmounts) {
+            foreach (var (modId, modAmount) in saleItem.ModifierAmounts) {
                 var modifierComp = compositions[modId];
                 foreach (var comp in modifierComp) {
                     var amountModification = comp.Amount * modAmount;
@@ -420,5 +541,13 @@ public class SaleTransactionService(
                 }
             }
         }
+
+        // Maybe add this to check if we're selling a negative amount of a store item (shouldn't
+        // ever happen)
+        // foreach (var sti in storeTransaction.StoreTransactionItems) {
+        //     if (sti.ItemAmount > 0) {
+        //         errors.AddItemOrCreate(sti.StoreItem.Name, "Cannot sell a negative amount of store item");
+        //     }
+        // }
     }
 }

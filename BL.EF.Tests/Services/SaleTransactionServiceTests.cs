@@ -1,6 +1,8 @@
 using BL.EF.Tests.Fixtures;
 using FluentAssertions;
 using KisV4.BL.EF.Services;
+using KisV4.Common.Enums;
+using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.Extensions.Time.Testing;
@@ -61,7 +63,8 @@ public class SaleTransactionServiceTests : IClassFixture<KisDbContextFactory>, I
         var validationResult = _saleTransactionService
             .ValidateCreateModel(new(
                 [new(testSaleItem.Id, [], -42, null)],
-                testStore.Id
+                testStore.Id,
+                "Some user"
                 ),
              out var _);
 
@@ -102,7 +105,8 @@ public class SaleTransactionServiceTests : IClassFixture<KisDbContextFactory>, I
         var validationResult = _saleTransactionService
             .ValidateCreateModel(new(
                 [new(testSaleItem.Id, [], 42, null)],
-                testContainer.Id
+                testContainer.Id,
+                "Some user"
                 ),
              out var _);
 
@@ -148,7 +152,8 @@ public class SaleTransactionServiceTests : IClassFixture<KisDbContextFactory>, I
         var validationResult = _saleTransactionService
             .ValidateCreateModel(new(
                 [new(testSaleItem.Id, [], 42, testContainer.Id)],
-                testStore.Id
+                testStore.Id,
+                "Some user"
                 ),
              out var _);
 
@@ -159,6 +164,148 @@ public class SaleTransactionServiceTests : IClassFixture<KisDbContextFactory>, I
                     [$"Container {testContainer.Id} can't store a non-container item {testStoreItem.Id}"]
                 }
             });
+    }
+
+    [Fact]
+    public void Create_ReturnsCorrectOutput() {
+        // arrange
+        _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
+        var testStore1 = new StoreEntity { Name = "Test store 1" };
+
+        var testCurrency1 = new CurrencyEntity {
+            ShortName = "czk"
+        };
+        var hamStoreItem = new StoreItemEntity { Name = "Ham", UnitName = "g" };
+        var testSaleItem1 = new SaleItemEntity {
+            Name = "Toast",
+            Composition = [
+                new CompositionEntity {
+                    StoreItem = new StoreItemEntity {Name = "Toast bread", UnitName = "ks"},
+                    Amount = 2,
+                },
+                new CompositionEntity {
+                    StoreItem = new StoreItemEntity {Name = "Butter", UnitName = "g"},
+                    Amount = 10
+                },
+                new CompositionEntity {
+                    StoreItem = new StoreItemEntity {Name = "Cheese", UnitName = "g"},
+                    Amount = 10
+                },
+                new CompositionEntity {
+                    StoreItem = hamStoreItem,
+                    Amount = 10
+                },
+            ],
+            Costs = [
+                new CurrencyCostEntity {
+                    Currency = testCurrency1,
+                    Amount = 20,
+                    ValidSince = _timeProvider.GetUtcNow().AddDays(-2)
+                }
+            ]
+        };
+        var testModifier1 = new ModifierEntity {
+            Name = "Vegetarian",
+            ModificationTarget = testSaleItem1,
+            Costs = [
+                new CurrencyCostEntity {
+                    Currency = testCurrency1,
+                    Amount = -2,
+                    ValidSince = _timeProvider.GetUtcNow().AddDays(-2)
+                }
+            ],
+            Composition = [
+                new CompositionEntity {
+                    StoreItem = hamStoreItem,
+                    Amount = -10
+                }
+            ]
+        };
+
+        _referenceDbContext.Currencies.Add(testCurrency1);
+        _referenceDbContext.StoreItems.Add(hamStoreItem);
+        _referenceDbContext.Stores.Add(testStore1);
+        _referenceDbContext.SaleItems.Add(testSaleItem1);
+        _referenceDbContext.Modifiers.Add(testModifier1);
+        _referenceDbContext.SaveChanges();
+
+        // act
+        var createResult = _saleTransactionService.Create(
+                new SaleTransactionCreateModel(
+                    [
+                        new SaleTransactionItemCreateModel(
+                            testSaleItem1.Id,
+                            [new ModifierAmountCreateModel(testModifier1.Id, 1)],
+                            10,
+                            null
+                        )
+                    ],
+                    testStore1.Id,
+                    "Some client"
+                    ),
+                "Some user"
+                );
+
+        // assert
+
+        createResult.IsT0.Should().BeTrue();
+        createResult.AsT0.Should().BeEquivalentTo(new SaleTransactionDetailModel(
+                    1,
+                    new UserListModel(0, "Some user", false),
+                    _timeProvider.GetUtcNow(),
+                    false,
+                    [
+                        new SaleTransactionItemListModel(
+                            1,
+                            new SaleItemListModel(
+                                testSaleItem1.Id,
+                                testSaleItem1.Name,
+                                string.Empty,
+                                false,
+                                false
+                                ),
+                            [
+                                new ModifierAmountListModel(
+                                    new ModifierListModel(
+                                        testModifier1.Id,
+                                        testModifier1.Name,
+                                        string.Empty,
+                                        false,
+                                        testSaleItem1.Id,
+                                        false
+                                        ),
+                                    1,
+                                    1
+                                    )
+                            ],
+                            [
+                                new TransactionPriceListModel(
+                                    new CurrencyListModel(1, string.Empty, "czk"),
+                                    1,
+                                    180,
+                                    false
+                                )
+                            ],
+                            10,
+                            false
+                            )
+                    ],
+                    [
+                        new StoreTransactionListModel(
+                                1,
+                                new UserListModel(1, "Some user", false),
+                                _timeProvider.GetUtcNow(),
+                                false,
+                                TransactionReason.Sale,
+                                1
+                            )
+                    ],
+                    []
+                    ), static opts => {
+                        opts = opts.Excluding(static sti => sti.ResponsibleUser.Id);
+                        return opts;
+                    }
+                );
     }
 
 }

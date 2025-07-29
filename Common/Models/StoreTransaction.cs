@@ -15,7 +15,7 @@ public record StoreTransactionListModel(
     DateTimeOffset Timestamp,
     bool Cancelled,
     TransactionReason TransactionReason,
-    SaleTransactionListModel? SaleTransaction
+    int? SaleTransactionId
 );
 
 public record StoreTransactionDetailModel(

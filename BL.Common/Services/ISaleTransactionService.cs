@@ -30,7 +30,7 @@ public interface ISaleTransactionService {
 
     OneOf<SaleTransactionDetailModel, NotFound, Dictionary<string, string[]>> Finish(
         int id,
-        IEnumerable<CurrencyChangeListModel> currencyChanges
+        IEnumerable<CurrencyChangeCreateModel> currencyChanges
     );
 
     OneOf<SaleTransactionDetailModel, NotFound> Delete(int id);

@@ -6,8 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 ///     Represents a price of a sale transaction item in a given currency.
 /// </summary>
 [PrimaryKey(nameof(SaleTransactionItemId), nameof(CurrencyId))]
-public record TransactionPriceEntity
-{
+public record TransactionPriceEntity {
     public int CurrencyId { get; init; }
 
     /// <summary>

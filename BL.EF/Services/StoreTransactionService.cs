@@ -161,6 +161,13 @@ public class StoreTransactionService(
                     nameof(createModel.DestinationStoreId),
                     $"Store with id {createModel.DestinationStoreId.Value} doesn't exist"
                 );
+            } else if (dbContext.Containers.Any(st => st.Id == createModel.DestinationStoreId.Value)) {
+                errors.AddItemOrCreate(
+                    nameof(createModel.StoreId),
+                    $"Store with id {createModel.StoreId} is a container. " +
+                    $"It is not possible to manually create store transactions " +
+                    $"for containers"
+                );
             }
         }
 

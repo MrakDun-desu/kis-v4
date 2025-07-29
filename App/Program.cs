@@ -30,11 +30,12 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(static o => {
     o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+        In = ParameterLocation.Header,
         Description = "JWT Authorization header using the bearer scheme",
         Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer",
     });
 
     o.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -51,7 +52,7 @@ builder.Services.AddSwaggerGen(static o => {
                 Name = "Bearer",
                 In = ParameterLocation.Header
             },
-            new List<string>()
+            []
         }
     });
 });

@@ -12,52 +12,44 @@ namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
 public class StoreItemService(KisDbContext dbContext)
-    : IStoreItemService, IScopedService
-{
+    : IStoreItemService, IScopedService {
     public OneOf<Page<StoreItemListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
         int? pageSize,
         bool? deleted,
         int? categoryId,
-        int? storeId)
-    {
+        int? storeId) {
         var errors = new Dictionary<string, string[]>();
-        if (storeId.HasValue && !dbContext.Stores.Any(s => s.Id == storeId))
-        {
+        if (storeId.HasValue && !dbContext.Stores.Any(s => s.Id == storeId)) {
             errors.AddItemOrCreate(
                 nameof(storeId),
                 $"Store with id {storeId} doesn't exist"
             );
         }
 
-        if (categoryId.HasValue && !dbContext.ProductCategories.Any(cat => cat.Id == categoryId))
-        {
+        if (categoryId.HasValue && !dbContext.ProductCategories.Any(cat => cat.Id == categoryId)) {
             errors.AddItemOrCreate(
                 nameof(categoryId),
                 $"Category with id {categoryId} doesn't exist"
             );
         }
 
-        if (errors.Count > 0)
-        {
+        if (errors.Count > 0) {
             return errors;
         }
 
         IQueryable<StoreItemEntity> query;
-        if (storeId.HasValue)
-        {
+        if (storeId.HasValue) {
             var partQuery = dbContext.StoreTransactionItems
                 .Include(sti => sti.StoreItem)
                 .Where(sti => sti.StoreId == storeId)
                 .Where(sti => !sti.Cancelled);
 
-            if (deleted.HasValue)
-            {
+            if (deleted.HasValue) {
                 partQuery = partQuery.Where(sti => sti.StoreItem!.Deleted == deleted.Value);
             }
 
-            if (categoryId.HasValue)
-            {
+            if (categoryId.HasValue) {
                 partQuery = partQuery
                     .Include(sti => sti.StoreItem)
                     .ThenInclude(si => si!.Categories)
@@ -66,24 +58,19 @@ public class StoreItemService(KisDbContext dbContext)
 
             query = partQuery.GroupBy(sti => sti.StoreItem)
                 .Select(g =>
-                    new
-                    {
+                    new {
                         StoreItem = g.Key,
                         Amount = g.Sum(sti => sti.ItemAmount)
                     })
                 .Where(item => item.Amount > 0)
                 .Select(item => item.StoreItem)!;
-        }
-        else
-        {
+        } else {
             query = dbContext.StoreItems.AsQueryable();
-            if (deleted.HasValue)
-            {
+            if (deleted.HasValue) {
                 query = query.Where(si => si.Deleted == deleted.Value);
             }
 
-            if (categoryId.HasValue)
-            {
+            if (categoryId.HasValue) {
                 query = query
                     .Include(si => si.Categories)
                     .Where(si => si.Categories.Any(cat => cat.Id == categoryId));
@@ -95,12 +82,10 @@ public class StoreItemService(KisDbContext dbContext)
 
     public OneOf<StoreItemDetailModel, Dictionary<string, string[]>> Create(
         StoreItemCreateModel createModel
-    )
-    {
+    ) {
         var categoryIds = createModel.CategoryIds.Distinct();
         var realCategories = dbContext.ProductCategories.Where(cat => categoryIds.Contains(cat.Id)).ToList();
-        if (realCategories.Count != categoryIds.Count())
-        {
+        if (realCategories.Count != categoryIds.Count()) {
             return new Dictionary<string, string[]>
             {
                 {
@@ -111,8 +96,7 @@ public class StoreItemService(KisDbContext dbContext)
         }
 
         var entity = createModel.ToEntity();
-        foreach (var category in realCategories)
-        {
+        foreach (var category in realCategories) {
             entity.Categories.Add(category);
         }
 
@@ -122,8 +106,7 @@ public class StoreItemService(KisDbContext dbContext)
         return new StoreItemIntermediateModel(entity, [], []).ToModel();
     }
 
-    public OneOf<StoreItemDetailModel, NotFound> Read(int id)
-    {
+    public OneOf<StoreItemDetailModel, NotFound> Read(int id) {
         var entity = dbContext.StoreItems.Find(id);
         if (entity is null)
             return new NotFound();
@@ -147,29 +130,24 @@ public class StoreItemService(KisDbContext dbContext)
     }
 
     public OneOf<StoreItemDetailModel, NotFound, Dictionary<string, string[]>> Update(int id,
-        StoreItemCreateModel updateModel)
-    {
+        StoreItemCreateModel updateModel) {
         var entity = dbContext.StoreItems.Find(id);
-        if (entity is null)
-        {
+        if (entity is null) {
             return new NotFound();
         }
 
         var categoryIds = updateModel.CategoryIds.Distinct();
         var newCategories = dbContext.ProductCategories.Where(cat => categoryIds.Contains(cat.Id)).ToList();
         var errors = new Dictionary<string, string[]>();
-        if (newCategories.Count != categoryIds.Count())
-        {
+        if (newCategories.Count != categoryIds.Count()) {
             errors.AddItemOrCreate(
                 nameof(updateModel.CategoryIds),
                 "Some of the submitted categories do not exist"
             );
         }
 
-        if (updateModel.IsContainerItem != entity.IsContainerItem)
-        {
-            if (dbContext.ContainerTemplates.Any(ct => ct.ContainedItemId == id))
-            {
+        if (updateModel.IsContainerItem != entity.IsContainerItem) {
+            if (dbContext.ContainerTemplates.Any(ct => ct.ContainedItemId == id)) {
                 errors.AddItemOrCreate(
                     nameof(updateModel.IsContainerItem),
                     "Cannot change whether store item is a container item - item already " +
@@ -177,8 +155,7 @@ public class StoreItemService(KisDbContext dbContext)
                     );
             }
 
-            if (dbContext.StoreTransactionItems.Any(sti => sti.StoreItemId == id))
-            {
+            if (dbContext.StoreTransactionItems.Any(sti => sti.StoreItemId == id)) {
                 errors.AddItemOrCreate(
                     nameof(updateModel.IsContainerItem),
                     "Cannot change whether store item is a container item - item already " +
@@ -187,15 +164,13 @@ public class StoreItemService(KisDbContext dbContext)
             }
         }
 
-        if (errors.Count > 0)
-        {
+        if (errors.Count > 0) {
             return errors;
         }
 
         updateModel.UpdateEntity(entity);
         entity.Categories.Clear();
-        foreach (var category in newCategories)
-        {
+        foreach (var category in newCategories) {
             entity.Categories.Add(category);
         }
 
@@ -207,11 +182,9 @@ public class StoreItemService(KisDbContext dbContext)
         return Read(entity.Id).AsT0;
     }
 
-    public OneOf<StoreItemDetailModel, NotFound> Delete(int id)
-    {
+    public OneOf<StoreItemDetailModel, NotFound> Delete(int id) {
         var storeItem = dbContext.StoreItems.Find(id);
-        if (storeItem is null)
-        {
+        if (storeItem is null) {
             return new NotFound();
         }
 

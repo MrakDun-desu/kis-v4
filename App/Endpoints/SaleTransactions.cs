@@ -36,7 +36,7 @@ public static class SaleTransactions {
     private static List<SaleTransactionListModel> ReadSelfCancellable(
         ISaleTransactionService saleTransactionService,
         ClaimsPrincipal claims) {
-        return saleTransactionService.ReadSelfCancellable(claims.Identity!.Name!);
+        return [.. saleTransactionService.ReadSelfCancellable(claims.Identity!.Name!)];
     }
 
     private static Results<Ok<SaleTransactionDetailModel>, ValidationProblem> Create(
@@ -67,10 +67,10 @@ public static class SaleTransactions {
     private static Results<Ok<SaleTransactionDetailModel>, NotFound, ValidationProblem> Finish(
             ISaleTransactionService saleTransactionService,
             int id,
-            IEnumerable<CurrencyChangeListModel> currencyChanges,
+            IEnumerable<CurrencyChangeCreateModel> currencyChanges,
             ClaimsPrincipal claims
             ) {
-        return saleTransactionService.Finish(id, currencyChanges)
+        return saleTransactionService.Finish(id, [.. currencyChanges])
             .Match<Results<Ok<SaleTransactionDetailModel>, NotFound, ValidationProblem>>(
                     static output => TypedResults.Ok(output),
                     static _ => TypedResults.NotFound(),

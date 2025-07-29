@@ -1,10 +1,11 @@
 using KisV4.Common.Models;
 using KisV4.DAL.EF.Entities;
-using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
 
 namespace KisV4.BL.EF;
 
+#pragma warning disable RMG020
+#pragma warning disable RMG012
 [Mapper]
 public static partial class Mapper {
     public static partial CashBoxEntity ToEntity(this CashBoxCreateModel model);
@@ -60,7 +61,7 @@ public static partial class Mapper {
             model.Entity.ShowOnWeb,
             model.Entity.Categories.ToList().ToModels(),
             model.Entity.Composition.ToList().ToModels(),
-            model.Entity.AvailableModifiers.Where(mod => !mod.Deleted).ToList().ToModels(),
+            model.Entity.AvailableModifiers.Where(static mod => !mod.Deleted).ToList().ToModels(),
             model.Entity.Costs.ToList().ToModels(),
             model.CurrentCosts,
             model.StoreAmounts

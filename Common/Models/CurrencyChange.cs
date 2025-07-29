@@ -1,5 +1,11 @@
 namespace KisV4.Common.Models;
 
+public record CurrencyChangeCreateModel(
+    int CurrencyId,
+    decimal Amount,
+    int AccountId
+);
+
 public record CurrencyChangeListModel(
     CurrencyListModel Currency,
     decimal Amount,

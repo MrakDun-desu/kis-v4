@@ -9,6 +9,7 @@ using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Time.Testing;
 
 namespace BL.EF.Tests.Services;
 
@@ -16,10 +17,11 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly SaleItemService _saleItemService;
+    private readonly FakeTimeProvider _timeProvider = new();
 
     public SaleItemServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
-        _saleItemService = new SaleItemService(_normalDbContext);
+        _saleItemService = new SaleItemService(_normalDbContext, _timeProvider);
         AssertionOptions.AssertEquivalencyUsing(options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
@@ -66,7 +68,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -88,7 +90,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -118,7 +120,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -187,7 +189,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -209,7 +211,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -239,7 +241,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -291,13 +293,13 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                 {
                     Currency = testCurrency,
                     Amount = 30,
-                    ValidSince = DateTimeOffset.UtcNow.AddDays(-10)
+                    ValidSince = _timeProvider.GetUtcNow().AddDays(-10)
                 },
                 new CurrencyCostEntity
                 {
                     Currency = testCurrency,
                     Amount = 50,
-                    ValidSince = DateTimeOffset.UtcNow.AddDays(-5)
+                    ValidSince = _timeProvider.GetUtcNow().AddDays(-5)
                 }
             },
             Composition =
@@ -317,7 +319,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -339,7 +341,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -409,13 +411,13 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                 {
                     Currency = testCurrency,
                     Amount = 30,
-                    ValidSince = DateTimeOffset.UtcNow.AddDays(-10)
+                    ValidSince = _timeProvider.GetUtcNow().AddDays(-10)
                 },
                 new CurrencyCostEntity
                 {
                     Currency = testCurrency,
                     Amount = 50,
-                    ValidSince = DateTimeOffset.UtcNow.AddDays(-5)
+                    ValidSince = _timeProvider.GetUtcNow().AddDays(-5)
                 }
             },
             Composition =
@@ -435,7 +437,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -457,7 +459,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -522,13 +524,13 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                 {
                     Currency = testCurrency,
                     Amount = 30,
-                    ValidSince = DateTimeOffset.UtcNow.AddDays(-10)
+                    ValidSince = _timeProvider.GetUtcNow().AddDays(-10)
                 },
                 new CurrencyCostEntity
                 {
                     Currency = testCurrency,
                     Amount = 50,
-                    ValidSince = DateTimeOffset.UtcNow.AddDays(-5)
+                    ValidSince = _timeProvider.GetUtcNow().AddDays(-5)
                 }
             },
             Composition =
@@ -556,7 +558,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                                 StoreTransaction = new StoreTransactionEntity
                                 {
                                     ResponsibleUser = testUser,
-                                    Timestamp = DateTimeOffset.UtcNow.AddDays(-10),
+                                    Timestamp = _timeProvider.GetUtcNow().AddDays(-10),
                                     TransactionReason = TransactionReason.AddingToStore
                                 }
                             }
@@ -681,7 +683,7 @@ public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposa
                 {
                     Amount = 42,
                     Currency = new CurrencyEntity { ShortName = "Czk" },
-                    ValidSince = DateTimeOffset.UtcNow
+                    ValidSince = _timeProvider.GetUtcNow().AddHours(-1)
                 }
             }
         };

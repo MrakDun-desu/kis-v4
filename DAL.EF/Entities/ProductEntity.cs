@@ -12,11 +12,11 @@ public abstract record ProductEntity {
     /// <summary>
     ///     Categories that this product is in.
     /// </summary>
-    public virtual ICollection<ProductCategoryEntity> Categories { get; private set; } =
+    public virtual ICollection<ProductCategoryEntity> Categories { get; init; } =
         [];
 
     /// <summary>
     ///     Costs that this product has.
     /// </summary>
-    public virtual ICollection<CurrencyCostEntity> Costs { get; private set; } = [];
+    public virtual ICollection<CurrencyCostEntity> Costs { get; init; } = [];
 }

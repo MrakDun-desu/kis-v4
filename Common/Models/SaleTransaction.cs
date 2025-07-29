@@ -2,7 +2,8 @@ namespace KisV4.Common.Models;
 
 public record SaleTransactionCreateModel(
     IEnumerable<SaleTransactionItemCreateModel> SaleTransactionItems,
-    int StoreId
+    int StoreId,
+    string ClientUserName
 );
 
 public record SaleTransactionListModel(
