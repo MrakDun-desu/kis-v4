@@ -4,6 +4,7 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 
+*.vim
 .idea/
 .vscode/
 App/Images/

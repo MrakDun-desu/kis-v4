@@ -12,7 +12,7 @@ using OneOf.Types;
 namespace KisV4.BL.EF.Services;
 
 public class SaleTransactionService(
-    KisDbContext dbContext,
+    KisDbContext _dbContext,
     IUserService userService,
     TimeProvider timeProvider
 ) : ISaleTransactionService, IScopedService {
@@ -24,7 +24,7 @@ public class SaleTransactionService(
         DateTimeOffset? endDate,
         bool? cancelled
     ) {
-        var query = dbContext.SaleTransactions
+        var query = _dbContext.SaleTransactions
             .Include(st => st.ResponsibleUser)
             .OrderByDescending(st => st.Timestamp)
             .AsQueryable();
@@ -46,7 +46,7 @@ public class SaleTransactionService(
 
     public IEnumerable<SaleTransactionListModel> ReadSelfCancellable(string userName) {
         var currentTime = timeProvider.GetUtcNow();
-        return dbContext.SaleTransactions
+        return _dbContext.SaleTransactions
             .Include(st => st.ResponsibleUser)
             .Where(st => st.Timestamp > (currentTime - Constants.SelfCancellableTime))
             .Include(st => st.ResponsibleUser)
@@ -74,18 +74,18 @@ public class SaleTransactionService(
         );
 
         // add the sale transaction itself
-        dbContext.SaleTransactions.Add(newSaleTransaction);
+        _dbContext.SaleTransactions.Add(newSaleTransaction);
         // add the incomplete transaction record
-        dbContext.IncompleteTransactions.Add(
+        _dbContext.IncompleteTransactions.Add(
             new IncompleteTransactionEntity {
                 UserId = userService.CreateOrGetId(createModel.ClientUserName),
                 SaleTransaction = newSaleTransaction,
             }
         );
-        dbContext.StoreTransactions.Add(newStoreTransaction);
+        _dbContext.StoreTransactions.Add(newStoreTransaction);
 
-        dbContext.SaveChanges();
-        dbContext.ChangeTracker.Clear();
+        _dbContext.SaveChanges();
+        _dbContext.ChangeTracker.Clear();
         return Read(newSaleTransaction.Id).AsT0;
     }
 
@@ -94,7 +94,7 @@ public class SaleTransactionService(
         SaleTransactionCreateModel updateModel,
         string userName
     ) {
-        var saleTransaction = dbContext.SaleTransactions
+        var saleTransaction = _dbContext.SaleTransactions
             .Include(st => st.SaleTransactionItems)
             .ThenInclude(sti => sti.TransactionPrices)
             .SingleOrDefault(st => st.Id == id);
@@ -102,7 +102,7 @@ public class SaleTransactionService(
             return new NotFound();
         }
 
-        var incompleteTransaction = dbContext.IncompleteTransactions.SingleOrDefault(it => it.SaleTransactionId == id);
+        var incompleteTransaction = _dbContext.IncompleteTransactions.SingleOrDefault(it => it.SaleTransactionId == id);
 
         if (incompleteTransaction is null) {
             return new Dictionary<string, string[]> {
@@ -128,10 +128,10 @@ public class SaleTransactionService(
             out var newStoreTransaction
         );
 
-        dbContext.SaleTransactions.Update(saleTransaction);
-        dbContext.StoreTransactions.Add(newStoreTransaction);
+        _dbContext.SaleTransactions.Update(saleTransaction);
+        _dbContext.StoreTransactions.Add(newStoreTransaction);
 
-        dbContext.SaveChanges();
+        _dbContext.SaveChanges();
         return Read(saleTransaction.Id).AsT0;
     }
 
@@ -141,11 +141,11 @@ public class SaleTransactionService(
     ) {
         var requestTime = timeProvider.GetUtcNow();
 
-        var incompleteTransaction = dbContext.IncompleteTransactions
+        var incompleteTransaction = _dbContext.IncompleteTransactions
             .Include(it => it.SaleTransaction)
             .SingleOrDefault(it => it.SaleTransactionId == id);
 
-        var saleTransaction = incompleteTransaction?.SaleTransaction ?? dbContext.SaleTransactions.Find(id);
+        var saleTransaction = incompleteTransaction?.SaleTransaction ?? _dbContext.SaleTransactions.Find(id);
 
         if (saleTransaction is null) {
             return new NotFound();
@@ -166,8 +166,8 @@ public class SaleTransactionService(
                 );
         }
 
-        var realCurrencyIds = dbContext.Currencies.Where(cc => currencyIds.Contains(cc.Id)).Select(cc => cc.Id).ToArray();
-        var realAccountIds = dbContext.Accounts.Where(a => accountIds.Contains(a.Id)).Select(a => a.Id).ToArray();
+        var realCurrencyIds = _dbContext.Currencies.Where(cc => currencyIds.Contains(cc.Id)).Select(cc => cc.Id).ToArray();
+        var realAccountIds = _dbContext.Accounts.Where(a => accountIds.Contains(a.Id)).Select(a => a.Id).ToArray();
 
         foreach (var currencyId in currencyIds) {
             if (!realCurrencyIds.Contains(currencyId)) {
@@ -185,15 +185,15 @@ public class SaleTransactionService(
         }
 
         if (incompleteTransaction is not null) {
-            dbContext.IncompleteTransactions.Remove(incompleteTransaction);
+            _dbContext.IncompleteTransactions.Remove(incompleteTransaction);
         }
 
         // delete old currency changes if any
-        dbContext.CurrencyChanges
+        _dbContext.CurrencyChanges
             .Where(cc => cc.SaleTransactionId == id)
             .ExecuteDelete();
 
-        dbContext.CurrencyChanges.AddRange(currencyChanges.Select(
+        _dbContext.CurrencyChanges.AddRange(currencyChanges.Select(
             cc => new CurrencyChangeEntity {
                 AccountId = cc.AccountId,
                 Amount = cc.Amount,
@@ -201,13 +201,16 @@ public class SaleTransactionService(
             }
         ));
 
-        dbContext.SaveChanges();
+        saleTransaction.Timestamp = requestTime;
+        _dbContext.SaleTransactions.Update(saleTransaction);
+
+        _dbContext.SaveChanges();
 
         return Read(saleTransaction.Id).AsT0;
     }
 
     public OneOf<SaleTransactionDetailModel, NotFound> Read(int id) {
-        var output = dbContext.SaleTransactions
+        var output = _dbContext.SaleTransactions
             .Include(st => st.SaleTransactionItems)
             .ThenInclude(sti => sti.TransactionPrices)
             .Include(st => st.SaleTransactionItems)
@@ -221,7 +224,7 @@ public class SaleTransactionService(
     }
 
     public OneOf<SaleTransactionDetailModel, NotFound> Delete(int id) {
-        var output = dbContext.SaleTransactions
+        var output = _dbContext.SaleTransactions
             .Include(st => st.SaleTransactionItems)
             .ThenInclude(sti => sti.TransactionPrices)
             .Include(st => st.SaleTransactionItems)
@@ -252,12 +255,12 @@ public class SaleTransactionService(
             }
         }
 
-        var incompleteTransaction = dbContext.IncompleteTransactions
+        var incompleteTransaction = _dbContext.IncompleteTransactions
             .SingleOrDefault(it => it.SaleTransactionId == id);
         if (incompleteTransaction is not null) {
-            dbContext.Remove(incompleteTransaction);
+            _dbContext.Remove(incompleteTransaction);
         }
-        dbContext.Update(output);
+        _dbContext.Update(output);
         return output.ToModel();
     }
 
@@ -295,26 +298,26 @@ public class SaleTransactionService(
 
         // making requests for the actual items to minimize the amount of DB calls
         // these items will be the passed down to the create/patch method to be used
-        var saleItems = dbContext
+        var saleItems = _dbContext
             .SaleItems.Where(si => saleItemIds.Contains(si.Id))
             .ToDictionary(item => item.Id);
-        var modifiers = dbContext
+        var modifiers = _dbContext
             .Modifiers.Where(m => modifierIds.Contains(m.Id))
             .ToDictionary(item => item.Id);
-        compositions = dbContext
+        compositions = _dbContext
             .Compositions.Where(c => compositionParents.Contains(c.SaleItemId))
             .GroupBy(c => c.SaleItemId)
             .ToDictionary(g => g.Key, g => g.ToArray());
 
         var storeItemIds = compositions.Values.SelectMany(ce => ce.Select(i => i.StoreItemId));
-        var storeItemsToIsContainer = dbContext
+        var storeItemsToIsContainer = _dbContext
             .StoreItems.Where(si => storeItemIds.Contains(si.Id))
             .ToDictionary(si => si.Id, si => si.IsContainerItem);
 
-        var stores = dbContext
+        var stores = _dbContext
             .Stores.Where(s => storeIds.Contains(s.Id))
             .ToDictionary(item => item.Id);
-        var containersToItems = dbContext
+        var containersToItems = _dbContext
             .Containers.Include(c => c.Template)
             .Where(c => storeIds.Contains(c.Id))
             .ToDictionary(item => item.Id, item => item.Template!.ContainedItemId);
@@ -435,7 +438,7 @@ public class SaleTransactionService(
 
         var priceItemIds = saleItemIds.Concat(modifierIds);
 
-        var currentCosts = dbContext.CurrencyCosts
+        var currentCosts = _dbContext.CurrencyCosts
             .Where(cc => priceItemIds.Contains(cc.ProductId))
             .Where(cc => cc.ValidSince < timestamp)
             .GroupBy(cc => cc.ProductId)
@@ -452,8 +455,6 @@ public class SaleTransactionService(
         .ToDictionary(i => i.ProductId, i => i.CurrentCosts);
 
         // update the sale transaction (mainly prices)
-        // old timestamp and user still stay in the store transactions that have been done
-        // previously (user honestly shouldn't change anyways)
         saleTransaction.ResponsibleUserId = responsibleUserId;
         saleTransaction.Timestamp = timestamp;
         foreach (var item in updateModel.SaleTransactionItems) {
@@ -469,14 +470,14 @@ public class SaleTransactionService(
                         Amount = modifier.Amount,
                     }
                 );
-                addToTransactionPrice(modifier.ModifierId, modifier.Amount);
+                addToTransactionPrice(modifier.ModifierId, modifier.Amount * item.ItemAmount);
             }
             saleTransaction.SaleTransactionItems.Add(newStItem);
 
             void addToTransactionPrice(int productId, int productAmount) {
-                foreach (var currencyCost in currentCosts[item.SaleItemId]) {
+                foreach (var currencyCost in currentCosts[productId]) {
                     var currencyId = currencyCost.CurrencyId;
-                    var cost = currencyCost.CurrentCost;
+                    var cost = currencyCost.CurrentCost * productAmount;
                     var priceEntityOpt = newStItem
                         .TransactionPrices
                         .SingleOrDefault(tp => tp.CurrencyId == currencyId);
@@ -509,7 +510,7 @@ public class SaleTransactionService(
             foreach (var (modId, modAmount) in saleItem.ModifierAmounts) {
                 var modifierComp = compositions[modId];
                 foreach (var comp in modifierComp) {
-                    var amountModification = comp.Amount * modAmount;
+                    var amountModification = comp.Amount * modAmount * saleItem.ItemAmount;
                     if (storeItemAmounts.ContainsKey(comp.StoreItemId)) {
                         storeItemAmounts[comp.StoreItemId] += amountModification;
                     } else {
@@ -542,6 +543,14 @@ public class SaleTransactionService(
             }
         }
 
+        // remove all store transaction items that have an amount of 0
+        for (var i = 0; i < storeTransaction.StoreTransactionItems.Count; i++) {
+            var current = storeTransaction.StoreTransactionItems.ElementAt(i);
+            if (current.ItemAmount == 0) {
+                storeTransaction.StoreTransactionItems.Remove(current);
+                i--;
+            }
+        }
         // Maybe add this to check if we're selling a negative amount of a store item (shouldn't
         // ever happen)
         // foreach (var sti in storeTransaction.StoreTransactionItems) {

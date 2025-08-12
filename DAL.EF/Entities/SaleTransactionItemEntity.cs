@@ -17,17 +17,17 @@ public record SaleTransactionItemEntity {
     /// <summary>
     ///     Modifiers applied to the sale item of this sale transaction item.
     /// </summary>
-    public virtual ICollection<ModifierAmountEntity> ModifierAmounts { get; private set; } = [];
+    public virtual ICollection<ModifierAmountEntity> ModifierAmounts { get; init; } = [];
 
     /// <summary>
     ///     Prices paid for this transaction item with various currencies.
     /// </summary>
-    public virtual ICollection<TransactionPriceEntity> TransactionPrices { get; private set; } = [];
+    public virtual ICollection<TransactionPriceEntity> TransactionPrices { get; init; } = [];
 
     /// <summary>
     ///     Discount usage items that have been used on this sale transaction item.
     /// </summary>
-    public virtual ICollection<DiscountUsageItemEntity> DiscountUsageItems { get; private set; } = [];
+    public virtual ICollection<DiscountUsageItemEntity> DiscountUsageItems { get; init; } = [];
 
     /// <summary>
     ///     Amount of a sale item that has been sold in this transaction.
