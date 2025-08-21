@@ -113,21 +113,15 @@ public class StoreTransactionService(
     }
 
     public OneOf<StoreTransactionDetailModel, NotFound> Delete(int id) {
-        var entity = dbContext.StoreTransactions
-            .Include(sti => sti.StoreTransactionItems)
-            .FirstOrDefault(sti => sti.Id == id);
-
-        if (entity is null) {
+        if (dbContext.StoreTransactions
+                .Where(st => st.Id == id)
+                .ExecuteUpdate(setters => setters.SetProperty(st => st.Cancelled, true)) < 1) {
             return new NotFound();
         }
 
-        entity.Cancelled = true;
-        foreach (var item in entity.StoreTransactionItems) {
-            item.Cancelled = true;
-        }
-
-        dbContext.StoreTransactions.Update(entity);
-        dbContext.SaveChanges();
+        dbContext.StoreTransactionItems
+            .Where(sti => sti.StoreTransactionId == id)
+            .ExecuteUpdate(setters => setters.SetProperty(sti => sti.Cancelled, true));
 
         return Read(id).AsT0;
     }

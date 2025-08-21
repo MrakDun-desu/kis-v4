@@ -11,7 +11,8 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace BL.EF.Tests.Services;
 
-public class UserServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class UserServiceTests : IDisposable, IAsyncDisposable {
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly UserService _userService;

@@ -4,26 +4,28 @@ using Testcontainers.PostgreSql;
 
 namespace BL.EF.Tests.Fixtures;
 
-public class KisDbContextFactory : IAsyncLifetime
-{
+public class KisDbContextFactory : IAsyncLifetime {
+    public static KisDbContextFactory Instance { get; private set; } = null!;
+
+    public KisDbContextFactory() {
+        Instance = this;
+    }
+
     private readonly PostgreSqlContainer _databaseContainer = new PostgreSqlBuilder()
         .WithUsername("postgres")
         .WithPassword("B6MchiUp69z")
         .WithDatabase("kis_v4")
         .Build();
 
-    public async Task InitializeAsync()
-    {
+    public async Task InitializeAsync() {
         await _databaseContainer.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        await _databaseContainer.StopAsync();
+    public async Task DisposeAsync() {
+        await _databaseContainer.DisposeAsync();
     }
 
-    public (KisDbContext, KisDbContext) CreateDbContextAndReference()
-    {
+    public (KisDbContext, KisDbContext) CreateDbContextAndReference() {
         // reference context can just have npgsql and no lazy loading
         var optionsBuilder = new DbContextOptionsBuilder<KisDbContext>()
             .UseNpgsql(_databaseContainer.GetConnectionString());

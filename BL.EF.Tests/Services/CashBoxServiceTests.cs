@@ -1,5 +1,5 @@
-using BL.EF.Tests.Extensions;
 using BL.EF.Tests.Fixtures;
+using BL.EF.Tests.Extensions;
 using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
@@ -12,18 +12,18 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace BL.EF.Tests.Services;
 
-public class
-    CashBoxServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class CashBoxServiceTests : IDisposable, IAsyncDisposable {
     private readonly CashBoxService _cashBoxService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly FakeTimeProvider _timeProvider = new();
 
-    public CashBoxServiceTests(KisDbContextFactory dbContextFactory) {
-        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
+    public CashBoxServiceTests() {
+        (_referenceDbContext, _normalDbContext) = KisDbContextFactory.Instance.CreateDbContextAndReference();
         _cashBoxService = new CashBoxService(_normalDbContext, new CurrencyChangeService(_normalDbContext), _timeProvider);
-        AssertionOptions.AssertEquivalencyUsing(options =>
-            options.Using<DateTimeOffset>(ctx =>
+        AssertionOptions.AssertEquivalencyUsing(static options =>
+            options.Using<DateTimeOffset>(static ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
         );
     }

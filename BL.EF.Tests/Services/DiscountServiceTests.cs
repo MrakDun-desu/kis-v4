@@ -8,8 +8,9 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
+[Collection(DockerDatabaseTests.Name)]
 public class
-    DiscountServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+    DiscountServiceTests : IDisposable, IAsyncDisposable {
     private readonly DiscountService _discountService;
     private readonly DiscountUsageService _discountUsageService;
     private readonly KisDbContext _referenceDbContext;

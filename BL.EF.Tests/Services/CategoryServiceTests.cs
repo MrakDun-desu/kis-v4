@@ -10,7 +10,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BL.EF.Tests.Services;
 
-public class CategoryServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class CategoryServiceTests : IDisposable, IAsyncDisposable {
     private readonly CategoryService _categoryService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;

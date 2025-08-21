@@ -11,7 +11,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BL.EF.Tests.Services;
 
-public class CurrencyChangeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class CurrencyChangeServiceTests : IDisposable, IAsyncDisposable {
     private readonly CurrencyChangeService _currencyChangeService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;

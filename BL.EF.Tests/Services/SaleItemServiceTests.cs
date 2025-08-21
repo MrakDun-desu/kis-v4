@@ -13,7 +13,8 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace BL.EF.Tests.Services;
 
-public class SaleItemServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class SaleItemServiceTests : IDisposable, IAsyncDisposable {
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly SaleItemService _saleItemService;

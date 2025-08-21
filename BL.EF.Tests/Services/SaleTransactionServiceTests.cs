@@ -1,4 +1,5 @@
 using BL.EF.Tests.Fixtures;
+using BL.EF.Tests.Extensions;
 using FluentAssertions;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Enums;
@@ -7,10 +8,12 @@ using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Time.Testing;
+using KisV4.Common;
 
 namespace BL.EF.Tests.Services;
 
-public class SaleTransactionServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
     private readonly SaleTransactionService _saleTransactionService;
     private readonly UserService _userService;
     private readonly FakeTimeProvider _timeProvider = new();
@@ -599,5 +602,196 @@ public class SaleTransactionServiceTests : IClassFixture<KisDbContextFactory>, I
                 UserId = 2
             }
         });
+    }
+
+    [Fact]
+    public void Finish_ReturnsCorrectOutput() {
+        // arrange
+        _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
+        var testSaleTransaction = new SaleTransactionEntity {
+            ResponsibleUser = new UserAccountEntity { UserName = "Test user" },
+            Timestamp = _timeProvider.GetUtcNow()
+        };
+        var testCurrency = new CurrencyEntity { ShortName = "czk" };
+        var testCashBox = new CashBoxEntity { Name = "Test cash box" };
+
+        _referenceDbContext.IncompleteTransactions.Add(
+            new IncompleteTransactionEntity {
+                SaleTransaction = testSaleTransaction,
+                User = new UserAccountEntity { UserName = "Test client" }
+            });
+        _referenceDbContext.Currencies.Add(testCurrency);
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction);
+        _referenceDbContext.CashBoxes.Add(testCashBox);
+        _referenceDbContext.SaveChanges();
+
+        // act
+        var output = _saleTransactionService.Finish(testSaleTransaction.Id, [new(testCurrency.Id, 50, testCashBox.Id)]);
+
+        // assert
+        output.IsT0.Should().BeTrue();
+        output.AsT0.Should().BeEquivalentTo(new SaleTransactionDetailModel(
+                1,
+                new UserListModel(2, "Test user", false),
+                _timeProvider.GetUtcNow(),
+                false,
+                [],
+                [],
+                [
+                    new CurrencyChangeListModel (
+                        new CurrencyListModel(1, string.Empty, "czk"),
+                        50,
+                        false,
+                        1,
+                        testCashBox.Id)
+                ]
+        ));
+    }
+
+    [Fact]
+    public void Finish_CreatesAndUpdatesCorrectEntities() {
+        // arrange
+        _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
+        var testSaleTransaction = new SaleTransactionEntity {
+            ResponsibleUser = new UserAccountEntity { UserName = "Test user" },
+            Timestamp = _timeProvider.GetUtcNow().AddMinutes(-30)
+        };
+        var testCurrency = new CurrencyEntity { ShortName = "czk" };
+        var testCashBox = new CashBoxEntity { Name = "Test cash box" };
+
+        _referenceDbContext.IncompleteTransactions.Add(
+            new IncompleteTransactionEntity {
+                SaleTransaction = testSaleTransaction,
+                User = new UserAccountEntity { UserName = "Test client" }
+            });
+        _referenceDbContext.Currencies.Add(testCurrency);
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction);
+        _referenceDbContext.CashBoxes.Add(testCashBox);
+        _referenceDbContext.SaveChanges();
+
+        // act
+        _ = _saleTransactionService.Finish(testSaleTransaction.Id, [new(testCurrency.Id, 50, testCashBox.Id)]);
+
+        // assert
+        _referenceDbContext.ChangeTracker.Clear();
+        _referenceDbContext.SaleTransactions.Find(testSaleTransaction.Id)!.Timestamp
+            .Should().BeCloseTo(_timeProvider.GetUtcNow(), TimeSpan.FromSeconds(1));
+        _referenceDbContext.IncompleteTransactions.ToArray()
+            .Should().BeEquivalentTo(Array.Empty<IncompleteTransactionEntity>());
+        _referenceDbContext.CurrencyChanges.ToArray()
+            .Should().BeEquivalentTo(new CurrencyChangeEntity[] {
+                new () {
+                    AccountId = testCashBox.Id,
+                    Amount = 50,
+                    CurrencyId = testCurrency.Id,
+                    SaleTransactionId = testSaleTransaction.Id,
+                }
+            },
+            static opts => opts
+                .Excluding(static cc => cc.Account)
+                .Excluding(static cc => cc.Currency)
+                .Excluding(static cc => cc.SaleTransaction)
+        );
+    }
+
+    [Fact]
+    public void ReadAll_Filters_WorkCorrectly() {
+        // arrange
+        _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
+        var testSaleTransaction1 = new SaleTransactionEntity {
+            ResponsibleUser = new UserAccountEntity { UserName = "Test user 1" },
+            Timestamp = _timeProvider.GetUtcNow().AddDays(-10)
+        };
+        var testSaleTransaction2 = new SaleTransactionEntity {
+            ResponsibleUser = new UserAccountEntity { UserName = "Test user 2" },
+            Timestamp = _timeProvider.GetUtcNow().AddDays(-20)
+        };
+        var testSaleTransaction3 = new SaleTransactionEntity {
+            ResponsibleUser = new UserAccountEntity { UserName = "Test user 3" },
+            Timestamp = _timeProvider.GetUtcNow().AddDays(-30)
+        };
+        var testSaleTransaction4 = new SaleTransactionEntity {
+            ResponsibleUser = new UserAccountEntity { UserName = "Test user 4" },
+            Timestamp = _timeProvider.GetUtcNow().AddDays(-20),
+            Cancelled = true
+        };
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction1);
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction2);
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction3);
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction4);
+        _referenceDbContext.SaveChanges();
+
+        // act
+        var output = _saleTransactionService.ReadAll(
+            page: null,
+            pageSize: null,
+            startDate: _timeProvider.GetUtcNow().AddDays(-25),
+            endDate: _timeProvider.GetUtcNow().AddDays(-15),
+            cancelled: false
+        );
+
+        // assert
+        output.IsT0.Should().BeTrue();
+        output.AsT0.Should().BeEquivalentTo(new Page<SaleTransactionListModel>(
+            Data: [
+                new SaleTransactionListModel(
+                    2,
+                    new UserListModel(2, "Test user 2", false),
+                    _timeProvider.GetUtcNow().AddDays(-20),
+                    false
+                )
+            ],
+            new PageMeta(
+                Page: 1,
+                PageSize: Constants.DefaultPageSize,
+                From: 1,
+                To: 1,
+                Total: 1,
+                PageCount: 1
+            )
+        ));
+    }
+
+    [Fact]
+    public void ReadSelfCancellable_WorksCorrectly() {
+        // arrange
+        _timeProvider.SetUtcNow(DateTimeOffset.UtcNow);
+        var testUser1 = new UserAccountEntity { UserName = "Test user 1" };
+        var testUser2 = new UserAccountEntity { UserName = "Test user 2" };
+        var testSaleTransaction1 = new SaleTransactionEntity {
+            ResponsibleUser = testUser1,
+            Timestamp = _timeProvider.GetUtcNow().AddMinutes(-10)
+        };
+        var testSaleTransaction2 = new SaleTransactionEntity {
+            ResponsibleUser = testUser1,
+            Timestamp = _timeProvider.GetUtcNow().AddMinutes(-10),
+            Cancelled = true
+        };
+        var testSaleTransaction3 = new SaleTransactionEntity {
+            ResponsibleUser = testUser1,
+            Timestamp = _timeProvider.GetUtcNow().AddMinutes(-30)
+        };
+        var testSaleTransaction4 = new SaleTransactionEntity {
+            ResponsibleUser = testUser2,
+            Timestamp = _timeProvider.GetUtcNow().AddMinutes(-10)
+        };
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction1);
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction2);
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction3);
+        _referenceDbContext.SaleTransactions.Add(testSaleTransaction4);
+        _referenceDbContext.SaveChanges();
+
+        // act
+        var output = _saleTransactionService.ReadSelfCancellable("Test user 1");
+
+        // assert
+        output.Should().BeEquivalentTo([
+            new SaleTransactionListModel(
+                1,
+                new UserListModel(1, "Test user 1", false),
+                _timeProvider.GetUtcNow().AddMinutes(-10),
+                false
+            )
+        ]);
     }
 }

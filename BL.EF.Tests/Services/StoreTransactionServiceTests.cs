@@ -12,7 +12,8 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace BL.EF.Tests.Services;
 
-public class StoreTransactionServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class StoreTransactionServiceTests : IDisposable, IAsyncDisposable {
     private readonly StoreTransactionService _storeTransactionService;
     private readonly UserService _userService;
     private readonly FakeTimeProvider _timeProvider = new();

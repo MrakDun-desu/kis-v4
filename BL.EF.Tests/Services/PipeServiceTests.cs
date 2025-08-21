@@ -9,7 +9,8 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class PipeServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class PipeServiceTests : IDisposable, IAsyncDisposable {
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;
     private readonly PipeService _pipeService;

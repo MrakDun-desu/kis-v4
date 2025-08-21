@@ -9,7 +9,8 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class CurrencyServiceTests : IClassFixture<KisDbContextFactory>, IDisposable, IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class CurrencyServiceTests : IDisposable, IAsyncDisposable {
     private readonly CurrencyService _currencyService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;

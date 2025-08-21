@@ -48,8 +48,9 @@ public class SaleTransactionService(
         var currentTime = timeProvider.GetUtcNow();
         return _dbContext.SaleTransactions
             .Include(st => st.ResponsibleUser)
+            .Where(st => st.ResponsibleUser!.UserName == userName)
+            .Where(st => !st.Cancelled)
             .Where(st => st.Timestamp > (currentTime - Constants.SelfCancellableTime))
-            .Include(st => st.ResponsibleUser)
             .Select(Mapper.ToListModel);
     }
 
@@ -151,8 +152,9 @@ public class SaleTransactionService(
             return new NotFound();
         }
 
-        var currencyIds = currencyChanges.Select(cc => cc.CurrencyId).ToArray();
-        var accountIds = currencyChanges.Select(cc => cc.AccountId).ToArray();
+        var currencyChangesArray = currencyChanges as CurrencyChangeCreateModel[] ?? [.. currencyChanges];
+        var currencyIds = currencyChangesArray.Select(cc => cc.CurrencyId).ToArray();
+        var accountIds = currencyChangesArray.Select(cc => cc.AccountId).ToArray();
 
         var errors = new Dictionary<string, string[]>();
 
@@ -193,11 +195,12 @@ public class SaleTransactionService(
             .Where(cc => cc.SaleTransactionId == id)
             .ExecuteDelete();
 
-        _dbContext.CurrencyChanges.AddRange(currencyChanges.Select(
+        _dbContext.CurrencyChanges.AddRange(currencyChangesArray.Select(
             cc => new CurrencyChangeEntity {
                 AccountId = cc.AccountId,
                 Amount = cc.Amount,
                 CurrencyId = cc.CurrencyId,
+                SaleTransactionId = id,
             }
         ));
 
@@ -217,6 +220,7 @@ public class SaleTransactionService(
             .ThenInclude(sti => sti.ModifierAmounts)
             .Include(st => st.StoreTransactions)
             .Include(st => st.CurrencyChanges)
+            .ThenInclude(cc => cc.Currency)
             .AsSplitQuery()
             .SingleOrDefault(st => st.Id == id);
 
@@ -224,44 +228,38 @@ public class SaleTransactionService(
     }
 
     public OneOf<SaleTransactionDetailModel, NotFound> Delete(int id) {
-        var output = _dbContext.SaleTransactions
-            .Include(st => st.SaleTransactionItems)
-            .ThenInclude(sti => sti.TransactionPrices)
-            .Include(st => st.SaleTransactionItems)
-            .ThenInclude(sti => sti.ModifierAmounts)
-            .Include(st => st.StoreTransactions)
-            .ThenInclude(st => st.StoreTransactionItems)
-            .Include(st => st.CurrencyChanges)
-            .AsSplitQuery()
-            .SingleOrDefault(st => st.Id == id);
-
-        if (output is null) {
+        if (_dbContext.SaleTransactions
+                .Where(st => st.Id == id)
+                .ExecuteUpdate(setters => setters.SetProperty(st => st.Cancelled, true)) < 1) {
             return new NotFound();
         }
 
-        foreach (var item in output.SaleTransactionItems) {
-            item.Cancelled = true;
-            foreach (var price in item.TransactionPrices) {
-                price.Cancelled = true;
-            }
-        }
-        foreach (var item in output.CurrencyChanges) {
-            item.Cancelled = true;
-        }
-        foreach (var item in output.StoreTransactions) {
-            item.Cancelled = true;
-            foreach (var transactionItem in item.StoreTransactionItems) {
-                transactionItem.Cancelled = true;
-            }
-        }
+        // update all connected entities to be cancelled
+        var sth = _dbContext.SaleTransactionItems
+            .Where(sti => sti.SaleTransactionId == id)
+            .ExecuteUpdate(setters => setters.SetProperty(sti => sti.Cancelled, true));
+        _dbContext.TransactionPrices
+            .Include(tp => tp.SaleTransactionItem)
+            .Where(tp => tp.SaleTransactionItem!.SaleTransactionId == id)
+            .ExecuteUpdate(setters => setters.SetProperty(tp => tp.Cancelled, true));
+        _dbContext.CurrencyChanges
+            .Where(cc => cc.SaleTransactionId == id)
+            .ExecuteUpdate(setters => setters.SetProperty(cc => cc.Cancelled, true));
+        _dbContext.StoreTransactions
+            .Where(st => st.SaleTransactionId == id)
+            .ExecuteUpdate(setters => setters.SetProperty(cc => cc.Cancelled, true));
+        _dbContext.StoreTransactionItems
+            .Include(st => st.StoreTransaction)
+            .Where(sti => sti.StoreTransaction!.SaleTransactionId == id)
+            .ExecuteUpdate(setters => setters.SetProperty(cc => cc.Cancelled, true));
 
-        var incompleteTransaction = _dbContext.IncompleteTransactions
-            .SingleOrDefault(it => it.SaleTransactionId == id);
-        if (incompleteTransaction is not null) {
-            _dbContext.Remove(incompleteTransaction);
-        }
-        _dbContext.Update(output);
-        return output.ToModel();
+        // remove incomplete transaction if there's any
+        _dbContext.IncompleteTransactions
+            .Where(it => it.SaleTransactionId == id)
+            .ExecuteDelete();
+
+        // no need to chance the entity itself, just read it after everything is done
+        return Read(id);
     }
 
     public Dictionary<string, string[]> ValidateCreateModel(

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace BL.EF.Tests.Services;
 
+[Collection(DockerDatabaseTests.Name)]
 public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
     IDisposable, IAsyncDisposable {
     private readonly ContainerService _containerService;

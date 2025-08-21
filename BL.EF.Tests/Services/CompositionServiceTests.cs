@@ -9,8 +9,8 @@ using KisV4.DAL.EF.Entities;
 
 namespace BL.EF.Tests.Services;
 
-public class CompositionServiceTests : IClassFixture<KisDbContextFactory>, IDisposable,
-    IAsyncDisposable {
+[Collection(DockerDatabaseTests.Name)]
+public class CompositionServiceTests : IDisposable, IAsyncDisposable {
     private readonly CompositionService _compositionService;
     private readonly KisDbContext _referenceDbContext;
     private readonly KisDbContext _normalDbContext;

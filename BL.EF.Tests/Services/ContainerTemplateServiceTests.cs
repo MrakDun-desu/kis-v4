@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BL.EF.Tests.Services;
 
+[Collection(DockerDatabaseTests.Name)]
 public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
     IDisposable,
     IAsyncDisposable {
