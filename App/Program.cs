@@ -36,6 +36,12 @@ builder.Services.AddAuthorizationBuilder()
 // OpenAPI/Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(static o => {
+    o.SwaggerDoc("v1", new OpenApiInfo {
+        Title = "KISv4 API",
+        Description = "Backend for the Kachna Information System",
+        Version = "1.0"
+    });
+
     o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
         In = ParameterLocation.Header,
         Description = "JWT Authorization header using the bearer scheme",

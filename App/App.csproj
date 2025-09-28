@@ -8,10 +8,15 @@
         <UserSecretsId>b8e97e0c-8e8d-4960-b54f-6756128c4667</UserSecretsId>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="File.TypeChecker" Version="4.1.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+        <PackageReference Include="File.TypeChecker" Version="4.3.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.14.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="..\.dockerignore">
@@ -19,12 +24,12 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\BL.Common\BL.Common.csproj"/>
-        <ProjectReference Include="..\BL.EF\BL.EF.csproj"/>
-        <ProjectReference Include="..\Common\Common.csproj"/>
-        <ProjectReference Include="..\DAL.EF\DAL.EF.csproj"/>
+        <ProjectReference Include="..\BL.Common\BL.Common.csproj" />
+        <ProjectReference Include="..\BL.EF\BL.EF.csproj" />
+        <ProjectReference Include="..\Common\Common.csproj" />
+        <ProjectReference Include="..\DAL.EF\DAL.EF.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Images\"/>
+        <Folder Include="Images\" />
     </ItemGroup>
 </Project>
