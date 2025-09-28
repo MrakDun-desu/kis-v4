@@ -123,7 +123,7 @@ public class
         _referenceDbContext.ChangeTracker.Clear();
 
         // act
-        var patchResult = _discountService.Patch(testDiscount1.Id);
+        var patchResult = _discountService.Put(testDiscount1.Id);
 
         // assert
         patchResult.Should()

@@ -19,7 +19,14 @@ builder.Services.AddCors(static opts => {
 // Image storage
 var imageDirectory = builder.Configuration.GetValue<string>("ImageDirectory")
                      ?? Path.Combine(Environment.CurrentDirectory, "Images");
+
 builder.Services.AddSingleton(new ImageStorageConfiguration(imageDirectory));
+
+// script file storage
+var scriptDirectory = builder.Configuration.GetValue<string>("ScriptDirectory")
+                     ?? Path.Combine(Environment.CurrentDirectory, "Scripts");
+
+builder.Services.AddSingleton(new ScriptStorageConfiguration(scriptDirectory));
 
 // Auth
 builder.Services.AddAuthentication("Bearer").AddJwtBearer();
@@ -100,3 +107,11 @@ Stores.MapEndpoints(app);
 Users.MapEndpoints(app);
 
 app.Run();
+
+static void CreateDirectoryRecursively(string path) {
+    var targetDir = Path.GetDirectoryName(path);
+    if (targetDir is not null && !Directory.Exists(targetDir)) {
+        CreateDirectoryRecursively(targetDir);
+    }
+    Directory.CreateDirectory(path);
+}

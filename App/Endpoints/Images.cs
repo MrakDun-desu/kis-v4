@@ -21,8 +21,7 @@ public static class Images {
                 { { nameof(image), ["File must be of type image"] } });
         }
 
-        string creationPath;
-        string fileName;
+        string creationPath, fileName;
         do {
             // if file is actually an image, trust the extension to be correct,
             // so it's simpler to create a file with a correct extension

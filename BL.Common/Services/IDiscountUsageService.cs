@@ -12,6 +12,9 @@ public interface IDiscountUsageService {
         int? userId
     );
 
-    OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(DiscountUsageCreateModel createModel);
+    OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(
+        DiscountUsageCreateModel createModel
+    );
+
     OneOf<DiscountUsageDetailModel, NotFound> Read(int id);
 }

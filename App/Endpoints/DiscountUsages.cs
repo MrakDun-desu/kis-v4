@@ -9,7 +9,7 @@ public static class DiscountUsages {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("discount-usages");
         group.MapGet(string.Empty, ReadAll);
-        // group.MapPost(string.Empty, Create);
+        group.MapPost(string.Empty, Create);
         group.MapGet("{id:int}", Read);
     }
 
@@ -22,28 +22,27 @@ public static class DiscountUsages {
     ) {
         return discountUsageService.ReadAll(page, pageSize, discountId, userId)
             .Match<Results<Ok<Page<DiscountUsageListModel>>, ValidationProblem>>(
-                output => TypedResults.Ok(output),
-                errors => TypedResults.ValidationProblem(errors)
+                static output => TypedResults.Ok(output),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 
-    // private static Results<Ok<DiscountUsageDetailModel>, ValidationProblem> Create(
-    //     IDiscountUsageService discountUsageService,
-    //     DiscountUsageCreateModel createModel)
-    // {
-    //     return discountUsageService.Create(createModel)
-    //         .Match<Results<Ok<DiscountUsageDetailModel>, ValidationProblem>>(
-    //             output => TypedResults.Ok(output),
-    //             errors => TypedResults.ValidationProblem(errors)
-    //         );
-    // }
-    //
+    private static Results<Ok<DiscountUsageDetailModel>, ValidationProblem> Create(
+        IDiscountUsageService discountUsageService,
+        DiscountUsageCreateModel createModel) {
+        return discountUsageService.Create(createModel)
+            .Match<Results<Ok<DiscountUsageDetailModel>, ValidationProblem>>(
+                static output => TypedResults.Ok(output),
+                static errors => TypedResults.ValidationProblem(errors)
+            );
+    }
+
     private static Results<Ok<DiscountUsageDetailModel>, NotFound> Read
         (IDiscountUsageService discountUsageService, int id) {
         return discountUsageService.Read(id)
             .Match<Results<Ok<DiscountUsageDetailModel>, NotFound>>(
-                result => TypedResults.Ok(result),
-                _ => TypedResults.NotFound()
+                static result => TypedResults.Ok(result),
+                static _ => TypedResults.NotFound()
             );
     }
 }

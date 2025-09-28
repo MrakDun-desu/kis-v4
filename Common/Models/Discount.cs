@@ -6,6 +6,11 @@ public record DiscountListModel(
     bool Deleted
 );
 
+public record DiscountCreateModel(
+    string Name,
+    string Script
+);
+
 public record DiscountDetailModel(
     int Id,
     string Name,

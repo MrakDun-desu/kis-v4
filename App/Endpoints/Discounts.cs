@@ -1,3 +1,4 @@
+using KisV4.App.Configuration;
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,7 +11,8 @@ public static class Discounts {
         var group = routeBuilder.MapGroup("discounts");
         group.MapGet(string.Empty, ReadAll);
         group.MapGet("{id:int}", Read);
-        group.MapPatch("{id:int}", Patch);
+        group.MapPost(string.Empty, Create);
+        group.MapPut("{id:int}", Put);
         group.MapDelete("{id:int}", Delete);
     }
 
@@ -26,18 +28,36 @@ public static class Discounts {
         int id
     ) {
         return discountService.Read(id).Match<Results<Ok<DiscountDetailModel>, NotFound>>(
-            result => TypedResults.Ok(result),
-            _ => TypedResults.NotFound()
+            static result => TypedResults.Ok(result),
+            static _ => TypedResults.NotFound()
         );
     }
 
-    private static Results<Ok<DiscountDetailModel>, NotFound> Patch(
+    private static Results<Ok<DiscountDetailModel>, ValidationProblem> Create(
+        IDiscountService discountService,
+        ScriptStorageConfiguration conf,
+        DiscountCreateModel createModel
+    ) {
+        return discountService.Create(createModel).Match<Results<Ok<DiscountDetailModel>, ValidationProblem>>(
+            output => {
+                var fileName = $"Discount{output.Id}-{output.Name}.cs";
+                File.WriteAllText(
+                    Path.Combine(conf.Path, fileName),
+                    createModel.Script
+                );
+                return TypedResults.Ok(output);
+            },
+            static errors => TypedResults.ValidationProblem(errors)
+        );
+    }
+
+    private static Results<Ok<DiscountDetailModel>, NotFound> Put(
         IDiscountService discountService,
         int id
     ) {
-        return discountService.Patch(id).Match<Results<Ok<DiscountDetailModel>, NotFound>>(
-            result => TypedResults.Ok(result),
-            _ => TypedResults.NotFound()
+        return discountService.Put(id).Match<Results<Ok<DiscountDetailModel>, NotFound>>(
+            static result => TypedResults.Ok(result),
+            static _ => TypedResults.NotFound()
         );
     }
 
@@ -46,8 +66,8 @@ public static class Discounts {
         int id
     ) {
         return discountService.Delete(id).Match<Results<Ok<DiscountDetailModel>, NotFound>>(
-            result => TypedResults.Ok(result),
-            _ => TypedResults.NotFound()
+            static result => TypedResults.Ok(result),
+            static _ => TypedResults.NotFound()
         );
     }
 }

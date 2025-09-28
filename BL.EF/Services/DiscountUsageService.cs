@@ -1,3 +1,4 @@
+using CSScriptLib;
 using KisV4.BL.Common.Services;
 using KisV4.Common;
 using KisV4.Common.DependencyInjection;
@@ -44,9 +45,31 @@ public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageServic
     }
 
     public OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(DiscountUsageCreateModel createModel) {
-        // will be implemented with cs-script, executing custom scripts
-        // on the database. Not very important for start
-        throw new NotImplementedException();
+        var discountEntity = dbContext.Discounts.Find(createModel);
+        var saleTransactionEntity = dbContext.SaleTransactions.Find(createModel.SaleTransactionId);
+
+        var errors = new Dictionary<string, string[]>();
+        if (discountEntity is null) {
+            errors.AddItemOrCreate(
+                nameof(createModel.DiscountId),
+                $"Discount with id {createModel.DiscountId} doesn't exist"
+            );
+        }
+        if (saleTransactionEntity is null) {
+            errors.AddItemOrCreate(
+                nameof(createModel.SaleTransactionId),
+                $"Sale transaction with id {createModel.SaleTransactionId} doesn't exist"
+            );
+        }
+
+        if (errors.Count != 0) {
+            return errors;
+        }
+
+        var discountScript = CSScript.Evaluator
+            .LoadFile<IDiscountScript>($"Discount{discountEntity.Id}-{discountEntity.Name}.cs");
+
+        return discountScript.Run(createModel.SaleTransactionId, dbContext);
     }
 
     public OneOf<DiscountUsageDetailModel, NotFound> Read(int id) {
