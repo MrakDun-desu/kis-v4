@@ -44,7 +44,10 @@ public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageServic
             : query.Page(page ?? 1, pageSize ?? Constants.DefaultPageSize, Mapper.ToModels);
     }
 
-    public OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(DiscountUsageCreateModel createModel) {
+    public OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(
+            DiscountUsageCreateModel createModel,
+            string discountScriptPath
+            ) {
         var discountEntity = dbContext.Discounts.Find(createModel);
         var saleTransactionEntity = dbContext.SaleTransactions.Find(createModel.SaleTransactionId);
 
@@ -66,8 +69,12 @@ public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageServic
             return errors;
         }
 
+        var discountScriptFile = Path.Combine(
+            discountScriptPath,
+            $"Discount{discountEntity!.Id}-{discountEntity.Name}.cs"
+        );
         var discountScript = CSScript.Evaluator
-            .LoadFile<IDiscountScript>($"Discount{discountEntity.Id}-{discountEntity.Name}.cs");
+            .LoadFile<IDiscountScript>(discountScriptFile);
 
         return discountScript.Run(createModel.SaleTransactionId, dbContext);
     }

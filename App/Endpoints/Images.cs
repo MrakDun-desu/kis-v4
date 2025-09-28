@@ -1,6 +1,7 @@
 using FileTypeChecker;
 using KisV4.App.Configuration;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Options;
 
 namespace KisV4.App.Endpoints;
 
@@ -13,7 +14,7 @@ public static class Images {
 
     private static Results<Created, ValidationProblem> Upload(
         IFormFile image,
-        ImageStorageConfiguration conf,
+        IOptions<ImageStorageSettings> conf,
         HttpRequest request) {
         // validating the filetype with magic bytes
         if (!FileTypeValidator.IsImage(image.OpenReadStream())) {
@@ -29,7 +30,7 @@ public static class Images {
                        Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) +
                        Path.GetExtension(image.FileName);
 
-            creationPath = Path.Combine(conf.Path, fileName);
+            creationPath = Path.Combine(conf.Value.Path, fileName);
         } while (File.Exists(creationPath));
 
         using var stream = File.Create(creationPath);
@@ -40,8 +41,8 @@ public static class Images {
 
     private static Results<NotFound, PhysicalFileHttpResult> Download(
         string filename,
-        ImageStorageConfiguration conf) {
-        var filePath = Path.Combine(conf.Path, filename);
+        IOptions<ImageStorageSettings> conf) {
+        var filePath = Path.Combine(conf.Value.Path, filename);
         if (!File.Exists(filePath)) {
             return TypedResults.NotFound();
         }

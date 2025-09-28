@@ -16,17 +16,13 @@ builder.Services.AddCors(static opts => {
             .AllowAnyMethod());
 });
 
-// Image storage
-var imageDirectory = builder.Configuration.GetValue<string>("ImageDirectory")
-                     ?? Path.Combine(Environment.CurrentDirectory, "Images");
-
-builder.Services.AddSingleton(new ImageStorageConfiguration(imageDirectory));
-
-// script file storage
-var scriptDirectory = builder.Configuration.GetValue<string>("ScriptDirectory")
-                     ?? Path.Combine(Environment.CurrentDirectory, "Scripts");
-
-builder.Services.AddSingleton(new ScriptStorageConfiguration(scriptDirectory));
+// Custom configuration
+builder.Services.Configure<ImageStorageSettings>(
+    builder.Configuration.GetSection("ImageStorage")
+);
+builder.Services.Configure<ScriptStorageSettings>(
+    builder.Configuration.GetSection("ScriptStorage")
+);
 
 // Auth
 builder.Services.AddAuthentication("Bearer").AddJwtBearer();

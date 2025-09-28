@@ -1,7 +1,9 @@
+using KisV4.App.Configuration;
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace KisV4.App.Endpoints;
 
@@ -29,8 +31,10 @@ public static class DiscountUsages {
 
     private static Results<Ok<DiscountUsageDetailModel>, ValidationProblem> Create(
         IDiscountUsageService discountUsageService,
-        DiscountUsageCreateModel createModel) {
-        return discountUsageService.Create(createModel)
+        DiscountUsageCreateModel createModel,
+        IOptions<ScriptStorageSettings> conf
+        ) {
+        return discountUsageService.Create(createModel, conf.Value.Path)
             .Match<Results<Ok<DiscountUsageDetailModel>, ValidationProblem>>(
                 static output => TypedResults.Ok(output),
                 static errors => TypedResults.ValidationProblem(errors)

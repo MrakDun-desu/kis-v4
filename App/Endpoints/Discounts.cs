@@ -3,6 +3,7 @@ using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace KisV4.App.Endpoints;
 
@@ -35,14 +36,14 @@ public static class Discounts {
 
     private static Results<Ok<DiscountDetailModel>, ValidationProblem> Create(
         IDiscountService discountService,
-        ScriptStorageConfiguration conf,
+        IOptions<ScriptStorageSettings> conf,
         DiscountCreateModel createModel
     ) {
         return discountService.Create(createModel).Match<Results<Ok<DiscountDetailModel>, ValidationProblem>>(
             output => {
                 var fileName = $"Discount{output.Id}-{output.Name}.cs";
                 File.WriteAllText(
-                    Path.Combine(conf.Path, fileName),
+                    Path.Combine(conf.Value.Path, fileName),
                     createModel.Script
                 );
                 return TypedResults.Ok(output);

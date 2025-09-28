@@ -13,7 +13,8 @@ public interface IDiscountUsageService {
     );
 
     OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(
-        DiscountUsageCreateModel createModel
+        DiscountUsageCreateModel createModel,
+        string discountScriptPath
     );
 
     OneOf<DiscountUsageDetailModel, NotFound> Read(int id);
