@@ -5,17 +5,22 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace KisV4.App.Endpoints;
 
 public static class Currencies {
+    private const string ReadAllRouteName = "CurrencyReadAll";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("currencies");
-        group.MapGet(string.Empty, ReadAll);
+        group.MapGet(string.Empty, ReadAll)
+            .WithName(ReadAllRouteName);
         group.MapPost(string.Empty, Create);
         group.MapPut("{id:int}", Update);
     }
 
-    private static CurrencyListModel Create(
+    private static CreatedAtRoute<CurrencyListModel> Create(
         ICurrencyService currencyService,
-        CurrencyCreateModel createModel) {
-        return currencyService.Create(createModel);
+        CurrencyCreateModel createModel
+    ) {
+        var createdModel = currencyService.Create(createModel);
+        return TypedResults.CreatedAtRoute(createdModel, ReadAllRouteName);
     }
 
     private static IEnumerable<CurrencyListModel> ReadAll(ICurrencyService currencyService) {
@@ -25,11 +30,12 @@ public static class Currencies {
     private static Results<Ok<CurrencyListModel>, NotFound> Update(
         ICurrencyService currencyService,
         CurrencyCreateModel updateModel,
-        int id) {
+        int id
+    ) {
         return currencyService.Update(id, updateModel)
             .Match<Results<Ok<CurrencyListModel>, NotFound>>(
-                model => TypedResults.Ok(model),
-                _ => TypedResults.NotFound()
+                static model => TypedResults.Ok(model),
+                static _ => TypedResults.NotFound()
             );
     }
 }

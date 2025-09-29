@@ -5,18 +5,25 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace KisV4.App.Endpoints;
 
 public static class Pipes {
+    private const string ReadAllRouteName = "PipesReadAll";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("pipes");
         group.MapPost(string.Empty, Create);
-        group.MapGet(string.Empty, ReadAll);
+        group.MapGet(string.Empty, ReadAll)
+            .WithName(ReadAllRouteName);
         group.MapPut("{id:int}", Update);
         group.MapDelete("{id:int}", Delete);
     }
 
-    private static PipeListModel Create(
+    private static CreatedAtRoute<PipeListModel> Create(
         IPipeService cashBoxService,
         PipeCreateModel createModel) {
-        return cashBoxService.Create(createModel);
+        var createdModel = cashBoxService.Create(createModel);
+        return TypedResults.CreatedAtRoute(
+            createdModel,
+            ReadAllRouteName
+        );
     }
 
     private static List<PipeListModel> ReadAll(IPipeService cashBoxService) {
@@ -26,22 +33,24 @@ public static class Pipes {
     private static Results<Ok<PipeListModel>, NotFound> Update(
         IPipeService cashBoxService,
         int id,
-        PipeCreateModel updateModel) {
+        PipeCreateModel updateModel
+    ) {
         return cashBoxService.Update(id, updateModel)
             .Match<Results<Ok<PipeListModel>, NotFound>>(
-                output => TypedResults.Ok(output),
-                _ => TypedResults.NotFound()
+                static output => TypedResults.Ok(output),
+                static _ => TypedResults.NotFound()
             );
     }
 
     private static Results<Ok, NotFound, BadRequest<string>> Delete(
         IPipeService cashBoxService,
-        int id) {
+        int id
+    ) {
         return cashBoxService.Delete(id)
             .Match<Results<Ok, NotFound, BadRequest<string>>>(
-                _ => TypedResults.Ok(),
-                _ => TypedResults.NotFound(),
-                error => TypedResults.BadRequest(error)
+                static _ => TypedResults.Ok(),
+                static _ => TypedResults.NotFound(),
+                static error => TypedResults.BadRequest(error)
             );
     }
 }

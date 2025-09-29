@@ -7,13 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace KisV4.App.Endpoints;
 
 public static class SaleTransactions {
+    private const string ReadRouteName = "SaleTransactionsRead";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("sale-transactions");
         group.MapGet(string.Empty, ReadAll);
         group.MapGet("self-cancellable", ReadSelfCancellable);
         group.MapPost(string.Empty, Create);
         group.MapPatch("{id:int}", Patch);
-        group.MapGet("{id:int}", Read);
+        group.MapGet("{id:int}", Read)
+            .WithName(ReadRouteName);
         group.MapPost("{id:int}/finish", Finish);
         group.MapDelete("{id:int}", Delete);
     }
@@ -39,13 +42,18 @@ public static class SaleTransactions {
         return [.. saleTransactionService.ReadSelfCancellable(claims.Identity!.Name!)];
     }
 
-    private static Results<Ok<SaleTransactionDetailModel>, ValidationProblem> Create(
+    private static Results<CreatedAtRoute<SaleTransactionDetailModel>, ValidationProblem> Create(
         ISaleTransactionService saleTransactionService,
         SaleTransactionCreateModel createModel,
-        ClaimsPrincipal claims) {
+        ClaimsPrincipal claims
+    ) {
         return saleTransactionService.Create(createModel, claims.Identity!.Name!)
-            .Match<Results<Ok<SaleTransactionDetailModel>, ValidationProblem>>(
-                static output => TypedResults.Ok(output),
+            .Match<Results<CreatedAtRoute<SaleTransactionDetailModel>, ValidationProblem>>(
+                static createdModel => TypedResults.CreatedAtRoute(
+                    createdModel,
+                    ReadRouteName,
+                    new { id = createdModel.Id }
+                ),
                 static errors => TypedResults.ValidationProblem(errors)
             );
     }
@@ -55,7 +63,7 @@ public static class SaleTransactions {
             int id,
             SaleTransactionCreateModel updateModel,
             ClaimsPrincipal claims
-            ) {
+    ) {
         return saleTransactionService.Patch(id, updateModel, claims.Identity!.Name!)
             .Match<Results<Ok<SaleTransactionDetailModel>, NotFound, ValidationProblem>>(
                     static output => TypedResults.Ok(output),
@@ -69,7 +77,7 @@ public static class SaleTransactions {
             int id,
             IEnumerable<CurrencyChangeCreateModel> currencyChanges,
             ClaimsPrincipal claims
-            ) {
+    ) {
         return saleTransactionService.Finish(id, [.. currencyChanges])
             .Match<Results<Ok<SaleTransactionDetailModel>, NotFound, ValidationProblem>>(
                     static output => TypedResults.Ok(output),
@@ -80,7 +88,8 @@ public static class SaleTransactions {
 
     private static Results<Ok<SaleTransactionDetailModel>, NotFound> Read(
         ISaleTransactionService saleTransactionService,
-        int id) {
+        int id
+    ) {
         return saleTransactionService.Read(id)
             .Match<Results<Ok<SaleTransactionDetailModel>, NotFound>>(
                 static output => TypedResults.Ok(output),
@@ -90,7 +99,8 @@ public static class SaleTransactions {
 
     private static Results<Ok<SaleTransactionDetailModel>, NotFound> Delete(
         ISaleTransactionService saleTransactionService,
-        int id) {
+        int id
+    ) {
         return saleTransactionService.Delete(id)
             .Match<Results<Ok<SaleTransactionDetailModel>, NotFound>>(
                 static output => TypedResults.Ok(output),

@@ -73,6 +73,15 @@ public static partial class Mapper {
     public static partial StoreEntity ToEntity(this StoreCreateModel model);
     public static partial List<StoreListModel> ToModels(this List<StoreEntity> entities);
     public static partial StoreListModel ToListModel(this StoreEntity entity);
+    public static StoreDetailModel ToModel(this StoreIntermediateModel model) {
+        return new StoreDetailModel(
+            Id: model.Entity.Id,
+            Name: model.Entity.Name,
+            Deleted: model.Entity.Deleted,
+            model.StoreItemAmounts,
+            model.StoreTransactionItems
+        );
+    }
 
     public static partial CompositionEntity ToEntity(this CompositionCreateModel model);
 
@@ -188,6 +197,12 @@ public record ContainerIntermediateModel(
 public record DiscountIntermediateModel(
     DiscountEntity Entity,
     Page<DiscountUsageListModel> DiscountUsages
+);
+
+public record StoreIntermediateModel(
+    StoreEntity Entity,
+    Page<StoreItemAmountListModel> StoreItemAmounts,
+    Page<StoreTransactionItemListModel> StoreTransactionItems
 );
 
 public record StoreItemIntermediateModel(

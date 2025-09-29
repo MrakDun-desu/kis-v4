@@ -22,8 +22,8 @@ public static class CurrencyChanges {
     ) {
         return currencyChangeService.ReadAll(page, pageSize, accountId, cancelled, startDate, endDate)
             .Match<Results<Ok<Page<CurrencyChangeListModel>>, ValidationProblem>>(
-                output => TypedResults.Ok(output),
-                errors => TypedResults.ValidationProblem(errors)
+                static output => TypedResults.Ok(output),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 }

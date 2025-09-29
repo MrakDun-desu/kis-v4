@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace KisV4.App.Endpoints;
 
 public static class ContainerTemplates {
+    private const string ReadAllRouteName = "ContainerTemplateReadAll";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("container-templates");
-        group.MapGet(string.Empty, ReadAll);
+        group.MapGet(string.Empty, ReadAll)
+            .WithName(ReadAllRouteName);
         group.MapPost(string.Empty, Create);
         group.MapPatch("{id:int}", Update);
         group.MapDelete("{id:int}", Delete);
@@ -17,37 +20,41 @@ public static class ContainerTemplates {
     private static Results<Ok<ICollection<ContainerTemplateListModel>>, ValidationProblem> ReadAll(
         IContainerTemplateService containerTemplateService,
         [FromQuery] bool? deleted,
-        [FromQuery] int? containedItemId) {
+        [FromQuery] int? containedItemId
+    ) {
         return containerTemplateService
             .ReadAll(deleted, containedItemId)
             .Match<Results<Ok<ICollection<ContainerTemplateListModel>>, ValidationProblem>>(
-                output => TypedResults.Ok(output),
-                errors => TypedResults.ValidationProblem(errors)
+                static output => TypedResults.Ok(output),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 
-    private static Results<Created<ContainerTemplateListModel>, ValidationProblem> Create(
+    private static Results<CreatedAtRoute<ContainerTemplateListModel>, ValidationProblem> Create(
         IContainerTemplateService containerTemplateService,
         ContainerTemplateCreateModel createModel,
-        HttpRequest request) {
+        HttpRequest request
+    ) {
         var creationResult = containerTemplateService.Create(createModel);
-        return creationResult.Match<Results<Created<ContainerTemplateListModel>, ValidationProblem>>(
-            createdModel => TypedResults.Created(
-                request.Host + request.Path + "/" + createdModel.Id,
-                createdModel),
-            errors => TypedResults.ValidationProblem(errors)
+        return creationResult.Match<Results<CreatedAtRoute<ContainerTemplateListModel>, ValidationProblem>>(
+            static createdModel => TypedResults.CreatedAtRoute(
+                createdModel,
+                ReadAllRouteName
+                ),
+            static errors => TypedResults.ValidationProblem(errors)
         );
     }
 
     private static Results<Ok<ContainerTemplateListModel>, NotFound, ValidationProblem> Update(
         IContainerTemplateService containerTemplateService,
         ContainerTemplateCreateModel updateModel,
-        int id) {
+        int id
+    ) {
         return containerTemplateService.Update(id, updateModel)
             .Match<Results<Ok<ContainerTemplateListModel>, NotFound, ValidationProblem>>(
-                model => TypedResults.Ok(model),
-                _ => TypedResults.NotFound(),
-                errors => TypedResults.ValidationProblem(errors)
+                static model => TypedResults.Ok(model),
+                static _ => TypedResults.NotFound(),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 
@@ -57,8 +64,8 @@ public static class ContainerTemplates {
     ) {
         return containerTemplateService.Delete(id)
             .Match<Results<Ok<ContainerTemplateListModel>, NotFound>>(
-                model => TypedResults.Ok(model),
-                _ => TypedResults.NotFound()
+                static model => TypedResults.Ok(model),
+                static _ => TypedResults.NotFound()
             );
     }
 }

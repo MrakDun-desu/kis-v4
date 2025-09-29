@@ -12,12 +12,13 @@ public static class Compositions {
 
     private static Results<Ok<CompositionListModel>, NoContent, ValidationProblem> CreateOrUpdate(
         ICompositionService compositionService,
-        CompositionCreateModel createModel) {
+        CompositionCreateModel createModel
+    ) {
         return compositionService.CreateOrUpdate(createModel)
             .Match<Results<Ok<CompositionListModel>, NoContent, ValidationProblem>>(
-                _ => TypedResults.NoContent(),
-                model => TypedResults.Ok(model),
-                errors => TypedResults.ValidationProblem(errors)
+                static _ => TypedResults.NoContent(),
+                static model => TypedResults.Ok(model),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 }

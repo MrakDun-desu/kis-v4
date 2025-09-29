@@ -15,8 +15,8 @@ public static class Costs {
         CostCreateModel createModel) {
         return costService.Create(createModel)
             .Match<Results<Ok<CostListModel>, ValidationProblem>>(
-                model => TypedResults.Ok(model),
-                errors => TypedResults.ValidationProblem(errors)
+                static model => TypedResults.Ok(model),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 }

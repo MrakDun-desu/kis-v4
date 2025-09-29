@@ -19,8 +19,8 @@ public class CashBoxServiceTests : IDisposable, IAsyncDisposable {
     private readonly KisDbContext _normalDbContext;
     private readonly FakeTimeProvider _timeProvider = new();
 
-    public CashBoxServiceTests() {
-        (_referenceDbContext, _normalDbContext) = KisDbContextFactory.Instance.CreateDbContextAndReference();
+    public CashBoxServiceTests(KisDbContextFactory dbContextFactory) {
+        (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _cashBoxService = new CashBoxService(_normalDbContext, new CurrencyChangeService(_normalDbContext), _timeProvider);
         AssertionOptions.AssertEquivalencyUsing(static options =>
             options.Using<DateTimeOffset>(static ctx =>

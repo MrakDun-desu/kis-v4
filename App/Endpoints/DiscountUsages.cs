@@ -8,9 +8,12 @@ using Microsoft.Extensions.Options;
 namespace KisV4.App.Endpoints;
 
 public static class DiscountUsages {
+    private const string ReadAllRouteName = "DiscountUsagesReadAll";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("discount-usages");
-        group.MapGet(string.Empty, ReadAll);
+        group.MapGet(string.Empty, ReadAll)
+            .WithName(ReadAllRouteName);
         group.MapPost(string.Empty, Create);
         group.MapGet("{id:int}", Read);
     }
@@ -29,14 +32,17 @@ public static class DiscountUsages {
             );
     }
 
-    private static Results<Ok<DiscountUsageDetailModel>, ValidationProblem> Create(
+    private static Results<CreatedAtRoute<DiscountUsageDetailModel>, ValidationProblem> Create(
         IDiscountUsageService discountUsageService,
         DiscountUsageCreateModel createModel,
         IOptions<ScriptStorageSettings> conf
         ) {
         return discountUsageService.Create(createModel, conf.Value.Path)
-            .Match<Results<Ok<DiscountUsageDetailModel>, ValidationProblem>>(
-                static output => TypedResults.Ok(output),
+            .Match<Results<CreatedAtRoute<DiscountUsageDetailModel>, ValidationProblem>>(
+                static createdModel => TypedResults.CreatedAtRoute(
+                    createdModel,
+                    ReadAllRouteName
+                ),
                 static errors => TypedResults.ValidationProblem(errors)
             );
     }

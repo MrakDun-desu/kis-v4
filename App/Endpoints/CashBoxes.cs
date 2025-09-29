@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace KisV4.App.Endpoints;
 
 public static class CashBoxes {
+    private const string ReadRouteName = "CashBoxRead";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("cashboxes");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
         group.MapPut("{id:int}", Update);
-        group.MapGet("{id:int}", Read);
+        group.MapGet("{id:int}", Read).WithName(ReadRouteName);
         group.MapDelete("{id:int}", Delete);
         group.MapPost("{id:int}/stock-taking", AddStockTaking);
     }
@@ -23,23 +25,23 @@ public static class CashBoxes {
         return cashBoxService.ReadAll(deleted);
     }
 
-    private static Created<CashBoxDetailModel> Create(
+    private static CreatedAtRoute<CashBoxDetailModel> Create(
         ICashBoxService cashBoxService,
-        CashBoxCreateModel createModel,
-        HttpRequest request) {
+        CashBoxCreateModel createModel
+    ) {
         var createdModel = cashBoxService.Create(createModel);
-        return TypedResults.Created(
-            request.Host + request.Path + "/" + createdModel.Id, createdModel);
+        return TypedResults.CreatedAtRoute(createdModel, ReadRouteName, new { id = createdModel.Id });
     }
 
     private static Results<NoContent, NotFound> Update(
         ICashBoxService cashBoxService,
         CashBoxCreateModel createModel,
-        int id) {
+        int id
+    ) {
         return cashBoxService.Update(id, createModel)
             .Match<Results<NoContent, NotFound>>(
-                _ => TypedResults.NoContent(),
-                _ => TypedResults.NotFound()
+                static _ => TypedResults.NoContent(),
+                static _ => TypedResults.NotFound()
             );
     }
 
@@ -47,29 +49,32 @@ public static class CashBoxes {
         ICashBoxService cashBoxService,
         int id,
         [FromQuery] DateTimeOffset? startDate,
-        [FromQuery] DateTimeOffset? endDate) {
+        [FromQuery] DateTimeOffset? endDate
+    ) {
         return cashBoxService.Read(id, startDate, endDate)
             .Match<Results<Ok<CashBoxDetailModel>, NotFound, ValidationProblem>>(
-                readModel => TypedResults.Ok(readModel),
-                _ => TypedResults.NotFound(),
-                errors => TypedResults.ValidationProblem(errors)
+                static readModel => TypedResults.Ok(readModel),
+                static _ => TypedResults.NotFound(),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 
     private static NoContent Delete(
         ICashBoxService cashBoxService,
-        int id) {
+        int id
+    ) {
         cashBoxService.Delete(id);
         return TypedResults.NoContent();
     }
 
     private static Results<Ok, NotFound> AddStockTaking(
         ICashBoxService cashBoxService,
-        int id) {
+        int id
+    ) {
         return cashBoxService.AddStockTaking(id)
             .Match<Results<Ok, NotFound>>(
-                _ => TypedResults.Ok(),
-                _ => TypedResults.NotFound()
+                static _ => TypedResults.Ok(),
+                static _ => TypedResults.NotFound()
             );
     }
 }

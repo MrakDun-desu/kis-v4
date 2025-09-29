@@ -34,10 +34,10 @@ public class StoreServiceTests : IDisposable, IAsyncDisposable {
     [Fact]
     public void Create_CreatesStore_WhenDataIsValid() {
         var createModel = new StoreCreateModel("Some store");
-        var createdId = _storeService.Create(createModel);
+        var createdModel = _storeService.Create(createModel);
 
-        var createdEntity = _referenceDbContext.Stores.Find(createdId);
-        var expectedEntity = new StoreEntity { Id = createdId, Name = createModel.Name };
+        var createdEntity = _referenceDbContext.Stores.Find(createdModel);
+        var expectedEntity = new StoreEntity { Id = createdModel.Id, Name = createModel.Name };
         createdEntity.Should().BeEquivalentTo(expectedEntity);
     }
 

@@ -8,10 +8,13 @@ using Microsoft.Extensions.Options;
 namespace KisV4.App.Endpoints;
 
 public static class Discounts {
+    private const string ReadRouteName = "DiscountRead";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("discounts");
         group.MapGet(string.Empty, ReadAll);
-        group.MapGet("{id:int}", Read);
+        group.MapGet("{id:int}", Read)
+            .WithName(ReadRouteName);
         group.MapPost(string.Empty, Create);
         group.MapPut("{id:int}", Put);
         group.MapDelete("{id:int}", Delete);
@@ -34,19 +37,24 @@ public static class Discounts {
         );
     }
 
-    private static Results<Ok<DiscountDetailModel>, ValidationProblem> Create(
+    private static Results<CreatedAtRoute<DiscountDetailModel>, ValidationProblem> Create(
         IDiscountService discountService,
         IOptions<ScriptStorageSettings> conf,
         DiscountCreateModel createModel
     ) {
-        return discountService.Create(createModel).Match<Results<Ok<DiscountDetailModel>, ValidationProblem>>(
-            output => {
-                var fileName = $"Discount{output.Id}-{output.Name}.cs";
+        return discountService.Create(createModel)
+            .Match<Results<CreatedAtRoute<DiscountDetailModel>, ValidationProblem>>(
+            createdModel => {
+                var fileName = $"Discount{createdModel.Id}-{createdModel.Name}.cs";
                 File.WriteAllText(
                     Path.Combine(conf.Value.Path, fileName),
                     createModel.Script
                 );
-                return TypedResults.Ok(output);
+                return TypedResults.CreatedAtRoute(
+                    createdModel,
+                    ReadRouteName,
+                    new { id = createdModel.Id }
+                );
             },
             static errors => TypedResults.ValidationProblem(errors)
         );

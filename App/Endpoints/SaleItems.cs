@@ -6,11 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace KisV4.App.Endpoints;
 
 public static class SaleItems {
+    private const string ReadRouteName = "SaleItemsRead";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("sale-items");
         group.MapGet(string.Empty, ReadAll);
         group.MapPost(string.Empty, Create);
-        group.MapGet("{id:int}", Read);
+        group.MapGet("{id:int}", Read)
+            .WithName(ReadRouteName);
         group.MapPut("{id:int}", Update);
         group.MapDelete("{id:int}", Delete);
     }
@@ -21,52 +24,63 @@ public static class SaleItems {
         [FromQuery] int? pageSize,
         [FromQuery] bool? deleted,
         [FromQuery] int? categoryId,
-        [FromQuery] bool? showOnWeb) {
+        [FromQuery] bool? showOnWeb
+    ) {
         return saleItemService.ReadAll(page, pageSize, deleted, categoryId, showOnWeb)
             .Match<Results<Ok<Page<SaleItemListModel>>, ValidationProblem>>(
-                output => TypedResults.Ok(output),
-                errors => TypedResults.ValidationProblem(errors)
+                static output => TypedResults.Ok(output),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 
-    private static Results<Ok<SaleItemDetailModel>, ValidationProblem> Create(
+    private static Results<CreatedAtRoute<SaleItemDetailModel>, ValidationProblem> Create(
         ISaleItemService saleItemService,
-        SaleItemCreateModel createModel) {
+        SaleItemCreateModel createModel
+    ) {
         return saleItemService.Create(createModel)
-            .Match<Results<Ok<SaleItemDetailModel>, ValidationProblem>>(
-                output => TypedResults.Ok(output),
-                errors => TypedResults.ValidationProblem(errors)
+            .Match<Results<CreatedAtRoute<SaleItemDetailModel>, ValidationProblem>>(
+                static createdModel => TypedResults.CreatedAtRoute(
+                    createdModel,
+                    ReadRouteName,
+                    new { id = createdModel.Id }
+                ),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 
 
-    private static Results<Ok<SaleItemDetailModel>, NotFound> Read(ISaleItemService saleItemService, int id) {
+    private static Results<Ok<SaleItemDetailModel>, NotFound> Read(
+        ISaleItemService saleItemService,
+        int id
+    ) {
         return saleItemService.Read(id)
             .Match<Results<Ok<SaleItemDetailModel>, NotFound>>(
-                output => TypedResults.Ok(output),
-                _ => TypedResults.NotFound()
+                static output => TypedResults.Ok(output),
+                static _ => TypedResults.NotFound()
             );
     }
 
     private static Results<Ok<SaleItemDetailModel>, NotFound, ValidationProblem> Update(
         ISaleItemService saleItemService,
         int id,
-        SaleItemCreateModel updateModel) {
+        SaleItemCreateModel updateModel
+    ) {
         return saleItemService.Update(id, updateModel)
             .Match<Results<Ok<SaleItemDetailModel>, NotFound, ValidationProblem>>(
-                output => TypedResults.Ok(output),
-                _ => TypedResults.NotFound(),
-                errors => TypedResults.ValidationProblem(errors)
+                static output => TypedResults.Ok(output),
+                static _ => TypedResults.NotFound(),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 
     private static Results<Ok<SaleItemDetailModel>, NotFound> Delete(
         ISaleItemService saleItemService,
-        int id) {
+        int id
+    ) {
         return saleItemService.Delete(id)
             .Match<Results<Ok<SaleItemDetailModel>, NotFound>>(
-                output => TypedResults.Ok(output),
-                _ => TypedResults.NotFound()
+                static output => TypedResults.Ok(output),
+                static _ => TypedResults.NotFound()
             );
     }
 }

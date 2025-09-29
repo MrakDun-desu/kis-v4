@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace KisV4.App.Endpoints;
 
 public static class StoreTransactions {
+    private const string ReadRouteName = "StoreTransactionsRead";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("store-transactions");
         group.MapGet(string.Empty, ReadAll);
         group.MapGet("self-cancellable", ReadSelfCancellable);
         group.MapPost(string.Empty, Create);
-        group.MapGet("{id:int}", Read);
+        group.MapGet("{id:int}", Read)
+            .WithName(ReadRouteName);
         group.MapDelete("{id:int}", Delete);
     }
 
@@ -26,8 +29,8 @@ public static class StoreTransactions {
     ) {
         return storeTransactionService.ReadAll(page, pageSize, startDate, endDate, cancelled)
             .Match<Results<Ok<Page<StoreTransactionListModel>>, ValidationProblem>>(
-                output => TypedResults.Ok(output),
-                errors => TypedResults.ValidationProblem(errors)
+                static output => TypedResults.Ok(output),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 
@@ -37,34 +40,41 @@ public static class StoreTransactions {
         return storeTransactionService.ReadSelfCancellable(claims.Identity!.Name!);
     }
 
-    private static Results<Ok<StoreTransactionDetailModel>, ValidationProblem> Create(
+    private static Results<CreatedAtRoute<StoreTransactionDetailModel>, ValidationProblem> Create(
         IStoreTransactionService storeTransactionService,
         StoreTransactionCreateModel createModel,
-        ClaimsPrincipal claims) {
+        ClaimsPrincipal claims
+    ) {
         return storeTransactionService.Create(createModel, claims.Identity!.Name!)
-            .Match<Results<Ok<StoreTransactionDetailModel>, ValidationProblem>>(
-                output => TypedResults.Ok(output),
-                errors => TypedResults.ValidationProblem(errors)
+            .Match<Results<CreatedAtRoute<StoreTransactionDetailModel>, ValidationProblem>>(
+                static createdModel => TypedResults.CreatedAtRoute(
+                    createdModel,
+                    ReadRouteName,
+                    new { id = createdModel.Id }
+                ),
+                static errors => TypedResults.ValidationProblem(errors)
             );
     }
 
     private static Results<Ok<StoreTransactionDetailModel>, NotFound> Read(
         IStoreTransactionService storeTransactionService,
-        int id) {
+        int id
+    ) {
         return storeTransactionService.Read(id)
             .Match<Results<Ok<StoreTransactionDetailModel>, NotFound>>(
-                output => TypedResults.Ok(output),
-                _ => TypedResults.NotFound()
+                static output => TypedResults.Ok(output),
+                static _ => TypedResults.NotFound()
             );
     }
 
     private static Results<Ok<StoreTransactionDetailModel>, NotFound> Delete(
         IStoreTransactionService storeTransactionService,
-        int id) {
+        int id
+    ) {
         return storeTransactionService.Delete(id)
             .Match<Results<Ok<StoreTransactionDetailModel>, NotFound>>(
-                output => TypedResults.Ok(output),
-                _ => TypedResults.NotFound()
+                static output => TypedResults.Ok(output),
+                static _ => TypedResults.NotFound()
             );
     }
 }

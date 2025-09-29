@@ -5,12 +5,6 @@ using Testcontainers.PostgreSql;
 namespace BL.EF.Tests.Fixtures;
 
 public class KisDbContextFactory : IAsyncLifetime {
-    public static KisDbContextFactory Instance { get; private set; } = null!;
-
-    public KisDbContextFactory() {
-        Instance = this;
-    }
-
     private readonly PostgreSqlContainer _databaseContainer = new PostgreSqlBuilder()
         .WithUsername("postgres")
         .WithPassword("B6MchiUp69z")

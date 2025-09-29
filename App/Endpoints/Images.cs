@@ -6,16 +6,20 @@ using Microsoft.Extensions.Options;
 namespace KisV4.App.Endpoints;
 
 public static class Images {
+    private const string ReadRouteName = "ImagesRead";
+
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         // ignoring anti-forgery for now, maybe include it in the future?
         routeBuilder.MapPost("images", Upload).DisableAntiforgery();
-        routeBuilder.MapGet("images/{filename}", Download).DisableAntiforgery();
+        routeBuilder.MapGet("images/{filename}", Download)
+            .DisableAntiforgery()
+            .WithName(ReadRouteName);
     }
 
-    private static Results<Created, ValidationProblem> Upload(
+    private static Results<CreatedAtRoute, ValidationProblem> Upload(
         IFormFile image,
-        IOptions<ImageStorageSettings> conf,
-        HttpRequest request) {
+        IOptions<ImageStorageSettings> conf
+    ) {
         // validating the filetype with magic bytes
         if (!FileTypeValidator.IsImage(image.OpenReadStream())) {
             return TypedResults.ValidationProblem(new Dictionary<string, string[]>
@@ -36,7 +40,7 @@ public static class Images {
         using var stream = File.Create(creationPath);
         image.CopyTo(stream);
 
-        return TypedResults.Created(request.Host + request.Path + "/" + fileName);
+        return TypedResults.CreatedAtRoute(ReadRouteName, new { filename = fileName });
     }
 
     private static Results<NotFound, PhysicalFileHttpResult> Download(
