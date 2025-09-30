@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using KisV4.App.Auth;
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -11,14 +12,21 @@ public static class SaleTransactions {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("sale-transactions");
-        group.MapGet(string.Empty, ReadAll);
-        group.MapGet("self-cancellable", ReadSelfCancellable);
-        group.MapPost(string.Empty, Create);
-        group.MapPatch("{id:int}", Patch);
+        group.MapGet(string.Empty, ReadAll)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapGet("self-cancellable", ReadSelfCancellable)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPost(string.Empty, Create)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPatch("{id:int}", Patch)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
         group.MapGet("{id:int}", Read)
-            .WithName(ReadRouteName);
-        group.MapPost("{id:int}/finish", Finish);
-        group.MapDelete("{id:int}", Delete);
+            .WithName(ReadRouteName)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPost("{id:int}/finish", Finish)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapDelete("{id:int}", Delete)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
     }
 
     private static Results<Ok<Page<SaleTransactionListModel>>, ValidationProblem> ReadAll(

@@ -1,4 +1,5 @@
 using FileTypeChecker;
+using KisV4.App.Auth;
 using KisV4.App.Configuration;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
@@ -10,10 +11,12 @@ public static class Images {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         // ignoring anti-forgery for now, maybe include it in the future?
-        routeBuilder.MapPost("images", Upload).DisableAntiforgery();
+        routeBuilder.MapPost("images", Upload).DisableAntiforgery()
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
         routeBuilder.MapGet("images/{filename}", Download)
             .DisableAntiforgery()
-            .WithName(ReadRouteName);
+            .WithName(ReadRouteName)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
     }
 
     private static Results<CreatedAtRoute, ValidationProblem> Upload(

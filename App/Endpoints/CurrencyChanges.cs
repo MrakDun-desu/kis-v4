@@ -1,3 +1,4 @@
+using KisV4.App.Auth;
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -8,7 +9,8 @@ namespace KisV4.App.Endpoints;
 public static class CurrencyChanges {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("currency-changes");
-        group.MapGet(string.Empty, Create);
+        group.MapGet(string.Empty, Create)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
     }
 
     private static Results<Ok<Page<CurrencyChangeListModel>>, ValidationProblem> Create(

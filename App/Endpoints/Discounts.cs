@@ -1,3 +1,4 @@
+using KisV4.App.Auth;
 using KisV4.App.Configuration;
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
@@ -12,12 +13,17 @@ public static class Discounts {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("discounts");
-        group.MapGet(string.Empty, ReadAll);
+        group.MapGet(string.Empty, ReadAll)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
         group.MapGet("{id:int}", Read)
-            .WithName(ReadRouteName);
-        group.MapPost(string.Empty, Create);
-        group.MapPut("{id:int}", Put);
-        group.MapDelete("{id:int}", Delete);
+            .WithName(ReadRouteName)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPost(string.Empty, Create)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPut("{id:int}", Put)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapDelete("{id:int}", Delete)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
     }
 
     private static IEnumerable<DiscountListModel> ReadAll(

@@ -22,7 +22,7 @@ To emulate this, .NET provides a local tool to generate JWT tokens for testing. 
 token by running:
 
 ```bash
-dotnet user-jwts create --project App
+dotnet user-jwts create -p App --role admin
 ```
 
 Copy the output after the `Token: ` to pass it to Swagger for authentication.

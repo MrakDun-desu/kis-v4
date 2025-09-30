@@ -1,3 +1,4 @@
+using KisV4.App.Auth;
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -11,10 +12,14 @@ public static class ContainerTemplates {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("container-templates");
         group.MapGet(string.Empty, ReadAll)
-            .WithName(ReadAllRouteName);
-        group.MapPost(string.Empty, Create);
-        group.MapPatch("{id:int}", Update);
-        group.MapDelete("{id:int}", Delete);
+            .WithName(ReadAllRouteName)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPost(string.Empty, Create)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPatch("{id:int}", Update)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapDelete("{id:int}", Delete)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
     }
 
     private static Results<Ok<ICollection<ContainerTemplateListModel>>, ValidationProblem> ReadAll(

@@ -1,3 +1,4 @@
+using KisV4.App.Auth;
 using KisV4.App.Configuration;
 using KisV4.BL.Common.Services;
 using KisV4.Common.Models;
@@ -13,9 +14,12 @@ public static class DiscountUsages {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("discount-usages");
         group.MapGet(string.Empty, ReadAll)
-            .WithName(ReadAllRouteName);
-        group.MapPost(string.Empty, Create);
-        group.MapGet("{id:int}", Read);
+            .WithName(ReadAllRouteName)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPost(string.Empty, Create)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapGet("{id:int}", Read)
+            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
     }
 
     private static Results<Ok<Page<DiscountUsageListModel>>, ValidationProblem> ReadAll(
