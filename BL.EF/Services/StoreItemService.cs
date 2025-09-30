@@ -108,12 +108,16 @@ public class StoreItemService(KisDbContext dbContext)
     }
 
     public OneOf<StoreItemDetailModel, NotFound> Read(int id) {
-        var entity = dbContext.StoreItems.Find(id);
+        var entity = dbContext.StoreItems
+            .Include(si => si.Categories)
+            .Include(si => si.Costs)
+            .SingleOrDefault(si => si.Id == id);
         if (entity is null) {
             return new NotFound();
         }
 
         var currentCosts = dbContext.CurrencyCosts
+            .Include(cc => cc.Currency)
             .Where(cc => cc.ProductId == id)
             .GroupBy(cc => cc.Currency)
             .Select(g => g.OrderByDescending(cc => cc.ValidSince).First())
@@ -131,9 +135,13 @@ public class StoreItemService(KisDbContext dbContext)
         return new StoreItemIntermediateModel(entity, currentCosts, storeAmounts).ToModel();
     }
 
-    public OneOf<StoreItemDetailModel, NotFound, Dictionary<string, string[]>> Update(int id,
-        StoreItemCreateModel updateModel) {
-        var entity = dbContext.StoreItems.Find(id);
+    public OneOf<StoreItemDetailModel, NotFound, Dictionary<string, string[]>> Update(
+        int id,
+        StoreItemCreateModel updateModel
+    ) {
+        var entity = dbContext.StoreItems
+            .Include(si => si.Categories)
+            .SingleOrDefault(si => si.Id == id);
         if (entity is null) {
             return new NotFound();
         }

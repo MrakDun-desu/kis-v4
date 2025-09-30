@@ -249,9 +249,14 @@ public class CashBoxServiceTests : IDisposable, IAsyncDisposable {
         // assert
         var expectedModel = new CashBoxIntermediateModel(
                 insertedEntity.Entity,
-                new Page<CurrencyChangeListModel>(new List<CurrencyChangeEntity> { currencyChange2 }.ToModels(),
-                    new PageMeta(1, Constants.DefaultPageSize, 1, 1, 1, 1)),
-                [new TotalCurrencyChangeListModel(currencyChange2.Currency.ToModel(), currencyChange2.Amount)])
+                new Page<CurrencyChangeListModel>(
+                    new List<CurrencyChangeEntity> { currencyChange1, currencyChange2 }
+                        .ToModels(),
+                    new PageMeta(1, Constants.DefaultPageSize, 1, 2, 2, 1)),
+                [
+                    new TotalCurrencyChangeListModel(currencyChange1.Currency.ToModel(), currencyChange1.Amount),
+                    new TotalCurrencyChangeListModel(currencyChange2.Currency.ToModel(), currencyChange2.Amount)
+                ])
             .ToDetailModel();
         returnedModel.Should().HaveValue(expectedModel);
     }

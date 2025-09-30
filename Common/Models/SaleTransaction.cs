@@ -4,7 +4,7 @@ public record SaleTransactionCreateModel(
     IEnumerable<SaleTransactionItemCreateModel> SaleTransactionItems,
     int StoreId,
     string ClientUserName,
-    string? Note = null
+    string? Note
 );
 
 public record SaleTransactionListModel(

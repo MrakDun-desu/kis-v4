@@ -64,7 +64,7 @@ public class ModifierService(KisDbContext dbContext)
         dbContext.Modifiers.Update(entity);
         dbContext.SaveChanges();
 
-        return entity.ToModel();
+        return Read(id).AsT0;
     }
 
     public OneOf<ModifierDetailModel, NotFound> Delete(int id) {
@@ -77,6 +77,6 @@ public class ModifierService(KisDbContext dbContext)
         entity.Deleted = true;
         dbContext.SaveChanges();
 
-        return entity.ToModel();
+        return Read(id).AsT0;
     }
 }

@@ -101,7 +101,8 @@ public class ContainerService(
 
         dbContext.Containers.Add(container);
         dbContext.SaveChanges();
-        return new ContainerIntermediateModel(container, template.Amount).ToModel();
+
+        return Read(container.Id);
     }
 
     public OneOf<ContainerListModel, NotFound, Dictionary<string, string[]>> Patch(int id,

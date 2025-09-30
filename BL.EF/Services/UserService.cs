@@ -43,8 +43,7 @@ public class UserService(
     }
 
     public OneOf<UserDetailModel, NotFound, Dictionary<string, string[]>> Read(int id) {
-        // needs to do AsNoTracking because otherwise currency changes will get included by lazy loading
-        var user = dbContext.UserAccounts.AsNoTracking()
+        var user = dbContext.UserAccounts
             .SingleOrDefault(u => u.Id == id);
 
         if (user is null) {

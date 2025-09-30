@@ -5,6 +5,7 @@ using KisV4.Common;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
+using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
 
@@ -17,7 +18,10 @@ public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageServic
         int? discountId,
         int? userId
     ) {
-        var query = dbContext.DiscountUsages.AsQueryable();
+        var query = dbContext.DiscountUsages
+            .Include(du => du.User)
+            .Include(du => du.Discount)
+            .AsQueryable();
         var errors = new Dictionary<string, string[]>();
         if (discountId.HasValue) {
             if (!dbContext.Discounts.Any(dc => dc.Id == discountId)) {
@@ -82,7 +86,13 @@ public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageServic
     }
 
     public OneOf<DiscountUsageDetailModel, NotFound> Read(int id) {
-        var output = dbContext.DiscountUsages.Find(id).ToModel();
-        return output is not null ? (OneOf<DiscountUsageDetailModel, NotFound>)output : (OneOf<DiscountUsageDetailModel, NotFound>)new NotFound();
+        var output = dbContext.DiscountUsages
+            .Include(du => du.User)
+            .Include(du => du.Discount)
+            .Include(du => du.UsageItems)
+            .ThenInclude(dui => dui.Currency)
+            .SingleOrDefault(du => du.Id == id)
+            .ToModel();
+        return output is not null ? output : new NotFound();
     }
 }

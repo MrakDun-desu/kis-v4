@@ -52,8 +52,7 @@ public class CashBoxService(
         int id,
         DateTimeOffset? startDate = null,
         DateTimeOffset? endDate = null) {
-        // needs to do AsNoTracking because otherwise currency changes will get included by lazy loading
-        var cashBox = dbContext.CashBoxes.AsNoTracking()
+        var cashBox = dbContext.CashBoxes
             .Include(cb => cb.StockTakings)
             .SingleOrDefault(cb => cb.Id == id);
 

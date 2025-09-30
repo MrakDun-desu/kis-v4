@@ -215,10 +215,15 @@ public class SaleTransactionService(
 
     public OneOf<SaleTransactionDetailModel, NotFound> Read(int id) {
         var output = _dbContext.SaleTransactions
+            .Include(st => st.ResponsibleUser)
             .Include(st => st.SaleTransactionItems)
             .ThenInclude(sti => sti.TransactionPrices)
+            .ThenInclude(tp => tp.Currency)
+            .Include(st => st.SaleTransactionItems)
+            .ThenInclude(sti => sti.SaleItem)
             .Include(st => st.SaleTransactionItems)
             .ThenInclude(sti => sti.ModifierAmounts)
+            .ThenInclude(ma => ma.Modifier)
             .Include(st => st.StoreTransactions)
             .Include(st => st.CurrencyChanges)
             .ThenInclude(cc => cc.Currency)

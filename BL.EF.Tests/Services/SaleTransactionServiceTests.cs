@@ -70,7 +70,8 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
             .ValidateCreateModel(new(
                 [new(testSaleItem.Id, [], -42, null)],
                 testStore.Id,
-                "Some user"
+                "Some user",
+                null
                 ),
              out var _);
 
@@ -112,7 +113,8 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
             .ValidateCreateModel(new(
                 [new(testSaleItem.Id, [], 42, null)],
                 testContainer.Id,
-                "Some user"
+                "Some user",
+                null
                 ),
              out var _);
 
@@ -159,7 +161,8 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
             .ValidateCreateModel(new(
                 [new(testSaleItem.Id, [], 42, testContainer.Id)],
                 testStore.Id,
-                "Some user"
+                "Some user",
+                null
                 ),
              out var _);
 
@@ -283,7 +286,8 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
                             )
                     ],
                     testStore1.Id,
-                    "Some client"
+                    "Some client",
+                    null
                     ),
                 "Some user"
                 );
@@ -481,7 +485,8 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
                             )
                     ],
                     testStore1.Id,
-                    "Some client"
+                    "Some client",
+                    null
                     ),
                 "Some user"
                 );

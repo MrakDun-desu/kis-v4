@@ -86,7 +86,12 @@ public class SaleItemService(KisDbContext dbContext, TimeProvider timeProvider)
 
     public OneOf<SaleItemDetailModel, NotFound> Read(int id) {
         var entity = dbContext.SaleItems
+            .Include(si => si.Categories)
             .Include(si => si.Composition)
+            .ThenInclude(c => c.StoreItem)
+            .Include(si => si.AvailableModifiers)
+            .Include(si => si.Costs)
+            .ThenInclude(c => c.Currency)
             .SingleOrDefault(st => st.Id == id);
 
         if (entity is null) {
@@ -112,6 +117,7 @@ public class SaleItemService(KisDbContext dbContext, TimeProvider timeProvider)
             );
 
         var storeAmountsDict = dbContext.StoreTransactionItems
+            .Include(sti => sti.Store)
             .Where(sti => composition.Keys.Contains(sti.StoreItemId))
             .Where(sti => !sti.Cancelled)
             .Where(sti => !sti.Store!.Deleted)
@@ -177,7 +183,9 @@ public class SaleItemService(KisDbContext dbContext, TimeProvider timeProvider)
 
     public OneOf<SaleItemDetailModel, NotFound, Dictionary<string, string[]>> Update(int id,
         SaleItemCreateModel updateModel) {
-        var entity = dbContext.SaleItems.Find(id);
+        var entity = dbContext.SaleItems
+            .Include(si => si.Categories)
+            .SingleOrDefault(si => si.Id == id);
         if (entity is null) {
             return new NotFound();
         }
@@ -203,6 +211,7 @@ public class SaleItemService(KisDbContext dbContext, TimeProvider timeProvider)
 
         dbContext.SaleItems.Update(entity);
         dbContext.SaveChanges();
+        dbContext.ChangeTracker.Clear();
 
         return Read(id).AsT0;
     }

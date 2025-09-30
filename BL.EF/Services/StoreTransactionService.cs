@@ -61,9 +61,35 @@ public class StoreTransactionService(
     }
 
     public OneOf<StoreTransactionDetailModel, NotFound> Read(int id) {
-        var entity = dbContext.StoreTransactions
-            .FirstOrDefault(st => st.Id == id);
-        return entity is null ? new NotFound() : entity.ToModel();
+        var entity = dbContext.StoreTransactions.Find(id);
+        if (entity is null) {
+            return new NotFound();
+        }
+
+        var query = dbContext.StoreTransactions
+            .Include(st => st.ResponsibleUser)
+            .Include(st => st.StoreTransactionItems)
+            .ThenInclude(sti => sti.StoreItem)
+            .Include(st => st.StoreTransactionItems)
+            .ThenInclude(sti => sti.StoreItem)
+            .Include(st => st.StoreTransactionItems)
+            .ThenInclude(sti => sti.Store)
+            .AsSplitQuery()
+            .AsQueryable();
+
+        if (entity.SaleTransactionId is not null) {
+            query = query
+                .Include(st => st.SaleTransaction)
+                .ThenInclude(st => st!.ResponsibleUser)
+                .Include(st => st.SaleTransaction)
+                .ThenInclude(st => st!.SaleTransactionItems)
+                .Include(st => st.SaleTransaction)
+                .ThenInclude(st => st!.StoreTransactions)
+                .Include(st => st.SaleTransaction)
+                .ThenInclude(st => st!.CurrencyChanges)
+                .AsSplitQuery();
+        }
+        return query.FirstOrDefault(st => st.Id == id)!.ToModel();
     }
 
     public OneOf<StoreTransactionDetailModel, Dictionary<string, string[]>> Create(

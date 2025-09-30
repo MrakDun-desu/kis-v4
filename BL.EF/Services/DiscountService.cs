@@ -4,7 +4,6 @@ using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
-using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
 
@@ -43,7 +42,7 @@ public class DiscountService(KisDbContext dbContext, IDiscountUsageService disco
     }
 
     public OneOf<DiscountDetailModel, NotFound> Read(int id) {
-        var discount = dbContext.Discounts.AsNoTracking().SingleOrDefault(dc => dc.Id == id);
+        var discount = dbContext.Discounts.SingleOrDefault(dc => dc.Id == id);
         if (discount is null) {
             return new NotFound();
         }

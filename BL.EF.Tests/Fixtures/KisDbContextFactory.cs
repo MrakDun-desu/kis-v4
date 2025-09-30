@@ -20,7 +20,6 @@ public class KisDbContextFactory : IAsyncLifetime {
     }
 
     public (KisDbContext, KisDbContext) CreateDbContextAndReference() {
-        // reference context can just have npgsql and no lazy loading
         var optionsBuilder = new DbContextOptionsBuilder<KisDbContext>()
             .UseNpgsql(_databaseContainer.GetConnectionString());
         var refContext = new KisDbContext(optionsBuilder.Options);
@@ -28,9 +27,6 @@ public class KisDbContextFactory : IAsyncLifetime {
         refContext.Database.EnsureDeleted();
         refContext.Database.EnsureCreated();
 
-        // for normal dbcontext, the options need to be the same as the main application does
-        // (same as in ServiceCollectionExtensions in DAL.EF)
-        optionsBuilder.UseLazyLoadingProxies();
         var normalContext = new KisDbContext(optionsBuilder.Options);
 
         return (refContext, normalContext);
