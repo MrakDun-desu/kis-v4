@@ -6,7 +6,8 @@ public record StoreTransactionCreateModel(
     IEnumerable<StoreTransactionItemCreateModel> StoreTransactionItems,
     TransactionReason TransactionReason,
     int StoreId,
-    int? DestinationStoreId
+    int? DestinationStoreId,
+    string? Note = null
 );
 
 public record StoreTransactionListModel(

@@ -24,4 +24,10 @@ public abstract record TransactionEntity {
     public DateTimeOffset Timestamp { get; set; }
 
     public bool Cancelled { get; set; }
+
+    /// <summary>
+    ///     Note about this transaction for example precise reason why this transaction was
+    ///     initiated.
+    /// </summary>
+    public string? Note { get; set; }
 }
