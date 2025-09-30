@@ -72,7 +72,7 @@ public class CashBoxServiceTests : IDisposable, IAsyncDisposable {
 
         // assert
         var mappedModels =
-            _referenceDbContext.CashBoxes.Where(cb => !cb.Deleted).ToList().ToModels();
+            _referenceDbContext.CashBoxes.Where(static cb => !cb.Deleted).ToList().ToModels();
         readModels.Should().BeEquivalentTo(mappedModels);
     }
 

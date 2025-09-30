@@ -75,9 +75,9 @@ public class CompositionServiceTests : IDisposable, IAsyncDisposable {
             SaleItem = insertedSaleItem.Entity,
             StoreItem = insertedStoreItem.Entity
         };
-        createdEntity.Should().BeEquivalentTo(expectedEntity, opts =>
-                opts.Excluding(entity => entity.SaleItem)
-                    .Excluding(entity => entity.StoreItem));
+        createdEntity.Should().BeEquivalentTo(expectedEntity, static opts =>
+                opts.Excluding(static entity => entity.SaleItem)
+                .Excluding(static entity => entity.StoreItem));
         result.Should().HaveValue(expectedEntity.ToModel());
     }
 
@@ -140,10 +140,9 @@ public class CompositionServiceTests : IDisposable, IAsyncDisposable {
             SaleItem = saleItemEntity,
             StoreItem = storeItemEntity
         };
-        createdEntity.Should().BeEquivalentTo(expectedEntity, opts =>
-            opts
-                .Excluding(entity => entity.SaleItem)
-                .Excluding(entity => entity.StoreItem)
+        createdEntity.Should().BeEquivalentTo(expectedEntity, static opts =>
+            opts.Excluding(static entity => entity.SaleItem)
+                .Excluding(static entity => entity.StoreItem)
         );
         result.Should().HaveValue(expectedEntity.ToModel());
     }

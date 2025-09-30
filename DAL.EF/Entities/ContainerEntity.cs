@@ -5,8 +5,7 @@ namespace KisV4.DAL.EF.Entities;
 /// <summary>
 ///     Represents a container that holds some kind of StoreItem. Intended use is for beer kegs.
 /// </summary>
-public record ContainerEntity : StoreEntity
-{
+public record ContainerEntity : StoreEntity {
     public int TemplateId { get; init; }
     public virtual ContainerTemplateEntity? Template { get; set; }
 

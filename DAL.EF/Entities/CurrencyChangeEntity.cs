@@ -6,8 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 ///     Represents a change in currency that occured in a given account.
 /// </summary>
 [PrimaryKey(nameof(CurrencyId), nameof(SaleTransactionId), nameof(AccountId))]
-public record CurrencyChangeEntity
-{
+public record CurrencyChangeEntity {
     public int CurrencyId { get; init; }
 
     /// <summary>

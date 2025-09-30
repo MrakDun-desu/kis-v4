@@ -31,8 +31,8 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
                 new CurrencyChangeService(_normalDbContext),
                 new DiscountUsageService(_normalDbContext))
             );
-        AssertionOptions.AssertEquivalencyUsing(options =>
-            options.Using<DateTimeOffset>(ctx =>
+        AssertionOptions.AssertEquivalencyUsing(static options =>
+            options.Using<DateTimeOffset>(static ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
         );
     }
@@ -90,10 +90,10 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
         // assert
         var expectedPage =
             _referenceDbContext.Containers
-            .Include(c => c.StoreTransactionItems)
-            .Include(c => c.Template).ThenInclude(ct => ct!.ContainedItem)
-            .Include(c => c.Pipe)
-                .Select(c => new ContainerIntermediateModel(c, 0))
+            .Include(static c => c.StoreTransactionItems)
+            .Include(static c => c.Template).ThenInclude(static ct => ct!.ContainedItem)
+            .Include(static c => c.Pipe)
+                .Select(static c => new ContainerIntermediateModel(c, 0))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
 
         readPage.Should().HaveValue(expectedPage.Value);
@@ -140,11 +140,11 @@ public class ContainerServiceTests : IClassFixture<KisDbContextFactory>,
         // assert
         var expectedPage =
             _referenceDbContext.Containers
-            .Include(c => c.StoreTransactionItems)
-            .Include(c => c.Template).ThenInclude(ct => ct!.ContainedItem)
-            .Include(c => c.Pipe)
-                .Where(c => c.Deleted)
-                .Select(c => new ContainerIntermediateModel(c, 0))
+            .Include(static c => c.StoreTransactionItems)
+            .Include(static c => c.Template).ThenInclude(static ct => ct!.ContainedItem)
+            .Include(static c => c.Pipe)
+                .Where(static c => c.Deleted)
+                .Select(static c => new ContainerIntermediateModel(c, 0))
                 .Page(1, Constants.DefaultPageSize, Mapper.ToModels);
 
         readPage.Should().HaveValue(expectedPage.Value);

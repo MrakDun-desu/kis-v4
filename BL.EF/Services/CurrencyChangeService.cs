@@ -1,4 +1,5 @@
 using KisV4.BL.Common.Services;
+using KisV4.BL.EF.Helpers;
 using KisV4.Common;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
@@ -8,27 +9,25 @@ using OneOf;
 
 namespace KisV4.BL.EF.Services;
 
-public class CurrencyChangeService(KisDbContext dbContext) : ICurrencyChangeService, IScopedService
-{
+public class CurrencyChangeService(KisDbContext dbContext) : ICurrencyChangeService, IScopedService {
     public OneOf<Page<CurrencyChangeListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
         int? pageSize,
         int? accountId,
         bool? cancelled,
         DateTimeOffset? startDate,
-        DateTimeOffset? endDate)
-    {
+        DateTimeOffset? endDate
+    ) {
         var query = dbContext.CurrencyChanges
             .Include(cc => cc.SaleTransaction)
             .Include(cc => cc.Currency)
+            .AsSplitQuery()
             .OrderByDescending(cc => cc.SaleTransaction!.Timestamp)
             .AsQueryable();
 
         var errors = new Dictionary<string, string[]>();
-        if (accountId.HasValue)
-        {
-            if (!dbContext.Accounts.Any(a => a.Id == accountId.Value))
-            {
+        if (accountId.HasValue) {
+            if (!dbContext.Accounts.Any(a => a.Id == accountId.Value)) {
                 errors.AddItemOrCreate(
                     nameof(accountId),
                     $"Account with id {accountId} doesn't exist");
@@ -38,18 +37,15 @@ public class CurrencyChangeService(KisDbContext dbContext) : ICurrencyChangeServ
             query = query.Where(cc => cc.AccountId == accountId.Value);
         }
 
-        if (cancelled.HasValue)
-        {
+        if (cancelled.HasValue) {
             query = query.Where(cc => cc.Cancelled == cancelled.Value);
         }
 
-        if (startDate.HasValue)
-        {
+        if (startDate.HasValue) {
             query = query.Where(cc => cc.SaleTransaction!.Timestamp > startDate.Value);
         }
-        
-        if (endDate.HasValue)
-        {
+
+        if (endDate.HasValue) {
             query = query.Where(cc => cc.SaleTransaction!.Timestamp < endDate.Value);
         }
 

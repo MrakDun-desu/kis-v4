@@ -1,4 +1,5 @@
 using KisV4.BL.Common.Services;
+using KisV4.BL.EF.Helpers;
 using KisV4.Common;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;
@@ -21,7 +22,8 @@ public class StoreTransactionService(
         int? pageSize,
         DateTimeOffset? startDate,
         DateTimeOffset? endDate,
-        bool? cancelled) {
+        bool? cancelled
+    ) {
         var query = dbContext.StoreTransactions
             .Include(sti => sti.SaleTransaction)
             .Include(sti => sti.ResponsibleUser)
@@ -66,7 +68,8 @@ public class StoreTransactionService(
 
     public OneOf<StoreTransactionDetailModel, Dictionary<string, string[]>> Create(
         StoreTransactionCreateModel createModel,
-        string userName) {
+        string userName
+    ) {
         ValidateCreateRequest(createModel, out var errors);
         if (errors.Count > 0) {
             return errors;

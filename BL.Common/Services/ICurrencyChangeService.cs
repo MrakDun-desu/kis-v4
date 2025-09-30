@@ -3,8 +3,7 @@ using OneOf;
 
 namespace KisV4.BL.Common.Services;
 
-public interface ICurrencyChangeService
-{
+public interface ICurrencyChangeService {
     OneOf<Page<CurrencyChangeListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
         int? pageSize,

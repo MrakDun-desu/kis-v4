@@ -18,7 +18,7 @@ public class CostServiceTests : IDisposable, IAsyncDisposable {
     public CostServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
         _costService = new CostService(_normalDbContext);
-        AssertionOptions.AssertEquivalencyUsing(options =>
+        AssertionOptions.AssertEquivalencyUsing(static options =>
             options.Using<DateTimeOffset>(ctx =>
                 ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))).WhenTypeIs<DateTimeOffset>()
         );

@@ -35,8 +35,9 @@ public class CashBoxService(
 
     public OneOf<CashBoxDetailModel, NotFound> Update(int id, CashBoxCreateModel updateModel) {
         var entity = dbContext.CashBoxes.Include(cb => cb.StockTakings).SingleOrDefault(cb => cb.Id == id);
-        if (entity is null)
+        if (entity is null) {
             return new NotFound();
+        }
 
         // updating automatically restores entities from deletion
         updateModel.UpdateEntity(entity);
@@ -56,34 +57,43 @@ public class CashBoxService(
             .Include(cb => cb.StockTakings)
             .SingleOrDefault(cb => cb.Id == id);
 
-        if (cashBox is null)
+        if (cashBox is null) {
             return new NotFound();
+        }
 
         var lastTimestamp = cashBox.StockTakings
             .OrderBy(st => st.Timestamp)
             .First().Timestamp;
 
-        var realStartDate = startDate ?? lastTimestamp;
-        var realEndDate = endDate ?? timeProvider.GetUtcNow();
-
-        var totalCurrencyChanges = dbContext.CurrencyChanges
+        var totalCurrencyChangesQuery = dbContext.CurrencyChanges
             .Include(cc => cc.SaleTransaction)
             .Include(cc => cc.Currency)
+            .AsSplitQuery()
             .Where(cc => cc.AccountId == id)
             .Where(cc => !cc.Cancelled)
-            .Where(cc => cc.SaleTransaction!.Timestamp > realStartDate && cc.SaleTransaction.Timestamp < realEndDate)
-            .GroupBy(cc => cc.Currency).Select(s =>
+            .AsQueryable();
+
+        if (startDate is not null) {
+            totalCurrencyChangesQuery = totalCurrencyChangesQuery
+                .Where(cc => cc.SaleTransaction!.Timestamp > startDate);
+        }
+
+        if (endDate is not null) {
+            totalCurrencyChangesQuery = totalCurrencyChangesQuery
+                .Where(cc => cc.SaleTransaction!.Timestamp < endDate);
+        }
+        var totalCurrencyChanges = totalCurrencyChangesQuery.GroupBy(cc => cc.Currency).Select(s =>
                 new TotalCurrencyChangeListModel(
                     s.Key!.ToModel(),
                     s.Sum(cc => cc.Amount))
             );
 
         var currencyChangesPage =
-            currencyChangeService.ReadAll(null, null, id, false, realStartDate, realEndDate);
+            currencyChangeService.ReadAll(null, null, accountId: id, false, startDate, endDate);
 
         return currencyChangesPage.IsT1
-            ? (OneOf<CashBoxDetailModel, NotFound, Dictionary<string, string[]>>)currencyChangesPage.AsT1
-            : (OneOf<CashBoxDetailModel, NotFound, Dictionary<string, string[]>>)new CashBoxIntermediateModel(
+            ? currencyChangesPage.AsT1
+            : new CashBoxIntermediateModel(
                 cashBox,
                 currencyChangesPage.AsT0,
                 [.. totalCurrencyChanges])
@@ -92,7 +102,10 @@ public class CashBoxService(
 
     public OneOf<CashBoxDetailModel, NotFound> Delete(int id) {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null) return new NotFound();
+        if (entity is null) {
+            return new NotFound();
+        }
+
         entity.Deleted = true;
         dbContext.SaveChanges();
 
@@ -101,7 +114,9 @@ public class CashBoxService(
 
     public OneOf<Success, NotFound> AddStockTaking(int id) {
         var entity = dbContext.CashBoxes.Find(id);
-        if (entity is null) return new NotFound();
+        if (entity is null) {
+            return new NotFound();
+        }
 
         entity.StockTakings.Add(new StockTakingEntity { Timestamp = timeProvider.GetUtcNow() });
 

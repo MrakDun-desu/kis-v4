@@ -1,4 +1,5 @@
 using KisV4.BL.Common.Services;
+using KisV4.BL.EF.Helpers;
 using KisV4.Common;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
@@ -17,7 +18,8 @@ public class SaleItemService(KisDbContext dbContext, TimeProvider timeProvider)
         int? pageSize,
         bool? deleted,
         int? categoryId,
-        bool? showOnWeb) {
+        bool? showOnWeb
+    ) {
         var errors = new Dictionary<string, string[]>();
         // can be left here until filtering by store is implemented
         // if (storeId.HasValue && !dbContext.Stores.Any(s => s.Id == storeId))

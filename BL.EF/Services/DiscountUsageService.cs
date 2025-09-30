@@ -1,5 +1,6 @@
 using CSScriptLib;
 using KisV4.BL.Common.Services;
+using KisV4.BL.EF.Helpers;
 using KisV4.Common;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
@@ -14,7 +15,8 @@ public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageServic
         int? page,
         int? pageSize,
         int? discountId,
-        int? userId) {
+        int? userId
+    ) {
         var query = dbContext.DiscountUsages.AsQueryable();
         var errors = new Dictionary<string, string[]>();
         if (discountId.HasValue) {
@@ -47,7 +49,7 @@ public class DiscountUsageService(KisDbContext dbContext) : IDiscountUsageServic
     public OneOf<DiscountUsageDetailModel, Dictionary<string, string[]>> Create(
             DiscountUsageCreateModel createModel,
             string discountScriptPath
-            ) {
+    ) {
         var discountEntity = dbContext.Discounts.Find(createModel);
         var saleTransactionEntity = dbContext.SaleTransactions.Find(createModel.SaleTransactionId);
 

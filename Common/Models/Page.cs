@@ -3,8 +3,7 @@ namespace KisV4.Common.Models;
 public record Page<T>(
     ICollection<T> Data,
     PageMeta Meta
-)
-{
+) {
     public static readonly Page<T> Empty = new([],
         new PageMeta(
             0, 0, 0, 0, 0, 0));

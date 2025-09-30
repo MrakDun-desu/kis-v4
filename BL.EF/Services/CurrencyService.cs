@@ -8,10 +8,8 @@ using OneOf.Types;
 namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
-public class CurrencyService(KisDbContext dbContext) : ICurrencyService, IScopedService
-{
-    public CurrencyListModel Create(CurrencyCreateModel createModel)
-    {
+public class CurrencyService(KisDbContext dbContext) : ICurrencyService, IScopedService {
+    public CurrencyListModel Create(CurrencyCreateModel createModel) {
         var entity = createModel.ToEntity();
         dbContext.Currencies.Add(entity);
 
@@ -20,15 +18,14 @@ public class CurrencyService(KisDbContext dbContext) : ICurrencyService, IScoped
         return entity.ToModel();
     }
 
-    public IEnumerable<CurrencyListModel> ReadAll()
-    {
+    public IEnumerable<CurrencyListModel> ReadAll() {
         return dbContext.Currencies.ToList().ToModels();
     }
 
-    public OneOf<CurrencyListModel, NotFound> Update(int id, CurrencyCreateModel updateModel)
-    {
-        if (!dbContext.Currencies.Any(c => c.Id == id)) 
+    public OneOf<CurrencyListModel, NotFound> Update(int id, CurrencyCreateModel updateModel) {
+        if (!dbContext.Currencies.Any(c => c.Id == id)) {
             return new NotFound();
+        }
 
         var entity = updateModel.ToEntity();
         entity.Id = id;

@@ -101,7 +101,7 @@ public static partial class Mapper {
     }
 
     public static List<ContainerListModel> ToModels(this List<ContainerIntermediateModel> models) {
-        return [.. models.Select(m => m.ToModel())];
+        return [.. models.Select(static m => m.ToModel())];
     }
 
     public static partial ContainerTemplateListModel ToModel(this ContainerTemplateEntity entity);

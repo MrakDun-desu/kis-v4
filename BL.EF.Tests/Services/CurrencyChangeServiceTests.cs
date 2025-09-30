@@ -4,7 +4,6 @@ using FluentAssertions;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
 using KisV4.Common;
-using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;

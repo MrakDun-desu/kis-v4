@@ -8,6 +8,7 @@ using KisV4.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
+using KisV4.BL.EF.Helpers;
 
 namespace KisV4.BL.EF.Services;
 
@@ -15,24 +16,24 @@ namespace KisV4.BL.EF.Services;
 public class ContainerService(
     KisDbContext dbContext,
     TimeProvider timeProvider,
-    IUserService userService) : IContainerService, IScopedService
-{
+    IUserService userService) : IContainerService, IScopedService {
     public OneOf<Page<ContainerListModel>, Dictionary<string, string[]>> ReadAll(
         int? page,
         int? pageSize,
         bool? deleted,
-        int? pipeId)
-    {
+        int? pipeId) {
         var query = dbContext.Containers.AsQueryable();
-        if (deleted.HasValue) query = query.Where(c => c.Deleted == deleted.Value);
+        if (deleted.HasValue) {
+            query = query.Where(c => c.Deleted == deleted.Value);
+        }
 
-        if (pipeId.HasValue)
-        {
-            if (!dbContext.Pipes.Any(p => p.Id == pipeId))
+        if (pipeId.HasValue) {
+            if (!dbContext.Pipes.Any(p => p.Id == pipeId)) {
                 return new Dictionary<string, string[]>
                 {
                     { nameof(pipeId), [$"Pipe with id {pipeId} doesn't exist"] }
                 };
+            }
 
             query = query.Where(c => c.PipeId == pipeId.Value);
         }
@@ -41,6 +42,7 @@ public class ContainerService(
             .Include(c => c.StoreTransactionItems)
             .Include(c => c.Template).ThenInclude(ct => ct!.ContainedItem)
             .Include(c => c.Pipe)
+            .AsSplitQuery()
             .Select(c =>
                 new ContainerIntermediateModel(c,
                     c.StoreTransactionItems
@@ -53,29 +55,32 @@ public class ContainerService(
     }
 
     public OneOf<ContainerListModel, Dictionary<string, string[]>> Create(
-        ContainerCreateModel createModel, string userName)
-    {
+        ContainerCreateModel createModel, string userName) {
         var errors = new Dictionary<string, string[]>();
         var template = dbContext.ContainerTemplates.Find(createModel.TemplateId);
-        if (template is null)
+        if (template is null) {
             errors.AddItemOrCreate(
                 nameof(createModel.TemplateId),
                 $"Container template with id {createModel.TemplateId} doesn't exist"
             );
-        else if (template.Deleted)
+        } else if (template.Deleted) {
             errors.AddItemOrCreate(
                 nameof(createModel.TemplateId),
                 $"Container template with id {createModel.TemplateId} is currently marked as deleted"
             );
+        }
 
         var pipe = dbContext.Pipes.Find(createModel.PipeId);
-        if (pipe is null)
+        if (pipe is null) {
             errors.AddItemOrCreate(
                 nameof(createModel.PipeId),
                 $"Pipe with id {createModel.PipeId} doesn't exist"
             );
+        }
 
-        if (errors.Count != 0) return errors;
+        if (errors.Count != 0) {
+            return errors;
+        }
 
         var creationTime = timeProvider.GetUtcNow();
         var container = createModel.ToEntity();
@@ -83,12 +88,10 @@ public class ContainerService(
         container.OpenSince = creationTime;
         container.Pipe = pipe;
         container.StoreTransactionItems.Add(
-            new StoreTransactionItemEntity
-            {
+            new StoreTransactionItemEntity {
                 ItemAmount = template.Amount,
                 StoreItemId = template.ContainedItemId,
-                StoreTransaction = new StoreTransactionEntity
-                {
+                StoreTransaction = new StoreTransactionEntity {
                     Timestamp = creationTime,
                     TransactionReason = TransactionReason.AddingToStore,
                     ResponsibleUserId = userService.CreateOrGetId(userName)
@@ -102,17 +105,20 @@ public class ContainerService(
     }
 
     public OneOf<ContainerListModel, NotFound, Dictionary<string, string[]>> Patch(int id,
-        ContainerPatchModel updateModel)
-    {
+        ContainerPatchModel updateModel) {
         var container = dbContext.Containers.Find(id);
-        if (container is null) return new NotFound();
+        if (container is null) {
+            return new NotFound();
+        }
 
-        if (updateModel.PipeId.HasValue)
-            if (!dbContext.Pipes.Any(p => p.Id == updateModel.PipeId.Value))
+        if (updateModel.PipeId.HasValue) {
+            if (!dbContext.Pipes.Any(p => p.Id == updateModel.PipeId.Value)) {
                 return new Dictionary<string, string[]>
                 {
                     { nameof(updateModel.PipeId), [$"Pipe with id {updateModel.PipeId} doesn't exist"] }
                 };
+            }
+        }
 
         container.PipeId = updateModel.PipeId;
         // updating automatically restores entities from deletion
@@ -123,13 +129,14 @@ public class ContainerService(
         return Read(id);
     }
 
-    public OneOf<ContainerListModel, NotFound> Delete(int id, string userName)
-    {
+    public OneOf<ContainerListModel, NotFound> Delete(int id, string userName) {
         var container = dbContext.Containers
             .Include(c => c.Template)
             .SingleOrDefault(c => c.Id == id);
 
-        if (container is null) return new NotFound();
+        if (container is null) {
+            return new NotFound();
+        }
 
         var writeOffTime = timeProvider.GetUtcNow();
 
@@ -138,21 +145,20 @@ public class ContainerService(
             .Where(sti => !sti.Cancelled)
             .Sum(sti => sti.ItemAmount);
 
-        if (leftoverAmount > 0)
+        if (leftoverAmount > 0) {
             dbContext.StoreTransactionItems.Add(
-                new StoreTransactionItemEntity
-                {
+                new StoreTransactionItemEntity {
                     ItemAmount = -leftoverAmount,
                     StoreItemId = container.Template!.ContainedItemId,
                     StoreId = container.Id,
-                    StoreTransaction = new StoreTransactionEntity
-                    {
+                    StoreTransaction = new StoreTransactionEntity {
                         Timestamp = writeOffTime,
                         TransactionReason = TransactionReason.WriteOff,
                         ResponsibleUserId = userService.CreateOrGetId(userName)
                     }
                 }
             );
+        }
 
         container.Deleted = true;
         container.PipeId = null;
@@ -162,13 +168,13 @@ public class ContainerService(
         return Read(id);
     }
 
-    private ContainerListModel Read(int id)
-    {
+    private ContainerListModel Read(int id) {
         return dbContext.Containers
             .Where(c => c.Id == id)
             .Include(c => c.StoreTransactionItems)
             .Include(c => c.Template).ThenInclude(ct => ct!.ContainedItem)
             .Include(c => c.Pipe)
+            .AsSplitQuery()
             .Select(c =>
                 new ContainerIntermediateModel(c,
                     c.StoreTransactionItems

@@ -1,4 +1,5 @@
 using KisV4.BL.Common.Services;
+using KisV4.BL.EF.Helpers;
 using KisV4.Common;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;
@@ -235,7 +236,7 @@ public class SaleTransactionService(
         }
 
         // update all connected entities to be cancelled
-        var sth = _dbContext.SaleTransactionItems
+        _dbContext.SaleTransactionItems
             .Where(sti => sti.SaleTransactionId == id)
             .ExecuteUpdate(setters => setters.SetProperty(sti => sti.Cancelled, true));
         _dbContext.TransactionPrices

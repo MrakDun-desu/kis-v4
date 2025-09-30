@@ -7,8 +7,7 @@ namespace KisV4.DAL.EF.Entities;
 ///     Also includes the user that the transaction is registered to.
 /// </summary>
 [PrimaryKey(nameof(SaleTransactionId), nameof(UserId))]
-public record IncompleteTransactionEntity
-{
+public record IncompleteTransactionEntity {
     public int SaleTransactionId { get; init; }
 
     /// <summary>

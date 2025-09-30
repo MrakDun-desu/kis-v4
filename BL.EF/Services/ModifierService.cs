@@ -2,7 +2,6 @@ using KisV4.BL.Common.Services;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
-using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
@@ -39,17 +38,14 @@ public class ModifierService(KisDbContext dbContext)
             .Include(m => m.Composition)
             .SingleOrDefault(m => m.Id == id);
 
-        if (entity is null) {
-            return new NotFound();
-        }
-
-        return entity.ToModel();
+        return entity is null ? (OneOf<ModifierDetailModel, NotFound>)new NotFound() : (OneOf<ModifierDetailModel, NotFound>)entity.ToModel();
     }
 
     public OneOf<ModifierDetailModel, NotFound, Dictionary<string, string[]>> Update(int id, ModifierCreateModel updateModel) {
         var entity = dbContext.Modifiers.Find(id);
-        if (entity is null)
+        if (entity is null) {
             return new NotFound();
+        }
 
         if (!dbContext.SaleItems.Any(si => si.Id == updateModel
                 .ModificationTargetId)) {
@@ -73,7 +69,9 @@ public class ModifierService(KisDbContext dbContext)
 
     public OneOf<ModifierDetailModel, NotFound> Delete(int id) {
         var entity = dbContext.Modifiers.Find(id);
-        if (entity is null) return new NotFound();
+        if (entity is null) {
+            return new NotFound();
+        }
 
         dbContext.Modifiers.Update(entity);
         entity.Deleted = true;

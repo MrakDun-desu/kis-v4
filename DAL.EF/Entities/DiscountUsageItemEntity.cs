@@ -7,8 +7,7 @@ namespace KisV4.DAL.EF.Entities;
 ///     in a single currency.
 /// </summary>
 [PrimaryKey(nameof(DiscountUsageId), nameof(CurrencyId), nameof(SaleTransactionItemId))]
-public record DiscountUsageItemEntity
-{
+public record DiscountUsageItemEntity {
     public int DiscountUsageId { get; init; }
 
     /// <summary>

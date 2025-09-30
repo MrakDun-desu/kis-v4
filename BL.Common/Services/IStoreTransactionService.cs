@@ -4,13 +4,12 @@ using OneOf;
 
 namespace KisV4.BL.Common.Services;
 
-public interface IStoreTransactionService
-{
+public interface IStoreTransactionService {
     OneOf<Page<StoreTransactionListModel>, Dictionary<string, string[]>> ReadAll(
-        int? page, 
-        int? pageSize, 
+        int? page,
+        int? pageSize,
         DateTimeOffset? startDate,
-        DateTimeOffset? endDate, 
+        DateTimeOffset? endDate,
         bool? cancelled);
 
     IEnumerable<StoreTransactionListModel> ReadSelfCancellable(

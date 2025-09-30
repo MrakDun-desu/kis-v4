@@ -6,8 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 ///     Represents a stock taking for a cash-box.
 /// </summary>
 [PrimaryKey(nameof(Timestamp), nameof(CashBoxId))]
-public record StockTakingEntity
-{
+public record StockTakingEntity {
     [Precision(0)] public DateTimeOffset Timestamp { get; set; }
 
     public int CashBoxId { get; init; }

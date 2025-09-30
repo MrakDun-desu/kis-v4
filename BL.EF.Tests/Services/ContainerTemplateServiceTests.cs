@@ -66,7 +66,7 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
 
         // assert
         var expectedModels = _referenceDbContext.ContainerTemplates
-            .Include(ct => ct.ContainedItem)
+            .Include(static ct => ct.ContainedItem)
             .ToList().ToModels();
 
         readResult.Should().HaveValue(expectedModels);
@@ -103,8 +103,8 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
 
         // assert
         var expectedModels = _referenceDbContext.ContainerTemplates
-            .Where(ct => ct.Deleted)
-            .Include(ct => ct.ContainedItem)
+            .Where(static ct => ct.Deleted)
+            .Include(static ct => ct.ContainedItem)
             .ToList().ToModels();
 
         readResult.Should().HaveValue(expectedModels);
@@ -372,8 +372,8 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
 
         // assert
         var updatedEntity = _referenceDbContext.ContainerTemplates.Find(testTemplate.Id);
-        updatedEntity.Should().BeEquivalentTo(testTemplate, opts =>
-            opts.Excluding(ct => ct.Instances).Excluding(ct => ct.ContainedItem)
+        updatedEntity.Should().BeEquivalentTo(testTemplate, static opts =>
+            opts.Excluding(static ct => ct.Instances).Excluding(static ct => ct.ContainedItem)
         );
         updateResult.Should().HaveValue(new Dictionary<string, string[]>
         {
@@ -412,8 +412,8 @@ public class ContainerTemplateServiceTests : IClassFixture<KisDbContextFactory>,
         var deletedEntity = _referenceDbContext.ContainerTemplates.Find(testTemplate.Id);
         testTemplate.Deleted = true;
         deleteResult.Should().HaveValue(testTemplate.ToModel());
-        deletedEntity.Should().BeEquivalentTo(testTemplate, opts =>
-            opts.Excluding(ct => ct.ContainedItem));
+        deletedEntity.Should().BeEquivalentTo(testTemplate, static opts =>
+            opts.Excluding(static ct => ct.ContainedItem));
     }
 
     [Fact]

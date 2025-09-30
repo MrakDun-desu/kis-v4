@@ -7,8 +7,7 @@ namespace KisV4.DAL.EF.Entities;
 ///     Includes the store item that the sale item is composed of, and its amount.
 /// </summary>
 [PrimaryKey(nameof(SaleItemId), nameof(StoreItemId))]
-public record CompositionEntity
-{
+public record CompositionEntity {
     public int SaleItemId { get; init; }
 
     /// <summary>

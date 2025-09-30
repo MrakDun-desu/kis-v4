@@ -17,7 +17,10 @@ public class UserService(
     IDiscountUsageService discountUsageService) : IScopedService, IUserService {
     public int CreateOrGetId(string userName) {
         var user = dbContext.UserAccounts.SingleOrDefault(ua => ua.UserName == userName);
-        if (user is not null) return user.Id;
+        if (user is not null) {
+            return user.Id;
+        }
+
         user = new UserAccountEntity {
             UserName = userName
         };
@@ -26,7 +29,11 @@ public class UserService(
         return user.Id;
     }
 
-    public OneOf<Page<UserListModel>, Dictionary<string, string[]>> ReadAll(int? page, int? pageSize, bool? deleted) {
+    public OneOf<Page<UserListModel>, Dictionary<string, string[]>> ReadAll(
+        int? page,
+        int? pageSize,
+        bool? deleted
+    ) {
         var query = dbContext.UserAccounts.AsQueryable();
         if (deleted is { } realDeleted) {
             query = query.Where(u => u.Deleted == realDeleted);
@@ -40,8 +47,9 @@ public class UserService(
         var user = dbContext.UserAccounts.AsNoTracking()
             .SingleOrDefault(u => u.Id == id);
 
-        if (user is null)
+        if (user is null) {
             return new NotFound();
+        }
 
         var totalCurrencyChanges = dbContext.CurrencyChanges
             .Include(cc => cc.Currency)
@@ -56,16 +64,16 @@ public class UserService(
         var currencyChangesPage =
             currencyChangeService.ReadAll(null, null, id, false, null, null);
 
-        if (currencyChangesPage.IsT1)
+        if (currencyChangesPage.IsT1) {
             return currencyChangesPage.AsT1;
+        }
 
         var discountUsagesPage =
             discountUsageService.ReadAll(null, null, null, id);
 
-        if (discountUsagesPage.IsT1)
-            return currencyChangesPage.AsT1;
-
-        return new UserIntermediateModel(
+        return discountUsagesPage.IsT1
+            ? (OneOf<UserDetailModel, NotFound, Dictionary<string, string[]>>)currencyChangesPage.AsT1
+            : (OneOf<UserDetailModel, NotFound, Dictionary<string, string[]>>)new UserIntermediateModel(
             user,
             [.. totalCurrencyChanges],
             currencyChangesPage.AsT0,

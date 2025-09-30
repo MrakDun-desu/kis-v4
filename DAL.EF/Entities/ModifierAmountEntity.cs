@@ -6,8 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 ///     Represents an application of a modifier on a sale transaction item.
 /// </summary>
 [PrimaryKey(nameof(ModifierId), nameof(SaleTransactionItemId))]
-public record ModifierAmountEntity
-{
+public record ModifierAmountEntity {
     public int ModifierId { get; set; }
 
     /// <summary>

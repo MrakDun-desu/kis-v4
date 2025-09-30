@@ -1,4 +1,5 @@
 using KisV4.BL.Common.Services;
+using KisV4.BL.EF.Helpers;
 using KisV4.Common;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
@@ -108,8 +109,9 @@ public class StoreItemService(KisDbContext dbContext)
 
     public OneOf<StoreItemDetailModel, NotFound> Read(int id) {
         var entity = dbContext.StoreItems.Find(id);
-        if (entity is null)
+        if (entity is null) {
             return new NotFound();
+        }
 
         var currentCosts = dbContext.CurrencyCosts
             .Where(cc => cc.ProductId == id)

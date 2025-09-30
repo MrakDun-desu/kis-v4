@@ -1,7 +1,6 @@
 namespace KisV4.Common.Enums;
 
-public enum TransactionReason
-{
+public enum TransactionReason {
     AddingToStore = 1,
     MovingStores = 2,
     Sale = 3,

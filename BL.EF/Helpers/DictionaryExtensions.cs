@@ -1,4 +1,4 @@
-namespace KisV4.BL.EF.Services;
+namespace KisV4.BL.EF.Helpers;
 
 public static class DictionaryExtensions {
     public static void AddItemOrCreate<TKey, TValue>(

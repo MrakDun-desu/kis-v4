@@ -8,10 +8,8 @@ using OneOf.Types;
 namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
-public class PipeService(KisDbContext dbContext) : IPipeService, IScopedService
-{
-    public PipeListModel Create(PipeCreateModel createModel)
-    {
+public class PipeService(KisDbContext dbContext) : IPipeService, IScopedService {
+    public PipeListModel Create(PipeCreateModel createModel) {
         var entity = createModel.ToEntity();
         dbContext.Pipes.Add(entity);
 
@@ -20,16 +18,15 @@ public class PipeService(KisDbContext dbContext) : IPipeService, IScopedService
         return entity.ToModel();
     }
 
-    public List<PipeListModel> ReadAll()
-    {
+    public List<PipeListModel> ReadAll() {
         return dbContext.Pipes.ToList().ToModels();
     }
 
-    public OneOf<PipeListModel, NotFound> Update(int id, PipeCreateModel updateModel)
-    {
+    public OneOf<PipeListModel, NotFound> Update(int id, PipeCreateModel updateModel) {
         var entity = dbContext.Pipes.Find(id);
-        if (entity is null)
+        if (entity is null) {
             return new NotFound();
+        }
 
         updateModel.UpdateEntity(entity);
 
@@ -39,13 +36,13 @@ public class PipeService(KisDbContext dbContext) : IPipeService, IScopedService
         return entity.ToModel();
     }
 
-    public OneOf<Success, NotFound, string> Delete(int id)
-    {
+    public OneOf<Success, NotFound, string> Delete(int id) {
         var entity = dbContext.Pipes.Find(id);
-        if (entity is null) return new NotFound();
+        if (entity is null) {
+            return new NotFound();
+        }
 
-        if (dbContext.Containers.Any(ct => ct.PipeId == id))
-        {
+        if (dbContext.Containers.Any(ct => ct.PipeId == id)) {
             return $"Pipe with id {id} cannot be deleted, currently has a " +
                    $"container active";
         }
