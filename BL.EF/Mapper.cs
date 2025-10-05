@@ -69,6 +69,7 @@ public static partial class Mapper {
     }
 
     public static partial List<SaleItemListModel> ToModels(this List<SaleItemEntity> entities);
+    public static partial SaleItemListModel ToListModel(this SaleItemEntity entities);
 
     public static partial StoreEntity ToEntity(this StoreCreateModel model);
     public static partial List<StoreListModel> ToModels(this List<StoreEntity> entities);
@@ -78,8 +79,9 @@ public static partial class Mapper {
             Id: model.Entity.Id,
             Name: model.Entity.Name,
             Deleted: model.Entity.Deleted,
-            model.StoreItemAmounts,
-            model.StoreTransactionItems
+            StoreItemAmounts: model.StoreItemAmounts,
+            SaleItemAmounts: model.SaleItemAmounts,
+            StoreTransactions: model.StoreTransactions
         );
     }
 
@@ -202,7 +204,8 @@ public record DiscountIntermediateModel(
 public record StoreIntermediateModel(
     StoreEntity Entity,
     Page<StoreItemAmountListModel> StoreItemAmounts,
-    Page<StoreTransactionItemListModel> StoreTransactionItems
+    Page<SaleItemAmountListModel> SaleItemAmounts,
+    Page<StoreTransactionListModel> StoreTransactions
 );
 
 public record StoreItemIntermediateModel(

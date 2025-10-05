@@ -17,3 +17,9 @@ public record StoreItemAmountListModel(
     StoreItemListModel StoreItem,
     decimal Amount
 );
+
+public record SaleItemAmountListModel(
+    int StoreId,
+    SaleItemListModel SaleItem,
+    int Amount
+);

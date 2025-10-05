@@ -9,6 +9,7 @@ public record SaleTransactionCreateModel(
 
 public record SaleTransactionListModel(
     int Id,
+    string? Note,
     UserListModel ResponsibleUser,
     DateTimeOffset Timestamp,
     bool Cancelled
@@ -16,6 +17,7 @@ public record SaleTransactionListModel(
 
 public record SaleTransactionDetailModel(
     int Id,
+    string? Note,
     UserListModel ResponsibleUser,
     DateTimeOffset Timestamp,
     bool Cancelled,

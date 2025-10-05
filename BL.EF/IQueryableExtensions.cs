@@ -18,29 +18,16 @@ public static class IQueryableExtensions {
             );
         }
 
-        if (pageSize > Constants.MaxPageSize) {
-            errors.AddItemOrCreate(
-                nameof(pageSize), $"Page size exceeds the maximum {Constants.MaxPageSize}. Received value: {pageSize}"
-            );
+        pageSize = Math.Min(pageSize, Constants.MaxPageSize);
+
+        if (errors.Count > 0) {
+            return errors;
         }
 
         var totalCount = source.Count();
         var pageCount = (totalCount / pageSize) + 1;
-        switch (totalCount) {
-            case > 0 when page > pageCount:
-                errors.AddItemOrCreate(
-                        nameof(page),
-                        $"Page is required to be lower or equal to page count ({pageCount}). Received value: {page}"
-                        );
-                break;
-            case 0:
-                return new Page<TTarget>([], new PageMeta(0, 0, 0, 0, 0, 0));
-            default:
-                break;
-        }
-
-        if (errors.Count > 0) {
-            return errors;
+        if (totalCount == 0) {
+            return new Page<TTarget>([], new PageMeta(0, 0, 0, 0, 0, 0));
         }
 
         var skipped = (page - 1) * pageSize;

@@ -296,6 +296,7 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
         createResult.IsT0.Should().BeTrue();
         createResult.AsT0.Should().BeEquivalentTo(new SaleTransactionDetailModel(
                     1,
+                    null,
                     new UserListModel(0, "Some user", false),
                     _timeProvider.GetUtcNow(),
                     false,
@@ -359,6 +360,7 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
                     [
                         new StoreTransactionListModel(
                                 2,
+                                null,
                                 new UserListModel(1, "Some user", false),
                                 _timeProvider.GetUtcNow(),
                                 false,
@@ -637,6 +639,7 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
         output.IsT0.Should().BeTrue();
         output.AsT0.Should().BeEquivalentTo(new SaleTransactionDetailModel(
                 1,
+                null,
                 new UserListModel(2, "Test user", false),
                 _timeProvider.GetUtcNow(),
                 false,
@@ -741,6 +744,7 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
             Data: [
                 new SaleTransactionListModel(
                     2,
+                    null,
                     new UserListModel(2, "Test user 2", false),
                     _timeProvider.GetUtcNow().AddDays(-20),
                     false
@@ -793,6 +797,7 @@ public class SaleTransactionServiceTests : IDisposable, IAsyncDisposable {
         output.Should().BeEquivalentTo([
             new SaleTransactionListModel(
                 1,
+                null,
                 new UserListModel(1, "Test user 1", false),
                 _timeProvider.GetUtcNow().AddMinutes(-10),
                 false
