@@ -12,6 +12,7 @@ public record StoreTransactionCreateModel(
 
 public record StoreTransactionListModel(
     int Id,
+    string? Note,
     UserListModel ResponsibleUser,
     DateTimeOffset Timestamp,
     bool Cancelled,
@@ -21,6 +22,7 @@ public record StoreTransactionListModel(
 
 public record StoreTransactionDetailModel(
     int Id,
+    string? Note,
     UserListModel ResponsibleUser,
     DateTimeOffset Timestamp,
     bool Cancelled,

@@ -21,17 +21,9 @@ public class SaleItemService(KisDbContext dbContext, TimeProvider timeProvider)
         bool? showOnWeb
     ) {
         var errors = new Dictionary<string, string[]>();
-        // can be left here until filtering by store is implemented
-        // if (storeId.HasValue && !dbContext.Stores.Any(s => s.Id == storeId))
-        // {
-        //     errors.AddItemOrCreate(
-        //         nameof(storeId),
-        //         $"Store with id {storeId} doesn't exist"
-        //     );
-        // }
 
-        if (categoryId.HasValue && !dbContext.ProductCategories
-                .Any(cat => cat.Id == categoryId)) {
+        if (categoryId is { } categoryIdReal && !dbContext.ProductCategories
+                .Any(cat => cat.Id == categoryIdReal)) {
             errors.AddItemOrCreate(
                 nameof(categoryId),
                 $"Category with id {categoryId} doesn't exist"

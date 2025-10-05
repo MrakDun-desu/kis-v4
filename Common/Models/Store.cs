@@ -9,5 +9,5 @@ public record StoreDetailModel(
     string Name,
     bool Deleted,
     Page<StoreItemAmountListModel> StoreItemAmounts,
-    Page<StoreTransactionItemListModel> StoreTransactionItems
+    Page<SaleItemAmountListModel> SaleItemAmounts
 );

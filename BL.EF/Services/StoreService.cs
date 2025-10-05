@@ -8,7 +8,11 @@ using OneOf.Types;
 namespace KisV4.BL.EF.Services;
 
 // ReSharper disable once UnusedType.Global
-public class StoreService(KisDbContext dbContext) : IStoreService, IScopedService {
+public class StoreService(
+        KisDbContext dbContext,
+        StoreItemAmountService storeItemAmountService,
+        SaleItemAmountService saleItemAmountService
+        ) : IStoreService, IScopedService {
     public StoreDetailModel Create(StoreCreateModel createModel) {
         var entity = createModel.ToEntity();
 
@@ -23,12 +27,12 @@ public class StoreService(KisDbContext dbContext) : IStoreService, IScopedServic
     }
 
     public bool Update(int id, StoreCreateModel updateModel) {
-        if (dbContext.Stores.Any(s => s.Id == id)) {
+        var entity = dbContext.Stores.Find(id);
+        if (entity is null) {
             return false;
         }
 
-        var entity = updateModel.ToEntity();
-        entity.Id = id;
+        updateModel.UpdateEntity(entity);
 
         dbContext.Stores.Update(entity);
         dbContext.SaveChanges();
@@ -49,21 +53,14 @@ public class StoreService(KisDbContext dbContext) : IStoreService, IScopedServic
     }
 
     public OneOf<StoreDetailModel, NotFound> Read(int id) {
-        throw new NotImplementedException();
-        // TODO:
-        // Implement the services to get the pages of store items amounts and store transaction
-        // items, then use them here
-        //
-        // var storeEntity = dbContext.Stores.Find(id);
-        // if (storeEntity is null) {
-        //     return new NotFound();
-        // }
-        //
-        // return new StoreIntermediateModel(
-        //         storeEntity,
-        //         Page<StoreItemAmountListModel>.Empty,
-        //         Page<StoreTransactionItemListModel>.Empty
-        //         )
-        //     .ToModel();
+        var storeEntity = dbContext.Stores.Find(id);
+        return storeEntity is null
+            ? new NotFound()
+            : new StoreIntermediateModel(
+                storeEntity,
+                storeItemAmountService.ReadAll(id, null, null, null).AsT0,
+                saleItemAmountService.ReadAll(id, null, null, null).AsT0
+            )
+            .ToModel();
     }
 }

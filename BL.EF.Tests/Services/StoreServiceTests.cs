@@ -16,7 +16,9 @@ public class StoreServiceTests : IDisposable, IAsyncDisposable {
 
     public StoreServiceTests(KisDbContextFactory dbContextFactory) {
         (_referenceDbContext, _normalDbContext) = dbContextFactory.CreateDbContextAndReference();
-        _storeService = new StoreService(_normalDbContext);
+        var storeItemAmountService = new StoreItemAmountService(_normalDbContext);
+        var saleItemAmountService = new SaleItemAmountService(_normalDbContext);
+        _storeService = new StoreService(_normalDbContext, storeItemAmountService, saleItemAmountService);
     }
 
     public async ValueTask DisposeAsync() {
@@ -36,7 +38,7 @@ public class StoreServiceTests : IDisposable, IAsyncDisposable {
         var createModel = new StoreCreateModel("Some store");
         var createdModel = _storeService.Create(createModel);
 
-        var createdEntity = _referenceDbContext.Stores.Find(createdModel);
+        var createdEntity = _referenceDbContext.Stores.Find(createdModel.Id);
         var expectedEntity = new StoreEntity { Id = createdModel.Id, Name = createModel.Name };
         createdEntity.Should().BeEquivalentTo(expectedEntity);
     }
@@ -54,34 +56,33 @@ public class StoreServiceTests : IDisposable, IAsyncDisposable {
 
         readModels.Should().BeEquivalentTo(mappedModels);
     }
-    //
-    // [Fact]
-    // public void Update_UpdatesName_WhenExistingId()
-    // {
-    //     const string oldName = "Some store";
-    //     const string newName = "Some store 2";
-    //     var testStore1 = new StoreEntity { Name = oldName };
-    //     var insertedEntity = _dbContext.Stores.Add(testStore1);
-    //     _dbContext.SaveChanges();
-    //     var updateModel = new StoreUpdateModel(newName);
-    //
-    //     var updateSuccess = _storeService.Update(insertedEntity.Entity.Id, updateModel);
-    //
-    //     updateSuccess.Should().BeTrue();
-    //     var updatedEntity = _dbContext.Stores.Find(insertedEntity.Entity.Id);
-    //     var expectedEntity = insertedEntity.Entity with { Name = newName };
-    //     updatedEntity.Should().BeEquivalentTo(expectedEntity);
-    // }
-    //
-    // [Fact]
-    // public void Update_ReturnsFalse_WhenNotFound()
-    // {
-    //     var updateModel = new StoreUpdateModel("Some store");
-    //
-    //     var updateSuccess = _storeService.Update(42, updateModel);
-    //
-    //     updateSuccess.Should().BeFalse();
-    // }
+
+    [Fact]
+    public void Update_UpdatesName_WhenExistingId() {
+        const string oldName = "Some store";
+        const string newName = "Some store 2";
+        var testStore1 = new StoreEntity { Name = oldName };
+        _referenceDbContext.Stores.Add(testStore1);
+        _referenceDbContext.SaveChanges();
+        _referenceDbContext.ChangeTracker.Clear();
+        var updateModel = new StoreCreateModel(newName);
+
+        var updateSuccess = _storeService.Update(testStore1.Id, updateModel);
+
+        updateSuccess.Should().BeTrue();
+        var updatedEntity = _referenceDbContext.Stores.Find(testStore1.Id);
+        var expectedEntity = testStore1 with { Name = newName };
+        updatedEntity.Should().BeEquivalentTo(expectedEntity);
+    }
+
+    [Fact]
+    public void Update_ReturnsFalse_WhenNotFound() {
+        var updateModel = new StoreCreateModel("Some store");
+
+        var updateSuccess = _storeService.Update(42, updateModel);
+
+        updateSuccess.Should().BeFalse();
+    }
 
     [Fact]
     public void Delete_Deletes_WhenExistingId() {

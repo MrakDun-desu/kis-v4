@@ -390,6 +390,7 @@ public class StoreTransactionServiceTests : IDisposable, IAsyncDisposable {
         readResult.Should().HaveValue(
             new StoreTransactionDetailModel(
                 testTransaction1.Id,
+                null,
                 testTransaction1.ResponsibleUser.ToListModel(),
                 testTransaction1.Timestamp,
                 testTransaction1.Cancelled,
@@ -429,6 +430,7 @@ public class StoreTransactionServiceTests : IDisposable, IAsyncDisposable {
         createResult.IsT0.Should().BeTrue();
         createResult.Should().HaveValue(new StoreTransactionDetailModel(
             1,
+            null,
             testUser.ToListModel(),
             creationTime,
             false,
@@ -531,6 +533,7 @@ public class StoreTransactionServiceTests : IDisposable, IAsyncDisposable {
         deleteResult.Should().HaveValue(
             new StoreTransactionDetailModel(
                 testTransaction1.Id,
+                null,
                 testTransaction1.ResponsibleUser.ToListModel(),
                 testTransaction1.Timestamp,
                 true,
