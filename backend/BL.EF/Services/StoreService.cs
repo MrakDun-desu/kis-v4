@@ -10,8 +10,8 @@ namespace KisV4.BL.EF.Services;
 // ReSharper disable once UnusedType.Global
 public class StoreService(
         KisDbContext dbContext,
-        StoreItemAmountService storeItemAmountService,
-        SaleItemAmountService saleItemAmountService
+        IStoreItemAmountService storeItemAmountService,
+        ISaleItemAmountService saleItemAmountService
         ) : IStoreService, IScopedService {
     public StoreDetailModel Create(StoreCreateModel createModel) {
         var entity = createModel.ToEntity();
