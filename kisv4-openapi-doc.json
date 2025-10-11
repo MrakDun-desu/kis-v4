@@ -5024,7 +5024,7 @@
         "type": "http",
         "description": "JWT Authorization header using the bearer scheme",
         "scheme": "bearer",
-        "bearerFormat": "JSON Web Token"
+        "bearerFormat": "JWT"
       }
     }
   },

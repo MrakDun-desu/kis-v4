@@ -45,8 +45,4 @@
         <ProjectReference Include="..\DAL.EF\DAL.EF.csproj" />
     </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="npm run generate-fetch" WorkingDirectory="../../frontend/" />
-  </Target>
-
 </Project>

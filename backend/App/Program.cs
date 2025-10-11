@@ -43,7 +43,7 @@ builder.Services.AddOpenApi(opts => {
                 Type = SecuritySchemeType.Http,
                 In = ParameterLocation.Header,
                 Scheme = "bearer",
-                BearerFormat = "JSON Web Token"
+                BearerFormat = "JWT"
             },
         };
 
