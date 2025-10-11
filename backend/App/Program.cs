@@ -1,4 +1,5 @@
 using System.Data;
+using System.Reflection;
 using KisV4.App.Configuration;
 using KisV4.App.Endpoints;
 using KisV4.BL.EF;
@@ -64,17 +65,14 @@ builder.Services.AddOpenApi(opts => {
 });
 
 // Database
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (connectionString is not null) {
-    builder.Services.AddEntityFrameworkDAL(connectionString);
+if (Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider") {
+    // if just running through the document generator, add empty dbContext
+    builder.Services.AddDbContext<KisDbContext>();
 } else {
-    // connection string needs to be null sometimes (when generating the OpenAPI document, for some
-    // reason it runs the whole program during build without access to any configuration)
-    // so this here is to handle that case, it should only happen in development
-    if (!builder.Environment.IsDevelopment()) {
-        throw new NoNullAllowedException("Database connection string");
-    }
-    builder.Services.AddDbContext<KisDbContext>(options => options.UseInMemoryDatabase("TestDb"));
+    // if running properly, add the database from config
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+            ?? throw new NoNullAllowedException("Database connection string");
+    builder.Services.AddEntityFrameworkDAL(connectionString);
 }
 builder.Services.AddEntityFrameworkBL();
 
