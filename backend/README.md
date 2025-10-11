@@ -8,14 +8,12 @@ school club Kachna at FIT BUT.
 
 Dependencies: .NET 9, Docker
 
-To setup the local database, .NET tool and dotnet-ef is required. Before testing, install this tool
-by running:
+To setup the local database, installing necesary .NET tools is required. The tools are set up for
+the workspace, so just run following to install them:
 
 ```bash
-dotnet tool install --global dotnet-ef
+dotnet tool restore
 ```
-
-If you're using Linux, you might also need to add the path to your .NET tool to the `$PATH` variable.
 
 This API doesn't provide authentication, it expects to be authenticated against a different service.
 To emulate this, .NET provides a local tool to generate JWT tokens for testing. You can generate a
@@ -25,7 +23,7 @@ token by running:
 dotnet user-jwts create -p App --role admin
 ```
 
-Copy the output after the `Token: ` to pass it to Swagger for authentication.
+Copy the output after the `Token: ` to pass it to the API for authentication.
 
 ## Running locally
 
@@ -42,11 +40,10 @@ dotnet ef database update --project DAL.EF --startup-project App
 ```
 
 After the database has successfully been migrated, the local program should function correctly. Run
-the project with `dotnet run` and the API should be live at `localhost:5242`. The API is set to only
-allow authenticated users, so this page will not work - to test the API, go to
-`localhost:5242/swagger`.
+the project with `dotnet run` and the API should be live at `localhost:5242`.
+To test the API, go to `localhost:5242/scalar`.
 
-To authenticate, click the "Authorize" button and paste in the generated JWT token. After that, all
-endpoints should function.
+To authenticate, in the Authentication section of the page, select "Bearer" as the Auth Type. Then
+paste the generated user JWT into the "Token" field.
 
 

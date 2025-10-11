@@ -1,84 +1,10 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "App | v1",
+    "title": "KISv4 API",
     "version": "1.0.0"
   },
   "paths": {
-    "/images": {
-      "post": {
-        "tags": [
-          "Images"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "required": [
-                  "image"
-                ],
-                "type": "object",
-                "properties": {
-                  "image": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
-      }
-    },
-    "/images/{filename}": {
-      "get": {
-        "tags": [
-          "Images"
-        ],
-        "operationId": "ImagesRead",
-        "parameters": [
-          {
-            "name": "filename",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
-      }
-    },
     "/cashboxes": {
       "get": {
         "tags": [
@@ -1440,6 +1366,80 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/images": {
+      "post": {
+        "tags": [
+          "Images"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "image"
+                ],
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/images/{filename}": {
+      "get": {
+        "tags": [
+          "Images"
+        ],
+        "operationId": "ImagesRead",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
           "404": {
             "description": "Not Found"
           }
@@ -5030,9 +5030,6 @@
   },
   "tags": [
     {
-      "name": "Images"
-    },
-    {
       "name": "CashBoxes"
     },
     {
@@ -5061,6 +5058,9 @@
     },
     {
       "name": "DiscountUsages"
+    },
+    {
+      "name": "Images"
     },
     {
       "name": "Modifiers"

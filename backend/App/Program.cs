@@ -33,29 +33,30 @@ builder.Services.AddAuthorizationBuilder()
 
 // OpenAPI
 builder.Services.AddOpenApi(opts => {
-    opts.AddDocumentTransformer((doc, ctx, _) => {
-        var requirements = new Dictionary<string, OpenApiSecurityScheme> {
-            ["Bearer"] = new OpenApiSecurityScheme {
+    opts.AddDocumentTransformer((doc, _, _) => {
+        doc.Info.Title = "KISv4 API";
+        doc.Components ??= new OpenApiComponents();
+        doc.Components.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme> {
+            ["Bearer"] = new() {
                 Name = "Bearer",
                 Description = "JWT Authorization header using the bearer scheme",
                 Type = SecuritySchemeType.Http,
                 In = ParameterLocation.Header,
                 Scheme = "bearer",
                 BearerFormat = "JSON Web Token"
-            }
+            },
         };
-        doc.Components ??= new OpenApiComponents();
-        doc.Components.SecuritySchemes = requirements;
 
+        var requirement = new OpenApiSecurityRequirement {
+            [new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme,
+                }
+            }] = Array.Empty<string>()
+        };
         foreach (var op in doc.Paths.Values.SelectMany(path => path.Operations)) {
-            op.Value.Security.Add(new OpenApiSecurityRequirement {
-                [new OpenApiSecurityScheme {
-                    Reference = new OpenApiReference {
-                        Id = "Bearer",
-                        Type = ReferenceType.SecurityScheme
-                    }
-                }] = Array.Empty<string>()
-            });
+            op.Value.Security.Add(requirement);
         }
 
         return Task.CompletedTask;
@@ -88,8 +89,6 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapOpenApi().AllowAnonymous();
-app.MapScalarApiReference().AllowAnonymous();
 
 // Endpoints
 CashBoxes.MapEndpoints(app);
@@ -113,5 +112,9 @@ StoreItems.MapEndpoints(app);
 StoreTransactions.MapEndpoints(app);
 Stores.MapEndpoints(app);
 Users.MapEndpoints(app);
+
+// OpenAPI
+app.MapOpenApi().AllowAnonymous();
+app.MapScalarApiReference().AllowAnonymous();
 
 app.Run();
