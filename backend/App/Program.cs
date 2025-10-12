@@ -33,6 +33,14 @@ builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
 // OpenAPI
+var bearerRequirement = new OpenApiSecurityRequirement {
+    [new OpenApiSecurityScheme {
+        Reference = new OpenApiReference {
+            Id = "Bearer",
+            Type = ReferenceType.SecurityScheme,
+        }
+    }] = Array.Empty<string>()
+};
 builder.Services.AddOpenApi(opts => {
     opts.AddDocumentTransformer((doc, _, _) => {
         doc.Info.Title = "KISv4 API";
@@ -47,19 +55,12 @@ builder.Services.AddOpenApi(opts => {
                 BearerFormat = "JWT"
             },
         };
-
-        var requirement = new OpenApiSecurityRequirement {
-            [new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
-                    Id = "Bearer",
-                    Type = ReferenceType.SecurityScheme,
-                }
-            }] = Array.Empty<string>()
-        };
-        foreach (var op in doc.Paths.Values.SelectMany(path => path.Operations)) {
-            op.Value.Security.Add(requirement);
+        return Task.CompletedTask;
+    });
+    opts.AddOperationTransformer((op, ctx, _) => {
+        if (ctx.Description.ActionDescriptor.EndpointMetadata.OfType<IAuthorizeData>().Any()) {
+            op.Security.Add(bearerRequirement);
         }
-
         return Task.CompletedTask;
     });
 });

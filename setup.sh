@@ -91,7 +91,7 @@ migrate_db() {
 
 run_backend() {
     migrate_db
-    build_backend
+    # no need to build the backend because migration already builds it
 
     echo "Running backend in dev mode..."
     cd "$BASE_DIR/backend"
