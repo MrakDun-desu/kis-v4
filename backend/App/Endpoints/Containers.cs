@@ -13,14 +13,10 @@ public static class Containers {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("containers");
         group.MapGet(string.Empty, ReadAll)
-            .WithName(ReadAllRouteName)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPost(string.Empty, Create)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPatch("{id:int}", Update)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapDelete("{id:int}", Delete)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+            .WithName(ReadAllRouteName);
+        group.MapPost(string.Empty, Create);
+        group.MapPatch("{id:int}", Update);
+        group.MapDelete("{id:int}", Delete);
     }
 
     private static Results<Ok<Page<ContainerListModel>>, ValidationProblem> ReadAll(

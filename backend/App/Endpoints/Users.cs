@@ -9,10 +9,8 @@ namespace KisV4.App.Endpoints;
 public static class Users {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("users");
-        group.MapGet(string.Empty, ReadAll)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapGet("{id:int}", Read)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapGet(string.Empty, ReadAll);
+        group.MapGet("{id:int}", Read);
     }
 
     private static Results<Ok<Page<UserListModel>>, ValidationProblem> ReadAll(

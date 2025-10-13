@@ -10,15 +10,11 @@ public static class Pipes {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("pipes");
-        group.MapPost(string.Empty, Create)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPost(string.Empty, Create);
         group.MapGet(string.Empty, ReadAll)
-            .WithName(ReadAllRouteName)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPut("{id:int}", Update)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapDelete("{id:int}", Delete)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+            .WithName(ReadAllRouteName);
+        group.MapPut("{id:int}", Update);
+        group.MapDelete("{id:int}", Delete);
     }
 
     private static CreatedAtRoute<PipeListModel> Create(

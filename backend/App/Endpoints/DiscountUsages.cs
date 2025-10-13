@@ -14,12 +14,9 @@ public static class DiscountUsages {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("discount-usages");
         group.MapGet(string.Empty, ReadAll)
-            .WithName(ReadAllRouteName)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPost(string.Empty, Create)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapGet("{id:int}", Read)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+            .WithName(ReadAllRouteName);
+        group.MapPost(string.Empty, Create);
+        group.MapGet("{id:int}", Read);
     }
 
     private static Results<Ok<Page<DiscountUsageListModel>>, ValidationProblem> ReadAll(

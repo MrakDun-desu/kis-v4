@@ -11,12 +11,10 @@ public static class Images {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         // ignoring anti-forgery for now, maybe include it in the future?
-        routeBuilder.MapPost("images", Upload).DisableAntiforgery()
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        routeBuilder.MapPost("images", Upload).DisableAntiforgery();
         routeBuilder.MapGet("images/{filename}", Download)
             .DisableAntiforgery()
-            .WithName(ReadRouteName)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+            .WithName(ReadRouteName);
     }
 
     private static Results<CreatedAtRoute, ValidationProblem> Upload(

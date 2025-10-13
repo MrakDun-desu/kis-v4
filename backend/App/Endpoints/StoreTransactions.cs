@@ -12,17 +12,12 @@ public static class StoreTransactions {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("store-transactions");
-        group.MapGet(string.Empty, ReadAll)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapGet("self-cancellable", ReadSelfCancellable)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPost(string.Empty, Create)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapGet(string.Empty, ReadAll);
+        group.MapGet("self-cancellable", ReadSelfCancellable);
+        group.MapPost(string.Empty, Create);
         group.MapGet("{id:int}", Read)
-            .WithName(ReadRouteName)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapDelete("{id:int}", Delete)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+            .WithName(ReadRouteName);
+        group.MapDelete("{id:int}", Delete);
     }
 
     private static Results<Ok<Page<StoreTransactionListModel>>, ValidationProblem> ReadAll(

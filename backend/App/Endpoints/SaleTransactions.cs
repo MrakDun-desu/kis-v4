@@ -12,21 +12,14 @@ public static class SaleTransactions {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("sale-transactions");
-        group.MapGet(string.Empty, ReadAll)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapGet("self-cancellable", ReadSelfCancellable)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPost(string.Empty, Create)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPatch("{id:int}", Patch)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapGet(string.Empty, ReadAll);
+        group.MapGet("self-cancellable", ReadSelfCancellable);
+        group.MapPost(string.Empty, Create);
+        group.MapPatch("{id:int}", Patch);
         group.MapGet("{id:int}", Read)
-            .WithName(ReadRouteName)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPost("{id:int}/finish", Finish)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapDelete("{id:int}", Delete)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+            .WithName(ReadRouteName);
+        group.MapPost("{id:int}/finish", Finish);
+        group.MapDelete("{id:int}", Delete);
     }
 
     private static Results<Ok<Page<SaleTransactionListModel>>, ValidationProblem> ReadAll(

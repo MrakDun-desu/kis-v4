@@ -8,8 +8,7 @@ namespace KisV4.App.Endpoints;
 public static class Compositions {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("compositions");
-        group.MapPut(string.Empty, CreateOrUpdate)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapPut(string.Empty, CreateOrUpdate);
     }
 
     private static Results<Ok<CompositionListModel>, NoContent, ValidationProblem> CreateOrUpdate(

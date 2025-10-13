@@ -9,8 +9,7 @@ namespace KisV4.App.Endpoints;
 public static class CurrencyChanges {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("currency-changes");
-        group.MapGet(string.Empty, Create)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapGet(string.Empty, Create);
     }
 
     private static Results<Ok<Page<CurrencyChangeListModel>>, ValidationProblem> Create(

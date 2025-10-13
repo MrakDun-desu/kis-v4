@@ -11,19 +11,13 @@ public static class CashBoxes {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("cashboxes");
-        group.MapGet(string.Empty, ReadAll)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPost(string.Empty, Create)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPut("{id:int}", Update)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapGet(string.Empty, ReadAll);
+        group.MapPost(string.Empty, Create);
+        group.MapPut("{id:int}", Update);
         group.MapGet("{id:int}", Read)
-            .WithName(ReadRouteName)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapDelete("{id:int}", Delete)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPost("{id:int}/stock-taking", AddStockTaking)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+            .WithName(ReadRouteName);
+        group.MapDelete("{id:int}", Delete);
+        group.MapPost("{id:int}/stock-taking", AddStockTaking);
     }
 
     private static List<CashBoxListModel> ReadAll(

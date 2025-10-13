@@ -184,7 +184,7 @@ case "$1" in
     ;;
     *)
         echo "Available commands:"
-        echo "    database    Start the database and migrate it"
+        echo "    database    Start the database"
         echo "    backend     Subcommands related to the backend"
         echo "    frontend    Subcommands related to the frontend"
         echo "    update      Update all dependencies"

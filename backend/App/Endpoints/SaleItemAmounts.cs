@@ -8,8 +8,7 @@ namespace KisV4.App.Endpoints;
 public static class SaleItemAmounts {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("sale-item-amounts");
-        group.MapGet(string.Empty, ReadAll)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapGet(string.Empty, ReadAll);
     }
 
     private static Results<Ok<Page<StoreItemAmountListModel>>, ValidationProblem> ReadAll(

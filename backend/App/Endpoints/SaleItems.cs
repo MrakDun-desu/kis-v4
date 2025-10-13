@@ -11,17 +11,12 @@ public static class SaleItems {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         var group = routeBuilder.MapGroup("sale-items");
-        group.MapGet(string.Empty, ReadAll)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPost(string.Empty, Create)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+        group.MapGet(string.Empty, ReadAll);
+        group.MapPost(string.Empty, Create);
         group.MapGet("{id:int}", Read)
-            .WithName(ReadRouteName)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapPut("{id:int}", Update)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
-        group.MapDelete("{id:int}", Delete)
-            .RequireAuthorization(p => p.RequireRole(RoleNames.Admin));
+            .WithName(ReadRouteName);
+        group.MapPut("{id:int}", Update);
+        group.MapDelete("{id:int}", Delete);
     }
 
     private static Results<Ok<Page<SaleItemListModel>>, ValidationProblem> ReadAll(
