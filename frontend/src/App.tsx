@@ -1,54 +1,28 @@
-import * as api from './api-generated'
-import './App.css'
-import { Button, TextField } from '@mui/material'
-import { useForm } from 'react-hook-form'
-
-const jwt_key = "user_jwt"
-
-const apiConf = new api.Configuration({
-  basePath: import.meta.env.VITE_API_URL ?? api.BASE_PATH,
-  accessToken: () => localStorage.getItem(jwt_key) ?? ""
-})
-
-let storeItemsApi = new api.StoreItemsApi(apiConf)
-
-interface TestingForm {
-  jwt: string
-  basePath: string
-}
+import { createTheme, CssBaseline, ThemeProvider, useMediaQuery, type Theme } from '@mui/material'
+import { useMemo } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HomePage, NotFoundPage } from './pages';
 
 function App() {
-  const { register, handleSubmit } = useForm<TestingForm>();
+  const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
 
-  const login = (data: TestingForm) => {
-    console.log(data);
-    const conf = new api.Configuration({
-      basePath: data.basePath,
-      accessToken: data.jwt
-    })
-    storeItemsApi = new api.StoreItemsApi(conf);
-  }
-
-  const queryStoreItems = async () => {
-    console.log(await storeItemsApi.storeItemsGet());
-  }
+  const theme = useMemo<Theme>(() =>
+    createTheme({
+      palette: {
+        mode: prefersLightMode ? "light" : "dark"
+      }
+    }), [prefersLightMode]);
 
   return (
-    <>
-      <h1>KISv4 testing</h1>
-      {
-        import.meta.env.DEV &&
-        <>
-          <form onSubmit={handleSubmit(login)}>
-            <TextField label="Testing JWT" {...register("jwt")} />
-            <TextField label="Base path" {...register("basePath")} />
-            <Button type="submit">Login to API</Button>
-          </form>
-
-          <Button type="button" onClick={queryStoreItems}>Query store items</Button>
-        </>
-      }
-    </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<HomePage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }
 
