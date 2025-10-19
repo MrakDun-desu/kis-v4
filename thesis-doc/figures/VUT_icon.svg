@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="132.28101"
+   height="132.283"
+   viewBox="0 0 132.28101 132.283"
+   sodipodi:docname="VUT_icon.svg"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3">
+      <path
+         d="M 0,165.26 H 166.512 V 0 H 0 Z"
+         transform="translate(-116.6602,-105.8799)"
+         id="path3" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="3.6851022"
+     inkscape:cx="65.669821"
+     inkscape:cy="75.98161"
+     inkscape:window-width="1920"
+     inkscape:window-height="1020"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer-MC0">
+    <inkscape:page
+       x="0"
+       y="0"
+       inkscape:label="1"
+       id="page1"
+       width="132.28101"
+       height="132.283"
+       margin="44.0312 44.868 44.033333 44.867199"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     id="layer-MC0"
+     inkscape:groupmode="layer"
+     inkscape:label="Vrstva 1">
+    <path
+       id="path1"
+       d="M 0,132.28266 H 132.28133 V 0 H 0 Z"
+       style="fill:#ee263a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
+       clip-path="none" />
+    <path
+       id="path2"
+       d="M 0,0 H -36.396 V 11.181 H -67.063 V 0 h 30.667 v -56.317 h 11.533 v 38.926 c 0,3.957 3.433,7.163 7.664,7.163 H 0 Z"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       transform="matrix(1.3333333,0,0,-1.3333333,110.68026,35.140126)"
+       clip-path="url(#clipPath3)" />
+  </g>
+</svg>

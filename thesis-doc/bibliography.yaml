@@ -1,0 +1,231 @@
+Pravidla:
+  type: book
+  title: Pravidla českého pravopisu
+  author:
+  - Hlavsa, Zdeněk
+  - others
+  date: 2009
+  publisher: Academia
+  edition: 2
+  serial-number:
+    isbn: 80-200-1327-X
+Knuth:
+  type: book
+  title: The TeXbook
+  author: Knuth, Donald E.
+  date: 1996
+  publisher: Addison-Wesley Publishing Company
+  serial-number:
+    isbn: 0-201-13447-0
+Rybicka:
+  type: book
+  title: LaTeX pro začátečníky
+  author: Rybička, Jiří
+  date: 2003
+  publisher: Konvoj
+  edition: 3
+  serial-number:
+    isbn: 80-7302-049-1
+Olsak:
+  type: book
+  title: 'TeXbook naruby'
+  author: Olšák, Petr
+  date: 2001
+  publisher: Konvoj
+  serial-number:
+    isbn: 80-7302-0007-6
+Eikh:
+  type: book
+  title: 'TeXby Topics, a TeXnitian''s Reference'
+  author: Eikhout, Victor
+  date: 2001
+  publisher: Addison-Wesley UK
+  serial-number:
+    isbn: 0-201-56882-9
+cstugWeb:
+  type: web
+  title: Československé sdružení uživatelů TeXu
+  author:
+  - Sojka, Petr
+  - others
+  url: http://www.cstug.cz/
+  note: online
+  cited: 2019-10-02
+fitWeb:
+  type: web
+  title: Užitečné rady pro psaní práce
+  author:
+  - Rábová, Zdena
+  - Hanáček, Petr
+  - Peringer, Petr
+  - Přikryl, Petr
+  - Křena, Bohuslav
+  date: 2008-11
+  publisher: FIT VUT v Brně
+  url: https://www.fit.vut.cz/study/theses/theses-advice/
+  note: online
+  cited: 2019-10-02
+citace:
+  type: web
+  title: Pravidla pro bibliografické citace
+  author:
+  - Rábová, Zdena
+  - Hanáček, Petr
+  - Peringer, Petr
+  - Přikryl, Petr
+  - Křena, Bohuslav
+  date: 2019
+  publisher: FIT VUT v Brně
+  url: https://www.fit.vut.cz/study/theses/citations/
+  note: online
+  cited: 2019-10-02
+biblio:
+  type: book
+  title: Bibliografické odkazy a citace dokumentů
+  author:
+  - Biernátová, Olga
+  - Skůpa, Jan
+  date: 2011-9
+  publisher:
+    name: Citace.com
+    location: Brno
+  url: http://www.citace.com/download/CSN-ISO-690.pdf
+  note: online
+  cited: 2019-10-02
+formalniBP:
+  type: web
+  title: Pokyny k bakalářským pracím a SZZ
+  author:
+  - Rábová, Zdena
+  - Přikryl, Petr
+  - Peringer, Petr
+  - Lampa, Petr
+  - Křena, Bohuslav
+  - Dytrych Jaroslav
+  - Veigend, Petr
+  date: 2019
+  url: https://www.fit.vut.cz/study/theses/bachelor-theses/
+  note: online
+  cited: 2019-10-02
+formalniDP:
+  type: web
+  title: Pokyny k diplomovým pracím a SZZ
+  author:
+  - Rábová, Zdena
+  - Přikryl, Petr
+  - Peringer, Petr
+  - Lampa, Petr
+  - Křena, Bohuslav
+  - Dytrych Jaroslav
+  - Veigend, Petr
+  date: 2019
+  url: https://www.fit.vut.cz/study/theses/master-theses/
+  note: online
+  cited: 2019-10-02
+smernice:
+  type: web
+  title: Směrnice rektora č. 72/2017 – Úprava, odevzdávání a zveřejňování závěrečných prací
+  author: Štěpánek, Petr
+  date: 2017
+  url: https://www.vutbr.cz/uredni-deska/vnitrni-predpisy-a-dokumenty/smernice-c-72-2017-uprava-odevzdavani-a-zverejnovani-zaverecnych-praci-d161410
+  note: online
+  cited: 2019-10-02
+smerniceFIT:
+  type: book
+  title: Směrnice děkana č. 7/2018 – Úprava, odevzdávání a zveřejňování závěrečných prací na FIT VUT v Brně
+  author: Zemčík, Pavel
+  date: 2018
+  url: https://www.fit.vut.cz/fit/info/smernice/sm2018-07.pdf
+  note: online
+  cited: 2019-10-02
+prirucka:
+  type: web
+  title: Internetová jazyková příručka – Ústav pro jazyk český Akademie věd ČR, v. v. i.
+  author:
+  - Černá, Anna
+  - Chromý, Jan
+  - Konečná, Hana
+  - others
+  date: 2019
+  publisher: Centrum zpracování přirozeného jazyka FI MU
+  url: http://prirucka.ujc.cas.cz/
+  note: online
+  cited: 2019-10-02
+Herout:
+  type: web
+  title: herout.net – Poznámky učitele, kouče, čtenáře.
+  author: Herout, Adam
+  date: 2018
+  url: http://www.herout.net/
+  note: online
+  cited: 2019-10-02
+chyby:
+  type: web
+  title: Textová část BP/DP – Lessons learned
+  author: Szöke, Igor
+  date: 2012
+  url: http://blog.igor.szoke.cz/2012/01/textova-cast-bpdp-lessons-learned-1.html
+  note: online
+  cited: 2019-10-02
+rady:
+  type: web
+  title: Píšete diplomku? 15+1 rad, které vám pomohou.
+  author: Szöke, Igor
+  date: 2011
+  url: http://blog.igor.szoke.cz/2011/12/pisete-diplomku-151-rad-ktere-vam.html
+  note: online
+  cited: 2019-10-02
+Beran:
+  type: web
+  title: Beran-BP DP Projekty
+  author: Beran, Vítězslav
+  date: 2017
+  url: http://merlin.fit.vutbr.cz/wiki/index.php/Beran-BP_DP_Projekty
+  note: online
+  cited: 2019-10-02
+BeranPDF:
+  type: book
+  title: Jak psát technickou zprávu
+  author: Beran, Vítězslav
+  date: 2013
+  url: http://www.fit.vutbr.cz/~beranv/podpora/Jak%20psat%20technickou%20zpravu.pdf
+  note: online
+  cited: 2019-10-02
+Cernocky:
+  type: web
+  title: Černocký BP DP – obecně
+  author: Černocký, Jan
+  date: 2016
+  publisher: Wiki FIT VUT v Brně
+  url: https://merlin.fit.vutbr.cz/wiki/index.php/Cernocky_BP_DP-obecne
+  note: online
+  cited: 2019-10-02
+CernockyEnglish:
+  type: web
+  title: English SOS
+  author: Černocký, Jan
+  date: 2016
+  url: https://merlin.fit.vutbr.cz/wiki/index.php/English_SOS
+  note: online
+  cited: 2019-10-02
+Lebrun2011:
+  type: book
+  title: 'Scientific Writing 2.0: a reader and writer''s guide'
+  author: Lebrun, Jean-Luc
+  date: 2011
+  publisher: World Scientific Publishing
+  edition: 1
+  serial-number:
+    isbn: '9814350605'
+Pysny:
+  type: thesis
+  title: BiBTeX styl pro ČSN ISO 690 a ČSN ISO 690-2
+  author: Pyšný, Radek
+  date: 2009
+  school: Vysoké učení technické v Brně, Fakulta informačních technologií
+  publisher:
+    location: Brno, CZ
+  url: https://www.fit.vut.cz/study/thesis/7848/
+  language: cs
+  genre: Bakalářská práce
+
