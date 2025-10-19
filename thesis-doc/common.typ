@@ -1,4 +1,6 @@
 #let bigskip() = block()
+#let todo(content) = text(red, [[[ #content ]]])
+#let cz(content) = text(lang: "cs", content)
 #let mini_heading(content) = block(
   above: 20pt,
   below: 14pt,

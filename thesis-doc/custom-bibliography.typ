@@ -7,80 +7,76 @@
   [[#ref(label(entry-name))]]
 }
 #let custom-bibliography(yaml-data, show-unused: false) = {
-  // Formatting helper functions to be used in the formats themselves
-  let format-name(name) = {
-    if name == "others" {
-      return [et al]
+  context {
+    let _months = if text.lang == "en" {
+      (
+        "1": [january],
+        "2": [february],
+        "3": [march],
+        "4": [april],
+        "5": [may],
+        "6": [june],
+        "7": [july],
+        "8": [august],
+        "9": [september],
+        "10": [october],
+        "11": [november],
+        "12": [december],
+      )
+    } else if text.lang == "cs" {
+      (
+        "1": [leden],
+        "2": [únor],
+        "3": [březen],
+        "4": [duben],
+        "5": [květen],
+        "6": [červen],
+        "7": [červenec],
+        "8": [srpen],
+        "9": [září],
+        "10": [říjen],
+        "11": [listopad],
+        "12": [prosinec],
+      )
+    } else if text.lang == "sk" {
+      (
+        "1": [január],
+        "2": [február],
+        "3": [marec],
+        "4": [apríl],
+        "5": [máj],
+        "6": [jún],
+        "7": [júl],
+        "8": [august],
+        "9": [september],
+        "10": [október],
+        "11": [november],
+        "12": [december],
+      )
     }
-    let parts = str.split(name, ", ")
-    if parts.len() == 1 {
-      smallcaps(parts.at(0))
-    } else {
-      smallcaps(parts.at(0))
-      [, ]
-      let removed-chars = "áčďěéíĺľňóřšťúý"
-      str.replace(parts.at(1), regex("[a-z" + removed-chars + "]+"), ".")
+    let _and = () => if text.lang == "en" [and] else [a]
+    let _available_at = () => if text.lang == "en" {
+      [Available at]
+    } else if text.lang == "cs" {
+      [Dostupné z]
+    } else if text.lang == "sk" {
+      [Dostupné z]
     }
-  }
-  let format-authors(authors) = {
-    if type(authors) == array {
-      if authors.len() == 2 {
-        [#format-name(authors.at(0))]
-        if (
-          authors.last() == "others"
-        ) [ et al.] else [ and #format-name(authors.at(1))]
-      } else {
-        let add_et_al = false
-        if authors.len() > 5 {
-          authors = authors.slice(0, 5)
-          add_et_al = true
-        }
-        authors.map(author => format-name(author)).join(", ")
-        if add_et_al [ et al.]
-        if authors.last() == "others" [.]
-      }
-    } else {
-      format-name(authors)
-      [ ]
+    let _bibliography = () => if text.lang == "en" {
+      [Bibliography]
+    } else if text.lang == "cs" {
+      [Literatura]
+    } else if text.lang == "sk" {
+      [Literatúra]
     }
-  }
-  let format-publisher(publisher) = {
-    if type(publisher) == dictionary {
-      let output = ()
-      if publisher.keys().contains("location") {
-        output.push(publisher.location)
-      }
-      if publisher.keys().contains("name") { output.push(publisher.name) }
-      return output.join(": ")
-    } else if type(publisher) == str {
-      [#publisher]
+    let _edition = () => if text.lang == "en" {
+      [ed.]
+    } else if text.lang == "cs" {
+      [vyd.]
+    } else if text.lang == "sk" {
+      [vyd.]
     }
-  }
-  let format-date(date) = {
-    let months = (
-      "1": [january],
-      "2": [february],
-      "3": [march],
-      "4": [april],
-      "5": [may],
-      "6": [june],
-      "7": [july],
-      "8": [august],
-      "9": [september],
-      "10": [october],
-      "11": [november],
-      "12": [december],
-    )
-    if type(date) == int { return [#date] }
-    let parts = str.split(date, "-")
-    if parts.len() == 2 {
-      months.at(parts.at(1))
-      [ ]
-      parts.at(0)
-    }
-  }
-  let format-edition(edition) = {
-    let format-order(number) = {
+    let format-order(number) = if text.lang == "en" {
       let rem = calc.rem(edition, 10)
       let rem10 = calc.rem(edition, 100)
       if rem10 > 10 and rem10 < 20 { return [th] }
@@ -88,69 +84,131 @@
       if rem == 2 { return [nd] }
       if rem == 3 { return [rd] }
       [th]
+    } else if text.lang == "cs" {
+      [.]
+    } else if text.lang == "sk" {
+      [.]
     }
-    if type(edition) == int {
-      [#edition]
-      format-order(edition)
-      [ ed]
-    }
-  }
-  let format-serial-number(sn) = {
-    if type(sn) == dictionary {
-      if sn.keys().contains("isbn") {
-        return [ISBN #sn.isbn]
+    // Formatting helper functions to be used in the formats themselves
+    let format-name(name) = {
+      if name == "others" {
+        return [et al]
       }
-      if sn.keys().contains("issn") {
-        return [ISSN #sn.issn]
+      let parts = str.split(name, ", ")
+      if parts.len() == 1 {
+        smallcaps(parts.at(0))
+      } else {
+        smallcaps(parts.at(0))
+        [, ]
+        let removed-chars = "áčďěéíĺľňóřšťúý"
+        str.replace(parts.at(1), regex("[a-z" + removed-chars + "]+"), ".")
       }
     }
-  }
+    let format-authors(authors) = {
+      if type(authors) == array {
+        if authors.len() == 2 {
+          [#format-name(authors.at(0))]
+          if (
+            authors.last() == "others"
+          ) [ et al.] else [ #_and #format-name(authors.at(1))]
+        } else {
+          let add_et_al = false
+          if authors.len() > 5 {
+            authors = authors.slice(0, 5)
+            add_et_al = true
+          }
+          authors.map(author => format-name(author)).join(", ")
+          if add_et_al [ et al.]
+          if authors.last() == "others" [.]
+        }
+      } else {
+        format-name(authors)
+        [ ]
+      }
+    }
+    let format-publisher(publisher) = {
+      if type(publisher) == dictionary {
+        let output = ()
+        if publisher.keys().contains("location") {
+          output.push(publisher.location)
+        }
+        if publisher.keys().contains("name") { output.push(publisher.name) }
+        return output.join(": ")
+      } else if type(publisher) == str {
+        [#publisher]
+      }
+    }
+    let format-date(date) = {
+      if type(date) == int { return [#date] }
+      let parts = str.split(date, "-")
+      if parts.len() == 2 {
+        _months.at(parts.at(1))
+        [ ]
+        parts.at(0)
+      }
+    }
+    let format-edition(edition) = {
+      if type(edition) == int {
+        [#edition]
+        format-order(edition)
+        [ #_edition()]
+      }
+    }
+    let format-serial-number(sn) = {
+      if type(sn) == dictionary {
+        if sn.keys().contains("isbn") {
+          return [ISBN #sn.isbn]
+        }
+        if sn.keys().contains("issn") {
+          return [ISSN #sn.issn]
+        }
+      }
+    }
 
-  // Format of the citation
-  // (one universal, it would be annoying to make separate ones since they're pretty mych the same)
-  let format-entry(entry, entry_name) = {
-    let fields = ()
-    let first_field = [#format-authors(entry.author) #text(
-        style: "italic",
-        entry.title,
-      )]
-    if entry.keys().contains("note") {
-      first_field += [ #entry.note]
+    // Format of the citation
+    // (one universal, it would be annoying to make separate ones since they're pretty mych the same)
+    let format-entry(entry, entry_name) = {
+      let fields = ()
+      let first_field = [#format-authors(entry.author) #text(
+          style: "italic",
+          entry.title,
+        )]
+      if entry.keys().contains("note") {
+        first_field += [ #entry.note]
+      }
+      fields.push(first_field)
+      if entry.keys().contains("edition") {
+        fields.push(format-edition(entry.edition))
+      }
+      let publisher_and_date = ()
+      if entry.keys().contains("publisher") {
+        publisher_and_date.push(format-publisher(entry.publisher))
+      }
+      if entry.keys().contains("date") {
+        publisher_and_date.push(format-date(entry.date))
+      }
+      fields.push(publisher_and_date.join(", "))
+      if entry.keys().contains("genre") { fields.push(entry.genre) }
+      if entry.keys().contains("school") { fields.push(entry.school) }
+      if entry.keys().contains("serial-number") {
+        fields.push(format-serial-number(entry.serial-number))
+      }
+      if entry.keys().contains("url") {
+        fields.push[#_available_at(): #link(entry.url)]
+      }
+      if entry.keys().contains("cited") {
+        fields.push[[cit. #entry.cited]]
+      }
+      show figure: it => []
+      fields.join(". ")
+      [. ]
+      [#figure(numbering: "1", kind: "citation", supplement: [])[] #label(
+          entry_name,
+        )]
     }
-    fields.push(first_field)
-    if entry.keys().contains("edition") {
-      fields.push(format-edition(entry.edition))
-    }
-    let publisher_and_date = ()
-    if entry.keys().contains("publisher") {
-      publisher_and_date.push(format-publisher(entry.publisher))
-    }
-    if entry.keys().contains("date") {
-      publisher_and_date.push(format-date(entry.date))
-    }
-    fields.push(publisher_and_date.join(", "))
-    if entry.keys().contains("genre") { fields.push(entry.genre) }
-    if entry.keys().contains("school") { fields.push(entry.school) }
-    if entry.keys().contains("serial-number") {
-      fields.push(format-serial-number(entry.serial-number))
-    }
-    if entry.keys().contains("url") {
-      fields.push[Available at: #link(entry.url)]
-    }
-    if entry.keys().contains("cited") {
-      fields.push[[cit. #entry.cited]]
-    }
-    show figure: it => []
-    fields.join(". ")
-    [. ]
-    [#figure(numbering: "1", kind: "citation", supplement: [])[] #label(
-        entry_name,
-      )]
-  }
 
-  heading[Bibliography]
-  // Actual citation rendering
-  context {
+    heading[#_bibliography()]
+    // Actual citation rendering
     let citationsVal = citations.final()
     if citationsVal == none { return }
     enum(
@@ -161,5 +219,4 @@
       ..citationsVal.map(elem => { format-entry(yaml-data.at(elem), elem) }),
     )
   }
-}
 }
