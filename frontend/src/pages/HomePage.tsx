@@ -1,28 +1,35 @@
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom"
-import "./HomePage.css"
+import { Box, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export const HomePage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container">
+    <Box
+      display="flex"
+      alignItems="center"
+      flexDirection="column"
+      justifyContent="center"
+      height="100vh"
+    >
       <h1>KISv4</h1>
-      <Button
-        variant="outlined"
-        size="large"
-        onClick={() => navigate("admin")}
+      <Box
+        display="flex"
+        gap="1.5em"
+        flexDirection="column"
+        alignItems="center"
       >
-        Admin
-      </Button>
-      <Button
-        variant="outlined"
-        size="large"
-        onClick={() => navigate("pos")}
-      >
-        POS
-      </Button>
-    </div>
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => navigate("admin")}
+        >
+          Admin
+        </Button>
+        <Button variant="outlined" size="large" onClick={() => navigate("pos")}>
+          POS
+        </Button>
+      </Box>
+    </Box>
   );
-}
-
+};

@@ -7,7 +7,13 @@ import {
 } from "@mui/material";
 import { useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { HomePage, NotFoundPage } from "./pages";
+import {
+  AdminPage,
+  HomePage,
+  NotFoundPage,
+  PosMain,
+  StoreItems,
+} from "./pages";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -28,6 +34,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route index element={<HomePage />} />
+          <Route path="admin" element={<AdminPage />}>
+            <Route path="store-items" element={<StoreItems />} />
+          </Route>
+          <Route path="pos" element={<PosMain />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
