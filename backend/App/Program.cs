@@ -29,8 +29,7 @@ builder.Services.Configure<ScriptStorageSettings>(
 
 // Auth
 builder.Services.AddAuthentication("Bearer").AddJwtBearer();
-builder.Services.AddAuthorizationBuilder()
-    .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+builder.Services.AddAuthorization();
 
 // OpenAPI
 var bearerRequirement = new OpenApiSecurityRequirement {
@@ -90,27 +89,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Endpoints
-CashBoxes.MapEndpoints(app);
-Categories.MapEndpoints(app);
-Compositions.MapEndpoints(app);
-Containers.MapEndpoints(app);
-ContainerTemplates.MapEndpoints(app);
-Costs.MapEndpoints(app);
-Currencies.MapEndpoints(app);
-CurrencyChanges.MapEndpoints(app);
-Discounts.MapEndpoints(app);
-DiscountUsages.MapEndpoints(app);
 Images.MapEndpoints(app);
-Modifiers.MapEndpoints(app);
-Pipes.MapEndpoints(app);
-SaleItemAmounts.MapEndpoints(app);
-SaleItems.MapEndpoints(app);
-SaleTransactions.MapEndpoints(app);
-StoreItemAmounts.MapEndpoints(app);
-StoreItems.MapEndpoints(app);
-StoreTransactions.MapEndpoints(app);
-Stores.MapEndpoints(app);
-Users.MapEndpoints(app);
 
 // OpenAPI
 app.MapOpenApi().AllowAnonymous();
