@@ -1,0 +1,22 @@
+namespace KisV4.DAL.EF.Entities;
+
+public record Container {
+    public int Id { get; init; }
+    public decimal Amount { get; set; }
+    public ContainerState State { get; set; }
+
+    public int TemplateId { get; init; }
+    public ContainerTemplate? Template { get; set; }
+    public int? PipeId { get; set; }
+    public Pipe? Pipe { get; set; }
+    public int StoreId { get; set; }
+    public Store? Store { get; set; }
+    public ICollection<ContainerChange> ContainerChanges { get; init; } = [];
+}
+
+public enum ContainerState {
+    New = 0,
+    Opened,
+    WrittenOff,
+    Bad
+}

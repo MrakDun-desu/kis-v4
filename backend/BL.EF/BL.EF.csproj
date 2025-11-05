@@ -6,12 +6,12 @@
         <RootNamespace>KisV4.BL.EF</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\BL.Common\BL.Common.csproj" />
         <ProjectReference Include="..\Common\Common.csproj" />
         <ProjectReference Include="..\DAL.EF\DAL.EF.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="CS-Script" Version="4.11.0" />
+        <PackageReference Include="OneOf" Version="3.0.271" />
         <PackageReference Include="Riok.Mapperly" Version="4.2.1" />
         <PackageReference Include="Scrutor" Version="6.1.0" />
     </ItemGroup>

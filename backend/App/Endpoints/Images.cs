@@ -1,5 +1,4 @@
 using FileTypeChecker;
-using KisV4.App.Auth;
 using KisV4.App.Configuration;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;

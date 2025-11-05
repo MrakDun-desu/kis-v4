@@ -42,7 +42,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BL.Common\BL.Common.csproj" />
         <ProjectReference Include="..\BL.EF\BL.EF.csproj" />
         <ProjectReference Include="..\Common\Common.csproj" />
         <ProjectReference Include="..\DAL.EF\DAL.EF.csproj" />

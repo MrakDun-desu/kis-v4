@@ -1,4 +1,3 @@
-using KisV4.Common.Models;
 using KisV4.DAL.EF.Entities;
 using Riok.Mapperly.Abstractions;
 
