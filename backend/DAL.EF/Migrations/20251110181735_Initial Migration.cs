@@ -138,7 +138,7 @@ namespace KisV4.DAL.EF.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Deleted = table.Column<bool>(type: "boolean", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    MoneyAccountId = table.Column<int>(type: "integer", nullable: false),
+                    SalesAccountId = table.Column<int>(type: "integer", nullable: false),
                     DonationsAccountId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -151,8 +151,8 @@ namespace KisV4.DAL.EF.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Cashboxes_Accounts_MoneyAccountId",
-                        column: x => x.MoneyAccountId,
+                        name: "FK_Cashboxes_Accounts_SalesAccountId",
+                        column: x => x.SalesAccountId,
                         principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -179,7 +179,7 @@ namespace KisV4.DAL.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AvailableModifiers",
+                name: "ApplicableModifiers",
                 columns: table => new
                 {
                     ApplicableModifiersId = table.Column<int>(type: "integer", nullable: false),
@@ -187,15 +187,15 @@ namespace KisV4.DAL.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AvailableModifiers", x => new { x.ApplicableModifiersId, x.TargetsId });
+                    table.PrimaryKey("PK_ApplicableModifiers", x => new { x.ApplicableModifiersId, x.TargetsId });
                     table.ForeignKey(
-                        name: "FK_AvailableModifiers_Composites_ApplicableModifiersId",
+                        name: "FK_ApplicableModifiers_Composites_ApplicableModifiersId",
                         column: x => x.ApplicableModifiersId,
                         principalTable: "Composites",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AvailableModifiers_Composites_TargetsId",
+                        name: "FK_ApplicableModifiers_Composites_TargetsId",
                         column: x => x.TargetsId,
                         principalTable: "Composites",
                         principalColumn: "Id",
@@ -233,7 +233,7 @@ namespace KisV4.DAL.EF.Migrations
                     X = table.Column<int>(type: "integer", nullable: false),
                     Y = table.Column<int>(type: "integer", nullable: false),
                     LayoutId = table.Column<int>(type: "integer", nullable: false),
-                    Discriminator = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
+                    Type = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
                     TargetId = table.Column<int>(type: "integer", nullable: true),
                     LayoutPipe_TargetId = table.Column<int>(type: "integer", nullable: true),
                     LayoutSaleItem_TargetId = table.Column<int>(type: "integer", nullable: true)
@@ -491,8 +491,7 @@ namespace KisV4.DAL.EF.Migrations
                         name: "FK_Transactions_Transactions_SaleTransactionId",
                         column: x => x.SaleTransactionId,
                         principalTable: "Transactions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Transactions_Users_CancelledById",
                         column: x => x.CancelledById,
@@ -666,7 +665,7 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     ModifierId = table.Column<int>(type: "integer", nullable: false),
                     SaleTransactionItemId = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false)
+                    Amount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -716,8 +715,8 @@ namespace KisV4.DAL.EF.Migrations
                 column: "SaleTransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AvailableModifiers_TargetsId",
-                table: "AvailableModifiers",
+                name: "IX_ApplicableModifiers_TargetsId",
+                table: "ApplicableModifiers",
                 column: "TargetsId");
 
             migrationBuilder.CreateIndex(
@@ -726,9 +725,9 @@ namespace KisV4.DAL.EF.Migrations
                 column: "DonationsAccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cashboxes_MoneyAccountId",
+                name: "IX_Cashboxes_SalesAccountId",
                 table: "Cashboxes",
-                column: "MoneyAccountId");
+                column: "SalesAccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompositeAmounts_CompositeId",
@@ -884,7 +883,7 @@ namespace KisV4.DAL.EF.Migrations
                 name: "AccountTransactions");
 
             migrationBuilder.DropTable(
-                name: "AvailableModifiers");
+                name: "ApplicableModifiers");
 
             migrationBuilder.DropTable(
                 name: "CompositeAmounts");

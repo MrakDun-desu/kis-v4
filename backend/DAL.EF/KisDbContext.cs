@@ -1,4 +1,5 @@
 using Audit.EntityFramework;
+using KisV4.Common.Enums;
 using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -68,7 +69,7 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
         modelBuilder.Entity<Modifier>()
             .HasMany(e => e.Targets)
             .WithMany(e => e.ApplicableModifiers)
-            .UsingEntity("AvailableModifiers");
+            .UsingEntity("ApplicableModifiers");
 
         modelBuilder.Entity<Transaction>()
             .HasOne(e => e.CancelledBy)
@@ -77,6 +78,12 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
         modelBuilder.Entity<Transaction>()
             .HasOne(e => e.StartedBy)
             .WithMany(e => e.StartedTransactions);
+
+        modelBuilder.Entity<LayoutItem>()
+            .HasDiscriminator(e => e.Type)
+            .HasValue<LayoutSaleItem>(LayoutItemType.SaleItem)
+            .HasValue<LayoutLink>(LayoutItemType.Layout)
+            .HasValue<LayoutPipe>(LayoutItemType.Pipe);
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) {

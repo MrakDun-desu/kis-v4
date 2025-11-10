@@ -1,7 +1,9 @@
+using Audit.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.DAL.EF.Entities;
 
+[AuditIgnore]
 [PrimaryKey(nameof(StoreItemId), nameof(StoreId), nameof(StoreTransactionId))]
 public record StoreTransactionItem {
     public decimal ItemAmount { get; set; }

@@ -1,5 +1,3 @@
-using Audit.EntityFramework;
-
 namespace KisV4.DAL.EF.Entities;
 
 public record Cashbox {
@@ -7,8 +5,9 @@ public record Cashbox {
     public bool Deleted { get; set; }
     public required string Name { get; set; }
 
-    public int MoneyAccountId { get; init; }
-    public Account MoneyAccount { get; init; } = new();
+    public int SalesAccountId { get; init; }
+    public Account SalesAccount { get; init; } = new();
     public int DonationsAccountId { get; init; }
     public Account DonationsAccount { get; init; } = new();
+    public IEnumerable<StockTaking> StockTakings { get; init; } = [];
 }

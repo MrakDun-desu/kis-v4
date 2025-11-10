@@ -6,7 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 [AuditIgnore]
 [PrimaryKey(nameof(ModifierId), nameof(SaleTransactionItemId))]
 public record Modification {
-    public decimal Amount { get; set; }
+    public int Amount { get; set; }
 
     public int ModifierId { get; init; }
     public Modifier? Modifier { get; set; }

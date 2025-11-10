@@ -22,7 +22,7 @@ namespace KisV4.DAL.EF.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AvailableModifiers", b =>
+            modelBuilder.Entity("ApplicableModifiers", b =>
                 {
                     b.Property<int>("ApplicableModifiersId")
                         .HasColumnType("integer");
@@ -34,7 +34,7 @@ namespace KisV4.DAL.EF.Migrations
 
                     b.HasIndex("TargetsId");
 
-                    b.ToTable("AvailableModifiers");
+                    b.ToTable("ApplicableModifiers");
                 });
 
             modelBuilder.Entity("CompositeInCategory", b =>
@@ -105,18 +105,18 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("DonationsAccountId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MoneyAccountId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("SalesAccountId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DonationsAccountId");
 
-                    b.HasIndex("MoneyAccountId");
+                    b.HasIndex("SalesAccountId");
 
                     b.ToTable("Cashboxes");
                 });
@@ -414,16 +414,16 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("Y")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Discriminator")
+                    b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("character varying(21)");
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
 
                     b.HasKey("LayoutId", "X", "Y");
 
                     b.ToTable("LayoutItems");
 
-                    b.HasDiscriminator().HasValue("LayoutItem");
+                    b.HasDiscriminator<string>("Type").HasValue("LayoutItem");
 
                     b.UseTphMappingStrategy();
                 });
@@ -436,9 +436,8 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("SaleTransactionItemId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(11, 2)
-                        .HasColumnType("numeric(11,2)");
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
 
                     b.HasKey("ModifierId", "SaleTransactionItemId");
 
@@ -741,7 +740,7 @@ namespace KisV4.DAL.EF.Migrations
 
                     b.HasIndex("TargetId");
 
-                    b.HasDiscriminator().HasValue("LayoutLink");
+                    b.HasDiscriminator().HasValue("Layout");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.LayoutPipe", b =>
@@ -759,7 +758,7 @@ namespace KisV4.DAL.EF.Migrations
                                 .HasColumnName("LayoutPipe_TargetId");
                         });
 
-                    b.HasDiscriminator().HasValue("LayoutPipe");
+                    b.HasDiscriminator().HasValue("Pipe");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.LayoutSaleItem", b =>
@@ -777,7 +776,7 @@ namespace KisV4.DAL.EF.Migrations
                                 .HasColumnName("LayoutSaleItem_TargetId");
                         });
 
-                    b.HasDiscriminator().HasValue("LayoutSaleItem");
+                    b.HasDiscriminator().HasValue("SaleItem");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleTransaction", b =>
@@ -802,7 +801,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("Reason")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SaleTransactionId")
+                    b.Property<int?>("SaleTransactionId")
                         .HasColumnType("integer");
 
                     b.HasIndex("SaleTransactionId");
@@ -810,7 +809,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.HasDiscriminator().HasValue("StoreTransaction");
                 });
 
-            modelBuilder.Entity("AvailableModifiers", b =>
+            modelBuilder.Entity("ApplicableModifiers", b =>
                 {
                     b.HasOne("KisV4.DAL.EF.Entities.Modifier", null)
                         .WithMany()
@@ -867,15 +866,15 @@ namespace KisV4.DAL.EF.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("KisV4.DAL.EF.Entities.Account", "MoneyAccount")
+                    b.HasOne("KisV4.DAL.EF.Entities.Account", "SalesAccount")
                         .WithMany()
-                        .HasForeignKey("MoneyAccountId")
+                        .HasForeignKey("SalesAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("DonationsAccount");
 
-                    b.Navigation("MoneyAccount");
+                    b.Navigation("SalesAccount");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.CompositeAmount", b =>
@@ -1080,7 +1079,7 @@ namespace KisV4.DAL.EF.Migrations
             modelBuilder.Entity("KisV4.DAL.EF.Entities.StockTaking", b =>
                 {
                     b.HasOne("KisV4.DAL.EF.Entities.Cashbox", "CashBox")
-                        .WithMany()
+                        .WithMany("StockTakings")
                         .HasForeignKey("CashBoxId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1231,9 +1230,7 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     b.HasOne("KisV4.DAL.EF.Entities.SaleTransaction", "SaleTransaction")
                         .WithMany("StoreTransactions")
-                        .HasForeignKey("SaleTransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SaleTransactionId");
 
                     b.Navigation("SaleTransaction");
                 });
@@ -1241,6 +1238,11 @@ namespace KisV4.DAL.EF.Migrations
             modelBuilder.Entity("KisV4.DAL.EF.Entities.Account", b =>
                 {
                     b.Navigation("AccountTransactions");
+                });
+
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.Cashbox", b =>
+                {
+                    b.Navigation("StockTakings");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.Composite", b =>

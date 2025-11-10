@@ -1,4 +1,5 @@
 using Audit.EntityFramework;
+using KisV4.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.DAL.EF.Entities;

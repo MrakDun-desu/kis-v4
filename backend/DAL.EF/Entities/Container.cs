@@ -1,3 +1,5 @@
+using KisV4.Common.Enums;
+
 namespace KisV4.DAL.EF.Entities;
 
 public record Container {
@@ -12,11 +14,4 @@ public record Container {
     public int StoreId { get; set; }
     public Store? Store { get; set; }
     public ICollection<ContainerChange> ContainerChanges { get; init; } = [];
-}
-
-public enum ContainerState {
-    New = 0,
-    Opened,
-    WrittenOff,
-    Bad
 }

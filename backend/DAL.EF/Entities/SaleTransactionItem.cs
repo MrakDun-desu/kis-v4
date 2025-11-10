@@ -1,5 +1,8 @@
+using Audit.EntityFramework;
+
 namespace KisV4.DAL.EF.Entities;
 
+[AuditIgnore]
 public record SaleTransactionItem {
     public int Id { get; init; }
     public int ItemAmount { get; set; }
