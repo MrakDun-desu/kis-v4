@@ -19,7 +19,9 @@ public record ContainerChangeReadAllRequest {
 public record ContainerChangeReadAllResponse : CollectionResponse<ContainerChangeModel>;
 
 public record ContainerChangeCreateRequest {
-    public required decimal NewAmounts { get; init; }
+    public required decimal NewAmount { get; init; }
     public required ContainerState NewState { get; init; }
     public required int ContainerId { get; init; }
 }
+
+public record ContainerChangeCreateResponse : ContainerChangeModel;

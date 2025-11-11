@@ -16,3 +16,7 @@ public record CategoryCreateRequest {
 }
 
 public record CategoryCreateResponse : CategoryModel;
+
+public record CategoryUpdateRequest {
+    public required string Name { get; init; }
+}

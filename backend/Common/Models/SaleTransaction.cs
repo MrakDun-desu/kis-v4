@@ -36,7 +36,7 @@ public record SaleTransactionReadAllRequest : PagedRequest {
     public bool OnlySelfCancellable { get; init; } = true;
 }
 
-public record SaleTranasctionReadAllResponse : PagedResponse<SaleTransactionListModel> {
+public record SaleTransactionReadAllResponse : PagedResponse<SaleTransactionListModel> {
     public DateTimeOffset From { get; init; }
     public DateTimeOffset To { get; init; }
 }

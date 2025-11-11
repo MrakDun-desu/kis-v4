@@ -89,7 +89,25 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Endpoints
+CashBoxes.MapEndpoints(app);
+Categories.MapEndpoints(app);
+CompositeAmounts.MapEndpoints(app);
+Compositions.MapEndpoints(app);
+ContainerChanges.MapEndpoints(app);
+Containers.MapEndpoints(app);
+ContainerTemplates.MapEndpoints(app);
+Costs.MapEndpoints(app);
 Images.MapEndpoints(app);
+Layouts.MapEndpoints(app);
+Modifiers.MapEndpoints(app);
+Pipes.MapEndpoints(app);
+SaleItems.MapEndpoints(app);
+SaleTransactions.MapEndpoints(app);
+StoreItemAmounts.MapEndpoints(app);
+StoreItems.MapEndpoints(app);
+Stores.MapEndpoints(app);
+StoreTransactions.MapEndpoints(app);
+Users.MapEndpoints(app);
 
 // OpenAPI
 app.MapOpenApi().AllowAnonymous();

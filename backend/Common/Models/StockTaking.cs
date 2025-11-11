@@ -16,4 +16,5 @@ public record StockTakingReadAllRequest : PagedRequest {
 
 public record StockTakingReadAllResponse : PagedResponse<StockTakingModel>;
 
+public record StockTakingCreateResponse : StockTakingModel;
 

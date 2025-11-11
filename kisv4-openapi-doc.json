@@ -5,6 +5,934 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/cashboxes": {
+      "get": {
+        "tags": [
+          "CashBoxes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashBoxReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CashBoxes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CashBoxCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashBoxCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cashboxes/{id}": {
+      "post": {
+        "tags": [
+          "CashBoxes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockTakingCreateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "CashBoxes"
+        ],
+        "operationId": "CashBoxesRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashBoxReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "CashBoxes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CashBoxUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashBoxUpdateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CashBoxes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{id}": {
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/composite-amounts": {
+      "get": {
+        "tags": [
+          "CompositeAmounts"
+        ],
+        "parameters": [
+          {
+            "name": "StoreId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompositeAmountReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/compositions": {
+      "get": {
+        "tags": [
+          "Compositions"
+        ],
+        "parameters": [
+          {
+            "name": "CompositeId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompositionReadAllResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Compositions"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompositionPutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/container-changes": {
+      "get": {
+        "tags": [
+          "ContainerChanges"
+        ],
+        "parameters": [
+          {
+            "name": "ContainerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerChangeReadAllResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ContainerChanges"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContainerChangeCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerChangeCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/containers": {
+      "get": {
+        "tags": [
+          "Containers"
+        ],
+        "parameters": [
+          {
+            "name": "StoreId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "TemplateId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PipeId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "IncludeUnusable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Containers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContainerCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/containers/{id}": {
+      "get": {
+        "tags": [
+          "Containers"
+        ],
+        "operationId": "ContainersRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Containers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContainerUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerUpdateResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Containers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/container-templates": {
+      "get": {
+        "tags": [
+          "ContainerTemplates"
+        ],
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "StoreItemId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerTemplateReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ContainerTemplates"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContainerTemplateCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerTemplateCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/container-templates/{id}": {
+      "put": {
+        "tags": [
+          "ContainerTemplates"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContainerTemplateUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerTemplateUpdateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ContainerTemplates"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/costs": {
+      "get": {
+        "tags": [
+          "Costs"
+        ],
+        "parameters": [
+          {
+            "name": "StoreItemId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Costs"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CostCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/costs/{id}": {
+      "delete": {
+        "tags": [
+          "Costs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/images": {
       "post": {
         "tags": [
@@ -68,10 +996,2526 @@
           }
         }
       }
+    },
+    "/layouts": {
+      "get": {
+        "tags": [
+          "Layouts"
+        ],
+        "parameters": [
+          {
+            "name": "TopLevel",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Layouts"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayoutCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/layouts/{id}": {
+      "get": {
+        "tags": [
+          "Layouts"
+        ],
+        "operationId": "LayoutsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutReadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Layouts"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayoutUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutUpdateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Layouts"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/modifiers": {
+      "get": {
+        "tags": [
+          "Modifiers"
+        ],
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "CategoryId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "TargetId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModifierReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Modifiers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifierCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModifierCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/modifers/{id}": {
+      "get": {
+        "tags": [
+          "Modifiers"
+        ],
+        "operationId": "ModifiersRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModifierReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/modifiers/{id}": {
+      "put": {
+        "tags": [
+          "Modifiers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifierUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModifierUpdateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Modifiers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/pipes": {
+      "get": {
+        "tags": [
+          "Pipes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipeReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pipes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PipeCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipeCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pipes/{id}": {
+      "get": {
+        "tags": [
+          "Pipes"
+        ],
+        "operationId": "PipesRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipeReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Pipes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PipeUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipeUpdateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Pipes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/sale-items": {
+      "get": {
+        "tags": [
+          "SaleItems"
+        ],
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "CategoryId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleItemReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SaleItems"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleItemCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleItemCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sale-items/{id}": {
+      "get": {
+        "tags": [
+          "SaleItems"
+        ],
+        "operationId": "SaleItemsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleItemReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SaleItems"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleItemUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleItemUpdateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SaleItems"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/sale-transactions": {
+      "get": {
+        "tags": [
+          "SaleTransactions"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "OnlySelfCancellable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleTransactionReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SaleTransactions"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleTransactionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleTransactionCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sale-transactions/{id}": {
+      "get": {
+        "tags": [
+          "SaleTransactions"
+        ],
+        "operationId": "SaleTransactionsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleTransactionReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "SaleTransactions"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleTransactionUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleTransactionUpdateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SaleTransactions"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/sale-transactions/check-price": {
+      "get": {
+        "tags": [
+          "SaleTransactions"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleTransactionCheckPriceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleTransactionCheckPriceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sale-transactions/open": {
+      "post": {
+        "tags": [
+          "SaleTransactions"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleTransactionOpenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleTransactionOpenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sale-transactions/{id}/close": {
+      "post": {
+        "tags": [
+          "SaleTransactions"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleTransactionCloseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleTransactionCloseResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store-item-amounts": {
+      "get": {
+        "tags": [
+          "StoreItemAmounts"
+        ],
+        "parameters": [
+          {
+            "name": "StoreId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreItemAmountReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store-items": {
+      "get": {
+        "tags": [
+          "StoreItems"
+        ],
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "IsContainerItem",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "CategoryId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreItemReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "StoreItems"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreItemCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreItemCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store-items/{id}": {
+      "get": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreItemReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "StoreItems"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreItemUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreItemUpdateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "StoreItems"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/stores": {
+      "get": {
+        "tags": [
+          "Stores"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Stores"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores/{id}": {
+      "get": {
+        "tags": [
+          "Stores"
+        ],
+        "operationId": "StoresRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreReadResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Stores"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreUpdateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Stores"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/store-transactions": {
+      "get": {
+        "tags": [
+          "StoreTransactions"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "OnlySelfCancellable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "StoreTransactions"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreTransactionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreTransactionCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store-transactions/{id}": {
+      "get": {
+        "tags": [
+          "StoreTransactions"
+        ],
+        "operationId": "StoreTransactionsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreTransactionReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "StoreTransactions"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "Username",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserReadAllResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AccountTransactionModel": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "saleTransactionId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AccountTransactionReadAllResponse": {
+        "required": [
+          "accountId",
+          "from",
+          "to",
+          "total",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "CashBoxCreateRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CashBoxCreateResponse": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CashBoxListModel": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CashBoxReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CashBoxListModel"
+            }
+          }
+        }
+      },
+      "CashBoxReadResponse": {
+        "required": [
+          "id",
+          "name",
+          "salesTransactions",
+          "donationsTransactions",
+          "stockTakings"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "salesTransactions": {
+            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+          },
+          "donationsTransactions": {
+            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+          },
+          "stockTakings": {
+            "$ref": "#/components/schemas/StockTakingReadAllResponse"
+          }
+        }
+      },
+      "CashBoxUpdateRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CashBoxUpdateResponse": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CategoryCreateRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CategoryCreateResponse": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CategoryModel": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CategoryReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryModel"
+            }
+          }
+        }
+      },
+      "CategoryUpdateRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CompositeAmountModel": {
+        "required": [
+          "amount",
+          "compositeId",
+          "storeId"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "compositeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CompositeAmountReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositeAmountModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "CompositionModel": {
+        "required": [
+          "amount",
+          "storeItem",
+          "compositeId"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "storeItem": {
+            "$ref": "#/components/schemas/StoreItemListModel"
+          },
+          "compositeId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CompositionPutRequest": {
+        "required": [
+          "compositeId",
+          "storeItemId",
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "compositeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "storeItemId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "CompositionReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositionModel"
+            }
+          }
+        }
+      },
+      "ContainerChangeCreateRequest": {
+        "required": [
+          "newAmount",
+          "newState",
+          "containerId"
+        ],
+        "type": "object",
+        "properties": {
+          "newAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "newState": {
+            "$ref": "#/components/schemas/ContainerState"
+          },
+          "containerId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ContainerChangeCreateResponse": {
+        "required": [
+          "newState",
+          "timestamp",
+          "containerId",
+          "user"
+        ],
+        "type": "object",
+        "properties": {
+          "newState": {
+            "$ref": "#/components/schemas/ContainerState"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "containerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserModel"
+          }
+        }
+      },
+      "ContainerChangeModel": {
+        "required": [
+          "newState",
+          "timestamp",
+          "containerId",
+          "user"
+        ],
+        "type": "object",
+        "properties": {
+          "newState": {
+            "$ref": "#/components/schemas/ContainerState"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "containerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserModel"
+          }
+        }
+      },
+      "ContainerChangeReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContainerChangeModel"
+            }
+          }
+        }
+      },
+      "ContainerCreateRequest": {
+        "required": [
+          "id",
+          "templateId",
+          "storeId",
+          "amount",
+          "cost"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "templateId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cost": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ContainerCreateResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContainerListModel"
+            }
+          }
+        }
+      },
+      "ContainerListModel": {
+        "required": [
+          "id",
+          "amount",
+          "state",
+          "template",
+          "pipe",
+          "store"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ContainerState"
+          },
+          "template": {
+            "$ref": "#/components/schemas/ContainerTemplateModel"
+          },
+          "pipe": {
+            "$ref": "#/components/schemas/PipeListModel"
+          },
+          "store": {
+            "$ref": "#/components/schemas/StoreListModel"
+          }
+        }
+      },
+      "ContainerReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContainerListModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "ContainerReadResponse": {
+        "required": [
+          "id",
+          "amount",
+          "state",
+          "template",
+          "pipe",
+          "store",
+          "containerChanges"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ContainerState"
+          },
+          "template": {
+            "$ref": "#/components/schemas/ContainerTemplateModel"
+          },
+          "pipe": {
+            "$ref": "#/components/schemas/PipeListModel"
+          },
+          "store": {
+            "$ref": "#/components/schemas/StoreListModel"
+          },
+          "containerChanges": {
+            "$ref": "#/components/schemas/ContainerChangeReadAllResponse"
+          }
+        }
+      },
+      "ContainerState": {
+        "type": "integer"
+      },
+      "ContainerTemplateCreateRequest": {
+        "required": [
+          "name",
+          "amount",
+          "storeItemId"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "storeItemId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ContainerTemplateCreateResponse": {
+        "required": [
+          "id",
+          "name",
+          "amount",
+          "storeItem"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "storeItem": {
+            "$ref": "#/components/schemas/StoreItemListModel"
+          }
+        }
+      },
+      "ContainerTemplateModel": {
+        "required": [
+          "id",
+          "name",
+          "amount",
+          "storeItem"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "storeItem": {
+            "$ref": "#/components/schemas/StoreItemListModel"
+          }
+        }
+      },
+      "ContainerTemplateReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContainerTemplateModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "ContainerTemplateUpdateRequest": {
+        "required": [
+          "name",
+          "amount",
+          "storeItemId"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "storeItemId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ContainerTemplateUpdateResponse": {
+        "required": [
+          "id",
+          "name",
+          "amount",
+          "storeItem"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "storeItem": {
+            "$ref": "#/components/schemas/StoreItemListModel"
+          }
+        }
+      },
+      "ContainerUpdateRequest": {
+        "required": [
+          "storeId"
+        ],
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pipeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "ContainerUpdateResponse": {
+        "required": [
+          "id",
+          "amount",
+          "state",
+          "template",
+          "pipe",
+          "store"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ContainerState"
+          },
+          "template": {
+            "$ref": "#/components/schemas/ContainerTemplateModel"
+          },
+          "pipe": {
+            "$ref": "#/components/schemas/PipeListModel"
+          },
+          "store": {
+            "$ref": "#/components/schemas/StoreListModel"
+          }
+        }
+      },
+      "CostCreateRequest": {
+        "required": [
+          "storeItemId",
+          "amount",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "storeItemId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CostCreateResponse": {
+        "required": [
+          "amount",
+          "timestamp",
+          "description",
+          "storeItem",
+          "user"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string"
+          },
+          "storeItem": {
+            "$ref": "#/components/schemas/StoreItemListModel"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserModel"
+          }
+        }
+      },
+      "CostModel": {
+        "required": [
+          "amount",
+          "timestamp",
+          "description",
+          "storeItem",
+          "user"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string"
+          },
+          "storeItem": {
+            "$ref": "#/components/schemas/StoreItemListModel"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserModel"
+          }
+        }
+      },
+      "CostReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CostModel"
+            }
+          }
+        }
+      },
       "HttpValidationProblemDetails": {
         "type": "object",
         "properties": {
@@ -106,6 +3550,2349 @@
             }
           }
         }
+      },
+      "LayoutCreateRequest": {
+        "required": [
+          "name",
+          "topLevel",
+          "layoutItems"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "topLevel": {
+            "type": "boolean"
+          },
+          "layoutItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LayoutItemCreateRequest"
+            }
+          }
+        }
+      },
+      "LayoutCreateResponse": {
+        "required": [
+          "id",
+          "name",
+          "topLevel",
+          "layoutItems"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "topLevel": {
+            "type": "boolean"
+          },
+          "layoutItems": {
+            "$ref": "#/components/schemas/LayoutItemReadAllResponse"
+          }
+        }
+      },
+      "LayoutItemCreateRequest": {
+        "required": [
+          "x",
+          "y",
+          "targetId",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "LayoutItemModel": {
+        "type": "object",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/LayoutItemModelLayoutSaleItemModel"
+          },
+          {
+            "$ref": "#/components/schemas/LayoutItemModelLayoutLinkModel"
+          },
+          {
+            "$ref": "#/components/schemas/LayoutItemModelLayoutPipeModel"
+          },
+          {
+            "$ref": "#/components/schemas/LayoutItemModelBase"
+          }
+        ]
+      },
+      "LayoutItemModelBase": {
+        "required": [
+          "x",
+          "y",
+          "type"
+        ],
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "LayoutItemModelLayoutLinkModel": {
+        "required": [
+          "Type",
+          "target",
+          "x",
+          "y",
+          "type"
+        ],
+        "properties": {
+          "Type": {
+            "enum": [
+              "Layout"
+            ],
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/LayoutListModel"
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "LayoutItemModelLayoutPipeModel": {
+        "required": [
+          "Type",
+          "target",
+          "x",
+          "y",
+          "type"
+        ],
+        "properties": {
+          "Type": {
+            "enum": [
+              "Pipe"
+            ],
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/PipeListModel"
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "LayoutItemModelLayoutSaleItemModel": {
+        "required": [
+          "Type",
+          "target",
+          "x",
+          "y",
+          "type"
+        ],
+        "properties": {
+          "Type": {
+            "enum": [
+              "SaleItem"
+            ],
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/SaleItemListModel"
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "LayoutItemReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LayoutItemModel"
+            }
+          }
+        }
+      },
+      "LayoutListModel": {
+        "required": [
+          "id",
+          "name",
+          "topLevel"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "topLevel": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LayoutReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LayoutListModel"
+            }
+          }
+        }
+      },
+      "LayoutReadResponse": {
+        "required": [
+          "id",
+          "name",
+          "topLevel",
+          "layoutItems"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "topLevel": {
+            "type": "boolean"
+          },
+          "layoutItems": {
+            "$ref": "#/components/schemas/LayoutItemReadAllResponse"
+          }
+        }
+      },
+      "LayoutUpdateRequest": {
+        "required": [
+          "name",
+          "topLevel",
+          "layoutItems"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "topLevel": {
+            "type": "boolean"
+          },
+          "layoutItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LayoutItemCreateRequest"
+            }
+          }
+        }
+      },
+      "LayoutUpdateResponse": {
+        "required": [
+          "id",
+          "name",
+          "topLevel",
+          "layoutItems"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "topLevel": {
+            "type": "boolean"
+          },
+          "layoutItems": {
+            "$ref": "#/components/schemas/LayoutItemReadAllResponse"
+          }
+        }
+      },
+      "ModificationCreateRequest": {
+        "required": [
+          "amount",
+          "modifierId"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "modifierId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ModificationModel": {
+        "required": [
+          "amount",
+          "modifier",
+          "saleTransactionItemId"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "modifier": {
+            "$ref": "#/components/schemas/ModifierListModel"
+          },
+          "saleTransactionItemId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ModificationReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModificationModel"
+            }
+          }
+        }
+      },
+      "ModifierCreateRequest": {
+        "required": [
+          "id",
+          "name",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
+          "categoryIds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "ModifierCreateResponse": {
+        "required": [
+          "id",
+          "name",
+          "categories",
+          "compositions",
+          "targets"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "categories": {
+            "$ref": "#/components/schemas/CategoryReadAllResponse"
+          },
+          "compositions": {
+            "$ref": "#/components/schemas/CompositionReadAllResponse"
+          },
+          "targets": {
+            "$ref": "#/components/schemas/SaleItemReadAllResponse"
+          }
+        }
+      },
+      "ModifierListModel": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ModifierReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModifierListModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "ModifierReadResponse": {
+        "required": [
+          "id",
+          "name",
+          "categories",
+          "compositions",
+          "targets"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "categories": {
+            "$ref": "#/components/schemas/CategoryReadAllResponse"
+          },
+          "compositions": {
+            "$ref": "#/components/schemas/CompositionReadAllResponse"
+          },
+          "targets": {
+            "$ref": "#/components/schemas/SaleItemReadAllResponse"
+          }
+        }
+      },
+      "ModifierUpdateRequest": {
+        "required": [
+          "id",
+          "name",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
+          "categoryIds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "ModifierUpdateResponse": {
+        "required": [
+          "id",
+          "name",
+          "categories",
+          "compositions",
+          "targets"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "categories": {
+            "$ref": "#/components/schemas/CategoryReadAllResponse"
+          },
+          "compositions": {
+            "$ref": "#/components/schemas/CompositionReadAllResponse"
+          },
+          "targets": {
+            "$ref": "#/components/schemas/SaleItemReadAllResponse"
+          }
+        }
+      },
+      "PageMeta": {
+        "required": [
+          "page",
+          "pageSize",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PipeCreateRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "PipeCreateResponse": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "PipeListModel": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "PipeReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PipeListModel"
+            }
+          }
+        }
+      },
+      "PipeReadResponse": {
+        "required": [
+          "id",
+          "name",
+          "saleItems",
+          "containers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "saleItems": {
+            "$ref": "#/components/schemas/SaleItemReadAllResponse"
+          },
+          "containers": {
+            "$ref": "#/components/schemas/ContainerReadAllResponse"
+          }
+        }
+      },
+      "PipeUpdateRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "PipeUpdateResponse": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "PrintType": {
+        "type": "integer"
+      },
+      "SaleItemCreateRequest": {
+        "required": [
+          "id",
+          "name",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
+          "printType",
+          "categoryIds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "printType": {
+            "$ref": "#/components/schemas/PrintType"
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "SaleItemCreateResponse": {
+        "required": [
+          "id",
+          "name",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
+          "printType",
+          "applicableModifiers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "printType": {
+            "$ref": "#/components/schemas/PrintType"
+          },
+          "applicableModifiers": {
+            "$ref": "#/components/schemas/ModifierReadAllResponse"
+          }
+        }
+      },
+      "SaleItemListModel": {
+        "required": [
+          "id",
+          "name",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
+          "printType"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "printType": {
+            "$ref": "#/components/schemas/PrintType"
+          }
+        }
+      },
+      "SaleItemReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleItemListModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "SaleItemReadResponse": {
+        "required": [
+          "id",
+          "name",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
+          "printType",
+          "applicableModifiers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "printType": {
+            "$ref": "#/components/schemas/PrintType"
+          },
+          "applicableModifiers": {
+            "$ref": "#/components/schemas/ModifierReadAllResponse"
+          }
+        }
+      },
+      "SaleItemUpdateRequest": {
+        "required": [
+          "id",
+          "name",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
+          "printType",
+          "categoryIds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "printType": {
+            "$ref": "#/components/schemas/PrintType"
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "SaleItemUpdateResponse": {
+        "required": [
+          "id",
+          "name",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
+          "printType",
+          "applicableModifiers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "marginPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "marginStatic": {
+            "type": "number",
+            "format": "double"
+          },
+          "prestigeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "printType": {
+            "$ref": "#/components/schemas/PrintType"
+          },
+          "applicableModifiers": {
+            "$ref": "#/components/schemas/ModifierReadAllResponse"
+          }
+        }
+      },
+      "SaleTransactionCheckPriceRequest": {
+        "required": [
+          "saleTransactionItems"
+        ],
+        "type": "object",
+        "properties": {
+          "saleTransactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemCreateRequest"
+            }
+          }
+        }
+      },
+      "SaleTransactionCheckPriceResponse": {
+        "required": [
+          "saleTransactionItems"
+        ],
+        "type": "object",
+        "properties": {
+          "saleTransactionItems": {
+            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+          }
+        }
+      },
+      "SaleTransactionCloseRequest": {
+        "required": [
+          "cashBoxId",
+          "customerId",
+          "paidAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "cashBoxId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paidAmount": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "SaleTransactionCloseResponse": {
+        "required": [
+          "id",
+          "startedAt",
+          "startedBy",
+          "open",
+          "saleTransactionItems",
+          "accountTransactions",
+          "storeTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserModel"
+          },
+          "cancelledBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "openedBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "saleTransactionItems": {
+            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+          },
+          "accountTransactions": {
+            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+          },
+          "storeTransactions": {
+            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+          }
+        }
+      },
+      "SaleTransactionCreateRequest": {
+        "required": [
+          "storeId",
+          "cashBoxId",
+          "customerId",
+          "paidAmount",
+          "saleTransactionItems"
+        ],
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cashBoxId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paidAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "saleTransactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemCreateRequest"
+            }
+          }
+        }
+      },
+      "SaleTransactionCreateResponse": {
+        "required": [
+          "id",
+          "startedAt",
+          "startedBy",
+          "open",
+          "saleTransactionItems",
+          "accountTransactions",
+          "storeTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserModel"
+          },
+          "cancelledBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "openedBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "saleTransactionItems": {
+            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+          },
+          "accountTransactions": {
+            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+          },
+          "storeTransactions": {
+            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+          }
+        }
+      },
+      "SaleTransactionItemCreateRequest": {
+        "required": [
+          "itemAmount",
+          "saleItemId",
+          "modifications"
+        ],
+        "type": "object",
+        "properties": {
+          "itemAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "saleItemId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "modifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModificationCreateRequest"
+            }
+          }
+        }
+      },
+      "SaleTransactionItemModel": {
+        "required": [
+          "id",
+          "itemAmount",
+          "saleItem",
+          "saleTransactionId",
+          "modifications"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "itemAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "saleItem": {
+            "$ref": "#/components/schemas/SaleItemListModel"
+          },
+          "saleTransactionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "modifications": {
+            "$ref": "#/components/schemas/ModificationReadAllResponse"
+          }
+        }
+      },
+      "SaleTransactionItemReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
+          }
+        }
+      },
+      "SaleTransactionListModel": {
+        "required": [
+          "id",
+          "startedAt",
+          "startedBy"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserModel"
+          },
+          "cancelledBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "openedBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          }
+        }
+      },
+      "SaleTransactionOpenRequest": {
+        "required": [
+          "storeId",
+          "assignToCreator",
+          "saleTransactionItems"
+        ],
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "assignToCreator": {
+            "type": "boolean"
+          },
+          "saleTransactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemCreateRequest"
+            }
+          }
+        }
+      },
+      "SaleTransactionOpenResponse": {
+        "required": [
+          "id",
+          "startedAt",
+          "startedBy",
+          "open",
+          "saleTransactionItems",
+          "accountTransactions",
+          "storeTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserModel"
+          },
+          "cancelledBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "openedBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "saleTransactionItems": {
+            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+          },
+          "accountTransactions": {
+            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+          },
+          "storeTransactions": {
+            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+          }
+        }
+      },
+      "SaleTransactionReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionListModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "SaleTransactionReadResponse": {
+        "required": [
+          "id",
+          "startedAt",
+          "startedBy",
+          "open",
+          "saleTransactionItems",
+          "accountTransactions",
+          "storeTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserModel"
+          },
+          "cancelledBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "openedBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "saleTransactionItems": {
+            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+          },
+          "accountTransactions": {
+            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+          },
+          "storeTransactions": {
+            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+          }
+        }
+      },
+      "SaleTransactionUpdateRequest": {
+        "required": [
+          "storeId",
+          "saleTransactionItems"
+        ],
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "saleTransactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemCreateRequest"
+            }
+          }
+        }
+      },
+      "SaleTransactionUpdateResponse": {
+        "required": [
+          "id",
+          "startedAt",
+          "startedBy",
+          "open",
+          "saleTransactionItems",
+          "accountTransactions",
+          "storeTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserModel"
+          },
+          "cancelledBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "openedBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "saleTransactionItems": {
+            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+          },
+          "accountTransactions": {
+            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+          },
+          "storeTransactions": {
+            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+          }
+        }
+      },
+      "StockTakingCreateResponse": {
+        "required": [
+          "timestamp",
+          "cashBoxId",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cashBoxId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "$ref": "#/components/schemas/UserModel"
+          }
+        }
+      },
+      "StockTakingModel": {
+        "required": [
+          "timestamp",
+          "cashBoxId",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cashBoxId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "$ref": "#/components/schemas/UserModel"
+          }
+        }
+      },
+      "StockTakingReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StockTakingModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "StoreCreateRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "StoreCreateResponse": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "StoreItemAmountModel": {
+        "required": [
+          "amount",
+          "storeItemId",
+          "storeId"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "storeItemId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "StoreItemAmountReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreItemAmountModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "StoreItemCreateRequest": {
+        "required": [
+          "id",
+          "name",
+          "unitName",
+          "isContainerItem",
+          "categoryIds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unitName": {
+            "type": "string"
+          },
+          "isContainerItem": {
+            "type": "boolean"
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "StoreItemCreateResponse": {
+        "required": [
+          "id",
+          "name",
+          "unitName",
+          "isContainerItem",
+          "currentCost",
+          "categories",
+          "costs"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unitName": {
+            "type": "string"
+          },
+          "isContainerItem": {
+            "type": "boolean"
+          },
+          "currentCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "categories": {
+            "$ref": "#/components/schemas/CategoryReadAllResponse"
+          },
+          "costs": {
+            "$ref": "#/components/schemas/CostReadAllResponse"
+          }
+        }
+      },
+      "StoreItemListModel": {
+        "required": [
+          "id",
+          "name",
+          "unitName",
+          "isContainerItem",
+          "currentCost"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unitName": {
+            "type": "string"
+          },
+          "isContainerItem": {
+            "type": "boolean"
+          },
+          "currentCost": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "StoreItemReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreItemListModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "StoreItemReadResponse": {
+        "required": [
+          "id",
+          "name",
+          "unitName",
+          "isContainerItem",
+          "currentCost",
+          "categories",
+          "costs"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unitName": {
+            "type": "string"
+          },
+          "isContainerItem": {
+            "type": "boolean"
+          },
+          "currentCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "categories": {
+            "$ref": "#/components/schemas/CategoryReadAllResponse"
+          },
+          "costs": {
+            "$ref": "#/components/schemas/CostReadAllResponse"
+          }
+        }
+      },
+      "StoreItemUpdateRequest": {
+        "required": [
+          "id",
+          "name",
+          "unitName",
+          "isContainerItem",
+          "categoryIds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unitName": {
+            "type": "string"
+          },
+          "isContainerItem": {
+            "type": "boolean"
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "StoreItemUpdateResponse": {
+        "required": [
+          "id",
+          "name",
+          "unitName",
+          "isContainerItem",
+          "currentCost",
+          "categories",
+          "costs"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unitName": {
+            "type": "string"
+          },
+          "isContainerItem": {
+            "type": "boolean"
+          },
+          "currentCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "categories": {
+            "$ref": "#/components/schemas/CategoryReadAllResponse"
+          },
+          "costs": {
+            "$ref": "#/components/schemas/CostReadAllResponse"
+          }
+        }
+      },
+      "StoreListModel": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "StoreReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreListModel"
+            }
+          }
+        }
+      },
+      "StoreReadResponse": {
+        "required": [
+          "id",
+          "name",
+          "storeItemAmounts",
+          "containers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "storeItemAmounts": {
+            "$ref": "#/components/schemas/StoreItemAmountReadAllResponse"
+          },
+          "containers": {
+            "$ref": "#/components/schemas/ContainerReadAllResponse"
+          }
+        }
+      },
+      "StoreTransactionCreateRequest": {
+        "required": [
+          "storeTransactionItems",
+          "reason",
+          "storeId"
+        ],
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "storeTransactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionItemCreateRequest"
+            }
+          },
+          "reason": {
+            "$ref": "#/components/schemas/StoreTransactionReason"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "destinationStoreId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updateCosts": {
+            "type": "boolean"
+          }
+        }
+      },
+      "StoreTransactionCreateResponse": {
+        "required": [
+          "id",
+          "startedAt",
+          "startedBy",
+          "storeTransactionItems"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserModel"
+          },
+          "cancelledBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/StoreTransactionReason"
+          },
+          "saleTransactionId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "storeTransactionItems": {
+            "$ref": "#/components/schemas/StoreTransactionItemReadAllResponse"
+          }
+        }
+      },
+      "StoreTransactionItemCreateRequest": {
+        "required": [
+          "itemAmount",
+          "cost",
+          "storeItemId"
+        ],
+        "type": "object",
+        "properties": {
+          "itemAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "cost": {
+            "type": "number",
+            "format": "double"
+          },
+          "storeItemId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "StoreTransactionItemModel": {
+        "required": [
+          "itemAmount",
+          "cost",
+          "storeItem",
+          "store",
+          "storeTransactionId"
+        ],
+        "type": "object",
+        "properties": {
+          "itemAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "cost": {
+            "type": "number",
+            "format": "double"
+          },
+          "storeItem": {
+            "$ref": "#/components/schemas/StoreItemListModel"
+          },
+          "store": {
+            "$ref": "#/components/schemas/StoreListModel"
+          },
+          "storeTransactionId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "StoreTransactionItemReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionItemModel"
+            }
+          }
+        }
+      },
+      "StoreTransactionListModel": {
+        "required": [
+          "id",
+          "startedAt",
+          "startedBy"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserModel"
+          },
+          "cancelledBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/StoreTransactionReason"
+          },
+          "saleTransactionId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "StoreTransactionReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "StoreTransactionReadResponse": {
+        "required": [
+          "id",
+          "startedAt",
+          "startedBy",
+          "storeTransactionItems"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserModel"
+          },
+          "cancelledBy": {
+            "$ref": "#/components/schemas/UserModel2"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/StoreTransactionReason"
+          },
+          "saleTransactionId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "storeTransactionItems": {
+            "$ref": "#/components/schemas/StoreTransactionItemReadAllResponse"
+          }
+        }
+      },
+      "StoreTransactionReason": {
+        "type": "integer"
+      },
+      "StoreUpdateRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "StoreUpdateResponse": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "UserModel": {
+        "required": [
+          "id",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "UserModel2": {
+        "required": [
+          "id",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "nullable": true
+      },
+      "UserReadAllResponse": {
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserModel"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PageMeta"
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -119,7 +5906,61 @@
   },
   "tags": [
     {
+      "name": "CashBoxes"
+    },
+    {
+      "name": "Categories"
+    },
+    {
+      "name": "CompositeAmounts"
+    },
+    {
+      "name": "Compositions"
+    },
+    {
+      "name": "ContainerChanges"
+    },
+    {
+      "name": "Containers"
+    },
+    {
+      "name": "ContainerTemplates"
+    },
+    {
+      "name": "Costs"
+    },
+    {
       "name": "Images"
+    },
+    {
+      "name": "Layouts"
+    },
+    {
+      "name": "Modifiers"
+    },
+    {
+      "name": "Pipes"
+    },
+    {
+      "name": "SaleItems"
+    },
+    {
+      "name": "SaleTransactions"
+    },
+    {
+      "name": "StoreItemAmounts"
+    },
+    {
+      "name": "StoreItems"
+    },
+    {
+      "name": "Stores"
+    },
+    {
+      "name": "StoreTransactions"
+    },
+    {
+      "name": "Users"
     }
   ]
 }

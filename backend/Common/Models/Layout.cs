@@ -43,3 +43,5 @@ public record LayoutUpdateRequest {
 }
 
 public record LayoutUpdateResponse : LayoutDetailModel;
+
+public record LayoutReadResponse : LayoutDetailModel;

@@ -16,9 +16,7 @@ public record StoreDetailModel {
 }
 
 // Requests and responses
-public record StoreReadAllRequest : PagedRequest;
-
-public record StoreReadAllResponse : PagedResponse<StoreListModel>;
+public record StoreReadAllResponse : CollectionResponse<StoreListModel>;
 
 public record StoreCreateRequest {
     public required string Name { get; init; }
@@ -32,4 +30,4 @@ public record StoreUpdateRequest {
 
 public record StoreUpdateResponse : StoreListModel;
 
-public record StoreReadRequest : StoreDetailModel;
+public record StoreReadResponse : StoreDetailModel;

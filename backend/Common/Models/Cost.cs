@@ -17,3 +17,11 @@ public record CostReadAllRequest {
 }
 
 public record CostReadAllResponse : CollectionResponse<CostModel>;
+
+public record CostCreateRequest {
+    public required int StoreItemId { get; init; }
+    public required decimal Amount { get; init; }
+    public required string Description { get; init; }
+}
+
+public record CostCreateResponse : CostModel;

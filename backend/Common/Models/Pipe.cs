@@ -28,6 +28,6 @@ public record PipeUpdateRequest {
     public required string Name { get; init; }
 }
 
-public record PipeUpdareResponse : PipeListModel;
+public record PipeUpdateResponse : PipeListModel;
 
 public record PipeReadResponse : PipeDetailModel;
