@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App", "App\App.csproj", "{F6A26A7B-E865-40AE-B7F9-66446829011A}"
+# 
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{F6A26A7B-E865-40AE-B7F9-66446829011A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65E77554-7C51-4964-8169-8673DD8A54D4}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,6 +15,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL.EF", "BL.EF\BL.EF.csproj", "{2AF9F3EA-B7AA-4B9D-9CD6-751B7A568225}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL.EF.Tests", "BL.EF.Tests\BL.EF.Tests.csproj", "{27377130-8F49-4B74-A471-00F92482505B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend.csproj", "{7A9C65F3-62AA-4D0F-8DB2-B6AD117EE745}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,5 +48,9 @@ Global
 		{27377130-8F49-4B74-A471-00F92482505B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27377130-8F49-4B74-A471-00F92482505B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27377130-8F49-4B74-A471-00F92482505B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A9C65F3-62AA-4D0F-8DB2-B6AD117EE745}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A9C65F3-62AA-4D0F-8DB2-B6AD117EE745}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A9C65F3-62AA-4D0F-8DB2-B6AD117EE745}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A9C65F3-62AA-4D0F-8DB2-B6AD117EE745}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
