@@ -1,7 +1,7 @@
 using System.Data;
 using System.Reflection;
-using KisV4.App.Configuration;
-using KisV4.App.Endpoints;
+using System.Security.Claims;
+using KisV4.Api.Endpoints;
 using KisV4.BL.EF;
 using KisV4.DAL.EF;
 using Microsoft.AspNetCore.Authorization;
@@ -12,54 +12,69 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
-builder.Services.AddCors(static opts => {
-    opts.AddDefaultPolicy(static policy =>
+builder.Services.AddCors(opts => {
+    opts.AddDefaultPolicy(policy =>
         policy.AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
 
-// Custom configuration
-builder.Services.Configure<ImageStorageSettings>(
-    builder.Configuration.GetSection("ImageStorage")
-);
-builder.Services.Configure<ScriptStorageSettings>(
-    builder.Configuration.GetSection("ScriptStorage")
-);
-
 // Auth
-builder.Services.AddAuthentication("Bearer").AddJwtBearer();
-builder.Services.AddAuthorization();
+var allowTestingTokens = args.Contains("--testing-auth");
+builder.Services.AddAuthentication(allowTestingTokens ? "Bearer" : "oidc")
+    .AddJwtBearer("Bearer")
+    .AddJwtBearer("oidc", opts => {
+        opts.Authority = "https://su-dev.fit.vutbr.cz";
+        opts.TokenValidationParameters.ValidateAudience = false;
+        if (builder.Environment.IsDevelopment()) {
+            opts.BackchannelHttpHandler = new HttpClientHandler {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+        }
+    });
+
+builder.Services.AddAuthorizationBuilder()
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
 // OpenAPI
-var bearerRequirement = new OpenApiSecurityRequirement {
-    [new OpenApiSecurityScheme {
-        Reference = new OpenApiReference {
-            Id = "Bearer",
-            Type = ReferenceType.SecurityScheme,
-        }
-    }] = Array.Empty<string>()
-};
 builder.Services.AddOpenApi(opts => {
     opts.AddDocumentTransformer((doc, _, _) => {
         doc.Info.Title = "KISv4 API";
         doc.Components ??= new OpenApiComponents();
-        doc.Components.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme> {
-            ["Bearer"] = new() {
+        doc.Components.SecuritySchemes.Clear();
+        if (allowTestingTokens) {
+            doc.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme {
                 Name = "Bearer",
-                Description = "JWT Authorization header using the bearer scheme",
+                Description = "Testing bearer token",
                 Type = SecuritySchemeType.Http,
                 In = ParameterLocation.Header,
-                Scheme = "bearer",
-                BearerFormat = "JWT"
-            },
-        };
-        return Task.CompletedTask;
-    });
-    opts.AddOperationTransformer((op, ctx, _) => {
-        if (ctx.Description.ActionDescriptor.EndpointMetadata.OfType<IAuthorizeData>().Any()) {
-            op.Security.Add(bearerRequirement);
+                BearerFormat = "JWT",
+                Scheme = "bearer"
+            };
+            doc.SecurityRequirements.Add(new() {
+                [new OpenApiSecurityScheme {
+                    Reference = new() {
+                        Id = "Bearer",
+                        Type = ReferenceType.SecurityScheme
+                    }
+                }] = Array.Empty<string>()
+            });
         }
+        doc.Components.SecuritySchemes["oidc"] = new() {
+            Type = SecuritySchemeType.OpenIdConnect,
+            OpenIdConnectUrl = new Uri("https://su-dev.fit.vutbr.cz/.well-known/openid-configuration/"),
+            Description = "OpenID Connect authentication via KIS.Auth",
+            Name = "Authorization",
+            In = ParameterLocation.Header
+        };
+        doc.SecurityRequirements.Add(new() {
+            [new OpenApiSecurityScheme {
+                Reference = new() {
+                    Id = "oidc",
+                    Type = ReferenceType.SecurityScheme
+                }
+            }] = Array.Empty<string>()
+        });
         return Task.CompletedTask;
     });
 });
@@ -87,6 +102,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles(); // static files only for serving images
 
 // Endpoints
 CashBoxes.MapEndpoints(app);
@@ -112,5 +128,9 @@ Users.MapEndpoints(app);
 // OpenAPI
 app.MapOpenApi().AllowAnonymous();
 app.MapScalarApiReference().AllowAnonymous();
+
+app.MapGet("identity", (ClaimsPrincipal user) => {
+    return user.Claims.Select(u => new { u.Type, u.Value });
+});
 
 app.Run();

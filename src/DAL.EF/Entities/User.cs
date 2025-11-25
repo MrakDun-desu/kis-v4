@@ -1,11 +1,10 @@
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KisV4.DAL.EF.Entities;
 
-[Index(nameof(Username), IsUnique = true)]
 public record User {
-    public int Id { get; init; }
-    public required string Username { get; init; }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public required int Id { get; init; }
 
     public Account PrestigeAccount { get; init; } = new();
 

@@ -8,10 +8,10 @@ public record SaleTransactionListModel {
     public string? Note { get; init; }
     public required DateTimeOffset StartedAt { get; init; }
     public DateTimeOffset? CancelledAt { get; init; }
-    public required UserModel StartedBy { get; init; }
-    public UserModel? CancelledBy { get; init; }
+    public required UserListModel StartedBy { get; init; }
+    public UserListModel? CancelledBy { get; init; }
     public bool Open { get; init; }
-    public UserModel? OpenedBy { get; init; }
+    public UserListModel? OpenedBy { get; init; }
 }
 
 public record SaleTransactionDetailModel {
@@ -19,10 +19,10 @@ public record SaleTransactionDetailModel {
     public string? Note { get; init; }
     public required DateTimeOffset StartedAt { get; init; }
     public DateTimeOffset? CancelledAt { get; init; }
-    public required UserModel StartedBy { get; init; }
-    public UserModel? CancelledBy { get; init; }
+    public required UserListModel StartedBy { get; init; }
+    public UserListModel? CancelledBy { get; init; }
     public required bool Open { get; init; }
-    public UserModel? OpenedBy { get; init; }
+    public UserListModel? OpenedBy { get; init; }
 
     public required SaleTransactionItemReadAllResponse SaleTransactionItems { get; init; }
     public required AccountTransactionReadAllResponse AccountTransactions { get; init; }

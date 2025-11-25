@@ -1,9 +1,8 @@
 #import "./custom-bibliography.typ": custom-bibliography
-#import "./common.typ": cs
 
 #let vut_thesis(
-  lang,
-  lang2,
+  lang: "cs",
+  lang2: "en",
   project_type: [Diplomová práce],
   project_type2: [Master's Thesis],
   date: datetime.today(),
@@ -52,6 +51,7 @@
 
   show raw: set text(font: "LMMono10")
   show link: set text(rgb("#092eab"), font: "LMMono10")
+  show footnote: set text(red)
 
   set heading(numbering: none, supplement: none)
   show heading: set par(first-line-indent: 0pt)
@@ -115,12 +115,12 @@
   // fixed words in different languages
   let _university = (
     "cs": [Vysoké učení technické v Brně],
-    "sk": cs[Vysoké učení technické v Brně],
+    "sk": [Vysoké učení technické v Brně],
     "en": [Brno University of Technology],
   )
   let _faculty = (
     "cs": [Fakulta informačních technologií],
-    "sk": cs[Fakulta informačních technologií],
+    "sk": [Fakulta informačních technologií],
     "en": [Faculty of Information Technology],
   )
   let _author = (

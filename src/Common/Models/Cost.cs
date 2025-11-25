@@ -8,7 +8,7 @@ public record CostModel {
     public required DateTimeOffset Timestamp { get; init; }
     public required string Description { get; init; }
     public required StoreItemListModel StoreItem { get; init; }
-    public required UserModel User { get; init; }
+    public required UserListModel User { get; init; }
 }
 
 // Requests and responses

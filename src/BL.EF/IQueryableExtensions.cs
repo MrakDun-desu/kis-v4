@@ -1,42 +1,75 @@
-using KisV4.BL.EF.Helpers;
-using KisV4.Common;
-using OneOf;
+using KisV4.Common.ModelWrappers;
 
 namespace KisV4.BL.EF;
 
-// public static class IQueryableExtensions {
-//     public static OneOf<Page<TTarget>, Dictionary<string, string[]>> Page<TSource, TTarget>(
-//         this IQueryable<TSource> source,
-//         int page,
-//         int pageSize,
-//         Func<List<TSource>, List<TTarget>> mapping) {
-//         var errors = new Dictionary<string, string[]>();
-//         if (page < 1) {
-//             errors.AddItemOrCreate(
-//                 nameof(page), $"Page is required to be higher than 0. Received value: {page}"
-//             );
-//         }
-//
-//         pageSize = Math.Min(pageSize, Constants.MaxPageSize);
-//
-//         if (errors.Count > 0) {
-//             return errors;
-//         }
-//
-//         var totalCount = source.Count();
-//         var pageCount = (totalCount / pageSize) + 1;
-//         if (totalCount == 0) {
-//             return new Page<TTarget>([], new PageMeta(0, 0, 0, 0, 0, 0));
-//         }
-//
-//         var skipped = (page - 1) * pageSize;
-//         var data = source.Skip(skipped).Take(pageSize).ToList();
-//         var from = skipped + 1;
-//         var count = data.Count;
-//
-//         return new Page<TTarget>(
-//             mapping.Invoke(data),
-//             new PageMeta(page, pageSize, from, from + count - 1, totalCount, pageCount)
-//         );
-//     }
-// }
+public static class IQueryableExtensions {
+
+    public static TOutPage KeysetPaginate<TOutPage, TOut, TSource, TKey>(
+            this IQueryable<TSource> source,
+            KeysetPagedRequest<TKey> req,
+            Func<TSource, TOut> mapping,
+            Func<TOut[], KeysetPageMeta<TKey>, TOutPage> factory,
+            Func<TSource, TKey> order,
+            bool orderDesc = false
+            )
+    where TOutPage : KeysetPagedResponse<TKey, TOut>
+    where TKey : struct, IComparable<TKey> {
+        var total = source.Count();
+
+        var ordered = orderDesc
+            ? source.OrderByDescending(order)
+            : source.OrderBy(order);
+
+        IEnumerable<TSource> offsetCollection = orderDesc
+            ? source.Where(s => order(s).CompareTo(req.PageStart) <= 0)
+            : source.Where(s => order(s).CompareTo(req.PageStart) >= 0);
+
+        var queried = offsetCollection
+            .Take(req.PageSize + 1)
+            .ToArray();
+
+        Nullable<TKey> nextPageStart = (queried.Length > req.PageSize)
+            ? null
+            : new Nullable<TKey>(order(queried[req.PageSize]));
+
+        return factory(
+            queried[..req.PageSize].Select(mapping).ToArray(),
+            new KeysetPageMeta<TKey> {
+                Total = total,
+                PageStart = req.PageStart,
+                NextPageStart = nextPageStart,
+                PageSize = req.PageSize,
+            }
+        );
+    }
+
+    public static TOutPage Paginate<TOutPage, TOut, TSource, TOrder>(
+            this IQueryable<TSource> source,
+            PagedRequest req,
+            Func<TSource, TOut> mapping,
+            Func<TOut[], PageMeta, TOutPage> factory,
+            Func<TSource, TOrder> order,
+            bool orderDesc = false
+            )
+    where TOutPage : PagedResponse<TOut> {
+        var total = source.Count();
+
+        var ordered = orderDesc switch {
+            true => source.OrderByDescending(order),
+            false => source.OrderBy(order)
+        };
+
+        return factory(
+            source
+                .Skip((req.Page - 1) * req.PageSize)
+                .Take(req.PageSize)
+                .Select(mapping)
+                .ToArray(),
+            new PageMeta {
+                Page = req.Page,
+                PageSize = req.PageSize,
+                Total = total
+            }
+        );
+    }
+}

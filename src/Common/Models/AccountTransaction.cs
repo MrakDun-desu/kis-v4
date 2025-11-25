@@ -11,7 +11,7 @@ public record AccountTransactionModel {
 
 // Requests and responses
 public record AccountTransactionReadAllRequest : PagedRequest {
-    public int AccountId { get; init; }
+    public required int AccountId { get; init; }
     public DateTimeOffset? From { get; init; }
     public DateTimeOffset? To { get; init; }
 }

@@ -6,7 +6,7 @@ namespace KisV4.Common.Models;
 public record StockTakingModel {
     public required DateTimeOffset Timestamp { get; init; }
     public required int CashBoxId { get; init; }
-    public required UserModel UserId { get; init; }
+    public required UserListModel User { get; init; }
 }
 
 // Requests and responses

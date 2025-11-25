@@ -6,7 +6,7 @@
   })
   [[#ref(label(entry-name))]]
 }
-#let custom-bibliography(yaml-data, show-unused: false) = {
+#let custom-bibliography(yaml-data) = {
   context {
     let _months = if text.lang == "en" {
       (
@@ -166,7 +166,7 @@
     }
 
     // Format of the citation
-    // (one universal, it would be annoying to make separate ones since they're pretty mych the same)
+    // (one universal, it would be annoying to make separate ones since they're pretty much the same)
     let format-entry(entry, entry_name) = {
       let fields = ()
       let first_field = [#format-authors(entry.author) #text(
@@ -200,8 +200,7 @@
         fields.push[[cit. #entry.cited]]
       }
       show figure: it => []
-      fields.join(". ")
-      [. ]
+      [#fields.join(". "). ]
       [#figure(numbering: "1", kind: "citation", supplement: [])[] #label(
           entry_name,
         )]

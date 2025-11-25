@@ -8,6 +8,7 @@ builder.Services
     .AddBff()
     .AddRemoteApis();
 
+
 builder.Services
     .AddAuthentication(options => {
         options.DefaultScheme = "Cookies";
@@ -16,15 +17,27 @@ builder.Services
     })
     .AddCookie("Cookies")
     .AddOpenIdConnect("oidc", options => {
-        options.Authority = "https://localhost:5001";
-        options.ClientId = "bff";
+        options.Authority = "https://su-dev.fit.vutbr.cz";
+        options.ClientId = "kis-sales";
         options.ClientSecret = "secret";
         options.ResponseType = "code";
-        options.Scope.Add("api1");
-        options.Scope.Add("offline_access");
+        options.Scope.Remove("profile"); // normal profile not supported by KIS Auth
+        string[] requiredScopes = [
+            "offline_access",
+            "openid",
+            "roles",
+            "cpo",
+            "fpo"
+        ];
+        foreach (var scope in requiredScopes) {
+            options.Scope.Add(scope);
+        }
         options.SaveTokens = true;
-        options.GetClaimsFromUserInfoEndpoint = true;
-        options.MapInboundClaims = false;
+        if (builder.Environment.IsDevelopment()) {
+            options.BackchannelHttpHandler = new HttpClientHandler {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+        }
     });
 
 var app = builder.Build();
@@ -39,6 +52,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseBff();
 app.UseAuthorization();
+
 app.MapBffManagementEndpoints();
+app.MapRemoteBffApiEndpoint("/sales-api", "https://localhost:7001")
+    .RequireAccessToken();
 
 app.Run();

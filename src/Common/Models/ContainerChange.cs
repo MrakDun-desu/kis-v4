@@ -8,7 +8,7 @@ public record ContainerChangeModel {
     public required ContainerState NewState { get; init; }
     public required DateTimeOffset Timestamp { get; init; }
     public required int ContainerId { get; init; }
-    public required UserModel User { get; init; }
+    public required UserListModel User { get; init; }
 }
 
 // Requests and responses

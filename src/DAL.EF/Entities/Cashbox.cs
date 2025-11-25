@@ -9,5 +9,5 @@ public record Cashbox {
     public Account SalesAccount { get; init; } = new();
     public int DonationsAccountId { get; init; }
     public Account DonationsAccount { get; init; } = new();
-    public IEnumerable<StockTaking> StockTakings { get; init; } = [];
+    public ICollection<StockTaking> StockTakings { get; init; } = [];
 }

@@ -1,7 +1,7 @@
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace KisV4.App.Endpoints;
+namespace KisV4.Api.Endpoints;
 
 public static class Compositions {
 
