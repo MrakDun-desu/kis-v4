@@ -9,6 +9,8 @@ public class AccountTransactionReadAllValidator : AbstractValidator<AccountTrans
 
     public AccountTransactionReadAllValidator(KisDbContext dbContext) {
         _dbContext = dbContext;
+
+        Include(new PagedRequestValidator());
         RuleFor(x => x)
             .Must(x => {
                 // if either of them is null, no need to check

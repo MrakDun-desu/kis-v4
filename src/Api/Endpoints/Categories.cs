@@ -1,3 +1,5 @@
+using FluentValidation;
+using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -12,19 +14,38 @@ public static class Categories {
         routeBuilder.MapDelete("categories/{id:int}", Delete);
     }
 
-    public static CategoryReadAllResponse ReadAll() {
-        throw new NotImplementedException();
+    public static CategoryReadAllResponse ReadAll(CategoryService service) {
+        return service.ReadAll();
     }
 
-    public static Created<CategoryCreateResponse> Create(CategoryCreateRequest req) {
-        throw new NotImplementedException();
+    public static Results<Ok<CategoryCreateResponse>, ValidationProblem> Create(
+            CategoryService service,
+            IValidator<CategoryCreateRequest> validator,
+            CategoryCreateRequest req) {
+        var validationResult = validator.Validate(req);
+        if (!validationResult.IsValid) {
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        }
+
+        return TypedResults.Ok(service.Create(req));
     }
 
-    public static Results<NoContent, NotFound> Update(int id, CategoryUpdateRequest req) {
-        throw new NotImplementedException();
+    public static Results<NoContent, NotFound, ValidationProblem> Update(
+            CategoryService service,
+            IValidator<CategoryUpdateRequest> validator,
+            int id,
+            CategoryUpdateRequest req) {
+        var validationResult = validator.Validate(req);
+        if (!validationResult.IsValid) {
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        }
+
+        return service.Update(id, req) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 
-    public static Results<NoContent, NotFound> Delete(int id) {
-        throw new NotImplementedException();
+    public static Results<NoContent, NotFound> Delete(
+            CategoryService service,
+            int id) {
+        return service.Delete(id) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 }

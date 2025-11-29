@@ -9,6 +9,7 @@ public class CompositeReadAllValidator : AbstractValidator<CompositeAmountReadAl
 
     public CompositeReadAllValidator(KisDbContext dbContext) {
         _dbContext = dbContext;
+        Include(new PagedRequestValidator());
 
         RuleFor(x => x.StoreId)
             .Must(StoreExists)
