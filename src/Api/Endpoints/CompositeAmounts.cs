@@ -1,3 +1,4 @@
+using FluentValidation;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -9,9 +10,16 @@ public static class CompositeAmounts {
         routeBuilder.MapGet("composite-amounts", ReadAll);
     }
 
-    public static CompositeAmountReadAllResponse ReadAll(
+    public static Results<CompositeAmountReadAllResponse, ValidationProblem> ReadAll(
+            CompositeAmountService service,
+            IValidator<CompositeAmountReadAllRequest> validator,
             [AsParameters] CompositeAmountReadAllRequest req
             ) {
-        throw new NotImplementedException();
+        var validationResult = validator.Validate(req);
+        if (!validationResult.IsValid) {
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        }
+
+        return service.ReadAll(req);
     }
 }
