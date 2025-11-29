@@ -7,11 +7,12 @@ namespace KisV4.DAL.EF.Entities;
 [AuditIgnore]
 [PrimaryKey(nameof(ContainerId), nameof(Timestamp))]
 public record ContainerChange {
-    public ContainerState NewState { get; init; }
-    public DateTimeOffset Timestamp { get; init; }
+    public required ContainerState NewState { get; init; }
+    public required decimal NewAmount { get; init; }
+    public required DateTimeOffset Timestamp { get; init; }
 
-    public int ContainerId { get; init; }
+    public required int ContainerId { get; init; }
     public Container? Container { get; set; }
-    public int UserId { get; init; }
+    public required int UserId { get; init; }
     public User? User { get; set; }
 }
