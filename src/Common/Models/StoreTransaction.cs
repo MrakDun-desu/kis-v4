@@ -41,7 +41,7 @@ public record StoreTransactionCreateRequest {
     public required StoreTransactionItemCreateRequest[] StoreTransactionItems { get; init; }
     public required StoreTransactionReason Reason { get; init; }
     public required int StoreId { get; init; }
-    public int? DestinationStoreId { get; init; }
+    public int? SourceStoreId { get; init; }
     public bool UpdateCosts { get; init; }
 }
 

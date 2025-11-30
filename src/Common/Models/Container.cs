@@ -9,7 +9,7 @@ public record ContainerListModel {
     public required decimal Amount { get; init; }
     public required ContainerState State { get; init; }
     public required ContainerTemplateModel Template { get; init; }
-    public required PipeListModel Pipe { get; init; }
+    public required PipeListModel? Pipe { get; init; }
     public required StoreListModel Store { get; init; }
 }
 
@@ -18,9 +18,9 @@ public record ContainerDetailModel {
     public required decimal Amount { get; init; }
     public required ContainerState State { get; init; }
     public required ContainerTemplateModel Template { get; init; }
-    public required PipeListModel Pipe { get; init; }
+    public required PipeListModel? Pipe { get; init; }
     public required StoreListModel Store { get; init; }
-    public required ContainerChangeReadAllResponse ContainerChanges { get; init; }
+    public required IEnumerable<ContainerChangeModel> ContainerChanges { get; init; }
 }
 
 // Requests and responses
@@ -34,7 +34,6 @@ public record ContainerReadAllRequest : PagedRequest {
 public record ContainerReadAllResponse : PagedResponse<ContainerListModel>;
 
 public record ContainerCreateRequest {
-    public required int Id { get; init; }
     public required int TemplateId { get; init; }
     public required int StoreId { get; init; }
     public required int Amount { get; init; }

@@ -8,7 +8,7 @@ public static class IQueryableExtensions {
             this IQueryable<TSource> source,
             KeysetPagedRequest<TKey> req,
             Func<TSource, TOut> mapping,
-            Func<TOut[], KeysetPageMeta<TKey>, TOutPage> factory,
+            Func<IEnumerable<TOut>, KeysetPageMeta<TKey>, TOutPage> factory,
             Func<TSource, TKey> order,
             bool orderDesc = false
             )
@@ -20,23 +20,31 @@ public static class IQueryableExtensions {
             ? source.OrderByDescending(order)
             : source.OrderBy(order);
 
-        IEnumerable<TSource> offsetCollection = orderDesc
-            ? source.Where(s => order(s).CompareTo(req.PageStart) <= 0)
-            : source.Where(s => order(s).CompareTo(req.PageStart) >= 0);
+        var offsetCollection = req.PageStart switch {
+            null => source,
+            { } pageStart => orderDesc
+                ? source.Where(s => order(s).CompareTo(pageStart) <= 0)
+                : source.Where(s => order(s).CompareTo(pageStart) >= 0)
+        };
 
         var queried = offsetCollection
             .Take(req.PageSize + 1)
             .ToArray();
 
-        Nullable<TKey> nextPageStart = (queried.Length > req.PageSize)
+        TKey? nextPageStart = (queried.Length > req.PageSize)
             ? null
-            : new Nullable<TKey>(order(queried[req.PageSize]));
+            : order(queried[req.PageSize]);
+
+        TKey? realPageStart = req.PageStart ?? queried.FirstOrDefault() switch {
+            null => null,
+            var val => order(val)
+        };
 
         return factory(
             queried[..req.PageSize].Select(mapping).ToArray(),
             new KeysetPageMeta<TKey> {
                 Total = total,
-                PageStart = req.PageStart,
+                PageStart = realPageStart,
                 NextPageStart = nextPageStart,
                 PageSize = req.PageSize,
             }
@@ -47,7 +55,7 @@ public static class IQueryableExtensions {
             this IQueryable<TSource> source,
             PagedRequest req,
             Func<TSource, TOut> mapping,
-            Func<TOut[], PageMeta, TOutPage> factory,
+            Func<IEnumerable<TOut>, PageMeta, TOutPage> factory,
             Func<TSource, TOrder> order,
             bool orderDesc = false
             )

@@ -18,3 +18,30 @@ public class ContainerChangeReadAllValidator : AbstractValidator<ContainerChange
     private bool ContainerExists(int containerId) =>
         _dbContext.Containers.Find(containerId) is not null;
 }
+
+public class ContainerChangeCreateValidator : AbstractValidator<ContainerChangeCreateRequest> {
+    private readonly KisDbContext _dbContext;
+
+    public ContainerChangeCreateValidator(KisDbContext dbContext) {
+        _dbContext = dbContext;
+
+        RuleFor(x => x.ContainerId)
+            .Must(ContainerExists)
+            .WithMessage("Specified container must exist");
+        RuleFor(x => x)
+            .Must(AmountLowerOrEqualToCurrent)
+            .WithMessage("New container amount must be lower or equal to the current one");
+    }
+
+    private bool ContainerExists(int containerId) =>
+        _dbContext.Containers.Find(containerId) is not null;
+
+    private bool AmountLowerOrEqualToCurrent(ContainerChangeCreateRequest req) {
+        var container = _dbContext.Containers.Find(req.ContainerId);
+        if (container is null) {
+            return true;
+        }
+
+        return container.Amount >= req.NewAmount;
+    }
+}
