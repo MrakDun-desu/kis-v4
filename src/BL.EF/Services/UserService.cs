@@ -1,3 +1,4 @@
+using KisV4.BL.EF.Mapping;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
@@ -20,6 +21,6 @@ public class UserService(
             _dbContext.SaveChanges();
         }
 
-        return new UserListModel { Id = entity.Id };
+        return entity.ToModel();
     }
 }

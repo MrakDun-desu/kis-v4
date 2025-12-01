@@ -1,3 +1,4 @@
+using KisV4.BL.EF.Mapping;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;
 using KisV4.Common.Models;
@@ -10,14 +11,12 @@ namespace KisV4.BL.EF.Services;
 public class ContainerService(
         KisDbContext dbContext,
         TimeProvider timeProvider,
-        UserService userService,
-        StoreTransactionService storeTransactionService
+        UserService userService
         ) : IScopedService {
 
     private readonly KisDbContext _dbContext = dbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
     private readonly UserService _userService = userService;
-    private readonly StoreTransactionService _storeTransactionService = storeTransactionService;
 
     public ContainerReadAllResponse ReadAll(ContainerReadAllRequest req) {
         var query = _dbContext.Containers
@@ -49,26 +48,9 @@ public class ContainerService(
                     Id = c.Id,
                     Amount = c.Amount,
                     State = c.State,
-                    Pipe = c.Pipe == null ? null : new PipeListModel {
-                        Id = c.Pipe!.Id,
-                        Name = c.Pipe.Name
-                    },
-                    Store = new StoreListModel {
-                        Id = c.Store!.Id,
-                        Name = c.Store.Name
-                    },
-                    Template = new ContainerTemplateModel {
-                        Id = c.Template!.Id,
-                        Name = c.Template.Name,
-                        Amount = c.Template.Amount,
-                        StoreItem = new StoreItemListModel {
-                            Id = c.Template.StoreItem!.Id,
-                            Name = c.Template.StoreItem.Name,
-                            CurrentCost = c.Template.StoreItem.CurrentCost,
-                            IsContainerItem = c.Template.StoreItem.IsContainerItem,
-                            UnitName = c.Template.StoreItem.UnitName,
-                        }
-                    }
+                    Pipe = c.Pipe.ToModel(),
+                    Store = c.Store!.ToModel(),
+                    Template = c.Template!.ToModel()
                 },
                 (data, meta) => new ContainerReadAllResponse { Data = data, Meta = meta },
                 c => c.Id
@@ -87,34 +69,10 @@ public class ContainerService(
                 Id = c.Id,
                 Amount = c.Amount,
                 State = c.State,
-                Template = new ContainerTemplateModel {
-                    Id = c.Template!.Id,
-                    Amount = c.Template.Amount,
-                    Name = c.Template.Name,
-                    StoreItem = new StoreItemListModel {
-                        Id = c.Template.StoreItem!.Id,
-                        Name = c.Template.StoreItem.Name,
-                        CurrentCost = c.Template.StoreItem.CurrentCost,
-                        IsContainerItem = c.Template.StoreItem.IsContainerItem,
-                        UnitName = c.Template.StoreItem.UnitName,
-                    }
-                },
-                Store = new StoreListModel {
-                    Id = c.Store!.Id,
-                    Name = c.Store.Name
-                },
-                Pipe = c.Pipe == null ? null : new PipeListModel {
-                    Id = c.Pipe!.Id,
-                    Name = c.Pipe.Name
-                },
-                ContainerChanges = c.ContainerChanges.Select(cc => new ContainerChangeModel {
-                    ContainerId = cc.ContainerId,
-                    NewState = cc.NewState,
-                    Timestamp = cc.Timestamp,
-                    User = new UserListModel {
-                        Id = cc.User!.Id
-                    }
-                })
+                Template = c.Template!.ToModel(),
+                Store = c.Store!.ToModel(),
+                Pipe = c.Pipe.ToModel(),
+                ContainerChanges = c.ContainerChanges.Select(cc => cc.ToModel())
             })
             .FirstOrDefault(c => c.Id == id);
     }
@@ -135,49 +93,36 @@ public class ContainerService(
             Amount = template.Amount
         });
 
-        _dbContext.Database.BeginTransaction();
-        _storeTransactionService.CreateInternal(
-                new StoreTransactionCreateRequest {
-                    Reason = StoreTransactionReason.AddingToStore,
-                    StoreId = req.StoreId,
-                    StoreTransactionItems = [
-                        new StoreTransactionItemCreateRequest {
+        using (var transaction = _dbContext.Database.BeginTransaction()) {
+
+            StoreTransactionService.CreateInternal(
+                    new StoreTransactionCreateRequest {
+                        Reason = StoreTransactionReason.AddingToStore,
+                        StoreId = req.StoreId,
+                        StoreTransactionItems = [
+                            new StoreTransactionItemCreateRequest {
                             Cost = req.Cost,
                             ItemAmount = req.Amount * template.Amount,
                             StoreItemId = template.StoreItemId
                         }
-                    ]
-                },
-            userId,
-            reqTime
-        );
+                        ]
+                    },
+                userId,
+                reqTime,
+                _dbContext
+            );
 
-        _dbContext.Containers.AddRange(containers);
-        _dbContext.SaveChanges();
-
-        _dbContext.Database.CommitTransaction();
+            _dbContext.Containers.AddRange(containers);
+            _dbContext.SaveChanges();
+        }
 
         var data = containers.Select(c => new ContainerListModel {
             Id = c.Id,
             Amount = c.Amount,
             State = c.State,
-            Store = new StoreListModel {
-                Id = c.Store!.Id,
-                Name = c.Store.Name
-            },
-            Pipe = null,
-            Template = new ContainerTemplateModel {
-                Id = c.Template!.Id,
-                Amount = c.Template.Amount,
-                Name = c.Template.Name,
-                StoreItem = new StoreItemListModel {
-                    Id = c.Template.StoreItem!.Id,
-                    Name = c.Template.StoreItem.Name,
-                    CurrentCost = c.Template.StoreItem.CurrentCost,
-                    IsContainerItem = c.Template.StoreItem.IsContainerItem,
-                    UnitName = c.Template.StoreItem.UnitName
-                }
-            }
+            Store = c.Store!.ToModel(),
+            Pipe = c.Pipe.ToModel(),
+            Template = c.Template!.ToModel()
         });
 
         return new ContainerCreateResponse { Data = data };
@@ -188,69 +133,60 @@ public class ContainerService(
         var user = _userService.GetOrCreate(userId);
 
         var entity = _dbContext.Containers
-            .Include(c => c.Store)
-            .Include(c => c.Pipe)
-            .Include(c => c.Template)
-            .ThenInclude(ct => ct!.StoreItem)
             .FirstOrDefault(c => c.Id == id);
 
         if (entity is null) {
             return null;
         }
 
-        _dbContext.Database.BeginTransaction();
+        using (var transaction = _dbContext.Database.BeginTransaction()) {
 
-        if (entity.StoreId != req.StoreId) {
-            _storeTransactionService.CreateInternal(
-                    new StoreTransactionCreateRequest {
-                        Reason = StoreTransactionReason.ChangingStores,
-                        StoreId = req.StoreId,
-                        SourceStoreId = entity.StoreId,
-                        StoreTransactionItems = [
-                            new StoreTransactionItemCreateRequest {
+            if (entity.StoreId != req.StoreId) {
+                StoreTransactionService.CreateInternal(
+                        new StoreTransactionCreateRequest {
+                            Reason = StoreTransactionReason.ChangingStores,
+                            StoreId = req.StoreId,
+                            SourceStoreId = entity.StoreId,
+                            StoreTransactionItems = [
+                                new StoreTransactionItemCreateRequest {
                                 Cost = 0,
                                 ItemAmount = entity.Amount,
                                 StoreItemId = entity.Template!.StoreItemId
                             }
-                        ]
-                    },
-                userId,
-                reqTime
-            );
+                            ]
+                        },
+                    userId,
+                    reqTime,
+                    _dbContext
+                );
+            }
+
+            entity.StoreId = req.StoreId;
+            entity.PipeId = req.PipeId;
+
+            _dbContext.Containers.Update(entity);
+            _dbContext.SaveChanges();
+
+            _dbContext.Database.CommitTransaction();
         }
 
-        entity.StoreId = req.StoreId;
-        entity.PipeId = req.PipeId;
-
-        _dbContext.Containers.Update(entity);
-        _dbContext.SaveChanges();
-
-        _dbContext.Database.CommitTransaction();
-
-        return new ContainerUpdateResponse {
-            Id = entity.Id,
-            Amount = entity.Amount,
-            State = entity.State,
-            Pipe = entity.Pipe == null ? null : new PipeListModel {
-                Id = entity.Pipe.Id,
-                Name = entity.Pipe.Name
-            },
-            Store = new StoreListModel {
-                Id = entity.Store!.Id,
-                Name = entity.Store.Name
-            },
-            Template = new ContainerTemplateModel {
-                Id = entity.Template!.Id,
-                Name = entity.Template.Name,
-                Amount = entity.Template.Amount,
-                StoreItem = new StoreItemListModel {
-                    Id = entity.Template.StoreItem!.Id,
-                    Name = entity.Template.StoreItem.Name,
-                    CurrentCost = entity.Template.StoreItem.CurrentCost,
-                    IsContainerItem = entity.Template.StoreItem.IsContainerItem,
-                    UnitName = entity.Template.StoreItem.UnitName,
+        return _dbContext.Containers
+            .AsNoTracking()
+            .Include(c => c.Store)
+            .Include(c => c.Pipe)
+            .Include(c => c.Template)
+            .ThenInclude(ct => ct!.StoreItem)
+            .Select(c =>
+                new ContainerUpdateResponse {
+                    Id = entity.Id,
+                    Amount = entity.Amount,
+                    State = entity.State,
+                    Pipe = entity.Pipe.ToModel(),
+                    Store = entity.Store!.ToModel(),
+                    Template = entity.Template!.ToModel()
                 }
-            }
-        };
+            )
+            .First(c => c.Id == id)
+        ;
     }
 }

@@ -1,5 +1,4 @@
 using KisV4.Common.DependencyInjection;
-using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
@@ -24,7 +23,7 @@ public class StoreTransactionService(
         var user = _userService.GetOrCreate(userId);
 
         _dbContext.Database.BeginTransaction();
-        var entity = CreateInternal(req, userId, reqTime, null);
+        var entity = CreateInternal(req, userId, reqTime, _dbContext);
 
         _dbContext.SaveChanges();
         _dbContext.Database.CommitTransaction();
@@ -37,64 +36,74 @@ public class StoreTransactionService(
     /// Creates a StoreTransaction entity with the specified parameters. Must always be wrapped
     /// inside of a database transaction to keep the database state consistent.
     /// </summary>
-    internal StoreTransaction CreateInternal(
+    internal static StoreTransaction CreateInternal(
             StoreTransactionCreateRequest req,
             int userId,
             DateTimeOffset reqTime,
+            KisDbContext dbContext,
             SaleTransaction? saleTransaction = null
             ) {
-        // Creating store transaction itself (simple)
+        var transactionItemsCount = req.StoreTransactionItems.Length;
+        if (req.SourceStoreId.HasValue) {
+            transactionItemsCount *= 2;
+        }
         var entity = new StoreTransaction {
             Note = req.Note,
             Reason = req.Reason,
             SaleTransaction = saleTransaction,
             StartedAt = reqTime,
             StartedById = userId,
-            StoreTransactionItems = req.StoreTransactionItems.SelectMany(sti => {
-                List<StoreTransactionItem> output = [
-                    new StoreTransactionItem {
+            StoreTransactionItems = req.StoreTransactionItems.Aggregate(
+                    new List<StoreTransactionItem>(transactionItemsCount), (output, sti) => {
+                        output.Add(new StoreTransactionItem {
                             StoreId = req.StoreId,
                             Cost = sti.Cost,
                             ItemAmount = sti.ItemAmount,
                             StoreItemId = sti.StoreItemId
-                        }
-                ];
+                        });
 
-                if (req.Reason is StoreTransactionReason.ChangingStores) {
-                    output.Add(new StoreTransactionItem {
-                        StoreId = req.SourceStoreId!.Value,
-                        Cost = sti.Cost,
-                        ItemAmount = -sti.ItemAmount,
-                        StoreItemId = sti.StoreItemId
-                    });
-                }
-                return output;
-            }).ToArray()
+                        if (req.SourceStoreId is { } sourceStoreId) {
+                            output.Add(new StoreTransactionItem {
+                                StoreId = sourceStoreId,
+                                Cost = sti.Cost,
+                                ItemAmount = -sti.ItemAmount,
+                                StoreItemId = sti.StoreItemId
+                            });
+                        }
+                        return output;
+                    })
         };
 
-        UpdateItemAmounts(req);
+        UpdateItemAmounts(req, transactionItemsCount, dbContext);
 
-        _dbContext.StoreTransactions.Add(entity);
+        dbContext.StoreTransactions.Add(entity);
 
         return entity;
     }
 
-    private void UpdateItemAmounts(StoreTransactionCreateRequest req) {
+    private static void UpdateItemAmounts(
+            StoreTransactionCreateRequest req,
+            int itemsCount,
+            KisDbContext dbContext
+            ) {
         // make a list of store item amount changes to update the store item amounts in the
         // database. There should be no need to group by store item ID since they should already be
         // distinct thanks to validation
         var storeItemAmountChanges = req.StoreTransactionItems
-            .Select(sti => new { sti.StoreItemId, sti.ItemAmount, req.StoreId }).ToList();
+            .Aggregate(new List<(int StoreId, int StoreItemId, decimal ItemAmount)>(itemsCount),
+                    (output, sti) => {
+                        output.Add((req.StoreId, sti.StoreItemId, sti.ItemAmount));
 
-        // if there is a source store (this is a movement operation), also remove the items from the
-        // source store
-        if (req.SourceStoreId is { } sourceStoreId) {
-            storeItemAmountChanges.AddRange(req.StoreTransactionItems
-                    .Select(sti => new { sti.StoreItemId, ItemAmount = -sti.ItemAmount, StoreId = sourceStoreId }));
-        }
+                        // if there is a source store (this is a movement operation), also remove the items from the
+                        // source store
+                        if (req.SourceStoreId is { } sourceStoreId) {
+                            output.Add((sourceStoreId, sti.StoreItemId, -sti.ItemAmount));
+                        }
+                        return output;
+                    });
 
         // update all the store item amounts in one database call
-        _dbContext.StoreItemAmounts
+        dbContext.StoreItemAmounts
             .Join(
                     storeItemAmountChanges,
                     sia => new { sia.StoreId, sia.StoreItemId },
@@ -110,25 +119,25 @@ public class StoreTransactionService(
 
         // search for all the necessary compositions to update the composite amounts
         var changedStoreItemIds = req.StoreTransactionItems.Select(sti => sti.StoreItemId);
-        var compositeIds = _dbContext.Compositions
+        var compositeIds = dbContext.Compositions
             .Where(c => changedStoreItemIds.Contains(c.StoreItemId))
             .Select(c => c.CompositeId)
             .Distinct()
             .ToArray();
 
-        var compositions = _dbContext.Compositions
+        var compositions = dbContext.Compositions
             .Where(c => compositeIds.Contains(c.CompositeId))
             .GroupBy(c => c.CompositeId)
             .ToArray();
         var relevantStoreItemIds = compositions.SelectMany(g => g.Select(c => c.StoreItemId)).Distinct();
 
         List<int> storesToUpdate = [req.StoreId];
-        if (req.SourceStoreId is { } id2) {
-            storesToUpdate.Add(id2);
+        if (req.SourceStoreId is { } sourceStoreId) {
+            storesToUpdate.Add(sourceStoreId);
         }
 
         // get store item amounts for all the composites
-        var storeItemAmounts = _dbContext.StoreItemAmounts
+        var storeItemAmounts = dbContext.StoreItemAmounts
             .Where(sia => storesToUpdate.Contains(sia.StoreId))
             .Where(sia => relevantStoreItemIds.Contains(sia.StoreItemId))
             .GroupBy(sia => sia.StoreId)
@@ -138,7 +147,8 @@ public class StoreTransactionService(
             })
             .ToArray();
 
-        List<(int CompositeId, int StoreId, decimal Amount)> newCompositeAmounts = [];
+        var newCompositeAmounts = new List<(int CompositeId, int StoreId, decimal NewAmount)>
+            (compositions.Length * storesToUpdate.Count);
 
         // compute the new composite amounts
         foreach (var composition in compositions) {
@@ -157,12 +167,12 @@ public class StoreTransactionService(
         }
 
         // update all composite amounts in one database call
-        _dbContext.CompositeAmounts
+        dbContext.CompositeAmounts
             .Join(
                     newCompositeAmounts,
                     ca => new { ca.StoreId, ca.CompositeId },
                     nc => new { nc.StoreId, nc.CompositeId },
-                    (ca, nc) => new { Entity = ca, NewAmount = nc.Amount }
+                    (ca, nc) => new { Entity = ca, nc.NewAmount }
                     )
             .ExecuteUpdate(
                     props => props.SetProperty(
@@ -170,5 +180,6 @@ public class StoreTransactionService(
                         x => x.NewAmount
                     ));
     }
-
 }
+
+

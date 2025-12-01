@@ -46,8 +46,8 @@ public class CashBoxService(
     public OneOf<StockTakingCreateResponse, NotFound> StockTaking(int id, int userId) {
         var reqTime = _timeProvider.GetUtcNow();
 
-        var cashbox = _dbContext.Cashboxes.Find(id);
-        if (cashbox is null) {
+        var entity = _dbContext.Cashboxes.Find(id);
+        if (entity is null) {
             return new NotFound();
         }
 
@@ -70,8 +70,8 @@ public class CashBoxService(
     }
 
     public OneOf<CashBoxReadResponse, NotFound> Read(int id) {
-        var cashbox = _dbContext.Cashboxes.Find(id);
-        if (cashbox is null) {
+        var entity = _dbContext.Cashboxes.Find(id);
+        if (entity is null) {
             return new NotFound();
         }
 
@@ -82,18 +82,18 @@ public class CashBoxService(
         var accountTransactionsFrom = stockTakings.Data.FirstOrDefault()?.Timestamp;
 
         var donationsTransactions = _accountTransactionService.ReadAll(new() {
-            AccountId = cashbox.DonationsAccountId,
+            AccountId = entity.DonationsAccountId,
             From = accountTransactionsFrom
         });
 
         var salesTransacions = _accountTransactionService.ReadAll(new() {
-            AccountId = cashbox.SalesAccountId,
+            AccountId = entity.SalesAccountId,
             From = accountTransactionsFrom
         });
 
         return new CashBoxReadResponse {
-            Id = cashbox.Id,
-            Name = cashbox.Name,
+            Id = entity.Id,
+            Name = entity.Name,
             StockTakings = stockTakings,
             DonationsTransactions = donationsTransactions,
             SalesTransactions = salesTransacions
@@ -101,25 +101,26 @@ public class CashBoxService(
     }
 
     public OneOf<CashBoxUpdateResponse, NotFound> Update(int id, CashBoxUpdateRequest req) {
-        var cashbox = _dbContext.Cashboxes.Find(id);
-        if (cashbox is null) {
+        var entity = _dbContext.Cashboxes.Find(id);
+        if (entity is null) {
             return new NotFound();
         }
 
-        cashbox.Name = req.Name;
+        entity.Name = req.Name;
 
+        _dbContext.Cashboxes.Update(entity);
         _dbContext.SaveChanges();
 
-        return new CashBoxUpdateResponse { Id = cashbox.Id, Name = cashbox.Name, };
+        return new CashBoxUpdateResponse { Id = entity.Id, Name = entity.Name, };
     }
 
     public bool Delete(int id) {
-        var cashbox = _dbContext.Cashboxes.Find(id);
-        if (cashbox == null) {
+        var entity = _dbContext.Cashboxes.Find(id);
+        if (entity == null) {
             return false;
         }
 
-        cashbox.Deleted = true;
+        entity.Deleted = true;
         // no need to mark account transactions as cancelled since they won't show up anywhere
         // anyways. Also deleting a cashbox shouldn't mean that its transactions just disappear
 

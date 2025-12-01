@@ -1,3 +1,4 @@
+using KisV4.BL.EF.Mapping;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
@@ -18,9 +19,7 @@ public class StockTakingService(
             .Paginate(
                 req,
                 st => new StockTakingModel {
-                    User = new UserListModel {
-                        Id = st.User!.Id
-                    },
+                    User = st.User!.ToModel(),
                     CashBoxId = st.CashBoxId,
                     Timestamp = st.Timestamp
                 },

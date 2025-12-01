@@ -1,3 +1,4 @@
+using KisV4.BL.EF.Mapping;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
@@ -22,9 +23,7 @@ public class ContainerChangeService(
             .Include(cc => cc.User)
             .Select(cc => new ContainerChangeModel {
                 ContainerId = cc.ContainerId,
-                User = new UserListModel {
-                    Id = cc.User!.Id
-                },
+                User = cc.User!.ToModel(),
                 NewState = cc.NewState,
                 Timestamp = cc.Timestamp
             });
@@ -47,17 +46,15 @@ public class ContainerChangeService(
         var container = _dbContext.Containers.Find(req.ContainerId)!;
         container.Amount = req.NewAmount;
         container.State = req.NewState;
-        _dbContext.Update(container);
 
+        _dbContext.Update(container);
         _dbContext.SaveChanges();
 
         return new ContainerChangeCreateResponse {
             ContainerId = entity.ContainerId,
             NewState = entity.NewState,
             Timestamp = entity.Timestamp,
-            User = new UserListModel {
-                Id = user.Id
-            }
+            User = user
         };
     }
 }
