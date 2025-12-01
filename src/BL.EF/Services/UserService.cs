@@ -12,15 +12,15 @@ public class UserService(
 
     private readonly KisDbContext _dbContext = dbContext;
 
-    public UserListModel GetOrCreate(int id) {
-        var entity = _dbContext.Users.Find(id);
+    public async Task<UserListModel> GetOrCreateAsync(int id, CancellationToken token = default) {
+        var entity = await _dbContext.Users.FindAsync(id, token);
 
         if (entity is null) {
             entity = new User { Id = id };
             _dbContext.Users.Add(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync(token);
         }
 
-        return entity.ToModel();
+        return entity.ToModel()!;
     }
 }

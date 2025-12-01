@@ -2,6 +2,7 @@ using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.BL.EF.Services;
 
@@ -11,19 +12,20 @@ public class CategoryService(
 
     private readonly KisDbContext _dbContext = dbContext;
 
-    public CategoryReadAllResponse ReadAll() {
-        var data = _dbContext.Categories.Select(c => new CategoryModel {
+    public async Task<CategoryReadAllResponse> ReadAllAsync(CancellationToken token = default) {
+        var data = await _dbContext.Categories.Select(c => new CategoryModel {
             Id = c.Id,
             Name = c.Name
-        });
+        }).ToArrayAsync(token);
+
         return new CategoryReadAllResponse { Data = data };
     }
 
-    public CategoryCreateResponse Create(CategoryCreateRequest req) {
+    public async Task<CategoryCreateResponse> CreateAsync(CategoryCreateRequest req, CancellationToken token = default) {
         var entity = new Category { Name = req.Name };
 
         _dbContext.Categories.Add(entity);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync(token);
 
         return new CategoryCreateResponse {
             Id = entity.Id,
@@ -31,8 +33,8 @@ public class CategoryService(
         };
     }
 
-    public bool Update(int id, CategoryUpdateRequest req) {
-        var entity = _dbContext.Categories.Find(id);
+    public async Task<bool> UpdateAsync(int id, CategoryUpdateRequest req, CancellationToken token = default) {
+        var entity = await _dbContext.Categories.FindAsync(id, token);
 
         if (entity is null) {
             return false;
@@ -40,19 +42,19 @@ public class CategoryService(
 
         entity.Name = req.Name;
         _dbContext.Categories.Update(entity);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync(token);
 
         return true;
     }
 
-    public bool Delete(int id) {
-        var entity = _dbContext.Categories.Find(id);
+    public async Task<bool> DeleteAsync(int id, CancellationToken token = default) {
+        var entity = await _dbContext.Categories.FindAsync(id, token);
         if (entity is null) {
             return false;
         }
 
         _dbContext.Categories.Remove(entity);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync(token);
 
         return true;
     }

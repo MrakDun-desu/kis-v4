@@ -12,30 +12,32 @@ public static class Compositions {
         routeBuilder.MapPut("compositions", Put);
     }
 
-    public static Results<Ok<CompositionReadAllResponse>, ValidationProblem> ReadAll(
+    public static async Task<Results<Ok<CompositionReadAllResponse>, ValidationProblem>> ReadAll(
             CompositionService service,
             IValidator<CompositionReadAllRequest> validator,
-            [AsParameters] CompositionReadAllRequest req
+            [AsParameters] CompositionReadAllRequest req,
+            CancellationToken token = default
             ) {
-        var validationResult = validator.Validate(req);
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return TypedResults.Ok(service.ReadAll(req));
+        return TypedResults.Ok(await service.ReadAllAsync(req, token));
     }
 
-    public static Results<ValidationProblem, NoContent> Put(
+    public static async Task<Results<ValidationProblem, NoContent>> Put(
             CompositionService service,
             IValidator<CompositionPutRequest> validator,
-            CompositionPutRequest req
+            CompositionPutRequest req,
+            CancellationToken token
             ) {
-        var validationResult = validator.Validate(req);
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        service.Put(req);
+        await service.Put(req, token);
 
         return TypedResults.NoContent();
     }

@@ -13,21 +13,22 @@ public class CompositionService(
 
     private readonly KisDbContext _dbContext = dbContext;
 
-    public CompositionReadAllResponse ReadAll(CompositionReadAllRequest req) {
-        var data = _dbContext.Compositions
+    public async Task<CompositionReadAllResponse> ReadAllAsync(CompositionReadAllRequest req, CancellationToken token = default) {
+        var data = await _dbContext.Compositions
             .Where(c => c.CompositeId == req.CompositeId)
             .Include(c => c.StoreItem)
             .Select(c => new CompositionModel {
                 CompositeId = c.CompositeId,
                 Amount = c.Amount,
                 StoreItem = c.StoreItem!.ToModel()
-            });
+            })
+            .ToArrayAsync(token);
 
         return new CompositionReadAllResponse { Data = data };
     }
 
-    public void Put(CompositionPutRequest req) {
-        var entity = _dbContext.Compositions.Find(req.StoreItemId, req.CompositeId);
+    public async Task Put(CompositionPutRequest req, CancellationToken token = default) {
+        var entity = await _dbContext.Compositions.FindAsync(req.StoreItemId, req.CompositeId, token);
         if (entity is not null) {
             if (req.Amount == 0) {
                 _dbContext.Compositions.Remove(entity);
@@ -43,6 +44,6 @@ public class CompositionService(
             });
         }
 
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync(token);
     }
 }

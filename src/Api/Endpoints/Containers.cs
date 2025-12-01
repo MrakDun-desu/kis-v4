@@ -16,55 +16,61 @@ public static class Containers {
         routeBuilder.MapPut("containers/{id:int}", Update);
     }
 
-    public static Results<Ok<ContainerReadAllResponse>, ValidationProblem> ReadAll(
+    public static async Task<Results<Ok<ContainerReadAllResponse>, ValidationProblem>> ReadAll(
             ContainerService service,
             IValidator<ContainerReadAllRequest> validator,
-            [AsParameters] ContainerReadAllRequest req
+            [AsParameters] ContainerReadAllRequest req,
+            CancellationToken token = default
             ) {
-        var validationResult = validator.Validate(req);
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return TypedResults.Ok(service.ReadAll(req));
+        return TypedResults.Ok(await service.ReadAllAsync(req, token));
     }
 
-    public static Results<Ok<ContainerReadResponse>, NotFound> Read(
+    public static async Task<Results<Ok<ContainerReadResponse>, NotFound>> Read(
             ContainerService service,
-            int id
+            int id,
+            CancellationToken token = default
             ) {
-        return service.Read(id) switch {
+        return await service.ReadAsync(id, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
         };
     }
 
-    public static Results<Ok<ContainerCreateResponse>, ValidationProblem> Create(
+    public static async Task<Results<Ok<ContainerCreateResponse>, ValidationProblem>> Create(
             ContainerService service,
             IValidator<ContainerCreateRequest> validator,
             ClaimsPrincipal user,
-            ContainerCreateRequest req) {
-        var validationResult = validator.Validate(req);
+            ContainerCreateRequest req,
+            CancellationToken token = default
+            ) {
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return TypedResults.Ok(service.Create(req, user.GetUserId()));
+        return TypedResults.Ok(await service.CreateAsync(req, user.GetUserId(), token));
     }
 
-    public static Results<Ok<ContainerUpdateResponse>, NotFound, ValidationProblem> Update(
+    public static async Task<Results<Ok<ContainerUpdateResponse>, NotFound, ValidationProblem>> Update(
             ContainerService service,
             IValidator<ContainerUpdateRequest> validator,
             ClaimsPrincipal user,
             int id,
-            ContainerUpdateRequest req) {
+            ContainerUpdateRequest req,
+            CancellationToken token = default
+            ) {
 
-        var validationResult = validator.Validate(req);
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return service.Update(id, req, user.GetUserId()) switch {
+        return await service.UpdateAsync(id, req, user.GetUserId(), token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
         };

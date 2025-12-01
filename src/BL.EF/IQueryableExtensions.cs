@@ -1,24 +1,22 @@
 using KisV4.Common.ModelWrappers;
+using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.BL.EF;
 
 public static class IQueryableExtensions {
 
-    public static TOutPage KeysetPaginate<TOutPage, TOut, TSource, TKey>(
+    public static async Task<TOutPage> KeysetPaginate<TOutPage, TOut, TSource, TKey>(
             this IQueryable<TSource> source,
             KeysetPagedRequest<TKey> req,
             Func<TSource, TOut> mapping,
             Func<IEnumerable<TOut>, KeysetPageMeta<TKey>, TOutPage> factory,
             Func<TSource, TKey> order,
-            bool orderDesc = false
+            bool orderDesc = false,
+            CancellationToken token = default
             )
     where TOutPage : KeysetPagedResponse<TKey, TOut>
     where TKey : struct, IComparable<TKey> {
-        var total = source.Count();
-
-        var ordered = orderDesc
-            ? source.OrderByDescending(order)
-            : source.OrderBy(order);
+        var total = await source.CountAsync(token);
 
         var offsetCollection = req.PageStart switch {
             null => source,
@@ -27,15 +25,19 @@ public static class IQueryableExtensions {
                 : source.Where(s => order(s).CompareTo(pageStart) >= 0)
         };
 
-        var queried = offsetCollection
+        var ordered = (orderDesc
+            ? offsetCollection.OrderByDescending(order)
+            : offsetCollection.OrderBy(order)).AsQueryable();
+
+        var queried = await ordered
             .Take(req.PageSize + 1)
-            .ToArray();
+            .ToArrayAsync(token);
 
         TKey? nextPageStart = (queried.Length > req.PageSize)
             ? null
-            : order(queried[req.PageSize]);
+            : order(queried.Last());
 
-        TKey? realPageStart = req.PageStart ?? queried.FirstOrDefault() switch {
+        TKey? realPageStart = queried.FirstOrDefault() switch {
             null => null,
             var val => order(val)
         };
@@ -51,16 +53,17 @@ public static class IQueryableExtensions {
         );
     }
 
-    public static TOutPage Paginate<TOutPage, TOut, TSource, TOrder>(
+    public static async Task<TOutPage> PaginateAsync<TOutPage, TOut, TSource, TOrder>(
             this IQueryable<TSource> source,
             PagedRequest req,
             Func<TSource, TOut> mapping,
-            Func<IEnumerable<TOut>, PageMeta, TOutPage> factory,
+            Func<TOut[], PageMeta, TOutPage> factory,
             Func<TSource, TOrder> order,
-            bool orderDesc = false
+            bool orderDesc = false,
+            CancellationToken token = default
             )
     where TOutPage : PagedResponse<TOut> {
-        var total = source.Count();
+        var total = await source.CountAsync(token);
 
         var ordered = orderDesc switch {
             true => source.OrderByDescending(order),
@@ -68,11 +71,12 @@ public static class IQueryableExtensions {
         };
 
         return factory(
-            source
+            await ordered
                 .Skip((req.Page - 1) * req.PageSize)
                 .Take(req.PageSize)
                 .Select(mapping)
-                .ToArray(),
+                .AsQueryable()
+                .ToArrayAsync(token),
             new PageMeta {
                 Page = req.Page,
                 PageSize = req.PageSize,

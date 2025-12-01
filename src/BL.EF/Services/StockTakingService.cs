@@ -12,20 +12,22 @@ public class StockTakingService(
 
     private readonly KisDbContext _dbContext = dbContext;
 
-    public StockTakingReadAllResponse ReadAll(StockTakingReadAllRequest req) {
-        return _dbContext.StockTakings
+    public async Task<StockTakingReadAllResponse> ReadAllAsync(StockTakingReadAllRequest req, CancellationToken token = default) {
+        var stockTakings = _dbContext.StockTakings.Include(st => st.User);
+        return await _dbContext.StockTakings
             .Include(st => st.User)
             .AsQueryable()
-            .Paginate(
+            .PaginateAsync(
                 req,
                 st => new StockTakingModel {
-                    User = st.User!.ToModel(),
+                    User = st.User.ToModel()!,
                     CashBoxId = st.CashBoxId,
                     Timestamp = st.Timestamp
                 },
                 (data, meta) => new StockTakingReadAllResponse { Data = data, Meta = meta },
                 st => st.Timestamp,
-                true
+                true,
+                token
             );
     }
 }

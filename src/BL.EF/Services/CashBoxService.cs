@@ -2,8 +2,7 @@ using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
-using OneOf;
-using OneOf.Types;
+using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.BL.EF.Services;
 
@@ -21,37 +20,44 @@ public class CashBoxService(
     private readonly StockTakingService _stockTakingService = stockTakingService;
     private readonly AccountTransactionService _accountTransactionService = accountTransactionService;
 
-    public CashBoxReadAllResponse ReadAll() {
-        var data = _dbContext.Cashboxes.Select(
+    public async Task<CashBoxReadAllResponse> ReadAllAsync(CancellationToken token = default) {
+        var data = await _dbContext.Cashboxes.Select(
             cb => new CashBoxListModel {
                 Id = cb.Id,
                 Name = cb.Name
             }
-        );
+        ).ToArrayAsync();
 
         return new CashBoxReadAllResponse { Data = data };
     }
 
-    public CashBoxCreateResponse Create(CashBoxCreateRequest req) {
+    public async Task<CashBoxCreateResponse> CreateAsync(
+            CashBoxCreateRequest req,
+            CancellationToken token = default
+            ) {
         var entity = new Cashbox {
             Name = req.Name,
         };
 
         _dbContext.Cashboxes.Add(entity);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync(token);
 
         return new CashBoxCreateResponse { Id = entity.Id, Name = entity.Name };
     }
 
-    public OneOf<StockTakingCreateResponse, NotFound> StockTaking(int id, int userId) {
+    public async Task<StockTakingCreateResponse?> StockTakingAsync(
+            int id,
+            int userId,
+            CancellationToken token = default
+            ) {
         var reqTime = _timeProvider.GetUtcNow();
 
-        var entity = _dbContext.Cashboxes.Find(id);
+        var entity = await _dbContext.Cashboxes.FindAsync(id, token);
         if (entity is null) {
-            return new NotFound();
+            return null;
         }
 
-        var user = _userService.GetOrCreate(userId);
+        var user = await _userService.GetOrCreateAsync(userId, token);
 
         var stockTaking = new StockTaking {
             Timestamp = reqTime,
@@ -60,7 +66,7 @@ public class CashBoxService(
         };
 
         _dbContext.StockTakings.Add(stockTaking);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync(token);
 
         return new StockTakingCreateResponse {
             Timestamp = stockTaking.Timestamp,
@@ -69,27 +75,27 @@ public class CashBoxService(
         };
     }
 
-    public OneOf<CashBoxReadResponse, NotFound> Read(int id) {
-        var entity = _dbContext.Cashboxes.Find(id);
+    public async Task<CashBoxReadResponse?> ReadAsync(int id, CancellationToken token = default) {
+        var entity = await _dbContext.Cashboxes.FindAsync(id, token);
         if (entity is null) {
-            return new NotFound();
+            return null;
         }
 
-        var stockTakings = _stockTakingService.ReadAll(new StockTakingReadAllRequest {
+        var stockTakings = await _stockTakingService.ReadAllAsync(new StockTakingReadAllRequest {
             CashBoxId = id,
-        });
+        }, token);
 
         var accountTransactionsFrom = stockTakings.Data.FirstOrDefault()?.Timestamp;
 
-        var donationsTransactions = _accountTransactionService.ReadAll(new() {
+        var donationsTransactions = await _accountTransactionService.ReadAllAsync(new() {
             AccountId = entity.DonationsAccountId,
             From = accountTransactionsFrom
-        });
+        }, token);
 
-        var salesTransacions = _accountTransactionService.ReadAll(new() {
+        var salesTransacions = await _accountTransactionService.ReadAllAsync(new() {
             AccountId = entity.SalesAccountId,
             From = accountTransactionsFrom
-        });
+        }, token);
 
         return new CashBoxReadResponse {
             Id = entity.Id,
@@ -100,22 +106,22 @@ public class CashBoxService(
         };
     }
 
-    public OneOf<CashBoxUpdateResponse, NotFound> Update(int id, CashBoxUpdateRequest req) {
-        var entity = _dbContext.Cashboxes.Find(id);
+    public async Task<CashBoxUpdateResponse?> UpdateAsync(int id, CashBoxUpdateRequest req, CancellationToken token = default) {
+        var entity = await _dbContext.Cashboxes.FindAsync(id, token);
         if (entity is null) {
-            return new NotFound();
+            return null;
         }
 
         entity.Name = req.Name;
 
         _dbContext.Cashboxes.Update(entity);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync(token);
 
         return new CashBoxUpdateResponse { Id = entity.Id, Name = entity.Name, };
     }
 
-    public bool Delete(int id) {
-        var entity = _dbContext.Cashboxes.Find(id);
+    public async Task<bool> DeleteAsync(int id, CancellationToken token = default) {
+        var entity = await _dbContext.Cashboxes.FindAsync(id, token);
         if (entity == null) {
             return false;
         }
@@ -124,7 +130,7 @@ public class CashBoxService(
         // no need to mark account transactions as cancelled since they won't show up anywhere
         // anyways. Also deleting a cashbox shouldn't mean that its transactions just disappear
 
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync(token);
 
         return true;
     }

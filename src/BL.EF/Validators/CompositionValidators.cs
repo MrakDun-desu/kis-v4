@@ -11,12 +11,12 @@ public class CompositionReadAllValidator : AbstractValidator<CompositionReadAllR
         _dbContext = dbContext;
 
         RuleFor(x => x.CompositeId)
-            .Must(CompositeExists)
+            .MustAsync(CompositeExists)
             .WithMessage("Specified composite must exist");
     }
 
-    private bool CompositeExists(int compositeId) =>
-        _dbContext.Composites.Find(compositeId) is not null;
+    private async Task<bool> CompositeExists(int compositeId, CancellationToken token = default) =>
+        await _dbContext.Composites.FindAsync(compositeId, token) is not null;
 }
 
 public class CompositionPutValidator : AbstractValidator<CompositionPutRequest> {
@@ -26,17 +26,17 @@ public class CompositionPutValidator : AbstractValidator<CompositionPutRequest> 
         _dbContext = dbContext;
 
         RuleFor(x => x.CompositeId)
-            .Must(CompositeExists)
+            .MustAsync(CompositeExists)
             .WithMessage("Specified composite must exist");
 
         RuleFor(x => x.StoreItemId)
-            .Must(StoreItemExists)
+            .MustAsync(StoreItemExists)
             .WithMessage("Specified store item must exist");
     }
 
-    private bool CompositeExists(int compositeId) =>
-        _dbContext.Composites.Find(compositeId) is not null;
+    private async Task<bool> CompositeExists(int compositeId, CancellationToken token = default) =>
+        await _dbContext.Composites.FindAsync(compositeId, token) is not null;
 
-    private bool StoreItemExists(int storeItemId) =>
-        _dbContext.StoreItems.Find(storeItemId) is not null;
+    private async Task<bool> StoreItemExists(int storeItemId, CancellationToken token = default) =>
+        await _dbContext.StoreItems.FindAsync(storeItemId, token) is not null;
 }

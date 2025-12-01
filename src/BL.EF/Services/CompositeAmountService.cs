@@ -10,10 +10,10 @@ public class CompositeAmountService(
 
     private readonly KisDbContext _dbContext = dbContext;
 
-    public CompositeAmountReadAllResponse ReadAll(CompositeAmountReadAllRequest req) {
-        return _dbContext.CompositeAmounts
+    public async Task<CompositeAmountReadAllResponse> ReadAllAsync(CompositeAmountReadAllRequest req, CancellationToken token = default) {
+        return await _dbContext.CompositeAmounts
             .Where(ca => ca.StoreId == req.StoreId)
-            .Paginate(
+            .PaginateAsync(
                     req,
                     ca => new CompositeAmountModel {
                         StoreId = ca.StoreId,
@@ -21,7 +21,8 @@ public class CompositeAmountService(
                         CompositeId = ca.CompositeId
                     },
                     (data, meta) => new CompositeAmountReadAllResponse { Data = data, Meta = meta },
-                    ca => ca.CompositeId
+                    ca => ca.CompositeId,
+                    token: token
                 );
     }
 }

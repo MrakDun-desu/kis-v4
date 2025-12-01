@@ -1,5 +1,3 @@
-using KisV4.Common.ModelWrappers;
-
 namespace KisV4.Common.Models;
 
 // Base models
@@ -17,5 +15,3 @@ public record StoreTransactionItemCreateRequest {
     public required decimal Cost { get; init; }
     public required int StoreItemId { get; init; }
 }
-
-public record StoreTransactionItemReadAllResponse : CollectionResponse<StoreTransactionItemModel>;

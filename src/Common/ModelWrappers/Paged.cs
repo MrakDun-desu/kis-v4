@@ -12,6 +12,6 @@ public record PageMeta {
 }
 
 public abstract record PagedResponse<T> {
-    public required IEnumerable<T> Data { get; init; }
+    public required T[] Data { get; init; }
     public required PageMeta Meta { get; init; }
 }

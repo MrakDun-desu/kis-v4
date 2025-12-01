@@ -11,16 +11,17 @@ public static class CompositeAmounts {
         routeBuilder.MapGet("composite-amounts", ReadAll);
     }
 
-    public static Results<Ok<CompositeAmountReadAllResponse>, ValidationProblem> ReadAll(
+    public static async Task<Results<Ok<CompositeAmountReadAllResponse>, ValidationProblem>> ReadAll(
             CompositeAmountService service,
             IValidator<CompositeAmountReadAllRequest> validator,
-            [AsParameters] CompositeAmountReadAllRequest req
+            [AsParameters] CompositeAmountReadAllRequest req,
+            CancellationToken token = default
             ) {
-        var validationResult = validator.Validate(req);
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return TypedResults.Ok(service.ReadAll(req));
+        return TypedResults.Ok(await service.ReadAllAsync(req, token));
     }
 }

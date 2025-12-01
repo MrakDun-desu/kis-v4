@@ -6,25 +6,25 @@ namespace KisV4.Common.Models;
 // Base models
 public record StoreTransactionListModel {
     public required int Id { get; init; }
-    public string? Note { get; init; }
+    public required string? Note { get; init; }
     public required DateTimeOffset StartedAt { get; init; }
-    public DateTimeOffset? CancelledAt { get; init; }
+    public required DateTimeOffset? CancelledAt { get; init; }
     public required UserListModel StartedBy { get; init; }
-    public UserListModel? CancelledBy { get; init; }
-    public StoreTransactionReason Reason { get; init; }
-    public int? SaleTransactionId { get; init; }
+    public required UserListModel? CancelledBy { get; init; }
+    public required StoreTransactionReason Reason { get; init; }
+    public required int? SaleTransactionId { get; init; }
 }
 
 public record StoreTransactionDetailModel {
     public required int Id { get; init; }
-    public string? Note { get; init; }
+    public required string? Note { get; init; }
     public required DateTimeOffset StartedAt { get; init; }
-    public DateTimeOffset? CancelledAt { get; init; }
+    public required DateTimeOffset? CancelledAt { get; init; }
     public required UserListModel StartedBy { get; init; }
-    public UserListModel? CancelledBy { get; init; }
-    public StoreTransactionReason Reason { get; init; }
-    public int? SaleTransactionId { get; init; }
-    public required StoreTransactionItemReadAllResponse StoreTransactionItems { get; init; }
+    public required UserListModel? CancelledBy { get; init; }
+    public required StoreTransactionReason Reason { get; init; }
+    public required int? SaleTransactionId { get; init; }
+    public required StoreTransactionItemModel[] StoreTransactionItems { get; init; }
 }
 
 // Requests and responses

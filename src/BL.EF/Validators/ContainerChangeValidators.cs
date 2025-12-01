@@ -11,12 +11,12 @@ public class ContainerChangeReadAllValidator : AbstractValidator<ContainerChange
         _dbContext = dbContext;
 
         RuleFor(x => x.ContainerId)
-            .Must(ContainerExists)
+            .MustAsync(ContainerExists)
             .WithMessage("Specified container must exist");
     }
 
-    private bool ContainerExists(int containerId) =>
-        _dbContext.Containers.Find(containerId) is not null;
+    private async Task<bool> ContainerExists(int containerId, CancellationToken token = default) =>
+        await _dbContext.Containers.FindAsync(containerId, token) is not null;
 }
 
 public class ContainerChangeCreateValidator : AbstractValidator<ContainerChangeCreateRequest> {
@@ -26,18 +26,20 @@ public class ContainerChangeCreateValidator : AbstractValidator<ContainerChangeC
         _dbContext = dbContext;
 
         RuleFor(x => x.ContainerId)
-            .Must(ContainerExists)
+            .MustAsync(ContainerExists)
             .WithMessage("Specified container must exist");
+        RuleFor(x => x.NewAmount)
+            .GreaterThanOrEqualTo(0);
         RuleFor(x => x)
-            .Must(AmountLowerOrEqualToCurrent)
+            .MustAsync(AmountLowerOrEqualToCurrent)
             .WithMessage("New container amount must be lower or equal to the current one");
     }
 
-    private bool ContainerExists(int containerId) =>
-        _dbContext.Containers.Find(containerId) is not null;
+    private async Task<bool> ContainerExists(int containerId, CancellationToken token = default) =>
+        await _dbContext.Containers.FindAsync(containerId, token) is not null;
 
-    private bool AmountLowerOrEqualToCurrent(ContainerChangeCreateRequest req) {
-        var container = _dbContext.Containers.Find(req.ContainerId);
+    private async Task<bool> AmountLowerOrEqualToCurrent(ContainerChangeCreateRequest req, CancellationToken token = default) {
+        var container = await _dbContext.Containers.FindAsync(req.ContainerId, token);
         if (container is null) {
             return true;
         }

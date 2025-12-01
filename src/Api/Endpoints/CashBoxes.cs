@@ -19,74 +19,77 @@ public static class CashBoxes {
         routeBuilder.MapDelete("cashboxes/{id:int}", Delete);
     }
 
-    public static CashBoxReadAllResponse ReadAll(CashBoxService service) {
-        return service.ReadAll();
+    public static async Task<CashBoxReadAllResponse> ReadAll(
+            CashBoxService service,
+            CancellationToken token = default
+            ) {
+        return await service.ReadAllAsync(token);
     }
 
-    public static Results<CreatedAtRoute<CashBoxCreateResponse>, ValidationProblem> Create(
+    public static async Task<Results<CreatedAtRoute<CashBoxCreateResponse>, ValidationProblem>> Create(
             CashBoxService service,
             CashBoxCreateRequest req,
-            IValidator<CashBoxCreateRequest> validator
+            IValidator<CashBoxCreateRequest> validator,
+            CancellationToken token = default
             ) {
-        var validationResult = validator.Validate(req);
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var output = service.Create(req);
+        var output = await service.CreateAsync(req, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
-    public static Results<Ok<StockTakingCreateResponse>, NotFound> StockTaking(
+    public static async Task<Results<Ok<StockTakingCreateResponse>, NotFound>> StockTaking(
             CashBoxService service,
             ClaimsPrincipal claims,
-            int id
+            int id,
+            CancellationToken token = default
             ) {
-        return service.StockTaking(id, claims.GetUserId())
-            .Match<Results<Ok<StockTakingCreateResponse>, NotFound>>(
-                    response => TypedResults.Ok(response),
-                    _ => TypedResults.NotFound()
-                );
-
+        return await service.StockTakingAsync(id, claims.GetUserId(), token) switch {
+            null => TypedResults.NotFound(),
+            var response => TypedResults.Ok(response)
+        };
     }
 
-    public static Results<Ok<CashBoxReadResponse>, NotFound> Read(
+    public static async Task<Results<Ok<CashBoxReadResponse>, NotFound>> Read(
             CashBoxService service,
-            int id
+            int id,
+            CancellationToken token = default
             ) {
-        return service.Read(id)
-            .Match<Results<Ok<CashBoxReadResponse>, NotFound>>(
-                response => TypedResults.Ok(response),
-                _ => TypedResults.NotFound()
-            );
+        return await service.ReadAsync(id, token) switch {
+            null => TypedResults.NotFound(),
+            var response => TypedResults.Ok(response)
+        };
     }
 
-    public static Results<Ok<CashBoxUpdateResponse>, NotFound, ValidationProblem> Update(
+    public static async Task<Results<Ok<CashBoxUpdateResponse>, NotFound, ValidationProblem>> Update(
             CashBoxService service,
             int id,
             CashBoxUpdateRequest req,
-            IValidator<CashBoxUpdateRequest> validator
+            IValidator<CashBoxUpdateRequest> validator,
+            CancellationToken token = default
             ) {
-        var validationResult = validator.Validate(req);
+        var validationResult = await validator.ValidateAsync(req, token);
 
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return service.Update(id, req)
-            .Match<Results<Ok<CashBoxUpdateResponse>, NotFound, ValidationProblem>>(
-                response => TypedResults.Ok(response),
-                _ => TypedResults.NotFound()
-            );
+        return await service.UpdateAsync(id, req, token) switch {
+            null => TypedResults.NotFound(),
+            var response => TypedResults.Ok(response)
+        };
     }
 
-    public static Results<NoContent, NotFound> Delete(
+    public static async Task<Results<NoContent, NotFound>> Delete(
             CashBoxService service,
-            int id
+            int id,
+            CancellationToken token = default
             ) {
-        return service.Delete(id) switch {
-            true => TypedResults.NoContent(),
-            false => TypedResults.NotFound()
-        };
+        return await service.DeleteAsync(id, token)
+            ? TypedResults.NoContent()
+            : TypedResults.NotFound();
     }
 }

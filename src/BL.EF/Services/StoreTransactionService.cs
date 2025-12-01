@@ -1,3 +1,4 @@
+using KisV4.BL.EF.Mapping;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
@@ -16,32 +17,48 @@ public class StoreTransactionService(
     private readonly TimeProvider _timeProvider = timeProvider;
     private readonly UserService _userService = userService;
 
-    public StoreTransactionCreateResponse Create(
+    public async Task<StoreTransactionCreateResponse> CreateAsync(
             StoreTransactionCreateRequest req,
-            int userId) {
+            int userId,
+            CancellationToken token = default
+            ) {
         var reqTime = _timeProvider.GetUtcNow();
-        var user = _userService.GetOrCreate(userId);
+        var user = await _userService.GetOrCreateAsync(userId, token);
 
-        _dbContext.Database.BeginTransaction();
-        var entity = CreateInternal(req, userId, reqTime, _dbContext);
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-        _dbContext.SaveChanges();
-        _dbContext.Database.CommitTransaction();
+        try {
+            var entity = await CreateInternalAsync(req, userId, reqTime, _dbContext, token: token);
+            await transaction.CommitAsync();
 
-        // TODO: Implement returning correctly
-        throw new NotImplementedException();
+            return new StoreTransactionCreateResponse {
+                Id = entity.Id,
+                Note = entity.Note,
+                Reason = entity.Reason,
+                StartedAt = entity.StartedAt,
+                StoreTransactionItems = entity.StoreTransactionItems.Select(sti => sti.ToModel()).ToArray(),
+                CancelledAt = entity.CancelledAt,
+                CancelledBy = entity.CancelledBy.ToModel(),
+                SaleTransactionId = entity.SaleTransactionId,
+                StartedBy = user
+            };
+        } catch {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     /// <summary>
     /// Creates a StoreTransaction entity with the specified parameters. Must always be wrapped
     /// inside of a database transaction to keep the database state consistent.
     /// </summary>
-    internal static StoreTransaction CreateInternal(
+    internal static async Task<StoreTransaction> CreateInternalAsync(
             StoreTransactionCreateRequest req,
             int userId,
             DateTimeOffset reqTime,
             KisDbContext dbContext,
-            SaleTransaction? saleTransaction = null
+            SaleTransaction? saleTransaction = null,
+            CancellationToken token = default
             ) {
         var transactionItemsCount = req.StoreTransactionItems.Length;
         if (req.SourceStoreId.HasValue) {
@@ -74,17 +91,19 @@ public class StoreTransactionService(
                     })
         };
 
-        UpdateItemAmounts(req, transactionItemsCount, dbContext);
-
         dbContext.StoreTransactions.Add(entity);
+        await dbContext.SaveChangesAsync(token);
+
+        await UpdateItemAmountsAsync(req, transactionItemsCount, dbContext, token);
 
         return entity;
     }
 
-    private static void UpdateItemAmounts(
+    private static async Task UpdateItemAmountsAsync(
             StoreTransactionCreateRequest req,
             int itemsCount,
-            KisDbContext dbContext
+            KisDbContext dbContext,
+            CancellationToken token
             ) {
         // make a list of store item amount changes to update the store item amounts in the
         // database. There should be no need to group by store item ID since they should already be
@@ -103,32 +122,33 @@ public class StoreTransactionService(
                     });
 
         // update all the store item amounts in one database call
-        dbContext.StoreItemAmounts
+        await dbContext.StoreItemAmounts
             .Join(
                     storeItemAmountChanges,
                     sia => new { sia.StoreId, sia.StoreItemId },
                     c => new { c.StoreId, c.StoreItemId },
                     (sia, c) => new { StoreItemAmount = sia, Change = c.ItemAmount }
                     )
-            .ExecuteUpdate(
+            .ExecuteUpdateAsync(
                     props => props.SetProperty(
                         x => x.StoreItemAmount.Amount,
                         x => x.StoreItemAmount.Amount + x.Change
-                        )
+                        ),
+                    token
                     );
 
         // search for all the necessary compositions to update the composite amounts
         var changedStoreItemIds = req.StoreTransactionItems.Select(sti => sti.StoreItemId);
-        var compositeIds = dbContext.Compositions
+        var compositeIds = await dbContext.Compositions
             .Where(c => changedStoreItemIds.Contains(c.StoreItemId))
             .Select(c => c.CompositeId)
             .Distinct()
-            .ToArray();
+            .ToArrayAsync(token);
 
-        var compositions = dbContext.Compositions
+        var compositions = await dbContext.Compositions
             .Where(c => compositeIds.Contains(c.CompositeId))
             .GroupBy(c => c.CompositeId)
-            .ToArray();
+            .ToArrayAsync(token);
         var relevantStoreItemIds = compositions.SelectMany(g => g.Select(c => c.StoreItemId)).Distinct();
 
         List<int> storesToUpdate = [req.StoreId];
@@ -137,7 +157,7 @@ public class StoreTransactionService(
         }
 
         // get store item amounts for all the composites
-        var storeItemAmounts = dbContext.StoreItemAmounts
+        var storeItemAmounts = await dbContext.StoreItemAmounts
             .Where(sia => storesToUpdate.Contains(sia.StoreId))
             .Where(sia => relevantStoreItemIds.Contains(sia.StoreItemId))
             .GroupBy(sia => sia.StoreId)
@@ -145,7 +165,7 @@ public class StoreTransactionService(
                 StoreId = g.Key,
                 ItemAmounts = g.Select(sia => new { sia.StoreItemId, sia.Amount })
             })
-            .ToArray();
+            .ToArrayAsync(token);
 
         var newCompositeAmounts = new List<(int CompositeId, int StoreId, decimal NewAmount)>
             (compositions.Length * storesToUpdate.Count);
@@ -167,18 +187,20 @@ public class StoreTransactionService(
         }
 
         // update all composite amounts in one database call
-        dbContext.CompositeAmounts
+        await dbContext.CompositeAmounts
             .Join(
                     newCompositeAmounts,
                     ca => new { ca.StoreId, ca.CompositeId },
                     nc => new { nc.StoreId, nc.CompositeId },
                     (ca, nc) => new { Entity = ca, nc.NewAmount }
                     )
-            .ExecuteUpdate(
+            .ExecuteUpdateAsync(
                     props => props.SetProperty(
                         x => x.Entity.Amount,
                         x => x.NewAmount
-                    ));
+                    ),
+                    token
+                );
     }
 }
 

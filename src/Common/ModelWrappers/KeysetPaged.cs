@@ -13,6 +13,6 @@ public record KeysetPageMeta<TKey> where TKey : struct {
 }
 
 public abstract record KeysetPagedResponse<TKey, TValue> where TKey : struct {
-    public required IEnumerable<TValue> Data { get; init; }
+    public required TValue[] Data { get; init; }
     public required KeysetPageMeta<TKey> Meta { get; init; }
 }

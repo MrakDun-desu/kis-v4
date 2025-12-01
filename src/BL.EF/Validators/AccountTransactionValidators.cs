@@ -22,10 +22,10 @@ public class AccountTransactionReadAllValidator : AbstractValidator<AccountTrans
             .WithMessage("The datetime From must be earlier than the datetime To");
 
         RuleFor(x => x.AccountId)
-            .Must(AccountExists)
+            .MustAsync(AccountExists)
             .WithMessage("Account must exist");
     }
 
-    private bool AccountExists(int accountId) =>
-        _dbContext.Accounts.Find(accountId) is not null;
+    private async Task<bool> AccountExists(int accountId, CancellationToken token = default) =>
+        await _dbContext.Accounts.FindAsync(accountId, token) is not null;
 }

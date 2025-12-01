@@ -13,7 +13,7 @@ public class AccountTransactionService(
     private readonly KisDbContext _dbContext = dbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
 
-    public AccountTransactionReadAllResponse ReadAll(AccountTransactionReadAllRequest req) {
+    public async Task<AccountTransactionReadAllResponse> ReadAllAsync(AccountTransactionReadAllRequest req, CancellationToken token = default) {
         var reqTime = _timeProvider.GetUtcNow();
         var query = _dbContext.AccountTransactions
             .Where(at => at.AccountId == req.AccountId)
@@ -26,9 +26,9 @@ public class AccountTransactionService(
             query = query.Where(at => at.Timestamp < req.To);
         }
 
-        var total = query.Sum(at => at.Amount);
+        var total = await query.SumAsync(at => at.Amount, token);
 
-        return query.Paginate(
+        return await query.PaginateAsync(
                 req,
                 at => new AccountTransactionModel {
                     Timestamp = at.Timestamp,
@@ -44,7 +44,8 @@ public class AccountTransactionService(
                     Total = total
                 },
                 at => at.Timestamp,
-                true
+                true,
+                token
             );
     }
 }

@@ -13,30 +13,32 @@ public static class ContainerChanges {
         routeBuilder.MapPost("container-changes", Create);
     }
 
-    public static Results<Ok<ContainerChangeReadAllResponse>, ValidationProblem> ReadAll(
+    public static async Task<Results<Ok<ContainerChangeReadAllResponse>, ValidationProblem>> ReadAll(
             ContainerChangeService service,
             IValidator<ContainerChangeReadAllRequest> validator,
-            [AsParameters] ContainerChangeReadAllRequest req
+            [AsParameters] ContainerChangeReadAllRequest req,
+            CancellationToken token = default
             ) {
-        var validationResult = validator.Validate(req);
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return TypedResults.Ok(service.ReadAll(req));
+        return TypedResults.Ok(await service.ReadAll(req, token));
     }
 
-    public static Results<Ok<ContainerChangeCreateResponse>, ValidationProblem> Create(
+    public static async Task<Results<Ok<ContainerChangeCreateResponse>, ValidationProblem>> Create(
             ContainerChangeService service,
             IValidator<ContainerChangeCreateRequest> validator,
             ClaimsPrincipal user,
-            ContainerChangeCreateRequest req
+            ContainerChangeCreateRequest req,
+            CancellationToken token = default
             ) {
-        var validationResult = validator.Validate(req);
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return TypedResults.Ok(service.Create(req, user.GetUserId()));
+        return TypedResults.Ok(await service.Create(req, user.GetUserId(), token));
     }
 }

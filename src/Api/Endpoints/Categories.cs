@@ -14,38 +14,44 @@ public static class Categories {
         routeBuilder.MapDelete("categories/{id:int}", Delete);
     }
 
-    public static CategoryReadAllResponse ReadAll(CategoryService service) {
-        return service.ReadAll();
+    public static async Task<CategoryReadAllResponse> ReadAll(CategoryService service, CancellationToken token = default) {
+        return await service.ReadAllAsync(token);
     }
 
-    public static Results<Ok<CategoryCreateResponse>, ValidationProblem> Create(
+    public static async Task<Results<Ok<CategoryCreateResponse>, ValidationProblem>> Create(
             CategoryService service,
             IValidator<CategoryCreateRequest> validator,
-            CategoryCreateRequest req) {
-        var validationResult = validator.Validate(req);
+            CategoryCreateRequest req,
+            CancellationToken token = default
+            ) {
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return TypedResults.Ok(service.Create(req));
+        return TypedResults.Ok(await service.CreateAsync(req, token));
     }
 
-    public static Results<NoContent, NotFound, ValidationProblem> Update(
+    public static async Task<Results<NoContent, NotFound, ValidationProblem>> Update(
             CategoryService service,
             IValidator<CategoryUpdateRequest> validator,
             int id,
-            CategoryUpdateRequest req) {
-        var validationResult = validator.Validate(req);
+            CategoryUpdateRequest req,
+            CancellationToken token = default
+            ) {
+        var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return service.Update(id, req) ? TypedResults.NoContent() : TypedResults.NotFound();
+        return await service.UpdateAsync(id, req, token) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 
-    public static Results<NoContent, NotFound> Delete(
+    public static async Task<Results<NoContent, NotFound>> Delete(
             CategoryService service,
-            int id) {
-        return service.Delete(id) ? TypedResults.NoContent() : TypedResults.NotFound();
+            int id,
+            CancellationToken token = default
+            ) {
+        return await service.DeleteAsync(id, token) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 }

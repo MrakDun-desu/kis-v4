@@ -13,29 +13,29 @@ public class ContainerReadAllValidator : AbstractValidator<ContainerReadAllReque
         Include(new PagedRequestValidator());
 
         RuleFor(x => x.StoreId)
-            .Must(BeNullOrExistingStore)
+            .MustAsync(BeNullOrExistingStore)
             .WithMessage("StoreId must either be null or identify an existing store");
         RuleFor(x => x.TemplateId)
-            .Must(BeNullOrExistingTemplate)
+            .MustAsync(BeNullOrExistingTemplate)
             .WithMessage("TemplateId must either be null or identify an existing template");
         RuleFor(x => x.PipeId)
-            .Must(BeNullOrExistingPipe)
+            .MustAsync(BeNullOrExistingPipe)
             .WithMessage("PipeId must either be null or identify an existing pipe");
     }
 
-    private bool BeNullOrExistingStore(int? storeId) => storeId switch {
+    private async Task<bool> BeNullOrExistingStore(int? storeId, CancellationToken token = default) => storeId switch {
         null => true,
-        { } val => _dbContext.Stores.Find(val) is not null
+        { } val => await _dbContext.Stores.FindAsync(val, token) is not null
     };
 
-    private bool BeNullOrExistingTemplate(int? templateId) => templateId switch {
+    private async Task<bool> BeNullOrExistingTemplate(int? templateId, CancellationToken token = default) => templateId switch {
         null => true,
-        { } val => _dbContext.ContainerTemplates.Find(val) is not null
+        { } val => await _dbContext.ContainerTemplates.FindAsync(val, token) is not null
     };
 
-    private bool BeNullOrExistingPipe(int? pipeId) => pipeId switch {
+    private async Task<bool> BeNullOrExistingPipe(int? pipeId, CancellationToken token = default) => pipeId switch {
         null => true,
-        { } val => _dbContext.Pipes.Find(val) is not null
+        { } val => await _dbContext.Pipes.FindAsync(val, token) is not null
     };
 }
 
@@ -46,19 +46,19 @@ public class ContainerCreateValidator : AbstractValidator<ContainerCreateRequest
         _dbContext = dbContext;
 
         RuleFor(x => x.StoreId)
-            .Must(BeExistingStore)
+            .MustAsync(BeExistingStore)
             .WithMessage("Specified store must exist");
 
         RuleFor(x => x.TemplateId)
-            .Must(BeExistingTemplate)
+            .MustAsync(BeExistingTemplate)
             .WithMessage("Specified container template must exist");
     }
 
-    private bool BeExistingStore(int storeId) =>
-        _dbContext.Stores.Find(storeId) is not null;
+    private async Task<bool> BeExistingStore(int storeId, CancellationToken token = default) =>
+        await _dbContext.Stores.FindAsync(storeId, token) is not null;
 
-    private bool BeExistingTemplate(int templateId) =>
-        _dbContext.ContainerTemplates.Find(templateId) is not null;
+    private async Task<bool> BeExistingTemplate(int templateId, CancellationToken token = default) =>
+        await _dbContext.ContainerTemplates.FindAsync(templateId, token) is not null;
 }
 
 public class ContainerUpdateValidator : AbstractValidator<ContainerUpdateRequest> {
@@ -68,18 +68,18 @@ public class ContainerUpdateValidator : AbstractValidator<ContainerUpdateRequest
         _dbContext = dbContext;
 
         RuleFor(x => x.StoreId)
-            .Must(BeExistingStore)
+            .MustAsync(BeExistingStore)
             .WithMessage("Specified store must exist");
         RuleFor(x => x.PipeId)
-            .Must(BeNullOrExistingPipe)
+            .MustAsync(BeNullOrExistingPipe)
             .WithMessage("PipeId must either be null or identify an existing pipe");
     }
 
-    private bool BeNullOrExistingPipe(int? pipeId) => pipeId switch {
-        null => true,
-        { } val => _dbContext.Pipes.Find(val) is not null
-    };
+    private async Task<bool> BeExistingStore(int storeId, CancellationToken token = default) =>
+        await _dbContext.Stores.FindAsync(storeId, token) is not null;
 
-    private bool BeExistingStore(int storeId) =>
-        _dbContext.Stores.Find(storeId) is not null;
+    private async Task<bool> BeNullOrExistingPipe(int? pipeId, CancellationToken token = default) => pipeId switch {
+        null => true,
+        { } val => await _dbContext.Pipes.FindAsync(val, token) is not null
+    };
 }

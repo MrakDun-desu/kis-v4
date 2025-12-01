@@ -12,11 +12,11 @@ public class CompositeReadAllValidator : AbstractValidator<CompositeAmountReadAl
         Include(new PagedRequestValidator());
 
         RuleFor(x => x.StoreId)
-            .Must(StoreExists)
+            .MustAsync(StoreExists)
             .WithMessage("Specified store must exist");
     }
 
-    private bool StoreExists(int storeId) =>
-        _dbContext.Stores.Find(storeId) is not null;
+    private async Task<bool> StoreExists(int storeId, CancellationToken token = default) =>
+        await _dbContext.Stores.FindAsync(storeId, token) is not null;
 }
 

@@ -5689,8 +5689,13 @@
       "StoreTransactionCreateResponse": {
         "required": [
           "id",
+          "note",
           "startedAt",
+          "cancelledAt",
           "startedBy",
+          "cancelledBy",
+          "reason",
+          "saleTransactionId",
           "storeTransactionItems"
         ],
         "type": "object",
@@ -5727,7 +5732,10 @@
             "nullable": true
           },
           "storeTransactionItems": {
-            "$ref": "#/components/schemas/StoreTransactionItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionItemModel"
+            }
           }
         }
       },
@@ -5783,25 +5791,16 @@
           }
         }
       },
-      "StoreTransactionItemReadAllResponse": {
-        "required": [
-          "data"
-        ],
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StoreTransactionItemModel"
-            }
-          }
-        }
-      },
       "StoreTransactionListModel": {
         "required": [
           "id",
+          "note",
           "startedAt",
-          "startedBy"
+          "cancelledAt",
+          "startedBy",
+          "cancelledBy",
+          "reason",
+          "saleTransactionId"
         ],
         "type": "object",
         "properties": {
@@ -5859,8 +5858,13 @@
       "StoreTransactionReadResponse": {
         "required": [
           "id",
+          "note",
           "startedAt",
+          "cancelledAt",
           "startedBy",
+          "cancelledBy",
+          "reason",
+          "saleTransactionId",
           "storeTransactionItems"
         ],
         "type": "object",
@@ -5897,7 +5901,10 @@
             "nullable": true
           },
           "storeTransactionItems": {
-            "$ref": "#/components/schemas/StoreTransactionItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionItemModel"
+            }
           }
         }
       },
