@@ -2,6 +2,8 @@
 #import "common.typ": todo
 
 // Change chapters.typ to edit chapters, change appendices.typ to edit appendices.
+// For fonts, typst doesn't recognize them just by being in the fonts folder (if developing
+// locally), so you will either need to pass fonts path to typst command line or install them.
 // Everything else should already be set up.
 //
 // ČSN ISO 690 norm doesn't work properly with what Typst offers, so I made a completely custom
@@ -11,10 +13,10 @@
 #let cs(content) = text(lang: "cs", content)
 
 #vut_thesis(
-  lang: "en", // primary language of the thesis
-  lang2: "cs", // secondary language
-  project_type: [Master's Thesis],
-  project_type2: cs[Diplomová práce],
+  lang: "en", // primary language of the thesis (can be en, cs or sk)
+  lang2: "cs", // secondary language (if first language is cs, this should be en, otherwise cs)
+  project_type: [Term Project],
+  project_type2: cs[Semestrální projekt],
   date: datetime.today(),
   title: [Modular Student Club Management System with Integration Into Existing Infrastructure],
   title2: cs[Modulární systém pro správu studentského klubu s integrací do stávající infrastruktury],
@@ -29,12 +31,10 @@
   supervisor_surname: [Ondryáš],
   supervisor_a: [],
   keywords: [
-    information system, product management, sales, C\#, React, ASP.NET Core, Entity Framework
-    Core, modular design, web application, full-stack
+    information system, product management, sales, modular design, web application, full-stack
   ],
   keywords2: cs[
-    informační systém, správa produktů, prodej, C\#, React, ASP.NET Core, Entity Framework
-    Core, modulární návrh, webová aplikace, full-stack
+    informační systém, správa produktů, prodej, modulární návrh, webová aplikace, full-stack
   ],
   abstract: [
     This thesis deals with the design and implementation of a modular information system

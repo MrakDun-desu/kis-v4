@@ -49,16 +49,20 @@
 
   set par(justify: true, first-line-indent: 1.5em, spacing: 0.6em)
 
-  show raw: set text(font: "LMMono10")
-  show link: set text(rgb("#092eab"), font: "LMMono10")
+  show raw: set text(font: "Latin Modern Mono")
+  show link: set text(rgb("#092eab"), font: "Latin Modern Mono")
   show footnote: set text(red)
 
+  // used to replace h1 heading where pagebreak before them can't be used (outlines)
+  let var_heading(content) = {
+    block(above: 100pt, below: 35pt, content)
+  }
   set heading(numbering: none, supplement: none)
-  show heading: set par(first-line-indent: 0pt)
-  show heading.where(depth: 1): set text(size: 25pt)
   show heading.where(depth: 1): self => {
     pagebreak()
+    set text(size: 25pt)
     counter(math.equation).update(0)
+    counter(footnote).update(0)
     counter(figure.where(kind: image)).update(0)
     counter(figure.where(kind: table)).update(0)
     v(90pt)
@@ -73,23 +77,17 @@
     }
     block(above: 35pt, below: 48pt, self.body)
   }
-  // used to replace h1 heading where pagebreak before them can't be used (outlines)
-  let var_heading(content) = {
-    block(above: 100pt, below: 35pt, content)
+  show heading.where(depth: 2): it => {
+    set text(size: 18pt)
+    set block(above: 30pt, below: 25pt)
+    it
   }
 
-  show heading.where(depth: 2): set text(size: 18pt)
-  show heading.where(depth: 2): self => {
-    v(17pt)
-    if self.numbering != none {
-      [#numbering(self.numbering, ..counter(heading).get()) ]
-    }
-    self.body
-    v(12pt)
+  show heading.where(depth: 3): it => {
+    set text(size: 15pt)
+    set block(below: 15pt)
+    it
   }
-
-  show heading.where(depth: 3): set text(size: 15pt)
-  show heading.where(depth: 3): set block(below: 8pt)
 
   show ref: it => text(red, it)
   set ref(supplement: none)
@@ -284,7 +282,7 @@
       #keywords
     ],
     [
-      === #dyn_text(lang, _keywords)
+      === #dyn_text(lang2, _keywords)
 
       #keywords2
     ],
@@ -313,12 +311,16 @@
   [=== #dyn_text(lang, _acknowledgments)]
   acknowledgments
 
+
+  counter(page).update(0)
+  set page(numbering: "1")
+
   {
     show outline.entry.where(level: 1): set outline.entry(fill: h(1fr))
-    show outline.entry.where(level: 1): self => {
+    show outline.entry.where(level: 1): it => {
       set block(above: 1.5em)
       set text(weight: "bold")
-      self
+      it
     }
     outline(title: var_heading(dyn_text(lang, _contents)))
   }
