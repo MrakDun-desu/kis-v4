@@ -44,6 +44,7 @@ Such systems are:
 - KIS (Kachna Information System) Food, which handles tracking long-duration orders such
   as making toasts, and displaying information about them on monitors.
 - KIS Auth, which handles authentication and authorization. It also integrates with the EduID
+  #footnote(link("https://www.eduid.cz", [EduId.cz]))
   academic identity federation for ease of signing up.
 
 In the following chapters, I will:
@@ -60,9 +61,148 @@ In the following chapters, I will:
 
 = Modern information systems <theory>
 
-== Requirements for a modern web appliation
+This chapter summarizes all the typical requirements that a modern information system is expected to
+fulfill, that are relevant to this project. Special attention is given to security practices
+(@security), as this information system needs to integrate with more complex security solutions,
+such as the EduId #footnote(link("https://www.eduid.cz", [EduId.cz])) academic identity federation.
 
-== Commonly used security practices
+== Requirements for a modern web application
+
+These are individual characteristics of a software product that can be used to judge quality of
+software, taken from the ISO/IEC 25010 standard #custom-cite("iso25010"). For each of the
+characteristics, I will either specify what is required of this project, or why the characteristic
+isn't very relevant to this particular software.
+
+=== Functional suitability
+
+The capability of the product to meet the functional needs of its users.
+
+In the chapter
+@analysis, I will specify what exactly these needs are for this project. Some of the user
+requirements are mandatory, while some are only nice-to-have and might be skipped either due to lack
+of time or to focus on more important user needs.
+
+=== Performance efficiency
+
+The capability of a product to perform the functions within specified time and be efficient in the
+use of its resources.
+
+A modern web application is expected to perform most of its task in time perceptible as instant by
+human eyes, and to provide visual feedback for the tasks that are required to take significant
+amount of time.
+
+It is also expected of the system to be able to respond to all the requests the users are expected
+to have -- for this project, however, the scalability isn't much of an issue, since the School Club
+is a fairly small organization with the amount of active members in dozens. The product is not
+expected to be deployed in a large-scale scenario, so the capacity requirement is fairly small.
+
+=== Compatibility
+
+The capability of a product to exchange information with other products and to perform its
+functions while sharing environment and resources with them.
+
+This product is expected to work with the other modules of the Kachna Information System and to be
+further extended by other systems in the future.
+
+=== Interaction capability
+
+The capability of a product to be interacted with by users. It also includes the following:
+- *appropriateness recognizability* - whether the product can be recognized by the users as
+  appropriate for their needs,
+- *learnability* - whether the product's functionality can be easily learned,
+- *self-descriptiveness* - whether the product is able to make its capabilities obvious to the
+  users,
+- and *user error protection* - whether the product is able to prevent operation errors from the
+  users.
+
+It is absolutely necessary that the product can be recognized as appropriate. The users should be
+able to work with it and improve their workflow as fast as possible.
+
+It is also very necessary to prevent operation errors, or in case of an error, helping the user
+resolve it as fast as possible via changing or removing the effects of the error such that the
+resulting state of the system correctly corresponds to the state of the real world.
+
+Learnability and self-descriptiveness aren't as crucial to this product, as it is expected for the
+new operators to be schooled by the more experienced users, but it would still be very useful if the
+need for schooling was as small as possible, and the users were able to start using the system
+without too much help.
+
+#bigskip()
+
+There are other parts of interaction capability that should be mentioned but aren't as relevant to this
+product for various reasons:
+- *user engagement* - it is not necessary for the users to feel particularly engaged by the product as
+  it is required for their work. Engagement is mostly important when users interact with the product
+  in their free time for leisure,
+- *inclusivity* - inclusivity is not very important for this particular product because it is known
+  that only the students of FIT VUT will be using it, and as such it's not necessary to think about
+  too wide of a spectrum of users,
+- *user assistance* - it is not very important to assist users with particular needs or disabilities
+  to the clients, because the chances of such users needing to use the product are exceedingly low.
+  It is more important to work on other functionality of the product before considering this.
+
+=== Reliability
+
+The capability of a product to perform its functions without interruptions or failures.
+
+This product should function without any failures, and it should be available under normal use. It
+should also be possible to recover the state of the system from an earlier point in time.
+
+When hardware faults occur, it is acceptable for the product to stop functioning for a short period
+of time, but it should be able to start functioning again as fast as possible.
+
+=== Security
+
+The capability of a product to protect information and data, and to defend against attack patterns
+by malicious actors. This includes the following:
+- *confidentiality* - capability to ensure that only authorized users access protected data,
+- *integrity* - capability to ensure that the data cannot be modified or deleted by unauthorized
+  users or computer error,
+- *non-repudiation* - capability to prove that actions have taken place,
+- *accountability* - traceability of actions within the system to a specific entity,
+- *authenticity* - capability to prove that subject or resource is the one it claims to be,
+- and *resistance* - capability to sustain operations even while under attack.
+
+Confidentiality, integrity, accountability and authenticity are very important to this system,
+especially since it includes information about exchange of money between students and the Student
+Club.
+
+Non-repudiation and resistance are still important, but not as vital, since it is not expected that
+anyone would want to attack the system. And while the system holds information about exchange of
+money, it is never expected to be treated as the source of truth, only as an accounting helper.
+
+=== Maintainability
+
+The capability of a product to be modified with effectiveness and efficiency. This includes:
+- *modularity* - changes to one component shouldn't affect other components,
+- *reusability* - capability of a product to be used in more than just one system,
+- *modifiability* - capability to be modified without degrading product quality,
+- and *testability* - capability to be objectively and feasibly tested for requirements.
+
+The product should be modular, and it should be easy to change parts of it without affecting other
+components. It should also be easily modifiable without introducing bugs.
+
+Reusability is not very important, as it is not planned to use the product in more scenarios than
+the expected scenarios.
+
+The product should also be easily tested, and it should be easily verifiable if it serves its
+function correctly.
+
+=== Flexibility
+
+The capability of a product to be adapted to changes in requirements, contexts of use, or system
+environment.
+
+Most parts of the system do not require to be deployed in different environments - the back-end and
+database are expected to stay the same, and the point-of-service front-end is also only expected to
+be used from a specific hardware. Context of use should also stay mostly the same.
+
+The only part of the system that really needs to be flexible is the administrative web application,
+which should be able to run across various modern browsers, but it is again sufficient to be able to
+run it on desktops. Enabling mobile users to use the administrative application would be
+nice-to-have, but it is not a hard requirement.
+
+== Commonly used security practices <security>
 
 = Current state of the information system <current>
 

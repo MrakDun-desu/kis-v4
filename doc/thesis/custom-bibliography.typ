@@ -70,15 +70,15 @@
       [Literatúra]
     }
     let _edition = () => if text.lang == "en" {
-      [ed.]
+      [ed]
     } else if text.lang == "cs" {
-      [vyd.]
+      [vyd]
     } else if text.lang == "sk" {
-      [vyd.]
+      [vyd]
     }
     let format-order(number) = if text.lang == "en" {
-      let rem = calc.rem(edition, 10)
-      let rem10 = calc.rem(edition, 100)
+      let rem = calc.rem(number, 10)
+      let rem10 = calc.rem(number, 100)
       if rem10 > 10 and rem10 < 20 { return [th] }
       if rem == 1 { return [st] }
       if rem == 2 { return [nd] }
@@ -163,16 +163,24 @@
           return [ISSN #sn.issn]
         }
       }
+      if type(sn) == str {
+        return [#sn]
+      }
     }
 
     // Format of the citation
     // (one universal, it would be annoying to make separate ones since they're pretty much the same)
     let format-entry(entry, entry_name) = {
       let fields = ()
-      let first_field = [#format-authors(entry.author) #text(
-          style: "italic",
-          entry.title,
-        )]
+      let first_field
+      if entry.keys().contains("author") {
+        first_field = [#format-authors(entry.author) #text(
+            style: "italic",
+            entry.title,
+          )]
+      } else {
+        first_field = text(style: "italic", entry.title)
+      }
       if entry.keys().contains("note") {
         first_field += [ #entry.note]
       }
