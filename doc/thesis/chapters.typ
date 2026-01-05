@@ -44,7 +44,7 @@ Such systems are:
 - KIS (Kachna Information System) Food, which handles tracking long-duration orders such
   as making toasts, and displaying information about them on monitors.
 - KIS Auth, which handles authentication and authorization. It also integrates with the EduID
-  #footnote(link("https://www.eduid.cz", [EduId.cz]))
+  #footnote(link("https://www.eduid.cz")[EduId.cz])
   academic identity federation for ease of signing up.
 
 In the following chapters, I will:
@@ -203,6 +203,45 @@ run it on desktops. Enabling mobile users to use the administrative application 
 nice-to-have, but it is not a hard requirement.
 
 == Commonly used security practices <security>
+
+Commonly used modern security practices have shifted from simple username and password authentication
+to delegated authorization using OAuth 2.0 for authorization and OpenID Connect for authentication.
+Both of these protocols are built on
+top of the HTTPS protocol as a communication channel and transfer authorization data in the JSON Web
+Token format.
+
+This project uses delegated authentication with OpenID Connect and it relies on the previously
+created subsystem "KIS Auth".
+
+=== OAuth 2.0
+
+OAuth 2.0 is an authorization framework that enables a third-party application to obtain limited
+access to an HTTP service, either on behalf of a resource owner by orchestrating an approval
+interaction between the resource owner and the HTTP service, or by allowing the third-party
+application to obtain access on its behalf #custom-cite("oauth").
+
+OAuth 2.0 is the most commonly used authorization protocol in modern web applications. It defines a
+way for client application to get access to resources via *access token* - a string denoting a
+specific scope, lifetime and other attributes.
+
+Access tokens should always be short-lived or single use, so for simplifying obtaining additional
+ones after the first sign-on, OAuth 2.0 also allows the use of a *refresh token*, which can live for
+longer and can be used to renew an access token.
+
+It defines multiple flows for authorization:
+- *authorization code grant*, which is used to obtain both access tokens and refresh tokens and is
+  optimized for confidential clients,
+- *implicit grant*, which is used to obtain access tokens only, and is optimized for public clients
+  known to operate a particular redirection URI,
+- *resource owner password credentials grant*, which is suitable in cases where the resource owner
+  has a trust relationship with the client, and is used to obtain the resource owner's credentials,
+- and *client credentials grant*, which is used to request an access token only using client
+  credentials.
+
+In modern systems, some of these flows have already been deprecated, like the implicit grant.
+Instead, for authenticating users themselves, only the authorization code grant is used, usually
+with PKCE #footnote[Proof-Key for Code Exchange] to prevent attackers from successful authorization
+even if they were to intercept the authorization code itself.
 
 = Current state of the information system <current>
 

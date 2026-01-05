@@ -18,3 +18,30 @@ iso25010:
   date: 2023-11
   location: Geneva
   serial-number: ISO/IEC 25010:2023
+oauth:
+  type: webpage
+  author: Hardt, Dick
+  title: The OAuth 2.0 Authorization Framework
+  publisher: Internet Engineering Task Force (IETF)
+  date: 2012-10
+  url: https://www.rfc-editor.org/info/rfc6749
+  pagetotal: 76
+  howpublished: RFC Editor
+  series: Request for Comments
+  number: 6749
+  doi: 10.17487/RFC6749
+  cited: 2026-01-05
+openid_connect:
+  type: webpage
+  author:
+  - Sakimura, N.
+  - Bradley, J.
+  - Jones, M.
+  - de Medeiros, B.
+  - Mortimore, C.
+  title: OpenId Connect Core 1.0
+  publisher: OpenID Foundation
+  date: 2023-12-15
+  url: https://openid.net/specs/openid-connect-core-1_0.html
+  howpublished: online
+  cited: 2026-01-05

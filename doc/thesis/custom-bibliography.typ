@@ -10,18 +10,18 @@
   context {
     let _months = if text.lang == "en" {
       (
-        "1": [january],
-        "2": [february],
-        "3": [march],
-        "4": [april],
-        "5": [may],
-        "6": [june],
-        "7": [july],
-        "8": [august],
-        "9": [september],
-        "10": [october],
-        "11": [november],
-        "12": [december],
+        "1": [January],
+        "2": [February],
+        "3": [March],
+        "4": [April],
+        "5": [May],
+        "6": [June],
+        "7": [July],
+        "8": [August],
+        "9": [September],
+        "10": [October],
+        "11": [November],
+        "12": [December],
       )
     } else if text.lang == "cs" {
       (
@@ -117,7 +117,7 @@
             authors = authors.slice(0, 5)
             add_et_al = true
           }
-          authors.map(author => format-name(author)).join(", ")
+          authors.map(author => format-name(author)).join("; ")
           if add_et_al [ et al.]
           if authors.last() == "others" [.]
         }
@@ -141,7 +141,7 @@
     let format-date(date) = {
       if type(date) == int { return [#date] }
       let parts = str.split(date, "-")
-      if parts.len() == 2 {
+      if parts.len() >= 2 {
         _months.at(parts.at(1))
         [ ]
         parts.at(0)
@@ -181,10 +181,13 @@
       } else {
         first_field = text(style: "italic", entry.title)
       }
-      if entry.keys().contains("note") {
-        first_field += [ #entry.note]
+      if entry.keys().contains("howpublished") {
+        first_field += [ #entry.howpublished]
       }
       fields.push(first_field)
+      if entry.keys().contains("version") {
+        fields.push(entry.version)
+      }
       if entry.keys().contains("edition") {
         fields.push(format-edition(entry.edition))
       }
