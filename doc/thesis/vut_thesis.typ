@@ -45,11 +45,14 @@
   set text(
     font: "New Computer Modern",
     lang: lang,
+    size: 11pt,
   )
 
   set par(justify: true, first-line-indent: 1.5em, spacing: 0.6em)
 
-  show raw: set text(font: "Latin Modern Mono")
+  // have to resize the raw text because by default it's smaller than the normal text for some
+  // reason
+  show raw: set text(font: "Latin Modern Mono", size: 1.2em)
   show link: set text(rgb("#092eab"), font: "Latin Modern Mono")
   show footnote: set text(red)
 

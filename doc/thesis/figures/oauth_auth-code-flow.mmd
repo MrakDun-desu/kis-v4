@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant Resource Owner
+    Client->>User-Agent: Client ID & Redirection URI
+    User-Agent->>+Auth Server: Client ID & Redirection URI
+    User-Agent->>Auth Server: User authenticates
+    Auth Server->>-User-Agent: Authorization Code
+    User-Agent->>Client: Authorization Code
+    Client->>+Auth Server: Authorization Code & Redirection URI
+    Auth Server->>-Client: Access Token (+ Optional Refresh Token)
+    Client->>+Resource Owner: Access Token
+    Resource Owner->>-Client: Restricted Resource

@@ -142,7 +142,7 @@
       if type(date) == int { return [#date] }
       let parts = str.split(date, "-")
       if parts.len() >= 2 {
-        _months.at(parts.at(1))
+        _months.at(parts.at(1).trim("0"))
         [ ]
         parts.at(0)
       }
@@ -204,7 +204,9 @@
       if entry.keys().contains("serial-number") {
         fields.push(format-serial-number(entry.serial-number))
       }
-      if entry.keys().contains("url") {
+      if entry.keys().contains("doi") {
+        fields.push[#_available_at(): #link("https://doi.org/" + entry.doi)]
+      } else if entry.keys().contains("url") {
         fields.push[#_available_at(): #link(entry.url)]
       }
       if entry.keys().contains("cited") {

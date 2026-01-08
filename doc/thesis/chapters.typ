@@ -213,12 +213,12 @@ Token format.
 This project uses delegated authentication with OpenID Connect and it relies on the previously
 created subsystem "KIS Auth".
 
-=== OAuth 2.0
+=== OAuth
 
 OAuth 2.0 is an authorization framework that enables a third-party application to obtain limited
 access to an HTTP service, either on behalf of a resource owner by orchestrating an approval
 interaction between the resource owner and the HTTP service, or by allowing the third-party
-application to obtain access on its behalf #custom-cite("oauth").
+application to obtain access on its behalf #custom-cite("oauth20").
 
 OAuth 2.0 is the most commonly used authorization protocol in modern web applications. It defines a
 way for client application to get access to resources via *access token* - a string denoting a
@@ -238,10 +238,77 @@ It defines multiple flows for authorization:
 - and *client credentials grant*, which is used to request an access token only using client
   credentials.
 
-In modern systems, some of these flows have already been deprecated, like the implicit grant.
-Instead, for authenticating users themselves, only the authorization code grant is used, usually
-with PKCE #footnote[Proof-Key for Code Exchange] to prevent attackers from successful authorization
-even if they were to intercept the authorization code itself.
+In modern systems, some of these flows are in the process of being deprecated, like the implicit grant.
+Instead, for authenticating users themselves, only the authorization code grant should be used, usually
+with PKCE #custom-cite("pkce") to prevent attackers from successful authorization
+even if they were to intercept the authorization code itself. These restrictions are
+currently in an active draft for OAuth 2.1 #custom-cite("oauth21").
+
+The most common OAuth 2.0 flow -- authorization code flow -- is depicted on the figure @auth_code_flow.
++ The client application sends its ID and redirection URI to the authorization server through its
+  user-agent.
++ The Authorization server authenticates the user and if the authentication is successful,
+  authorization code is returned to the client via the user-agent.
++ When the client application receives the authorization code, it sends it back to the authorization
+  server with its redirection URI.
++ If the authorization code is valid, the authorization server responds with the access token, which
+  can be used to access restricted resources from the resource owner, and optionally a refresh token
+  that can be used to renew the access token.
++ While the access token is valid, client uses it to access restricted resources from the resource
+  owner.
+
+#figure(
+  image("figures/oauth_auth-code-flow.svg", width: 98%),
+  caption: [OAuth 2.0 authorization code flow],
+) <auth_code_flow>
+
+=== OpenID Connect
+
+OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol. It enables clients
+to verify the identity of the End-User based on the authentication performed by an Authorization
+Server, as well as to obtain basic profile information about the End-User in an interoperable and
+REST-like manner.
+
+The OpenID Connect Core 1.0 specification defines the core OpenID Connect functionality:
+authentication built on top of OAuth 2.0 and the use of Claims to communicate information about the
+End-User. It also describes the security and privacy considerations for using OpenID Connect
+#custom-cite("openid_connect").
+
+OpenID Connect is initiated when the OAuth authentication request contains the `openid` scope value.
+It then returns an *ID token* along with the access token from OAuth itself. The ID token contains
+information about the end user, such as their unique ID and optionally e-mail, name and others.
+
+OpenID Connect also provides a way for an application to obtain user information through the
+*UserInfo endpoint*. Via this endpoint, a client can request additional or
+updated information about the end user.
+
+=== JSON Web Token
+
+The OAuth 2.0 protocol additionally specifies how to use bearer tokens in HTTP requests. Any party
+in posession of a bearer token (in OAuth, bearer is the access token) can use it to access
+associated resources without demonstrating posession of a crypthographic key. To prevent misuse,
+bearer tokens need to be protected from disclosure in storage and transport #custom-cite("oauth_bearer").
+
+The most commonly used format of a bearer token is a *JWT* - JSON Web Token. It is a compact,
+URL-safe means of representing claims to be transferred between two parties. The claims in a JWT are
+encoded as a JSON object that is used as the payload of a JSON Web Signature (JWS) structure or as
+the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to be digitally signed
+or integrity protected with a Message Authentication Code (MAC) and/or encrypted
+#custom-cite("jwt").
+
+JWTs usually consist of three distinct sections:
+
++ *the header*, which holds information about the type of the token and the algorithms used for
+  signature and/or encryption,
++ *the payload*, which holds the claims about the entity represented by the JWT,
++ and *the digital signature*.
+
+In case of unsecured tokens (which are almost never used), the algorithm in the header is set to
+none, and the digital signature is empty.
+
+For usage in HTTP communications as a bearer token, each section of the JWT is represented as an
+UTF-8 JSON object and encoded with Base64url. Parts are then separated by the dot symbol.
+
 
 = Current state of the information system <current>
 
