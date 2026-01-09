@@ -63,8 +63,8 @@ In the following chapters, I will:
 
 This chapter summarizes all the typical requirements that a modern information system is expected to
 fulfill, that are relevant to this project. Special attention is given to security practices
-(@security), as this information system needs to integrate with more complex security solutions,
-such as the EduId #footnote(link("https://www.eduid.cz", [EduId.cz])) academic identity federation.
+(@security), as one of the requirements for this thesis was to specifically research mechanisms for
+authentication of users in complex information systems.
 
 == Requirements for a modern web application
 
@@ -285,8 +285,8 @@ updated information about the end user.
 === JSON Web Token
 
 The OAuth 2.0 protocol additionally specifies how to use bearer tokens in HTTP requests. Any party
-in posession of a bearer token (in OAuth, bearer is the access token) can use it to access
-associated resources without demonstrating posession of a crypthographic key. To prevent misuse,
+in possession of a bearer token (in OAuth, bearer is the access token) can use it to access
+associated resources without demonstrating possession of a cryptographic key. To prevent misuse,
 bearer tokens need to be protected from disclosure in storage and transport #custom-cite("oauth_bearer").
 
 The most commonly used format of a bearer token is a *JWT* - JSON Web Token. It is a compact,
@@ -306,21 +306,106 @@ JWTs usually consist of three distinct sections:
 In case of unsecured tokens (which are almost never used), the algorithm in the header is set to
 none, and the digital signature is empty.
 
-For usage in HTTP communications as a bearer token, each section of the JWT is represented as an
+For usage in HTTP communications as a bearer token, each section of the JWT is represented as a
 UTF-8 JSON object and encoded with Base64url. Parts are then separated by the dot symbol.
 
 
 = Current state of the information system <current>
 
-== Sales subsystem
+This chapter's purpose is to familiarize the reader with the current state of the Kachna Information
+System before implementing the new solutions. The current version of the information system is
+already in its fourth generation, but due to complex needs of the clients, a lot of needed
+functionality is still missing.
 
-== Operator subsystem
+== Overall architecture
 
-== Admin subsystem
+Currently, the Kachna Information System (KIS) consists of 10 subsystems and components:
 
-== Food management subsystem
+- *KIS Sales* (@kis_sales),
+- *KIS Operator* (@kis_operator),
+- *KIS Admin* (@kis_admin),
+- *KIS Auth* (@kis_auth),
+- *Kachna Online* -- service for administration of club opening hours, Student Union events and user
+  application used to access information about them,
+- *KIS Monitor* -- front-end application for displaying the status of longer orders,
+- *KIS Food Management Device (KIS Food)* -- service for publishing and management of waiting lists for longer
+  orders,
+- *KIS HW Reader* -- hardware smart card reader,
+- *KIS Android Reader* -- smart card reader implementation for Android,
+- and *KIS Reader Library* -- client JavaScript library for communication with smart card readers.
 
-== Authentication subsystem
+The relevant subsystems will be discussed in more detail in the following sections. Interactions
+between individual services are illustrated in the figure @kis_architecture.
+
+Kachna Online, KIS Admin and KIS Operator all depend on KIS Sales, which is the service that manages
+the majority of the information about the system. KIS Sales in turn depends on KIS Auth for
+authentication, on KIS Food for scheduling and displaying longer orders, and on its database to hold the actual
+data.
+
+#figure(
+  image("figures/kis_relationships.drawio.svg"),
+  caption: [Top-level architecture of the Kachna Information System],
+) <kis_architecture>
+
+== Sales subsystem <kis_sales>
+
+KIS Sales is the main subsystem that the whole information system is standing on top of. It holds
+all the data about product storage, costs, users, voluntary contributions, beer kegs and others.
+The current implementation has last been updated about two and half years ago.
+
+It is a REST application that serves as a shared back-end by Kachna Online, KIS Admin @kis_admin,
+and KIS Operator @kis_operator. It stores its data in a PostgreSQL database, and depends on KIS Food
+for queueing long preparation orders, such as toasts, and displaying them on KIS Monitors.
+
+It uses Python as the main backend language, integrates directly with EduId using SAML
+authentication, and only partially integrates with the more modern authentication service KIS Auth
+which has also been implemented about two years ago.
+
+The main issues stated by the Student Union with the old sales subsystem is that it doesn't provide
+a lot of necessary options to interact with products, such as write-offs. It also doesn't have good
+auditing capabilities, so when someone makes a change in the system, it is very difficult to
+associate the change with the user who made it.
+
+Currently, the KIS Sales subsystem manages mainly the following entities:
+- *Articles (products)* -- in the current version of KIS Sales, articles are managed as
+  simple database entities. Articles can also be composed of multiple different articles, but
+  there isn't any distinction between composites and components within the database other than the
+  database relations. Articles can also have any number of colored labels for filtering purposes.
+- *Prices* -- prices are currently statically assigned to each article, and prices of
+  composites are not dependent on the prices of components. Because of this, when changing prices of
+  articles, it's necessary to manually change the price of each article affected. Also, since prices
+  are saved in a one-to-one relation with articles, it is not possible to view how the price of an
+  article has changed over time.
+- *Users* -- since the previous version of the Sales system has been created before KIS
+  Auth, the sales service is also fully capable of managing users and their data.
+- *Beer kegs and taps* -- in the current version of the Sales system, beer kegs are special entities
+  that hold certain volume their assigned article. In the current schema, any article can
+  theoretically be in a beer keg, and unsealed kegs are just identified by changes in stock that
+  belong to them.
+- *Operations* -- these include orders, contributions, stock-takings and others. Operations are core
+  to the system, so the current implementation is one of the more mature parts of the system.
+  However, since all the operations are grouped in one table, which results in quite messy code when
+  it comes to handling operations. Some required operations are also not supported, such as simple
+  write-offs of spoiled or otherwise undesirable products.
+
+The current system has no concept of multiple different stores. The information about amounts of
+each article are stored globally, or associated to individual beer kegs.
+
+There also isn't an easy way to modify structure and price of a certain article for a single
+specific transaction. Every time a different kind of product is sold, a new special article needs
+to be added. This makes the database filled with products that are only slightly different from
+each other, like toasts with different toppings, or teas with and without milk or honey.
+
+One more big deficiency of the current system is that it has no fixed way to display articles. All
+the articles are sorted alphabetically, so if a new article is added, all the following articles
+will get shifted and the operators constantly lose muscle memory about positions of individual
+articles.
+
+== Operator subsystem <kis_operator>
+
+== Admin subsystem <kis_admin>
+
+== Authentication subsystem <kis_auth>
 
 = Use-case analysis <analysis>
 
