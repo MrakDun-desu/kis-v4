@@ -357,9 +357,10 @@ It is a REST application that serves as a shared back-end by Kachna Online, KIS 
 and KIS Operator @kis_operator. It stores its data in a PostgreSQL database, and depends on KIS Food
 for queueing long preparation orders, such as toasts, and displaying them on KIS Monitors.
 
-It uses Python as the main backend language, integrates directly with EduId using SAML
-authentication, and only partially integrates with the more modern authentication service KIS Auth
-which has also been implemented about two years ago.
+It uses Python as the main backend language, integrates directly with EduId
+#footnote(link("https://www.eduid.cz")[EduId.cz]) using SAML authentication, and only partially
+integrates with the more modern authentication service KIS Auth which has also been implemented
+about two years ago.
 
 The main issues stated by the Student Union with the old sales subsystem is that it doesn't provide
 a lot of necessary options to interact with products, such as write-offs. It also doesn't have good
@@ -381,7 +382,9 @@ Currently, the KIS Sales subsystem manages mainly the following entities:
 - *Beer kegs and taps* -- in the current version of the Sales system, beer kegs are special entities
   that hold certain volume their assigned article. In the current schema, any article can
   theoretically be in a beer keg, and unsealed kegs are just identified by changes in stock that
-  belong to them.
+  belong to them. \
+  An unsealed beer keg can also be opened at a beer tap. Kegs can be queried based on which tap they
+  belong to.
 - *Operations* -- these include orders, contributions, stock-takings and others. Operations are core
   to the system, so the current implementation is one of the more mature parts of the system.
   However, since all the operations are grouped in one table, which results in quite messy code when
@@ -402,6 +405,47 @@ will get shifted and the operators constantly lose muscle memory about positions
 articles.
 
 == Operator subsystem <kis_operator>
+
+Operator subsystem -- KIS Operator -- is the Point-of-Service front-end application for the
+bartenders that service customers during the club's opening hours. It is an interface for most
+operations offered by the KIS Sales backend (@kis_sales).
+
+It also integrates the KIS Reader Library for communication with a smart card reader. The reader is
+used to scan the students' cards for easy registration with the Student Club.
+
+It's written in the Angular framework version 12, and has last been updated approximately 3 years
+ago. Just quickly trying to run the application locally and installing dependencies reveals that the
+current implementation has over 50 security vulnerabilities, 3 of which are stated to be critical.
+
+The main purposes of the KIS Operator currently are:
+
+- *Communicating with the smart card reader* -- this serves as the main and most convenient
+  way for Student Club members to sign up, since all it involves is just putting their card on the
+  reader and confirming their identity.
+- *Searching normal articles* -- everything except for beer from kegs should be easily searchable
+  and possible to be added to an order in a consistent interface. \
+  The current KIS Operator lets the bartender search the articles, but since there isn't a clearly
+  defined structure to the way the articles are positioned in the database, they are always just
+  displayed in alphabetical order, which is not good for muscle memory of the bartenders.
+- *Searching available beer kegs and opening them when needed* -- beer kegs are special, since the
+  club needs to track the amounts in individual opened beer kegs. Because of this, they have a
+  separate page in the current KIS Operator.
+- *Adding articles to orders* -- once a particular article has been found, it needs to be added to
+  the order in the necessary amount.
+- *Submitting and cancelling orders* -- for orders that have been successfully completed, it is
+  necessary to submit them to the KIS Sales system to update the article stocks, contribution
+  amounts for the club members and amount of cash in the used cash-box. \
+  For the most recent orders, it is also possible for them to be cancelled in case something went
+  wrong or the order was made by mistake.
+
+Overall, the current KIS Operator is doing its job fairly well. The biggest problems associated with
+the current version is the lack of maintenance over the years, and the fact that products cannot
+have a fixed positioning in the Operator UI.
+
+Some additional features would also be welcome, such as native way to handle discounts -- currently,
+when wanting to sell a product at a discount, the current barman needs to mark the product as an
+expense for the Student Union. The buying Student Club member then needs to pay a certain amount
+that will get counted as contribution.
 
 == Admin subsystem <kis_admin>
 
