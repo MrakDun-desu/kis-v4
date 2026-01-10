@@ -369,9 +369,13 @@ associate the change with the user who made it.
 
 Currently, the KIS Sales subsystem manages mainly the following entities:
 - *Articles (products)* -- in the current version of KIS Sales, articles are managed as
-  simple database entities. Articles can also be composed of multiple different articles, but
-  there isn't any distinction between composites and components within the database other than the
-  database relations. Articles can also have any number of colored labels for filtering purposes.
+  simple database entities. \
+  Articles can also be composed of multiple different articles, but the
+  requirement for an article to be used as component can be inconvenient -- currently, only articles
+  that can be used as components are components without set prices, components which aren't
+  composites themselves. This can be an issue if an article can be sold separately, but can also be
+  used as a component in a different article.\
+  Articles can also have any number of colored labels for filtering purposes.
 - *Prices* -- prices are currently statically assigned to each article, and prices of
   composites are not dependent on the prices of components. Because of this, when changing prices of
   articles, it's necessary to manually change the price of each article affected. Also, since prices
@@ -391,8 +395,9 @@ Currently, the KIS Sales subsystem manages mainly the following entities:
   it comes to handling operations. Some required operations are also not supported, such as simple
   write-offs of spoiled or otherwise undesirable products.
 
-The current system has no concept of multiple different stores. The information about amounts of
-each article are stored globally, or associated to individual beer kegs.
+The current system has no concept of different general stores. The information about amounts of
+each article are stored globally, or for beer articles, associated to beer kegs which each hold only
+one type of article.
 
 There also isn't an easy way to modify structure and price of a certain article for a single
 specific transaction. Every time a different kind of product is sold, a new special article needs
@@ -406,16 +411,19 @@ articles.
 
 == Operator subsystem <kis_operator>
 
-Operator subsystem -- KIS Operator -- is the Point-of-Service front-end application for the
-bartenders that service customers during the club's opening hours. It is an interface for most
-operations offered by the KIS Sales backend (@kis_sales).
+Operator subsystem -- KIS Operator -- is the Point-of-Service web application for the
+bartenders that service customers during the club's opening hours. It is a front-end for the KIS
+Sales back-end (@kis_sales) and offers a subset of its capabilities. It is used on specialized
+touch-screen devices the purpose of which is only to serve as hardware for the Operator UI.
 
 It also integrates the KIS Reader Library for communication with a smart card reader. The reader is
 used to scan the students' cards for easy registration with the Student Club.
 
-It's written in the Angular framework version 12, and has last been updated approximately 3 years
-ago. Just quickly trying to run the application locally and installing dependencies reveals that the
-current implementation has over 50 security vulnerabilities, 3 of which are stated to be critical.
+It's written in the Angular framework #footnote(link("https://angular.dev/")) version 12, and has
+last been updated approximately 3 years ago. Just quickly trying to run the application locally
+and installing dependencies reveals that the current implementation has over 50 security
+vulnerabilities registered by NPM #footnote(link("https://www.npmjs.com/")),
+3 of which are stated to be critical.
 
 The main purposes of the KIS Operator currently are:
 
@@ -442,12 +450,66 @@ Overall, the current KIS Operator is doing its job fairly well. The biggest prob
 the current version is the lack of maintenance over the years, and the fact that products cannot
 have a fixed positioning in the Operator UI.
 
-Some additional features would also be welcome, such as native way to handle discounts -- currently,
-when wanting to sell a product at a discount, the current barman needs to mark the product as an
-expense for the Student Union. The buying Student Club member then needs to pay a certain amount
-that will get counted as contribution.
+Some additional features would also be welcome, such as native way to handle discounts, and option
+to only view what articles are available in the store currently used by the bartender. These would
+however first need to be implemented in the Sales API, which the Operator depends on for business
+logic.
 
-== Admin subsystem <kis_admin>
+== Administration subsystem <kis_admin>
+
+The administration subsystem (KIS Admin) is a web application used for administrative
+purposes. Similarly to KIS Operator (@kis_operator), it is a front-end to the KIS Sales back-end
+(@kis_sales).
+
+Similarly to KIS Operator, it is written in the Angular framework version 12, and the last time it
+has been significantly updated is about 4 years ago. NPM also reports a high number of
+vulnerabilities in used libraries -- 62 in total, 5 of which are critical.
+
+The main features of KIS Admin are:
+
+- *Article management* -- browsing, creating and updating articles available for sale.
+- *User management* -- browsing users (Student Club members), user creation (in case it is not
+  possible through EduID integration) and updating some of the user details, such as nickname. It is
+  also possible to block certain card IDs from the Student Club.
+- *Bar management* -- browsing and creating cash-boxes and pipes. \
+  Browsing currently open beer kegs.
+- *Operations management* -- browsing and exporting all the different kinds of operations, such as
+  orders, contributions, article stock changes, paymeents and others.
+- *Report browsing* -- viewing information about sales or about beer keg yields.
+
+Different pages of the current KIS Admin UI can be seen on the figures @sales_report_old,
+@article_list_old, and @cashbox_detail_old.
+
+#figure(
+  image("figures/sale_reports.png", width: 77%),
+  caption: [Sales report in the old KIS Admin UI],
+) <sales_report_old>
+
+#figure(
+  image("figures/article_list.png", height: 50% - 2.5em),
+  caption: [Article list view in the old KIS Admin UI],
+) <article_list_old>
+
+#figure(
+  image("figures/cash-box_detail.png", height: 50% - 2.5em),
+  caption: [Cash-box detail view in the old KIS Admin UI],
+) <cashbox_detail_old>
+
+The current KIS Admin UI has several problems:
+
+- *UI inconsistency* -- data view tables on each page look slightly different, and can be interacted
+  with in different ways. This also means updating something that should be shared between all the
+  tables -- such as pagination UI -- needs to be done multiple times.
+- *Lack of maintenance* -- frameworks and libraries used are greatly outdated and full of
+  vulnerabilities.
+- *Lack of bulk operations* -- currently, when the users want to change the amounts of multiple
+  articles, they need to update each article individually. This can be a big problem when the users
+  need to add a lot of different articles at once, or when amounts of products are re-counted for a
+  stock-taking.
+- *Authentication directly through Sales API* -- since the KIS Admin front-end was made before the
+  new authentication service existed, it still relies directly on KIS Sales back-end for
+  authentication. This is not a big problem, but for modernization of the authentication, it should
+  be integrated with the new KIS Auth (@kis_auth) subsystem instead.
 
 == Authentication subsystem <kis_auth>
 
