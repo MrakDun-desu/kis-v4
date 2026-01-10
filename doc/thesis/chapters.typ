@@ -43,8 +43,8 @@ Such systems are:
 
 - KIS (Kachna Information System) Food, which handles tracking long-duration orders such
   as making toasts, and displaying information about them on monitors.
-- KIS Auth, which handles authentication and authorization. It also integrates with the EduID
-  #footnote(link("https://www.eduid.cz")[EduId.cz])
+- KIS Auth, which handles authentication and authorization. It also integrates with the eduID
+  #footnote(link("https://www.eduid.cz")[eduID.cz])
   academic identity federation for ease of signing up.
 
 In the following chapters, I will:
@@ -213,7 +213,7 @@ Token format.
 This project uses delegated authentication with OpenID Connect and it relies on the previously
 created subsystem "KIS Auth".
 
-=== OAuth
+=== OAuth <oauth_section>
 
 OAuth 2.0 is an authorization framework that enables a third-party application to obtain limited
 access to an HTTP service, either on behalf of a resource owner by orchestrating an approval
@@ -221,7 +221,7 @@ interaction between the resource owner and the HTTP service, or by allowing the 
 application to obtain access on its behalf #custom-cite("oauth20").
 
 OAuth 2.0 is the most commonly used authorization protocol in modern web applications. It defines a
-way for client application to get access to resources via *access token* - a string denoting a
+way for client applications to get access to resources via *access token* - a string denoting a
 specific scope, lifetime and other attributes.
 
 Access tokens should always be short-lived or single use, so for simplifying obtaining additional
@@ -238,7 +238,7 @@ It defines multiple flows for authorization:
 - and *client credentials grant*, which is used to request an access token only using client
   credentials.
 
-In modern systems, some of these flows are in the process of being deprecated, like the implicit grant.
+In modern systems, some of these flows are in the process of being deprecated.
 Instead, for authenticating users themselves, only the authorization code grant should be used, usually
 with PKCE #custom-cite("pkce") to prevent attackers from successful authorization
 even if they were to intercept the authorization code itself. These restrictions are
@@ -258,11 +258,11 @@ The most common OAuth 2.0 flow -- authorization code flow -- is depicted on the 
   owner.
 
 #figure(
-  image("figures/oauth_auth-code-flow.svg", width: 98%),
+  image("figures/oauth_auth-code-flow.svg"),
   caption: [OAuth 2.0 authorization code flow],
 ) <auth_code_flow>
 
-=== OpenID Connect
+=== OpenID Connect <openid_section>
 
 OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol. It enables clients
 to verify the identity of the End-User based on the authentication performed by an Authorization
@@ -358,9 +358,12 @@ and KIS Operator @kis_operator. It stores its data in a PostgreSQL database, and
 for queueing long preparation orders, such as toasts, and displaying them on KIS Monitors.
 
 It uses Python as the main backend language, integrates directly with EduId
-#footnote(link("https://www.eduid.cz")[EduId.cz]) using SAML authentication, and only partially
-integrates with the more modern authentication service KIS Auth which has also been implemented
-about two years ago.
+#footnote(link("https://www.eduid.cz")[EduId.cz]) using SAML
+#footnote(link(
+  "https://wiki.oasis-open.org/security/",
+)[Security Assertion Markup Language])
+authentication, and only partially integrates with the more modern authentication service KIS Auth
+which has also been implemented about two years ago.
 
 The main issues stated by the Student Union with the old sales subsystem is that it doesn't provide
 a lot of necessary options to interact with products, such as write-offs. It also doesn't have good
@@ -469,7 +472,7 @@ The main features of KIS Admin are:
 
 - *Article management* -- browsing, creating and updating articles available for sale.
 - *User management* -- browsing users (Student Club members), user creation (in case it is not
-  possible through EduID integration) and updating some of the user details, such as nickname. It is
+  possible through eduID integration) and updating some of the user details, such as nickname. It is
   also possible to block certain card IDs from the Student Club.
 - *Bar management* -- browsing and creating cash-boxes and pipes. \
   Browsing currently open beer kegs.
@@ -512,6 +515,38 @@ The current KIS Admin UI has several problems:
   be integrated with the new KIS Auth (@kis_auth) subsystem instead.
 
 == Authentication subsystem <kis_auth>
+
+KIS Auth is the newest addition to the Kachna Information System and handles authorization,
+authentication, and user management. Unlike the older system, which directly uses SAML
+#footnote(link("https://wiki.oasis-open.org/security/")[Security Assertion Markup Language]) and RFID
+authentication on the Sales API level, KIS Auth is a separate back-end that only handles
+authentication. #todo[Figure out what to do with RFID]
+
+The new authentication system offers following ways of authenticating:
+- *eduID authentication through SAML* -- this was the primary way to sign in with the older KIS
+  Sales system. It is also the only fully trusted way for user to sign up with KIS Auth, where their
+  identity is automatically confirmed as a student.
+- *RFID login through an ISIC card* -- the easiest way for Club Members to log in physically at the
+  club. This is only a way to log in, not to register. After a member has registered with a different
+  method, they can associate a student card with their user account.
+- *Discord #footnote(link("https://discord.com/")[discord.com]) login through OAuth* -- a secondary
+  way to sign in through a less trusted provider.
+- *username and password* -- not often used, but still useful way for users to log in or sign up
+  when other methods are not available.
+
+Other services can then register as OAuth (@oauth_section) clients and rely on KIS Auth to provide
+access tokens to authenticated users. In the new Kachna Information System, the KIS Sales back-end
+(@kis_sales) should not handle authorization directly, but depend on KIS Auth.
+
+Other than just authorization through OAuth 2.0, KIS Auth also provides authentication with OpenID
+Connect (@openid_section) ID tokens. It is implemented in the C\# programming language in .NET 8,
+and it uses Duende IdentityServer
+#footnote(link("https://duendesoftware.com/products/identityserver")) as an implementation provider
+for OAuth 2.0 and OpenID Connect 1.0.
+
+This subsystem is not currently fully integrated with the sales subsystem, and one of the goals of
+this thesis is to integrate it with the other services. This will offer more extensibility, better
+separation of concerns, and more ways for users to register as club members.
 
 = Use-case analysis <analysis>
 

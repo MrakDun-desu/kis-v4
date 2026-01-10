@@ -110,7 +110,7 @@
           [#format-name(authors.at(0))]
           if (
             authors.last() == "others"
-          ) [ et al.] else [ #_and #format-name(authors.at(1))]
+          ) [ et al.] else [ #_and() #format-name(authors.at(1))]
         } else {
           let add_et_al = false
           if authors.len() > 5 {
