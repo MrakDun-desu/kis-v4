@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.0.3" pages="5">
   <diagram id="7TXdtiIXrN7FSFcp1B47" name="ER_New">
-    <mxGraphModel dx="951" dy="560" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
+    <mxGraphModel dx="2037" dy="1200" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -898,7 +898,7 @@
     </mxGraphModel>
   </diagram>
   <diagram name="Usecase_New" id="iMlmX7kc1FUaEpyN8fH5">
-    <mxGraphModel dx="2037" dy="1200" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="840" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -1096,7 +1096,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="RILZDrMLU31PRgtcXAj_-8" value="(optional)&lt;br&gt;Apply a discount" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="866.25" y="550" width="210" height="80" as="geometry" />
+          <mxGeometry x="866.25" y="555" width="210" height="80" as="geometry" />
         </mxCell>
         <mxCell id="RILZDrMLU31PRgtcXAj_-10" value="Write off store items" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="878.75" y="1812" width="210" height="80" as="geometry" />

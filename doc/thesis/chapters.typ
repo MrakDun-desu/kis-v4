@@ -53,7 +53,7 @@ In the following chapters, I will:
   them, as well as discuss what security measures are usually employed, in chapter @theory
 - Familiarize the reader with the current state of the information systems used by the Kachna
   Student Club in chapter @current
-- Analyze the requirements of the Student Union and formalize them as UML diagrams in chapter
+- Analyze the requirements of the Student Union and formalize them as an use-case diagram in chapter
   @analysis
 - Design the individual parts of the system in chapter @design
 - And finally sum up the work in chapter @concl
@@ -544,15 +544,157 @@ and it uses Duende IdentityServer
 #footnote(link("https://duendesoftware.com/products/identityserver")) as an implementation provider
 for OAuth 2.0 and OpenID Connect 1.0.
 
-This subsystem is not currently fully integrated with the sales subsystem, and one of the goals of
+This subsystem is not currently fully integrated with the rest of the system, and one of the goals of
 this thesis is to integrate it with the other services. This will offer more extensibility, better
 separation of concerns, and more ways for users to register as club members.
 
 = Use-case analysis <analysis>
 
+This chapter describes the current requirements of the Student Union for the new, improved version
+of the Kachna Information System.
+
 == Informal specification
 
-== Use-case diagrams
+The current Kachna Information System (@current) uses a solution that works, but is quite
+insufficient in several areas that this project is supposed to improve upon. The new system should
+completely replace the current implementations of the KIS Sales API and both main front-ends which
+depend on it -- KIS Admin and KIS Operator. The new version should offer more capabilities and better
+integration with the new authentication system, as well as more unified UI. It would be ideal if the
+data was easily transferrable to the new database, but since the amount of products isn't that
+large, it is possible to rewrite data manually if necessary.
+
+The general requirements are very similar to any sales management application, with some additional
+requirements on top. There is no requirement for the implementation platform used, but some
+technologies are easier to integrate with existing subsystems than others.
+
+The full informal specification includes various levels of necessity:
+
+- *Absolute necessities:*
+  - Tracking the product amount changes over time
+  - Tracking the price of individual products over time
+  - Tracking individual sale transactions -- how much was paid for each one and how much did the
+    customer voluntarily contribute to the club, and at which cash-box
+  - Tracking the currently open beer kegs and amounts of product in them, as well as which pipe they
+    are opened for
+- *Important features and improvements:*
+  - Tracking product amounts currently available in different storage spaces
+  - Auditing database changes
+  - Letting customers have an "open sale transaction", where they don't pay for the product right
+    away. This allows the bartender to update the stored amounts of products without finalizing the
+    sale transaction completely
+  - Separating products into "store items", which are bought and stored, and "sale items", which are
+    sold and can be composed of different amounts of store items
+  - Tracking sale margins of sale items and computing sale prices automatically
+  - Managing "modifiers" which can be associated with different sale items to more easily alter their
+    composition and price instead of storing every variation of a sale item separately
+  - Point-of-Sales user interface with fixed positioning of sale items, where existing layouts of
+    items don't change just by adding more items
+  - Administration user interface with clean, consistent and responsive design
+  - Integrating with the existing authentication system that lets students register as members of
+    the Student Club with eduID identification (KIS Auth @kis_auth)
+  - Integrating with the existing order-tracking system (KIS Food)
+- *Nice-to-haves:*
+  - Managing dynamic discounts and tracking their usage by different customers. This also includes
+    deprecating discounts that are out-of-date
+  - Being able to process payments in different currencies
+
+Some of the nice-to-have requirements may be skipped due to lack of time and prioritization of
+more important features.
+
+== Use-case diagram
+
+After multiple meetings with the Student Union, the requirements have been formalized into use-case
+diagrams for each privileged user role in the information system. The roles are as follows:
+
+- *Storekeeper* -- manages products and their amounts in individual stores.
+- *Bartender* -- serves customers (student club members) during different opening modes of the
+  student club.
+- *Accountant* -- makes sure that the amounts of cash in individual cash-boxes are correct and sets
+  product prices.
+- *Administrator* -- manages users and all persistent entities that other roles don't have access
+  to. Also has access to everything the other roles can do.
+
+An use-case diagram for the given roles is depicted on the figure @usecase_diagram.
+
+#figure(
+  image("figures/usecase_diagram.drawio.svg"),
+  caption: [Use-case diagram for the users of the new Kachna Information System],
+) <usecase_diagram>
+
+Other than the users with privileges, basic users accounts without any privileges can also be
+created. These accounts represent ordinary members of the Student Club -- people that don't take
+part in management. These users can only register, log-in, log-out and edit details of their own
+user account, such as their nickname in the system.
+
+In the new version of the Kachna Information system, all of these actions will be done in the
+dedicated front-end of KIS Auth, not in KIS Admin like before.
+
+=== Description of individual use cases
+
+*Store management* --- creating and editing store entities in which products (store items) can be
+stored.
+
+#bigskip()
+
+*Pipe management* --- creating and editing pipe entities that the beer kegs can be opened for.
+
+#bigskip()
+
+*User management* --- in the context of the new KIS Sales API, this will include only browsing users
+and displaying information about them. Other actions, such as blocking or forcefully editing other
+users' profiles will be provided by KIS Auth.
+
+#bigskip()
+
+*Cash-box management* --- creating and editing cash-box entities, setting the amounts of currency in
+each of them and displaying history of transactions for each given cash-box.
+
+#bigskip()
+
+*Sale transaction management* --- creating, updating and cancelling sale transactions. This also
+incudes associating sale items with sale transactions, adding modifiers to sale items, and applying
+discounts to sale transactions.
+
+#bigskip()
+
+*Price management* --- updating and recalculating prices for store items, changing sale margins for
+sale items and modifiers.
+
+#bigskip()
+
+*Discount management* --- creating and browsing discounts, displaying the usages associated with
+them and marking discounts as out-of-date.
+
+#bigskip()
+
+*Beer keg management* --- creating, updating and deleting beer keg types, and viewing aggregate
+information about them.
+
+#bigskip()
+
+*Sale item management* --- creating, updating and deleting sale items. This also includes
+associating sale items with their components, displaying amounts of sale items in individual
+stores, and associating them with categories.
+
+#bigskip()
+
+*Store item management* --- creating, updating and deleting store items. This also includes
+displaying amounts of store items in individual stores, and associating them with categories.
+
+#bigskip()
+
+*Store item amount management* --- adding store items to stores, moving them from one store to
+another, marking store items as written off and setting the amounts of store items as a
+stock-taking.
+
+#bigskip()
+
+*Product category management* --- creating, editing and deleting individual product categories.
+
+#bigskip()
+
+*POS Layout management* --- creating, editing and deleting fixed layouts in the Point-of-Sales UI
+(KIS Operator).
 
 = Application design <design>
 

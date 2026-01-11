@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.0.3" pages="5">
   <diagram id="7TXdtiIXrN7FSFcp1B47" name="ER_New">
-    <mxGraphModel dx="2377" dy="1400" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
+    <mxGraphModel dx="2037" dy="1200" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -726,7 +726,7 @@
         <mxCell id="ojR8LotGKx4y6zFBe1d5-9" value="ContainerChange" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;fontColor=default;" parent="1" vertex="1">
           <mxGeometry x="833.96" y="1183.2" width="190" height="96" as="geometry" />
         </mxCell>
-        <mxCell id="ojR8LotGKx4y6zFBe1d5-10" value="&lt;div&gt;+ reason: enum&lt;br&gt;+ timestamp&lt;/div&gt;" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" parent="ojR8LotGKx4y6zFBe1d5-9" vertex="1">
+        <mxCell id="ojR8LotGKx4y6zFBe1d5-10" value="&lt;div&gt;+ new_state&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;: enum&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ timestamp&lt;/div&gt;" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" parent="ojR8LotGKx4y6zFBe1d5-9" vertex="1">
           <mxGeometry y="26" width="190" height="70" as="geometry" />
         </mxCell>
         <mxCell id="ojR8LotGKx4y6zFBe1d5-19" value="" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" parent="1" source="ojR8LotGKx4y6zFBe1d5-9" target="dD5ONsdHf9vbiUfRJ5uM-24" edge="1">
@@ -894,11 +894,17 @@
         <mxCell id="CazT7TmoOPmk2ayihyny-54" value="0..*" style="edgeLabel;resizable=0;html=1;;align=left;verticalAlign=bottom;" parent="CazT7TmoOPmk2ayihyny-51" connectable="0" vertex="1">
           <mxGeometry x="1" relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="6IThzr9Zln8YSrDuHtW4-1" value="" style="endArrow=classic;html=1;rounded=0;sourcePerimeterSpacing=0;endSize=6;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="300" y="466" as="sourcePoint" />
+            <mxPoint x="219" y="498" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram name="Usecase_New" id="iMlmX7kc1FUaEpyN8fH5">
-    <mxGraphModel dx="2037" dy="1200" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="840" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -1096,7 +1102,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="RILZDrMLU31PRgtcXAj_-8" value="(optional)&lt;br&gt;Apply a discount" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="866.25" y="550" width="210" height="80" as="geometry" />
+          <mxGeometry x="866.25" y="555" width="210" height="80" as="geometry" />
         </mxCell>
         <mxCell id="RILZDrMLU31PRgtcXAj_-10" value="Write off store items" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="878.75" y="1812" width="210" height="80" as="geometry" />
