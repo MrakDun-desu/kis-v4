@@ -38,7 +38,7 @@
   ],
   abstract: [
     This thesis deals with the design and implementation of a modular information system
-    for a student club. It handles store management, product and
+
     composite product management, automated price calculation, tracking
     voluntary contributions, and offers two user interfaces, one for administration and one for
     sales. Backend has been implemented with ASP.NET Core and it integrates with an existing custom

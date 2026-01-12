@@ -53,7 +53,7 @@ In the following chapters, I will:
   them, as well as discuss what security measures are usually employed, in chapter @theory
 - Familiarize the reader with the current state of the information systems used by the Kachna
   Student Club in chapter @current
-- Analyze the requirements of the Student Union and formalize them as an use-case diagram in chapter
+- Analyze the requirements of the Student Union and formalize them as UML diagrams in chapter
   @analysis
 - Design the individual parts of the system in chapter @design
 - And finally sum up the work in chapter @concl
@@ -548,10 +548,10 @@ This subsystem is not currently fully integrated with the rest of the system, an
 this thesis is to integrate it with the other services. This will offer more extensibility, better
 separation of concerns, and more ways for users to register as club members.
 
-= Use-case analysis <analysis>
+= Requirement analysis <analysis>
 
-This chapter describes the current requirements of the Student Union for the new, improved version
-of the Kachna Information System.
+This chapter describes analysis of the current requirements of the Student Union for the new,
+improved version of the Kachna Information System.
 
 == Informal specification
 
@@ -592,7 +592,9 @@ The full informal specification includes various levels of necessity:
   - Administration user interface with clean, consistent and responsive design
   - Integrating with the existing authentication system that lets students register as members of
     the Student Club with eduID identification (KIS Auth @kis_auth)
-  - Integrating with the existing order-tracking system (KIS Food)
+  - Integrating with the existing order-tracking system (KIS Food). This includes sending requests
+    for queueing orders and printing the number of the order and/or number of the table for the
+    order
 - *Nice-to-haves:*
   - Managing dynamic discounts and tracking their usage by different customers. This also includes
     deprecating discounts that are out-of-date
@@ -696,11 +698,82 @@ stock-taking.
 *POS Layout management* --- creating, editing and deleting fixed layouts in the Point-of-Sales UI
 (KIS Operator).
 
+== Data model
+
+The figures @er_diagram_products, @er_diagram_transactions, @er_diagram_layouts and
+@er_diagram_containers depict the data model of the new KIS Sales back-end, as designed according to
+the user requirements and some assumptions made during analysis. The diagram has been split into
+multiple figures because of its complexity.
+
+#figure(
+  image("figures/er_diagram_products.drawio.svg"),
+  caption: [Entity Relationship diagram for the new KIS Sales -- Products],
+) <er_diagram_products>
+
+#figure(
+  image("figures/er_diagram_transactions.drawio.svg", height: 62%),
+  caption: [Entity Relationship diagram for the new KIS Sales -- Transactions],
+) <er_diagram_transactions>
+
+#figure(
+  image("figures/er_diagram_layouts.drawio.svg"),
+  caption: [Entity Relationship diagram for the new KIS Sales -- Layouts],
+) <er_diagram_layouts>
+
+#figure(
+  image("figures/er_diagram_containers.drawio.svg"),
+  caption: [Entity Relationship diagram for the new KIS Sales -- Containers (Beer kegs)],
+) <er_diagram_containers>
+
 = Application design <design>
+
+This chapter describes the design of the replaced parts of the Kachna Information System, which
+includes the new KIS Sales back-end (@kis_sales), KIS Operator front-end (@kis_operator) and KIS
+Admin front-end (@kis_admin).
 
 == Technology choices
 
-== Entity design
+Based on previous experience with web application development and the requirement analysis, the
+following technologies have been chosen:
+
+- The new *KIS Sales back-end* will be implemented in *ASP.NET Core*
+  #footnote(link(
+    "https://dotnet.microsoft.com/en-us/apps/aspnet",
+  )[dotnet.microsoft.com/en-us/apps/aspnet])
+  using the *C\# programming language*, *Entity Framework Core ORM*
+  #footnote(link(
+    "https://learn.microsoft.com/en-us/ef/core/",
+  )[learn.microsoft.com/en-us/ef/core/])
+  for interfacing with the database and *Minimal API architecture* for defining endpoints.
+  - KIS Auth uses the Duende IdentityServer package to implement its authentication protocols.
+    Documentation for this package includes many examples in C\# and is made to be especially easily
+    integrated into other C\# web applications.
+  - C\# is also the language I have the most experience with, and it requires the least amount of
+    familiarizing myself with the structure of applications.
+  - Modern C\# Minimal API architecture provides an excellent type-safe way of defining REST API
+    endpoints that can be automatically compiled from C\# code into OpenAPI documents.
+  - Entity Framework Core provides a very clean and type-safe way of defining database schemas and
+    querying for entities with speed and flexibility very close to raw SQL.
+- The new *KIS Sales database* will use the *PostgreSQL RDBMS*.
+  #footnote(link("https://www.postgresql.org/")[postgresql.org])
+  - PostgreSQL is the modern gold standard for relational databases because of its stability,
+    flexibility and amount of features.
+- *KIS Operator and KIS Admin* front-ends will be written in *React
+  #footnote(link("https://react.dev")[react.dev]) with TypeScript*, with *Material
+  UI* #footnote(link("https://mui.com/")[mui.com]) components for UI. *Vite*
+  #footnote(link("https://vite.dev/")[vite.dev]) will be used as the build tool for optimizing
+  front-end code and as a development server.
+  - React is the most used modern web application framework and provides a convenient way to split an
+    application into easily maintainable components.
+  - TypeScript will provide type-safety and robust language server support for faster and less error-prone
+    development compared to JavaScript.
+  - Material UI is a themable and full-featured UI component framework complete with many data display
+    components and form field inputs. It is particularly good for ensuring consistency in the user
+    interface.
+  - Vite is a unified modern web build tool which provides great developer experience with hot reload
+    and small compile sizes in production builds.
+
+== Database design
 
 == Application architecture
 
