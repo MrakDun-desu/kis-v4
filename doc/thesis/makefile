@@ -1,13 +1,15 @@
-MMD_SOURCES = $(wildcard figures/*.mmd)
-FIGURES = $(MMD_SOURCES:.mmd=.svg)
+DRAWIO_SOURCES = $(wildcard figures/*.drawio)
+DRAWIO_FIGURES = $(DRAWIO_SOURCES:.drawio=.pdf)
 
 all: thesis.pdf
 
-figures/%.svg: figures/%.mmd
-	mmdc -i $< -o $@
+figures/%.pdf: figures/%.drawio
+	drawio -x --crop $<
 
-thesis.pdf: main.typ $(FIGURES)
+thesis.pdf: main.typ $(DRAWIO_FIGURES)
 	typst c main.typ $@
 
 clean:
 	rm *.pdf
+
+.PHONY: all clean

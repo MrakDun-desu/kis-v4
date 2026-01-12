@@ -258,7 +258,7 @@ The most common OAuth 2.0 flow -- authorization code flow -- is depicted on the 
   owner.
 
 #figure(
-  image("figures/oauth_auth-code-flow.svg"),
+  image("figures/oauth_auth-code-flow.pdf"),
   caption: [OAuth 2.0 authorization code flow],
 ) <auth_code_flow>
 
@@ -343,7 +343,7 @@ authentication, on KIS Food for scheduling and displaying longer orders, and on 
 data.
 
 #figure(
-  image("figures/kis_relationships.drawio.svg"),
+  image("figures/kis_relationships.pdf"),
   caption: [Top-level architecture of the Kachna Information System],
 ) <kis_architecture>
 
@@ -619,7 +619,7 @@ diagrams for each privileged user role in the information system. The roles are 
 An use-case diagram for the given roles is depicted on the figure @usecase_diagram.
 
 #figure(
-  image("figures/usecase_diagram.drawio.svg"),
+  image("figures/usecase_diagram.pdf"),
   caption: [Use-case diagram for the users of the new Kachna Information System],
 ) <usecase_diagram>
 
@@ -706,22 +706,22 @@ the user requirements and some assumptions made during analysis. The diagram has
 multiple figures because of its complexity.
 
 #figure(
-  image("figures/er_diagram_products.drawio.svg"),
+  image("figures/er_diagram_products.pdf"),
   caption: [Entity Relationship diagram for the new KIS Sales -- Products],
 ) <er_diagram_products>
 
 #figure(
-  image("figures/er_diagram_transactions.drawio.svg", height: 62%),
+  image("figures/er_diagram_transactions.pdf", height: 62%),
   caption: [Entity Relationship diagram for the new KIS Sales -- Transactions],
 ) <er_diagram_transactions>
 
 #figure(
-  image("figures/er_diagram_layouts.drawio.svg"),
+  image("figures/er_diagram_layouts.pdf"),
   caption: [Entity Relationship diagram for the new KIS Sales -- Layouts],
 ) <er_diagram_layouts>
 
 #figure(
-  image("figures/er_diagram_containers.drawio.svg"),
+  image("figures/er_diagram_containers.pdf"),
   caption: [Entity Relationship diagram for the new KIS Sales -- Containers (Beer kegs)],
 ) <er_diagram_containers>
 
