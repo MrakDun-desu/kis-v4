@@ -3,8 +3,11 @@
 
 = Introduction
 
-The goal of this thesis was to study and redesign the information system used by the Kachna
-Student Club #footnote(link("https://su.fit.vut.cz/kachna/")).
+The goal of this thesis was to study and redesign the information system used by the
+Students Club "U Kachničky" #footnote(link("https://su.fit.vut.cz/kachna/")). The club functions as
+a meeting place for students, offers board games to borrow and play, and sells various refreshments
+as a non-profit organization. It is maintained by the Students Union (SU), who take on volunteer
+work as bartenders, servers, storekeepers or accountants.
 
 #bigskip()
 
@@ -12,197 +15,162 @@ Any organization that handles products and their sales has a specific set of req
 type of products it specializes in. A lot of this is shared for all such businesses -- product
 storage tracking, price specification and tracking, sales
 management and others. Systems to manage such businesses are pretty complex already and need
-to be secure and consistent. The Student Club however also has some specific requirements that
+to be secure and consistent. The Students Club however also has some specific requirements that
 are not easy to find in general sales systems.
 For example, the club functions in multiple different ways:
 
-- Most of the time, it's open in "bar" mode, selling beer from kegs and offering a big
-  selection of snacks.
+- Most of the time, it's open in "bar" mode, selling mostly tapped drinks and big
+  selection of snacks, with volunteers working as bartenders.
 - Once per week, it's open in "teahouse" mode, mainly preparing and selling teas
-  and maintaining a quiet, relaxed atmosphere. During this mode, the employees are
-  also expected to bring the orders to individual tables.
+  and maintaining a quiet, relaxed atmosphere. During this mode, the volunteers are
+  also expected to serve orders to individual tables.
 - Sometimes, it's also open for special occasions, and it serves only small subset of the
-  usual catalogue. During these events, the orders are usually all made on the name of a single
-  person instead of a person ordering and then paying right away as usual.
+  usual catalogue. During these events, the orders are usually all made in the name of a single
+  person, instead of individual customers ordering and paying for themselves.
 
 On top of this, some of the products sold are more complex than others -- for example, different
-beer kegs might be available on different days, and it's also necessary to track the beer amounts
-of individual kegs.
+types of kegs might be available on different days, and it's also necessary to track the current
+volumes of individual kegs.
 
-Also, unlike most organizations, the Student Club is non-profit and requires voluntary contributions
-from members to keep running. Because of this, it's absolutely necessary
-to track the amounts of individual contributions. The contributions are also
-used for gamification purposes to encourage members to support the growth of the club.
+Also, unlike most organizations that deal with sales, the Students Club is non-profit and requires
+voluntary contributions from members to keep running. These contributions are usually taken as parts
+of sale transactions. Because of this, it's absolutely necessary to track the amounts of the
+individual contributions within transactions. The contributions are also used for gamification
+purposes to encourage members to support the club.
 
-Because of all these requirements, the ideal solution needs to be custom-made. In the past,
-there have been attempts to make such a system, but the members of the Student Union have not
-been satisfied with them. Some of the modules of the system are satisfactory, however,
-and for a new solution, it's better to integrate with them than to implement from scratch.
+Because of all these requirements, the ideal solution needs to be custom-made. In the past, there
+have been attempts to make such a system, but members of the Students Union have not been
+satisfied with them. The implementation has been gradually growing in scale, which led to somewhat
+accidental architecture -- it consists of multiple subsystems, some of which work together and
+some of which are supposed to work together but don't. In recent years, there has been an attempt to
+implement a better and unified authentication subsystem and integrate it, but due
+to the messy state of the current implementation and lack of maintainers, it wasn't fully
+successful.
 
-Such systems are:
-
-- KIS (Kachna Information System) Food, which handles tracking long-duration orders such
-  as making toasts, and displaying information about them on monitors.
-- KIS Auth, which handles authentication and authorization. It also integrates with the eduID
-  #footnote(link("https://www.eduid.cz")[eduID.cz])
-  academic identity federation for ease of signing up.
+#bigskip()
 
 In the following chapters, I will:
 
-- Talk about modern information systems and what requirements are usually expected when implementing
-  them, as well as discuss what security measures are usually employed, in chapter @theory
-- Familiarize the reader with the current state of the information systems used by the Kachna
-  Student Club in chapter @current
-- Analyze the requirements of the Student Union and formalize them as UML diagrams in chapter
-  @analysis
-- Design the individual parts of the system in chapter @design
-- And finally sum up the work in chapter @concl
+- talk about modern information systems and what requirements are usually expected when implementing
+  them, as well as discuss what security measures are usually employed, in chapter @theory,
+- familiarize the reader with the current state of the information systems used by the
+  Students Club "U Kachničky" in chapter @current,
+- analyze the requirements of the Students Union and formalize them into a use-case diagram in chapter
+  @analysis,
+- design the individual parts of the system in chapter @design,
+- and finally sum up the work in chapter @concl.
 
 
 = Modern information systems <theory>
 
 This chapter summarizes all the typical requirements that a modern information system is expected to
-fulfill, that are relevant to this project. Special attention is given to security practices
-(@security), as one of the requirements for this thesis was to specifically research mechanisms for
-authentication of users in complex information systems.
+fulfill. Special attention is given to security practices in sections @security_risks and
+@security_practices, as that is one particularly important aspect of today's information systems.
 
 == Requirements for a modern web application
 
 These are individual characteristics of a software product that can be used to judge quality of
-software, taken from the ISO/IEC 25010 standard #custom-cite("iso25010"). For each of the
-characteristics, I will either specify what is required of this project, or why the characteristic
-isn't very relevant to this particular software.
+software, taken from the ISO/IEC 25010 standard #custom-cite("iso25010"). These characteristics will
+be all taken into account in the later chapters and applied for the needs of the current clients.
 
 === Functional suitability
 
-The capability of the product to meet the functional needs of its users.
+The capability of the product to meet the functional needs of its users. It includes:
+- *functional completeness* -- capability of a product to provide functionality that covers all the
+  specified tasks and objectives,
+- *functional correctness* -- capability to provide accurate results to intended users,
+- and *functional appropriateness* -- capability to provide necessary and sufficient functions, and
+  exclude unnecessary steps.
 
-In the chapter
-@analysis, I will specify what exactly these needs are for this project. Some of the user
-requirements are mandatory, while some are only nice-to-have and might be skipped either due to lack
-of time or to focus on more important user needs.
+// Functional suitability is an aspect that is important for every product. The requirements for it
+// change from system to system, so it is necessary to be given special care every time a new system is
+// designed.
 
 === Performance efficiency
 
 The capability of a product to perform the functions within specified time and be efficient in the
-use of its resources.
+use of its resources. In more detail, it includes:
+- *time behavior* -- capability to perform functions in expected time,
+- *resource utilization* -- capability to not use more than required amount of resources for
+  accomplishing functionality,
+- and *capacity* -- capability to function correctly under the maximum expected system load.
 
-A modern web application is expected to perform most of its task in time perceptible as instant by
-human eyes, and to provide visual feedback for the tasks that are required to take significant
-amount of time.
-
-It is also expected of the system to be able to respond to all the requests the users are expected
-to have -- for this project, however, the scalability isn't much of an issue, since the School Club
-is a fairly small organization with the amount of active members in dozens. The product is not
-expected to be deployed in a large-scale scenario, so the capacity requirement is fairly small.
+// Performance efficiency has proven to be quite a lot less important for the current web applications
+// due to strong capabilities of modern hardware. However, it still remains an important requirement,
+// especially in bigger systems. Even if the modern hardware is very capable and optimized, it is
+// important for software to remain optimized as well.
 
 === Compatibility
 
 The capability of a product to exchange information with other products and to perform its
-functions while sharing environment and resources with them.
+functions while sharing environment and resources with them. Its sub-characteristics include:
+- *co-existence* -- capability to perform functions efficiently while sharing common environment and
+  resources with other products, while also not impacting other products' efficiency,
+- *interoperability* -- capability to exchange information with other products and use it,
+- and *interaction capability* -- capability to be interacted with by users via user interface.
 
-This product is expected to work with the other modules of the Kachna Information System and to be
-further extended by other systems in the future.
+// Compatibility is particularly important in modern web applications that function as parts of a
+// bigger system. Most of the web functions on the same protocols, so it is usually relatively simple
+// to ensure, but it shouldn't be dismissed because of that.
 
 === Interaction capability
 
 The capability of a product to be interacted with by users. It also includes the following:
-- *appropriateness recognizability* - whether the product can be recognized by the users as
+- *appropriateness recognizability* -- whether the product can be recognized by the users as
   appropriate for their needs,
-- *learnability* - whether the product's functionality can be easily learned,
-- *self-descriptiveness* - whether the product is able to make its capabilities obvious to the
+- *learnability* -- whether the product's functionality can be easily learned,
+- *operability* -- whether the product can be easily controlled by its intended users,
+- *self-descriptiveness* -- whether the product is able to make its capabilities obvious to the
   users,
-- and *user error protection* - whether the product is able to prevent operation errors from the
-  users.
-
-It is absolutely necessary that the product can be recognized as appropriate. The users should be
-able to work with it and improve their workflow as fast as possible.
-
-It is also very necessary to prevent operation errors, or in case of an error, helping the user
-resolve it as fast as possible via changing or removing the effects of the error such that the
-resulting state of the system correctly corresponds to the state of the real world.
-
-Learnability and self-descriptiveness aren't as crucial to this product, as it is expected for the
-new operators to be schooled by the more experienced users, but it would still be very useful if the
-need for schooling was as small as possible, and the users were able to start using the system
-without too much help.
-
-#bigskip()
-
-There are other parts of interaction capability that should be mentioned but aren't as relevant to this
-product for various reasons:
-- *user engagement* - it is not necessary for the users to feel particularly engaged by the product as
-  it is required for their work. Engagement is mostly important when users interact with the product
-  in their free time for leisure,
-- *inclusivity* - inclusivity is not very important for this particular product because it is known
-  that only the students of FIT VUT will be using it, and as such it's not necessary to think about
-  too wide of a spectrum of users,
-- *user assistance* - it is not very important to assist users with particular needs or disabilities
-  to the clients, because the chances of such users needing to use the product are exceedingly low.
-  It is more important to work on other functionality of the product before considering this.
+- *user error protection* -- whether the product is able to prevent operation errors from the
+  users,
+- *user engagement* -- whether the product presents its functions and information in inviting and
+  motivating manner, encouraging continued user interaction
+- *inclusivity* -- whether the product is usable by people of various backgrounds,
+- and *user assistance* -- whether the product is usable by people with different characteristics
+  and physical and mental capabilities.
 
 === Reliability
 
-The capability of a product to perform its functions without interruptions or failures.
-
-This product should function without any failures, and it should be available under normal use. It
-should also be possible to recover the state of the system from an earlier point in time.
-
-When hardware faults occur, it is acceptable for the product to stop functioning for a short period
-of time, but it should be able to start functioning again as fast as possible.
+The capability of a product to perform its functions without interruptions or failures. It includes:
+- *faultlessness* -- capability to function without fault under normal operation,
+- *availability* -- capability to be operational when required for use,
+- *fault tolerance* -- capability to operate despite the presence of faults in the system,
+- and *recoverability* -- capability to recover the data from the system and continue work after
+  interruption and major failure.
 
 === Security
 
 The capability of a product to protect information and data, and to defend against attack patterns
 by malicious actors. This includes the following:
-- *confidentiality* - capability to ensure that only authorized users access protected data,
-- *integrity* - capability to ensure that the data cannot be modified or deleted by unauthorized
+- *confidentiality* -- capability to ensure that only authorized users access protected data,
+- *integrity* -- capability to ensure that the data cannot be modified or deleted by unauthorized
   users or computer error,
-- *non-repudiation* - capability to prove that actions have taken place,
-- *accountability* - traceability of actions within the system to a specific entity,
-- *authenticity* - capability to prove that subject or resource is the one it claims to be,
-- and *resistance* - capability to sustain operations even while under attack.
-
-Confidentiality, integrity, accountability and authenticity are very important to this system,
-especially since it includes information about exchange of money between students and the Student
-Club.
-
-Non-repudiation and resistance are still important, but not as vital, since it is not expected that
-anyone would want to attack the system. And while the system holds information about exchange of
-money, it is never expected to be treated as the source of truth, only as an accounting helper.
+- *non-repudiation* -- capability to prove that actions have taken place,
+- *accountability* -- traceability of actions within the system to a specific entity,
+- *authenticity* -- capability to prove that subject or resource is the one it claims to be,
+- and *resistance* -- capability to sustain operations even while under attack.
 
 === Maintainability
 
 The capability of a product to be modified with effectiveness and efficiency. This includes:
-- *modularity* - changes to one component shouldn't affect other components,
-- *reusability* - capability of a product to be used in more than just one system,
-- *modifiability* - capability to be modified without degrading product quality,
-- and *testability* - capability to be objectively and feasibly tested for requirements.
-
-The product should be modular, and it should be easy to change parts of it without affecting other
-components. It should also be easily modifiable without introducing bugs.
-
-Reusability is not very important, as it is not planned to use the product in more scenarios than
-the expected scenarios.
-
-The product should also be easily tested, and it should be easily verifiable if it serves its
-function correctly.
+- *modularity* -- changes to one component shouldn't affect other components,
+- *reusability* -- capability of a product to be used in more than just one system,
+- *modifiability* -- capability to be modified without degrading product quality,
+- and *testability* -- capability to be objectively and feasibly tested for requirements.
 
 === Flexibility
 
-The capability of a product to be adapted to changes in requirements, contexts of use, or system
-environment.
+The capability of the product to be adapted to changes in requirements, contexts of use or system
+environment. This includes:
+- *adaptability* -- capability to be adapted for different hardware, software or other environments,
+- *scalability* -- capability to handle growing or shrinking workloads while maintaining similar
+  efficiency,
+- *installability* -- capability to be installed and/or uninstalled the required environments,
+- *replaceability* -- capability to replace a different product for the same purpose in the same
+  environment.
 
-Most parts of the system do not require to be deployed in different environments - the back-end and
-database are expected to stay the same, and the point-of-service front-end is also only expected to
-be used from a specific hardware. Context of use should also stay mostly the same.
-
-The only part of the system that really needs to be flexible is the administrative web application,
-which should be able to run across various modern browsers, but it is again sufficient to be able to
-run it on desktops. Enabling mobile users to use the administrative application would be
-nice-to-have, but it is not a hard requirement.
-
-== Commonly used security practices <security>
+== Commonly used security practices <security_practices>
 
 Commonly used modern security practices have shifted from simple username and password authentication
 to delegated authorization using OAuth 2.0 for authorization and OpenID Connect for authentication.
@@ -264,15 +232,15 @@ The most common OAuth 2.0 flow -- authorization code flow -- is depicted on the 
 
 === OpenID Connect <openid_section>
 
+// not simple
 OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol. It enables clients
 to verify the identity of the End-User based on the authentication performed by an Authorization
 Server, as well as to obtain basic profile information about the End-User in an interoperable and
 REST-like manner.
 
-The OpenID Connect Core 1.0 specification defines the core OpenID Connect functionality:
+The OpenID Connect Core 1.0 specification #custom-cite("openid_connect") defines the core OpenID Connect functionality:
 authentication built on top of OAuth 2.0 and the use of Claims to communicate information about the
-End-User. It also describes the security and privacy considerations for using OpenID Connect
-#custom-cite("openid_connect").
+End-User. It also describes the security and privacy considerations for using OpenID Connect.
 
 OpenID Connect is initiated when the OAuth authentication request contains the `openid` scope value.
 It then returns an *ID token* along with the access token from OAuth itself. The ID token contains
@@ -289,7 +257,7 @@ in possession of a bearer token (in OAuth, bearer is the access token) can use i
 associated resources without demonstrating possession of a cryptographic key. To prevent misuse,
 bearer tokens need to be protected from disclosure in storage and transport #custom-cite("oauth_bearer").
 
-The most commonly used format of a bearer token is a *JWT* - JSON Web Token. It is a compact,
+The most commonly used format of a bearer token is a *JWT* -- JSON Web Token. It is a compact,
 URL-safe means of representing claims to be transferred between two parties. The claims in a JWT are
 encoded as a JSON object that is used as the payload of a JSON Web Signature (JWS) structure or as
 the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to be digitally signed
@@ -312,24 +280,26 @@ UTF-8 JSON object and encoded with Base64url. Parts are then separated by the do
 
 = Current state of the information system <current>
 
-This chapter's purpose is to familiarize the reader with the current state of the Kachna Information
-System before implementing the new solutions. The current version of the information system is
-already in its fourth generation, but due to complex needs of the clients, a lot of needed
-functionality is still missing.
+This chapter's purpose is to familiarize the reader with the state of the currently employed system,
+as a whole called "Kachní informační systém", or KIS. The current version of the information system is
+already in its third generation, but due to complex needs of the clients, a lot of needed
+functionality is still missing, and due to lack of maintenance, there is a lot of architecture and
+security problems.
 
 == Overall architecture
 
-Currently, the Kachna Information System (KIS) consists of 10 subsystems and components:
+Currently, KIS consists of 10 subsystems and components:
 
 - *KIS Sales* (@kis_sales),
 - *KIS Operator* (@kis_operator),
 - *KIS Admin* (@kis_admin),
 - *KIS Auth* (@kis_auth),
-- *Kachna Online* -- service for administration of club opening hours, Student Union events and user
+- *Kachna Online* -- service for administration of club opening hours, Students Union events and user
   application used to access information about them,
 - *KIS Monitor* -- front-end application for displaying the status of longer orders,
 - *KIS Food Management Device (KIS Food)* -- service for publishing and management of waiting lists for longer
   orders,
+// spojit dohromady
 - *KIS HW Reader* -- hardware smart card reader,
 - *KIS Android Reader* -- smart card reader implementation for Android,
 - and *KIS Reader Library* -- client JavaScript library for communication with smart card readers.
@@ -344,13 +314,13 @@ data.
 
 #figure(
   image("figures/kis_relationships.pdf"),
-  caption: [Top-level architecture of the Kachna Information System],
+  caption: [Top-level architecture of the currently employed information system],
 ) <kis_architecture>
 
 == Sales subsystem <kis_sales>
 
 KIS Sales is the main subsystem that the whole information system is standing on top of. It holds
-all the data about product storage, costs, users, voluntary contributions, beer kegs and others.
+all the data about product storage, costs, users, voluntary contributions, kegs and others.
 The current implementation has last been updated about two and half years ago.
 
 It is a REST application that serves as a shared back-end by Kachna Online, KIS Admin @kis_admin,
@@ -365,7 +335,7 @@ It uses Python as the main backend language, integrates directly with EduId
 authentication, and only partially integrates with the more modern authentication service KIS Auth
 which has also been implemented about two years ago.
 
-The main issues stated by the Student Union with the old sales subsystem is that it doesn't provide
+The main issues stated by the Students Union with the old sales subsystem is that it doesn't provide
 a lot of necessary options to interact with products, such as write-offs. It also doesn't have good
 auditing capabilities, so when someone makes a change in the system, it is very difficult to
 associate the change with the user who made it.
@@ -386,11 +356,11 @@ Currently, the KIS Sales subsystem manages mainly the following entities:
   article has changed over time.
 - *Users* -- since the previous version of the Sales system has been created before KIS
   Auth, the sales service is also fully capable of managing users and their data.
-- *Beer kegs and taps* -- in the current version of the Sales system, beer kegs are special entities
+- *Kegs and taps* -- in the current version of the Sales system, kegs are special entities
   that hold certain volume their assigned article. In the current schema, any article can
-  theoretically be in a beer keg, and unsealed kegs are just identified by changes in stock that
+  theoretically be in a keg, and unsealed kegs are just identified by changes in stock that
   belong to them. \
-  An unsealed beer keg can also be opened at a beer tap. Kegs can be queried based on which tap they
+  An unsealed keg can also be opened at a tap. Kegs can be queried based on which tap they
   belong to.
 - *Operations* -- these include orders, contributions, stock-takings and others. Operations are core
   to the system, so the current implementation is one of the more mature parts of the system.
@@ -399,7 +369,7 @@ Currently, the KIS Sales subsystem manages mainly the following entities:
   write-offs of spoiled or otherwise undesirable products.
 
 The current system has no concept of different general stores. The information about amounts of
-each article are stored globally, or for beer articles, associated to beer kegs which each hold only
+each article are stored globally, or for tapped drinks, associated to kegs which each hold only
 one type of article.
 
 There also isn't an easy way to modify structure and price of a certain article for a single
@@ -420,7 +390,7 @@ Sales back-end (@kis_sales) and offers a subset of its capabilities. It is used 
 touch-screen devices the purpose of which is only to serve as hardware for the Operator UI.
 
 It also integrates the KIS Reader Library for communication with a smart card reader. The reader is
-used to scan the students' cards for easy registration with the Student Club.
+used to scan the students' cards for easy registration with the Students Club.
 
 It's written in the Angular framework #footnote(link("https://angular.dev/")) version 12, and has
 last been updated approximately 3 years ago. Just quickly trying to run the application locally
@@ -431,15 +401,15 @@ vulnerabilities registered by NPM #footnote(link("https://www.npmjs.com/")),
 The main purposes of the KIS Operator currently are:
 
 - *Communicating with the smart card reader* -- this serves as the main and most convenient
-  way for Student Club members to sign up, since all it involves is just putting their card on the
+  way for Students Club members to sign up, since all it involves is just putting their card on the
   reader and confirming their identity.
-- *Searching normal articles* -- everything except for beer from kegs should be easily searchable
+- *Searching normal articles* -- everything except for drinks from kegs should be easily searchable
   and possible to be added to an order in a consistent interface. \
   The current KIS Operator lets the bartender search the articles, but since there isn't a clearly
   defined structure to the way the articles are positioned in the database, they are always just
   displayed in alphabetical order, which is not good for muscle memory of the bartenders.
-- *Searching available beer kegs and opening them when needed* -- beer kegs are special, since the
-  club needs to track the amounts in individual opened beer kegs. Because of this, they have a
+- *Searching available kegs and opening them when needed* -- kegs are special, since the
+  club needs to track the amounts in individual opened kegs. Because of this, they have a
   separate page in the current KIS Operator.
 - *Adding articles to orders* -- once a particular article has been found, it needs to be added to
   the order in the necessary amount.
@@ -471,14 +441,14 @@ vulnerabilities in used libraries -- 62 in total, 5 of which are critical.
 The main features of KIS Admin are:
 
 - *Article management* -- browsing, creating and updating articles available for sale.
-- *User management* -- browsing users (Student Club members), user creation (in case it is not
+- *User management* -- browsing users (Students Club members), user creation (in case it is not
   possible through eduID integration) and updating some of the user details, such as nickname. It is
-  also possible to block certain card IDs from the Student Club.
+  also possible to block certain card IDs from the Students Club.
 - *Bar management* -- browsing and creating cash-boxes and pipes. \
-  Browsing currently open beer kegs.
+  Browsing currently open kegs.
 - *Operations management* -- browsing and exporting all the different kinds of operations, such as
   orders, contributions, article stock changes, paymeents and others.
-- *Report browsing* -- viewing information about sales or about beer keg yields.
+- *Report browsing* -- viewing information about sales or about keg yields.
 
 Different pages of the current KIS Admin UI can be seen on the figures @sales_report_old,
 @article_list_old, and @cashbox_detail_old.
@@ -516,7 +486,7 @@ The current KIS Admin UI has several problems:
 
 == Authentication subsystem <kis_auth>
 
-KIS Auth is the newest addition to the Kachna Information System and handles authorization,
+KIS Auth is the newest addition to KIS and handles authorization,
 authentication, and user management. Unlike the older system, which directly uses SAML
 #footnote(link("https://wiki.oasis-open.org/security/")[Security Assertion Markup Language]) and RFID
 authentication on the Sales API level, KIS Auth is a separate back-end that only handles
@@ -535,12 +505,9 @@ The new authentication system offers following ways of authenticating:
   when other methods are not available.
 
 Other services can then register as OAuth (@oauth_section) clients and rely on KIS Auth to provide
-access tokens to authenticated users. In the new Kachna Information System, the KIS Sales back-end
-(@kis_sales) should not handle authorization directly, but depend on KIS Auth.
-
-Other than just authorization through OAuth 2.0, KIS Auth also provides authentication with OpenID
-Connect (@openid_section) ID tokens. It is implemented in the C\# programming language in .NET 8,
-and it uses Duende IdentityServer
+access tokens to authenticated users. Other than just authorization through OAuth 2.0, KIS Auth also
+provides authentication with OpenID Connect (@openid_section) ID tokens. It is implemented in the
+C\# programming language in .NET 8, and it uses Duende IdentityServer
 #footnote(link("https://duendesoftware.com/products/identityserver")) as an implementation provider
 for OAuth 2.0 and OpenID Connect 1.0.
 
@@ -548,14 +515,16 @@ This subsystem is not currently fully integrated with the rest of the system, an
 this thesis is to integrate it with the other services. This will offer more extensibility, better
 separation of concerns, and more ways for users to register as club members.
 
+// + deployment
+
 = Requirement analysis <analysis>
 
-This chapter describes analysis of the current requirements of the Student Union for the new,
-improved version of the Kachna Information System.
+This chapter describes analysis of the current requirements of the Students Union for the new,
+improved version of KIS.
 
 == Informal specification
 
-The current Kachna Information System (@current) uses a solution that works, but is quite
+The current KIS (@current) uses a solution that works, but is quite
 insufficient in several areas that this project is supposed to improve upon. The new system should
 completely replace the current implementations of the KIS Sales API and both main front-ends which
 depend on it -- KIS Admin and KIS Operator. The new version should offer more capabilities and better
@@ -574,7 +543,7 @@ The full informal specification includes various levels of necessity:
   - Tracking the price of individual products over time
   - Tracking individual sale transactions -- how much was paid for each one and how much did the
     customer voluntarily contribute to the club, and at which cash-box
-  - Tracking the currently open beer kegs and amounts of product in them, as well as which pipe they
+  - Tracking the currently open kegs and amounts of product in them, as well as which pipe they
     are opened for
 - *Important features and improvements:*
   - Tracking product amounts currently available in different storage spaces
@@ -591,7 +560,7 @@ The full informal specification includes various levels of necessity:
     items don't change just by adding more items
   - Administration user interface with clean, consistent and responsive design
   - Integrating with the existing authentication system that lets students register as members of
-    the Student Club with eduID identification (KIS Auth @kis_auth)
+    the Students Club with eduID identification (KIS Auth @kis_auth)
   - Integrating with the existing order-tracking system (KIS Food). This includes sending requests
     for queueing orders and printing the number of the order and/or number of the table for the
     order
@@ -605,7 +574,7 @@ more important features.
 
 == Use-case diagram
 
-After multiple meetings with the Student Union, the requirements have been formalized into use-case
+After multiple meetings with the Students Union, the requirements have been formalized into use-case
 diagrams for each privileged user role in the information system. The roles are as follows:
 
 - *Storekeeper* -- manages products and their amounts in individual stores.
@@ -620,16 +589,13 @@ An use-case diagram for the given roles is depicted on the figure @usecase_diagr
 
 #figure(
   image("figures/usecase_diagram.pdf"),
-  caption: [Use-case diagram for the users of the new Kachna Information System],
+  caption: [Use-case diagram for the users of the information system],
 ) <usecase_diagram>
 
 Other than the users with privileges, basic users accounts without any privileges can also be
-created. These accounts represent ordinary members of the Student Club -- people that don't take
+created. These accounts represent ordinary members of the Students Club -- people that don't take
 part in management. These users can only register, log-in, log-out and edit details of their own
 user account, such as their nickname in the system.
-
-In the new version of the Kachna Information system, all of these actions will be done in the
-dedicated front-end of KIS Auth, not in KIS Admin like before.
 
 === Description of individual use cases
 
@@ -638,7 +604,7 @@ stored.
 
 #bigskip()
 
-*Pipe management* --- creating and editing pipe entities that the beer kegs can be opened for.
+*Pipe management* --- creating and editing pipe entities that the kegs can be opened for.
 
 #bigskip()
 
@@ -669,7 +635,7 @@ them and marking discounts as out-of-date.
 
 #bigskip()
 
-*Beer keg management* --- creating, updating and deleting beer keg types, and viewing aggregate
+*Keg management* --- creating, updating and deleting keg types, and viewing aggregate
 information about them.
 
 #bigskip()
@@ -722,12 +688,12 @@ multiple figures because of its complexity.
 
 #figure(
   image("figures/er_diagram_containers.pdf"),
-  caption: [Entity Relationship diagram for the new KIS Sales -- Containers (Beer kegs)],
+  caption: [Entity Relationship diagram for the new KIS Sales -- Containers (Kegs for tapped drinks)],
 ) <er_diagram_containers>
 
 = Application design <design>
 
-This chapter describes the design of the replaced parts of the Kachna Information System, which
+This chapter describes the design of the replaced parts of KIS, which
 includes the new KIS Sales back-end (@kis_sales), KIS Operator front-end (@kis_operator) and KIS
 Admin front-end (@kis_admin).
 
@@ -780,3 +746,4 @@ following technologies have been chosen:
 == User interface design
 
 = Conclusion <concl>
+
