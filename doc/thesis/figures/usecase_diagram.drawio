@@ -130,19 +130,19 @@
         <mxCell id="y2IcB3em7y5YyugZ8KMl-31" value="Administrator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;labelBackgroundColor=default;" parent="1" vertex="1">
           <mxGeometry x="200" y="360" width="30" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="y2IcB3em7y5YyugZ8KMl-67" value="Bartenders can only&lt;div&gt;create sale transactions and cancel their own ones&lt;/div&gt;" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=middle;" parent="1" vertex="1">
+        <mxCell id="y2IcB3em7y5YyugZ8KMl-67" value="Bartenders can only&lt;div&gt;create sale transactions and cancel their own ones&lt;/div&gt;" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#141400;align=left;verticalAlign=middle;" parent="1" vertex="1">
           <mxGeometry x="60" y="550" width="150" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="y2IcB3em7y5YyugZ8KMl-69" value="Most user management will&lt;div&gt;be done through KIS Admin,&lt;/div&gt;&lt;div&gt;not the new Sales API&lt;/div&gt;" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=middle;" parent="1" vertex="1">
+        <mxCell id="y2IcB3em7y5YyugZ8KMl-69" value="Most user management will&lt;div&gt;be done through KIS Admin,&lt;/div&gt;&lt;div&gt;not the new Sales API&lt;/div&gt;" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#141400;align=left;verticalAlign=middle;" parent="1" vertex="1">
           <mxGeometry x="40" y="250" width="160" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="y2IcB3em7y5YyugZ8KMl-71" value="Includes setting prices for&lt;div&gt;store items, and setting&lt;/div&gt;&lt;div&gt;static&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(102, 102, 0), rgb(162, 162, 74));&quot;&gt;and percentual margins for sale items and modifiers&lt;/span&gt;&lt;/div&gt;" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=middle;" parent="1" vertex="1">
+        <mxCell id="y2IcB3em7y5YyugZ8KMl-71" value="Includes setting prices for&lt;div&gt;store items, and setting&lt;/div&gt;&lt;div&gt;static&amp;nbsp;&lt;span style=&quot;background-color: transparent;&quot;&gt;and percentual margins for sale items and modifiers&lt;/span&gt;&lt;/div&gt;" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#141400;align=left;verticalAlign=middle;" parent="1" vertex="1">
           <mxGeometry x="530" y="92" width="153.43" height="60" as="geometry" />
         </mxCell>
         <mxCell id="y2IcB3em7y5YyugZ8KMl-76" value="Discount&lt;div&gt;management&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="462.71999999999997" y="170" width="100" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="y2IcB3em7y5YyugZ8KMl-79" value="The real roles and scopes will not be managed through the newly implemented&lt;div&gt;KIS Sales API,&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(102, 102, 0), rgb(162, 162, 74));&quot;&gt;but through the KIS Admin API. The individual permissions of the roles can be altered by administrators if&amp;nbsp; necessary.&lt;/span&gt;&lt;/div&gt;" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=top;" parent="1" vertex="1">
+        <mxCell id="y2IcB3em7y5YyugZ8KMl-79" value="The real roles and scopes will not be managed through the newly implemented&lt;div&gt;KIS Sales API,&amp;nbsp;&lt;span style=&quot;background-color: transparent;&quot;&gt;but through the KIS Admin API. The individual permissions of the roles can be altered by administrators if&amp;nbsp; necessary.&lt;/span&gt;&lt;/div&gt;" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#141400;align=left;verticalAlign=top;" parent="1" vertex="1">
           <mxGeometry x="125" y="20" width="440" height="50" as="geometry" />
         </mxCell>
       </root>

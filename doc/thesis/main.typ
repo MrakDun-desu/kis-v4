@@ -37,26 +37,35 @@
     informační systém, správa produktů, prodej, modulární návrh, webová aplikace, full-stack
   ],
   abstract: [
-    This thesis deals with the design and implementation of a modular information system
-
-    composite product management, automated price calculation, tracking
-    voluntary contributions, and offers two user interfaces, one for administration and one for
-    sales. Backend has been implemented with ASP.NET Core and it integrates with an existing custom
-    authentication server using Duende IdentityServer. Frontend has been implemented with React and
-    built with Vite.
+    This thesis deals with redesing of an information system for a students club. The basis of the
+    work is an outdated information system for handling sales, product administration and user
+    contribution monitoring. The output is a design of a more modern system, allowing also for
+    management of multiple stores, automatic price calculation, management of product modifiers and
+    programmable discounts. The new system is also designed to integrate with an existing
+    authentication server.
+    // This thesis deals with the design and implementation of a modular information system for a
+    // student club. It handles store management, product and composite product management, automated
+    // price calculation, tracking voluntary contributions, and offers two user interfaces, one for
+    // administration and one for sales. Backend has been implemented with ASP.NET Core and it integrates
+    // with an existing custom authentication server using Duende IdentityServer. Frontend has been
+    // implemented with React and built with Vite.
   ],
   abstract2: cs[
-    Tato práce se zabývá návrhem a implementací modulárního informačního systému pro studentský
-    klub. Obsahuje možnosti správy skladů, správy produktů a zložených produktů, automatické
-    počítání ceny, sledování dobrovolných příspěvků a dvě uživatelská rozhraní, jedno pro
-    administraci a druhé pro samotný prodej. Backend byl implementován v ASP.NET Core a integruje s
-    existujícím autentizačním serverem, který používá Duende IdentityServer. Frontend byl
-    implementován v Reactu a sestaven programem Vite.
+    Tato práce se zabývá úpravou návrhu informačního systému pro studentský klub. Základem práce je
+    zastaralý informační systém pro prodej, administraci produktů a sledování členských příspěvků.
+    Výstupem je návrh modernějšího systému umožňujícího také správu více skladů, automatické
+    počítání cen produktů, správu modifikátorů produktů a programovatelné slevy. Nový systém je také
+    navržen pro integraci s existujícím autentizačním serverem.
+    // Tato práce se zabývá návrhem a implementací modulárního informačního systému pro studentský
+    // klub. Obsahuje možnosti správy skladů, správy produktů a zložených produktů, automatické
+    // počítání ceny, sledování dobrovolných příspěvků a dvě uživatelská rozhraní, jedno pro
+    // administraci a druhé pro samotný prodej. Backend byl implementován v ASP.NET Core a integruje s
+    // existujícím autentizačním serverem, který používá Duende IdentityServer. Frontend byl
+    // implementován v Reactu a sestaven programem Vite.
   ],
   declaration: [
-    I declare that I have worked on this thesis independently under the supervision of
-    Ing. Ondřej Ondryáš. I have stated all literary sources, publications and other resources that I
-    have used.
+    I declare that I have worked on this project independently under the supervision of Ing. Ondřej
+    Ondryáš. I have stated all literary sources, publications and other resources that I have used.
   ],
   acknowledgments: [
     #todo[Todo]

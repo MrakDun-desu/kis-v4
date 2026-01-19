@@ -12,6 +12,7 @@ architecture_practice:
     isbn: 0-13-688609-4
 iso25010:
   type: book
+  author: ISO/IEC JTC 1/SC 7 Technical Commitee
   title: Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE) — Product quality model
   edition: 2
   publisher: International Organization for Standardization
@@ -102,3 +103,27 @@ openid_connect:
   url: https://openid.net/specs/openid-connect-core-1_0.html
   howpublished: online
   cited: 2026-01-05
+owasp:
+  type: webpage
+  author: The OWASP Foundation
+  title: OWASP Top 10:2025, The Ten Most Critical Web Application Security Risks
+  date: 2025
+  url: https://owasp.org/Top10/2025/
+  howpublished: online
+  cited: 2026-01-15
+db-engines:
+  type: webpage
+  author: Red Gate Software
+  title: DB-Engines Ranking
+  date: 2025
+  url: https://db-engines.com/en/ranking
+  howpublished: online
+  cited: 2026-01-19
+state-of-js:
+  type: webpage
+  author: Devographics
+  title: State of JavaScript
+  date: 2024
+  url: https://2024.stateofjs.com/en-US/
+  howpublished: online
+  cited: 2026-01-19

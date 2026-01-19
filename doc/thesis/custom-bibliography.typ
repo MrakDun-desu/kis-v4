@@ -210,7 +210,7 @@
         fields.push[#_available_at(): #link(entry.url)]
       }
       if entry.keys().contains("cited") {
-        fields.push[[cit. #entry.cited]]
+        fields.push[[cit.~#entry.cited]]
       }
       show figure: it => []
       [#fields.join(". "). ]

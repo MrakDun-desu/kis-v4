@@ -3,25 +3,25 @@
 
 = Introduction
 
-The goal of this thesis was to study and redesign the information system used by the
-Students Club "U Kachničky" #footnote(link("https://su.fit.vut.cz/kachna/")). The club functions as
-a meeting place for students, offers board games to borrow and play, and sells various refreshments
-as a non-profit organization. It is maintained by the Students Union (SU), who take on volunteer
-work as bartenders, servers, storekeepers or accountants.
+The goal of this thesis was to study and redesign the information system used by the Students Club
+"U Kachničky" #footnote[Students Club "U Kachničky": #link("https://su.fit.vut.cz/kachna/")]. The
+club functions as a meeting place for students, offers board games to borrow and play, and sells
+various refreshments as a non-profit organization. It is maintained by the Students Union (SU),
+members of which take on volunteer work as bartenders, servers, storekeepers or accountants to keep
+the club running.
 
 #bigskip()
 
 Any organization that handles products and their sales has a specific set of requirements for the
 type of products it specializes in. A lot of this is shared for all such businesses -- product
-storage tracking, price specification and tracking, sales
-management and others. Systems to manage such businesses are pretty complex already and need
-to be secure and consistent. The Students Club however also has some specific requirements that
-are not easy to find in general sales systems.
-For example, the club functions in multiple different ways:
+storage tracking, price specification and tracking, sales management and others. Systems to manage
+such businesses are pretty complex already and need to be secure and consistent. The Students Club
+however also has some specific requirements that are not easy to find in general sales systems. For
+example, the club functions in multiple different ways:
 
 - Most of the time, it's open in "bar" mode, selling mostly tapped drinks and big
   selection of snacks, with volunteers working as bartenders.
-- Once per week, it's open in "teahouse" mode, mainly preparing and selling teas
+- Once per week, it's open in "teahouse" mode, mainly preparing and selling teas,
   and maintaining a quiet, relaxed atmosphere. During this mode, the volunteers are
   also expected to serve orders to individual tables.
 - Sometimes, it's also open for special occasions, and it serves only small subset of the
@@ -33,7 +33,7 @@ types of kegs might be available on different days, and it's also necessary to t
 volumes of individual kegs.
 
 Also, unlike most organizations that deal with sales, the Students Club is non-profit and requires
-voluntary contributions from members to keep running. These contributions are usually taken as parts
+voluntary contributions from members to keep running. These contributions are usually taken as a part
 of sale transactions. Because of this, it's absolutely necessary to track the amounts of the
 individual contributions within transactions. The contributions are also used for gamification
 purposes to encourage members to support the club.
@@ -49,23 +49,23 @@ successful.
 
 #bigskip()
 
-In the following chapters, I will:
+The following chapters will contain:
 
-- talk about modern information systems and what requirements are usually expected when implementing
-  them, as well as discuss what security measures are usually employed, in chapter @theory,
-- familiarize the reader with the current state of the information systems used by the
-  Students Club "U Kachničky" in chapter @current,
-- analyze the requirements of the Students Union and formalize them into a use-case diagram in chapter
-  @analysis,
-- design the individual parts of the system in chapter @design,
-- and finally sum up the work in chapter @concl.
+- information about modern information systems and what requirements are usually expected when
+  implementing them, as well as what security measures are usually employed (chapter @theory),
+- the current state of the information systems used by the Students Club "U Kachničky" (chapter
+  @current),
+- analysis of requirements of the Students Union and formalization of them into a use-case diagram
+  (chapter @analysis),
+- design of the individual parts of the new system (chapter @design),
+- and finally the summary of the work (chapter @concl).
 
 
 = Modern information systems <theory>
 
 This chapter summarizes all the typical requirements that a modern information system is expected to
-fulfill. Special attention is given to security practices in sections @security_risks and
-@security_practices, as that is one particularly important aspect of today's information systems.
+fulfill. Special attention is given to security practices in the section @security_practices, as
+that is one particularly important aspect of today's information systems.
 
 == Requirements for a modern web application
 
@@ -154,7 +154,8 @@ by malicious actors. This includes the following:
 === Maintainability
 
 The capability of a product to be modified with effectiveness and efficiency. This includes:
-- *modularity* -- changes to one component shouldn't affect other components,
+- *modularity* -- capability of individual components to keep functioning in the same way even after
+  updating other components,
 - *reusability* -- capability of a product to be used in more than just one system,
 - *modifiability* -- capability to be modified without degrading product quality,
 - and *testability* -- capability to be objectively and feasibly tested for requirements.
@@ -170,16 +171,20 @@ environment. This includes:
 - *replaceability* -- capability to replace a different product for the same purpose in the same
   environment.
 
+// == Most critical security risks <security_risks>
+//
+// It is important to mention the most critical and common security risks in the modern web
+// applications, as these are the most likely to occur in any application and should be considered the
+// most when designing a modern, secure information system. The OWASP Foundation maintains the list of
+// the 10 most critical security risks, and it provides a good baseline to be considered when
+// implementing an information system.
+
 == Commonly used security practices <security_practices>
 
-Commonly used modern security practices have shifted from simple username and password authentication
-to delegated authorization using OAuth 2.0 for authorization and OpenID Connect for authentication.
-Both of these protocols are built on
-top of the HTTPS protocol as a communication channel and transfer authorization data in the JSON Web
-Token format.
-
-This project uses delegated authentication with OpenID Connect and it relies on the previously
-created subsystem "KIS Auth".
+Commonly used modern security practices have shifted from simple username and password
+authentication to delegated authorization using OAuth 2.0 for authorization and OpenID Connect for
+authentication. Both of these protocols are built on top of the HTTPS protocol as a communication
+channel and usually transfer authorization data in the JSON Web Token format.
 
 === OAuth <oauth_section>
 
@@ -188,15 +193,13 @@ access to an HTTP service, either on behalf of a resource owner by orchestrating
 interaction between the resource owner and the HTTP service, or by allowing the third-party
 application to obtain access on its behalf #custom-cite("oauth20").
 
-OAuth 2.0 is the most commonly used authorization protocol in modern web applications. It defines a
-way for client applications to get access to resources via *access token* - a string denoting a
-specific scope, lifetime and other attributes.
+OAuth 2.0 defines a way for client applications to get access to resources via *access token* -- a
+string denoting a specific scope, lifetime and other attributes. Access tokens should always be
+short-lived or single use, so for simplifying obtaining additional ones after the first sign-on,
+OAuth 2.0 also allows the use of a *refresh token*, which can live for longer and can be used to
+renew an access token.
 
-Access tokens should always be short-lived or single use, so for simplifying obtaining additional
-ones after the first sign-on, OAuth 2.0 also allows the use of a *refresh token*, which can live for
-longer and can be used to renew an access token.
-
-It defines multiple flows for authorization:
+Multiple protocol flows are defined within OAuth 2.0 #custom-cite("oauth20") for authorization:
 - *authorization code grant*, which is used to obtain both access tokens and refresh tokens and is
   optimized for confidential clients,
 - *implicit grant*, which is used to obtain access tokens only, and is optimized for public clients
@@ -212,11 +215,13 @@ with PKCE #custom-cite("pkce") to prevent attackers from successful authorizatio
 even if they were to intercept the authorization code itself. These restrictions are
 currently in an active draft for OAuth 2.1 #custom-cite("oauth21").
 
-The most common OAuth 2.0 flow -- authorization code flow -- is depicted on the figure @auth_code_flow.
-+ The client application sends its ID and redirection URI to the authorization server through its
-  user-agent.
+#bigskip()
+
+The most common OAuth 2.0 flow -- authorization code flow -- is depicted on the Figure @auth_code_flow.
+
++ The client application sends its ID and redirection URI to the authorization server.
 + The Authorization server authenticates the user and if the authentication is successful,
-  authorization code is returned to the client via the user-agent.
+  authorization code is returned to the client.
 + When the client application receives the authorization code, it sends it back to the authorization
   server with its redirection URI.
 + If the authorization code is valid, the authorization server responds with the access token, which
@@ -232,39 +237,52 @@ The most common OAuth 2.0 flow -- authorization code flow -- is depicted on the 
 
 === OpenID Connect <openid_section>
 
-// not simple
 OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol. It enables clients
-to verify the identity of the End-User based on the authentication performed by an Authorization
-Server, as well as to obtain basic profile information about the End-User in an interoperable and
-REST-like manner.
+to verify the identity of the end user based on the authentication performed by an authorization
+server, as well as to obtain basic profile information about the end user in an interoperable and
+REST-like manner #custom-cite("openid_connect").
 
-The OpenID Connect Core 1.0 specification #custom-cite("openid_connect") defines the core OpenID Connect functionality:
-authentication built on top of OAuth 2.0 and the use of Claims to communicate information about the
-End-User. It also describes the security and privacy considerations for using OpenID Connect.
+The OpenID Connect Core 1.0 specification #custom-cite("openid_connect") defines the core OpenID
+Connect functionality: authentication built on top of OAuth 2.0 and the use of Claims to communicate
+information about the End-User. It also describes the security and privacy considerations for using
+OpenID Connect.
 
 OpenID Connect is initiated when the OAuth authentication request contains the `openid` scope value.
-It then returns an *ID token* along with the access token from OAuth itself. The ID token contains
-information about the end user, such as their unique ID and optionally e-mail, name and others.
+It then returns an *ID token* along with the access token from OAuth itself. The ID token is a data
+structure containing claims about the authentication of an end user by an authorization server, and
+it is represented as JSON Web Token (described in Subsection @jwt_section) containing claims about
+the token and the end user. The minimum contained claims are:
+- `iss` -- the issuer of the token (URL of the authentication server),
+- `sub` -- the subject of the token (end user identifier),
+- `aud` -- audience or audiences of the token, represented as either a client ID or array of client
+  IDs,
+- `exp` -- the expiration timestamp of the token, represented as a Unix timestamp in seconds,
+- and `iat` -- the timestamp at which the token was issued, represented as a Unix timestamp in seconds.
+
+The ID token can contain other standard claims, such as authentication time of the end user, nonce,
+as well as other custom claims specific to the used authentication server.
 
 OpenID Connect also provides a way for an application to obtain user information through the
-*UserInfo endpoint*. Via this endpoint, a client can request additional or
-updated information about the end user.
+*UserInfo endpoint*. Via this endpoint, a client can request additional or updated information about
+the end user, which are normally represented by a JSON object that contains a collection of name and
+value pairs for the claims.
 
-=== JSON Web Token
+=== JSON Web Token <jwt_section>
 
 The OAuth 2.0 protocol additionally specifies how to use bearer tokens in HTTP requests. Any party
 in possession of a bearer token (in OAuth, bearer is the access token) can use it to access
-associated resources without demonstrating possession of a cryptographic key. To prevent misuse,
-bearer tokens need to be protected from disclosure in storage and transport #custom-cite("oauth_bearer").
+associated resources without demonstrating possession of a cryptographic key #custom-cite("oauth_bearer").
 
-The most commonly used format of a bearer token is a *JWT* -- JSON Web Token. It is a compact,
-URL-safe means of representing claims to be transferred between two parties. The claims in a JWT are
-encoded as a JSON object that is used as the payload of a JSON Web Signature (JWS) structure or as
-the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to be digitally signed
-or integrity protected with a Message Authentication Code (MAC) and/or encrypted
-#custom-cite("jwt").
+The most commonly used format of a bearer token is the JSON Web Token -- *JWT*, described in
+#custom-cite("jwt"). It is a compact, URL-safe means of representing claims to be transferred
+between two parties. The claims in a JWT are encoded as a JSON object that is used as the payload of
+a JSON Web Signature (JWS) structure or as the plaintext of a JSON Web Encryption (JWE) structure,
+enabling the claims to be digitally signed or integrity protected with a Message Authentication Code
+(MAC) and/or encrypted.
 
-JWTs usually consist of three distinct sections:
+#bigskip()
+
+JWTs consist of three distinct sections:
 
 + *the header*, which holds information about the type of the token and the algorithms used for
   signature and/or encryption,
@@ -272,140 +290,141 @@ JWTs usually consist of three distinct sections:
 + and *the digital signature*.
 
 In case of unsecured tokens (which are almost never used), the algorithm in the header is set to
-none, and the digital signature is empty.
-
-For usage in HTTP communications as a bearer token, each section of the JWT is represented as a
-UTF-8 JSON object and encoded with Base64url. Parts are then separated by the dot symbol.
-
+none, and the digital signature is empty. For usage in HTTP communications as a bearer token, each
+section of the JWT is represented as a UTF-8 JSON object and encoded with base64url encoding. Parts
+are then separated by the dot symbol.
 
 = Current state of the information system <current>
 
 This chapter's purpose is to familiarize the reader with the state of the currently employed system,
-as a whole called "Kachní informační systém", or KIS. The current version of the information system is
-already in its third generation, but due to complex needs of the clients, a lot of needed
-functionality is still missing, and due to lack of maintenance, there is a lot of architecture and
+as a whole called "Kachní informační systém", or KIS. The current version of the information system
+is already in its third generation, but due to complex needs of the clients, a lot of needed
+functionality is still missing. Also, due to lack of maintenance, there is a lot of architecture and
 security problems.
 
 == Overall architecture
 
-Currently, KIS consists of 10 subsystems and components:
+Currently, KIS consists of 8 loosely interconnected subsystems and components:
 
-- *KIS Sales* (@kis_sales),
-- *KIS Operator* (@kis_operator),
-- *KIS Admin* (@kis_admin),
-- *KIS Auth* (@kis_auth),
-- *Kachna Online* -- service for administration of club opening hours, Students Union events and user
-  application used to access information about them,
+- *KIS Sales* (further described in Section @kis_sales) -- the main "source of truth" REST API which
+  holds all the core information about the system and business logic,
+- *KIS Operator* (further described in Section @kis_operator) -- front-end to the KIS Sales API used
+  by volunteers in the Students Club as a Point-of-Sales system,
+- *KIS Admin* (further described in Section @kis_admin) -- another front-end to the KIS Sales API
+  used for the administration of the Students Club,
+- *KIS Auth* (further described in Section @kis_auth) -- new authentication system that isn't fully
+  integrated with the other systems, but offers unified authentication for all the users of KIS,
+- *Kachna Online* -- service for administration and displaying of club opening hours and Students
+  Union events,
 - *KIS Monitor* -- front-end application for displaying the status of longer orders,
-- *KIS Food Management Device (KIS Food)* -- service for publishing and management of waiting lists for longer
-  orders,
-// spojit dohromady
-- *KIS HW Reader* -- hardware smart card reader,
-- *KIS Android Reader* -- smart card reader implementation for Android,
-- and *KIS Reader Library* -- client JavaScript library for communication with smart card readers.
+- *KIS Food Management Device (KIS Food)* -- service for publishing and management of waiting lists
+  for longer orders,
+- and *KIS Reader* -- hardware smart card reader used for RFID identification of club members.
 
 The relevant subsystems will be discussed in more detail in the following sections. Interactions
-between individual services are illustrated in the figure @kis_architecture.
+between individual services are illustrated in the Figure @kis_architecture.
 
 Kachna Online, KIS Admin and KIS Operator all depend on KIS Sales, which is the service that manages
-the majority of the information about the system. KIS Sales in turn depends on KIS Auth for
-authentication, on KIS Food for scheduling and displaying longer orders, and on its database to hold the actual
-data.
+the majority of the information about the system. KIS Sales relies on KIS Food for scheduling and
+displaying longer orders, and for KIS Auth to authenticate against KIS Food.
+//KIS Sales in turn depends on KIS Auth for
+// authentication, on KIS Food for scheduling and displaying longer orders, and on its database to hold
+// the actual data.
 
 #figure(
   image("figures/kis_relationships.pdf"),
-  caption: [Top-level architecture of the currently employed information system],
+  caption: [
+    Top-level architecture of the currently employed information system for the Student Club
+    "U Kachničky". The arrows show the flow of data and the colors show very strongly connected
+    components.
+  ],
 ) <kis_architecture>
 
 == Sales subsystem <kis_sales>
 
 KIS Sales is the main subsystem that the whole information system is standing on top of. It holds
-all the data about product storage, costs, users, voluntary contributions, kegs and others.
-The current implementation has last been updated about two and half years ago.
+all the data about product storage, costs, users, voluntary contributions, kegs and others. The
+current implementation has last been updated about two and half years ago.
 
-It is a REST application that serves as a shared back-end by Kachna Online, KIS Admin @kis_admin,
-and KIS Operator @kis_operator. It stores its data in a PostgreSQL database, and depends on KIS Food
+It is a REST application that serves as a shared back-end by Kachna Online, KIS Admin (Section
+@kis_admin), and KIS Operator (Section @kis_operator). It stores its data in a PostgreSQL
+#footnote(link("https://www.postgresql.org/")) database, and depends on KIS Food (Section @kis_food)
 for queueing long preparation orders, such as toasts, and displaying them on KIS Monitors.
 
 It uses Python as the main backend language, integrates directly with EduId
-#footnote(link("https://www.eduid.cz")[EduId.cz]) using SAML
-#footnote(link(
-  "https://wiki.oasis-open.org/security/",
-)[Security Assertion Markup Language])
-authentication, and only partially integrates with the more modern authentication service KIS Auth
-which has also been implemented about two years ago.
+#footnote(link("https://www.eduid.cz")) using SAML #footnote[Security Assertion Markup Language:
+  #link("https://wiki.oasis-open.org/security/")] authentication, and only partially integrates with
+the more modern authentication service KIS Auth which has also been implemented about two years ago.
+It uses its own authentication for most of the operations it supports, but it relies on KIS Auth to
+authenticate against the newer KIS Food subsystem.
 
 The main issues stated by the Students Union with the old sales subsystem is that it doesn't provide
 a lot of necessary options to interact with products, such as write-offs. It also doesn't have good
 auditing capabilities, so when someone makes a change in the system, it is very difficult to
 associate the change with the user who made it.
 
+#bigskip()
+
 Currently, the KIS Sales subsystem manages mainly the following entities:
-- *Articles (products)* -- in the current version of KIS Sales, articles are managed as
-  simple database entities. \
-  Articles can also be composed of multiple different articles, but the
-  requirement for an article to be used as component can be inconvenient -- currently, only articles
-  that can be used as components are components without set prices, components which aren't
+
+- *Articles (products)* -- in the current version of KIS Sales, articles are managed as simple
+  database entities. Articles can also be composed of multiple different articles, but the
+  requirement for an article to be used as component can be inconvenient -- currently, the only
+  articles that can be used as components are articles without set prices and articles which aren't
   composites themselves. This can be an issue if an article can be sold separately, but can also be
-  used as a component in a different article.\
-  Articles can also have any number of colored labels for filtering purposes.
-- *Prices* -- prices are currently statically assigned to each article, and prices of
-  composites are not dependent on the prices of components. Because of this, when changing prices of
-  articles, it's necessary to manually change the price of each article affected. Also, since prices
-  are saved in a one-to-one relation with articles, it is not possible to view how the price of an
-  article has changed over time.
-- *Users* -- since the previous version of the Sales system has been created before KIS
-  Auth, the sales service is also fully capable of managing users and their data.
-- *Kegs and taps* -- in the current version of the Sales system, kegs are special entities
-  that hold certain volume their assigned article. In the current schema, any article can
-  theoretically be in a keg, and unsealed kegs are just identified by changes in stock that
-  belong to them. \
-  An unsealed keg can also be opened at a tap. Kegs can be queried based on which tap they
-  belong to.
+  used as a component in a different article. Articles can also have any number of colored labels for filtering purposes.
+- *Prices* -- prices are currently statically assigned to each article, and prices of composites are
+  not dependent on the prices of components -- components can't even have a set price. Because of
+  this, it's necessary to always manually set the price of each article that requires a new price
+  every time the price changes. Also, since prices are saved in a one-to-one relation with articles,
+  it is not possible to view how the price of an article has changed over time.
+- *Users* -- since the previous version of the Sales system has been created before KIS Auth, the
+  sales service is also fully capable of managing users and their data.
+- *Kegs and taps* -- in the current version of the Sales system, kegs are special entities that hold
+  certain volume their assigned article. In the current schema, any article can theoretically be in
+  a keg, and unsealed kegs are just identified by changes in stock that belong to them. An unsealed
+  keg can also be opened at a tap. Kegs can be queried based on which tap they belong to.
 - *Operations* -- these include orders, contributions, stock-takings and others. Operations are core
   to the system, so the current implementation is one of the more mature parts of the system.
-  However, since all the operations are grouped in one table, which results in quite messy code when
-  it comes to handling operations. Some required operations are also not supported, such as simple
+  However, all the operations are grouped in one table, which results in quite messy code when
+  it comes to handling them. Some required operations are also not supported, such as simple
   write-offs of spoiled or otherwise undesirable products.
 
 The current system has no concept of different general stores. The information about amounts of
-each article are stored globally, or for tapped drinks, associated to kegs which each hold only
+each article are stored globally, or for tapped drinks, associated to kegs, which each hold only
 one type of article.
 
-There also isn't an easy way to modify structure and price of a certain article for a single
-specific transaction. Every time a different kind of product is sold, a new special article needs
-to be added. This makes the database filled with products that are only slightly different from
-each other, like toasts with different toppings, or teas with and without milk or honey.
-
-One more big deficiency of the current system is that it has no fixed way to display articles. All
-the articles are sorted alphabetically, so if a new article is added, all the following articles
-will get shifted and the operators constantly lose muscle memory about positions of individual
-articles.
+There also isn't an easy way to modify the structure and price of a certain article for a single
+specific transaction. Every time a different kind of product starts being sold, a new special
+article needs to be added. This fills the database with products that are only slightly
+different from each other, like toasts with different toppings, or teas with and without milk or
+honey.
 
 == Operator subsystem <kis_operator>
 
-Operator subsystem -- KIS Operator -- is the Point-of-Service web application for the
-bartenders that service customers during the club's opening hours. It is a front-end for the KIS
-Sales back-end (@kis_sales) and offers a subset of its capabilities. It is used on specialized
-touch-screen devices the purpose of which is only to serve as hardware for the Operator UI.
-
-It also integrates the KIS Reader Library for communication with a smart card reader. The reader is
-used to scan the students' cards for easy registration with the Students Club.
+Operator subsystem -- KIS Operator -- is the Point-of-Sales web application for the bartenders that
+service customers during the club's opening hours. It is a front-end for the KIS Sales back-end
+(Section @kis_sales) and offers a subset of its capabilities. It is used on specialized touch-screen
+devices, the purpose of which is only to serve as hardware for the Operator UI. It also integrates
+the KIS Reader Library for communication with a smart card reader. The reader is used to scan the
+students' cards for contribution tracking.
 
 It's written in the Angular framework #footnote(link("https://angular.dev/")) version 12, and has
-last been updated approximately 3 years ago. Just quickly trying to run the application locally
-and installing dependencies reveals that the current implementation has over 50 security
-vulnerabilities registered by NPM #footnote(link("https://www.npmjs.com/")),
-3 of which are stated to be critical.
+last been updated approximately 3 years ago. Just quickly trying to run the application locally and
+installing dependencies reveals that the current implementation has over 50 security vulnerabilities
+registered by NPM #footnote(link("https://www.npmjs.com/")), 3 of which are stated to be critical.
+
+#bigskip()
 
 The main purposes of the KIS Operator currently are:
 
 - *Communicating with the smart card reader* -- this serves as the main and most convenient
-  way for Students Club members to sign up, since all it involves is just putting their card on the
-  reader and confirming their identity.
+  way for Students Club members to log in, since all it involves is just putting their card on the
+  reader and confirming their identity. The cards are also used to track contributions of each
+  member, as all members must scan their card before completing every transaction.
 - *Searching normal articles* -- everything except for drinks from kegs should be easily searchable
-  and possible to be added to an order in a consistent interface. \
-  The current KIS Operator lets the bartender search the articles, but since there isn't a clearly
+  and possible to be added to an order in a consistent interface. The current KIS Operator lets the
+  bartender browse the articles and filter them based on labels, but since there isn't a clearly
   defined structure to the way the articles are positioned in the database, they are always just
   displayed in alphabetical order, which is not good for muscle memory of the bartenders.
 - *Searching available kegs and opening them when needed* -- kegs are special, since the
@@ -415,28 +434,51 @@ The main purposes of the KIS Operator currently are:
   the order in the necessary amount.
 - *Submitting and cancelling orders* -- for orders that have been successfully completed, it is
   necessary to submit them to the KIS Sales system to update the article stocks, contribution
-  amounts for the club members and amount of cash in the used cash-box. \
-  For the most recent orders, it is also possible for them to be cancelled in case something went
-  wrong or the order was made by mistake.
+  amounts for the club members and amount of cash in the used cash-box.  For the most recent orders,
+  it is also possible for them to be cancelled in case something went wrong or the order was made by
+  mistake.
 
 Overall, the current KIS Operator is doing its job fairly well. The biggest problems associated with
 the current version is the lack of maintenance over the years, and the fact that products cannot
 have a fixed positioning in the Operator UI.
 
-Some additional features would also be welcome, such as native way to handle discounts, and option
-to only view what articles are available in the store currently used by the bartender. These would
-however first need to be implemented in the Sales API, which the Operator depends on for business
-logic.
+Some additional features would also be welcome, such as native way to handle discounts, option to
+only view what articles are available in the store currently used by the bartender, and option to
+modify articles for individual transactions. These would however first need to be implemented in the
+Sales API, which the Operator depends on for business logic.
+
+The main KIS Operator UI can be seen on the Figure @operator_orders, and the UI for displaying taps
+and kegs on the Figure @operator_taps.
+
+#figure(
+  image("./figures/operator_orders.png"),
+  caption: [
+    Main user interface in the current version of KIS Operator. It allows displaying the individual
+    articles with their current stock amounts, filtering of the articles by labels and
+    managing the amounts of articles in the currently open order.
+  ],
+) <operator_orders>
+
+#figure(
+  image("./figures/operator_taps.png"),
+  caption: [
+    The user interface for managing taps in the current version of KIS Operator. It allows
+    displaying the currently available kegs, their current approximate amounts, and opening them when
+    needed.
+  ],
+) <operator_taps>
 
 == Administration subsystem <kis_admin>
 
 The administration subsystem (KIS Admin) is a web application used for administrative
-purposes. Similarly to KIS Operator (@kis_operator), it is a front-end to the KIS Sales back-end
-(@kis_sales).
+purposes. Similarly to KIS Operator (Section @kis_operator), it is a front-end to the KIS Sales back-end
+(Section @kis_sales).
 
-Similarly to KIS Operator, it is written in the Angular framework version 12, and the last time it
+Like KIS Operator, it is written in the Angular framework version 12, and the last time it
 has been significantly updated is about 4 years ago. NPM also reports a high number of
 vulnerabilities in used libraries -- 62 in total, 5 of which are critical.
+
+#bigskip()
 
 The main features of KIS Admin are:
 
@@ -444,29 +486,38 @@ The main features of KIS Admin are:
 - *User management* -- browsing users (Students Club members), user creation (in case it is not
   possible through eduID integration) and updating some of the user details, such as nickname. It is
   also possible to block certain card IDs from the Students Club.
-- *Bar management* -- browsing and creating cash-boxes and pipes. \
-  Browsing currently open kegs.
+- *Bar management* -- browsing and creating cash-boxes and taps, and browsing currently open kegs.
 - *Operations management* -- browsing and exporting all the different kinds of operations, such as
-  orders, contributions, article stock changes, paymeents and others.
+  orders, contributions, article stock changes, payments and others.
 - *Report browsing* -- viewing information about sales or about keg yields.
 
-Different pages of the current KIS Admin UI can be seen on the figures @sales_report_old,
-@article_list_old, and @cashbox_detail_old.
+Different pages of the current KIS Admin UI can be seen on the Figures @admin_article_list,
+@admin_sales_report and @admin_cash-box_detail.
 
 #figure(
-  image("figures/sale_reports.png", width: 77%),
-  caption: [Sales report in the old KIS Admin UI],
-) <sales_report_old>
+  image("figures/admin_article_list.png"),
+  caption: [
+    Article list view in the old KIS Admin user interface -- it displays each article, its
+    labels and optionally the current stock status.
+  ],
+) <admin_article_list>
 
 #figure(
-  image("figures/article_list.png", height: 50% - 2.5em),
-  caption: [Article list view in the old KIS Admin UI],
-) <article_list_old>
+  image("figures/admin_sale_reports.png"),
+  caption: [
+    Sales report in the old KIS Admin user interface -- it displays the total amounts of
+    contributions, order payments, and other cash movements for each cash-box.
+  ],
+) <admin_sales_report>
 
 #figure(
-  image("figures/cash-box_detail.png", height: 50% - 2.5em),
-  caption: [Cash-box detail view in the old KIS Admin UI],
-) <cashbox_detail_old>
+  image("figures/admin_cash-box_detail.png"),
+  caption: [
+    Detail view of a cash-box in teh old KIS Admin user interface -- it displays the current amount
+    of cash in the cash-box, and lets the users change the cash-box name, save a cash change, or
+    perform a stock-taking.
+  ],
+) <admin_cash-box_detail>
 
 The current KIS Admin UI has several problems:
 
@@ -482,40 +533,63 @@ The current KIS Admin UI has several problems:
 - *Authentication directly through Sales API* -- since the KIS Admin front-end was made before the
   new authentication service existed, it still relies directly on KIS Sales back-end for
   authentication. This is not a big problem, but for modernization of the authentication, it should
-  be integrated with the new KIS Auth (@kis_auth) subsystem instead.
+  be integrated with the new KIS Auth (Section @kis_auth) subsystem instead.
 
 == Authentication subsystem <kis_auth>
 
-KIS Auth is the newest addition to KIS and handles authorization,
-authentication, and user management. Unlike the older system, which directly uses SAML
-#footnote(link("https://wiki.oasis-open.org/security/")[Security Assertion Markup Language]) and RFID
-authentication on the Sales API level, KIS Auth is a separate back-end that only handles
-authentication. #todo[Figure out what to do with RFID]
+KIS Auth is the newest addition to KIS and handles authorization, authentication, and user
+management. Unlike the older system, which directly uses SAML #footnote[Security Assertion Markup
+  Language: #link("https://wiki.oasis-open.org/security/")] and RFID #footnote[Radio Frequency
+  Identification -- contactless short-distance identification using smart cards. The Student Union
+  uses MIFARE chips embedded into Czech ISIC cards: #link("https://www.mifare.net/")] authentication
+on the Sales API level, KIS Auth is a separate back-end that only handles authentication.
 
-The new authentication system offers following ways of authenticating:
-- *eduID authentication through SAML* -- this was the primary way to sign in with the older KIS
-  Sales system. It is also the only fully trusted way for user to sign up with KIS Auth, where their
-  identity is automatically confirmed as a student.
-- *RFID login through an ISIC card* -- the easiest way for Club Members to log in physically at the
-  club. This is only a way to log in, not to register. After a member has registered with a different
-  method, they can associate a student card with their user account.
-- *Discord #footnote(link("https://discord.com/")[discord.com]) login through OAuth* -- a secondary
-  way to sign in through a less trusted provider.
-- *username and password* -- not often used, but still useful way for users to log in or sign up
-  when other methods are not available.
-
-Other services can then register as OAuth (@oauth_section) clients and rely on KIS Auth to provide
-access tokens to authenticated users. Other than just authorization through OAuth 2.0, KIS Auth also
-provides authentication with OpenID Connect (@openid_section) ID tokens. It is implemented in the
-C\# programming language in .NET 8, and it uses Duende IdentityServer
+It is implemented in the C\# programming language in .NET 8, and it uses Duende IdentityServer
 #footnote(link("https://duendesoftware.com/products/identityserver")) as an implementation provider
 for OAuth 2.0 and OpenID Connect 1.0.
 
-This subsystem is not currently fully integrated with the rest of the system, and one of the goals of
-this thesis is to integrate it with the other services. This will offer more extensibility, better
-separation of concerns, and more ways for users to register as club members.
+#bigskip()
 
-// + deployment
+KIS Auth offers following ways of authenticating:
+- *EduID authentication through SAML* -- this was the primary way to sign in with the older KIS
+  Sales system. It is also the only fully trusted way for user to sign up with KIS Auth, where their
+  identity is automatically confirmed as a student. With other approaches, the identity has to be
+  confirmed by an existing account with corresponding privileges.
+- *RFID login through an ISIC card* -- the easiest way for Club Members to log in physically at the
+  club. This is only a way to log in, not to register. After a member has registered with a different
+  method, they can associate their student card with their user account.
+- *Discord #footnote(link("https://discord.com/")) login through OAuth* -- a secondary
+  way to sign up through a less trusted provider.
+- *Username and password* -- not often used, but still useful way for users to log in or sign up
+  when other methods are not available. This way, an account is directly created in KIS Auth without
+  using any external services like all the other methods.
+
+Other services can then register as OAuth clients (Subsection @oauth_section) and rely on KIS Auth
+to provide access tokens to authenticated users. Other than just authorization through OAuth 2.0,
+KIS Auth also provides authentication with OpenID Connect (Subsection @openid_section).
+
+This subsystem is not currently fully integrated with the rest of the system -- it is only used for
+authenticating the KIS Sales back-end against the order tracking subsystem (described in section
+@kis_food). Integrating it fully would make the whole system more extensible, have better separation
+of concerns, and let club members to sign up in more different ways.
+
+== Order tracking subsystem <kis_food>
+
+The order tracking subsystem -- KIS Food -- is a back-end service that handles order queueing
+requests from the KIS Sales API. It automates the workflow of tracking, creating and handing out
+numbered tickets for individual long-term orders by the volunteers working at the bar.
+
+Similarly to KIS Auth (Section @kis_auth), it is implemented in the C\# language using .NET 8.
+Communication between individual devices managed by KIS Food back-end is performed with the SignalR
+library #footnote[SignalR -- real-time web communication library:
+  #link("https://learn.microsoft.com/en-us/aspnet/core/signalr/introduction?view=aspnetcore-8.0")].
+
+KIS Food subsystem also includes:
+- monitoring devices that show the state of individual
+orders and call out finished orders via text-to-speech. The system sends the orders to a printer
+that also prints order tickets for the cook and the customer. KIS Food itself then is a back-end
+service which manages the state of the individual queues and enables communication between all the
+other devices.
 
 = Requirement analysis <analysis>
 
@@ -524,7 +598,7 @@ improved version of KIS.
 
 == Informal specification
 
-The current KIS (@current) uses a solution that works, but is quite
+The current KIS (chapter @current) uses a solution that works, but is quite
 insufficient in several areas that this project is supposed to improve upon. The new system should
 completely replace the current implementations of the KIS Sales API and both main front-ends which
 depend on it -- KIS Admin and KIS Operator. The new version should offer more capabilities and better
@@ -543,7 +617,7 @@ The full informal specification includes various levels of necessity:
   - Tracking the price of individual products over time
   - Tracking individual sale transactions -- how much was paid for each one and how much did the
     customer voluntarily contribute to the club, and at which cash-box
-  - Tracking the currently open kegs and amounts of product in them, as well as which pipe they
+  - Tracking the currently open kegs and amounts of product in them, as well as which taps they
     are opened for
 - *Important features and improvements:*
   - Tracking product amounts currently available in different storage spaces
@@ -560,7 +634,7 @@ The full informal specification includes various levels of necessity:
     items don't change just by adding more items
   - Administration user interface with clean, consistent and responsive design
   - Integrating with the existing authentication system that lets students register as members of
-    the Students Club with eduID identification (KIS Auth @kis_auth)
+    the Students Club with eduID identification (KIS Auth -- Section @kis_auth)
   - Integrating with the existing order-tracking system (KIS Food). This includes sending requests
     for queueing orders and printing the number of the order and/or number of the table for the
     order
@@ -585,7 +659,7 @@ diagrams for each privileged user role in the information system. The roles are 
 - *Administrator* -- manages users and all persistent entities that other roles don't have access
   to. Also has access to everything the other roles can do.
 
-An use-case diagram for the given roles is depicted on the figure @usecase_diagram.
+An use-case diagram for the given roles is depicted on the Figure @usecase_diagram.
 
 #figure(
   image("figures/usecase_diagram.pdf"),
@@ -604,7 +678,7 @@ stored.
 
 #bigskip()
 
-*Pipe management* --- creating and editing pipe entities that the kegs can be opened for.
+*Tap management* --- creating and editing tap entities that the kegs can be opened for.
 
 #bigskip()
 
@@ -664,38 +738,11 @@ stock-taking.
 *POS Layout management* --- creating, editing and deleting fixed layouts in the Point-of-Sales UI
 (KIS Operator).
 
-== Data model
-
-The figures @er_diagram_products, @er_diagram_transactions, @er_diagram_layouts and
-@er_diagram_containers depict the data model of the new KIS Sales back-end, as designed according to
-the user requirements and some assumptions made during analysis. The diagram has been split into
-multiple figures because of its complexity.
-
-#figure(
-  image("figures/er_diagram_products.pdf"),
-  caption: [Entity Relationship diagram for the new KIS Sales -- Products],
-) <er_diagram_products>
-
-#figure(
-  image("figures/er_diagram_transactions.pdf", height: 62%),
-  caption: [Entity Relationship diagram for the new KIS Sales -- Transactions],
-) <er_diagram_transactions>
-
-#figure(
-  image("figures/er_diagram_layouts.pdf"),
-  caption: [Entity Relationship diagram for the new KIS Sales -- Layouts],
-) <er_diagram_layouts>
-
-#figure(
-  image("figures/er_diagram_containers.pdf"),
-  caption: [Entity Relationship diagram for the new KIS Sales -- Containers (Kegs for tapped drinks)],
-) <er_diagram_containers>
-
 = Application design <design>
 
 This chapter describes the design of the replaced parts of KIS, which
-includes the new KIS Sales back-end (@kis_sales), KIS Operator front-end (@kis_operator) and KIS
-Admin front-end (@kis_admin).
+includes the new KIS Sales back-end (Section @kis_sales), KIS Operator front-end (Section @kis_operator) and KIS
+Admin front-end (Section @kis_admin).
 
 == Technology choices
 
@@ -703,41 +750,51 @@ Based on previous experience with web application development and the requiremen
 following technologies have been chosen:
 
 - The new *KIS Sales back-end* will be implemented in *ASP.NET Core*
-  #footnote(link(
-    "https://dotnet.microsoft.com/en-us/apps/aspnet",
-  )[dotnet.microsoft.com/en-us/apps/aspnet])
+  #footnote(
+    link(
+      "https://dotnet.microsoft.com/en-us/apps/aspnet",
+    ),
+  )
   using the *C\# programming language*, *Entity Framework Core ORM*
-  #footnote(link(
-    "https://learn.microsoft.com/en-us/ef/core/",
-  )[learn.microsoft.com/en-us/ef/core/])
+  #footnote(
+    link(
+      "https://learn.microsoft.com/en-us/ef/core/",
+    ),
+  )
   for interfacing with the database and *Minimal API architecture* for defining endpoints.
-  - KIS Auth uses the Duende IdentityServer package to implement its authentication protocols.
-    Documentation for this package includes many examples in C\# and is made to be especially easily
-    integrated into other C\# web applications.
+  - KIS Auth uses the Duende IdentityServer
+    #footnote[#link("https://duendesoftware.com/products/identityserver")] package to implement its
+    authentication protocols. documentation for this package includes many examples in c\# and is made
+    to be especially easily integrated into other c\# web applications.
   - C\# is also the language I have the most experience with, and it requires the least amount of
-    familiarizing myself with the structure of applications.
-  - Modern C\# Minimal API architecture provides an excellent type-safe way of defining REST API
+    familiarizing myself with the structure of applications written in it.
+  - Modern C\# Minimal API architecture provides a type-safe way of defining REST API
     endpoints that can be automatically compiled from C\# code into OpenAPI documents.
   - Entity Framework Core provides a very clean and type-safe way of defining database schemas and
     querying for entities with speed and flexibility very close to raw SQL.
-- The new *KIS Sales database* will use the *PostgreSQL RDBMS*.
-  #footnote(link("https://www.postgresql.org/")[postgresql.org])
+- The new *KIS Sales database* will use the *PostgreSQL RDBMS*
+  #footnote(link("https://www.postgresql.org/")).
   - PostgreSQL is the modern gold standard for relational databases because of its stability,
-    flexibility and amount of features.
+    flexibility and amount of features. According to the DB-Engines ranking
+    #custom-cite("db-engines"), it is the second most popular open-source database in the world.
 - *KIS Operator and KIS Admin* front-ends will be written in *React
-  #footnote(link("https://react.dev")[react.dev]) with TypeScript*, with *Material
-  UI* #footnote(link("https://mui.com/")[mui.com]) components for UI. *Vite*
-  #footnote(link("https://vite.dev/")[vite.dev]) will be used as the build tool for optimizing
+  #footnote(link("https://react.dev")) with TypeScript*, with *Material
+  UI* #footnote[Material UI components: #link("https://mui.com/")] components for UI. *Vite*
+  #footnote(link("https://vite.dev/")) will be used as the build tool for optimizing
   front-end code and as a development server.
-  - React is the most used modern web application framework and provides a convenient way to split an
-    application into easily maintainable components.
-  - TypeScript will provide type-safety and robust language server support for faster and less error-prone
-    development compared to JavaScript.
+  - React is the most used modern web application framework (according to
+    #custom-cite("state-of-js")) and provides a convenient way to split an application into easily
+    maintainable components.
+  - TypeScript will provide type-safety and a robust language server support #footnote[TypeScript
+      Language Server:
+      #link("https://github.com/typescript-language-server/typescript-language-server")] for
+    less error-prone development compared to JavaScript.
   - Material UI is a themable and full-featured UI component framework complete with many data display
     components and form field inputs. It is particularly good for ensuring consistency in the user
     interface.
   - Vite is a unified modern web build tool which provides great developer experience with hot reload
-    and small compile sizes in production builds.
+    and small compile sizes in production builds. It is rapidly growing in popularity, being
+    currently the second most used after WebPack, according to #custom-cite("state-of-js").
 
 == Database design
 
