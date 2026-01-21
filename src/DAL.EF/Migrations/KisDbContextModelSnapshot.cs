@@ -17,7 +17,7 @@ namespace KisV4.DAL.EF.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -177,7 +177,7 @@ namespace KisV4.DAL.EF.Migrations
 
                     b.ToTable("Composites");
 
-                    b.HasDiscriminator().HasValue("Composite");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Composite");
 
                     b.UseTphMappingStrategy();
                 });
@@ -263,6 +263,10 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
+
+                    b.Property<decimal>("NewAmount")
+                        .HasPrecision(11, 2)
+                        .HasColumnType("numeric(11,2)");
 
                     b.Property<int>("NewState")
                         .HasColumnType("integer");
@@ -669,7 +673,7 @@ namespace KisV4.DAL.EF.Migrations
 
                     b.ToTable("Transactions");
 
-                    b.HasDiscriminator().HasValue("Transaction");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Transaction");
 
                     b.UseTphMappingStrategy();
                 });

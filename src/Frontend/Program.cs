@@ -1,3 +1,4 @@
+using Duende.Bff;
 using Duende.Bff.Yarp;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,8 +54,7 @@ app.UseAuthentication();
 app.UseBff();
 app.UseAuthorization();
 
-app.MapBffManagementEndpoints();
-app.MapRemoteBffApiEndpoint("/sales-api", "https://localhost:7001")
-    .RequireAccessToken();
+app.MapRemoteBffApiEndpoint("/sales-api", new Uri("https://localhost:7001"))
+    .WithAccessToken();
 
 app.Run();

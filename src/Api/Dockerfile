@@ -1,23 +1,31 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+# Set context to the root of the repo
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+ENV DOTNET_PRINT_TELEMETRY_MESSAGE="false"
+ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE="1"
+ENV DOTNET_NOLOGO="true"
+
 WORKDIR /src
-COPY ["App/App.csproj", "App/"]
-RUN dotnet restore "App/App.csproj"
-COPY . .
-WORKDIR "/src/App"
-RUN dotnet build "App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Run restore separately
+COPY ./Api/Api.csproj Api/
+RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
+    dotnet restore ./Api/Api.csproj
 
-FROM base AS final
+# Copy entire source code
+COPY ./Api/. Api/
+COPY ./BL.EF/. BL.EF/
+COPY ../DAL.EF/ DAL.EF/
+COPY ../Common/ Common/
+
+# Build and publish
+WORKDIR /src/Api
+RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
+    dotnet publish --no-restore -o /publish
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine-extra AS runtime
+EXPOSE 8080
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "App.dll"]
+COPY --from=build /publish .
+ENTRYPOINT ["./Api"]

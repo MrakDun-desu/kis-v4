@@ -6,7 +6,7 @@ using KisV4.BL.EF;
 using KisV4.DAL.EF;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +41,8 @@ builder.Services.AddOpenApi(opts => {
     opts.AddDocumentTransformer((doc, _, _) => {
         doc.Info.Title = "KISv4 API";
         doc.Components ??= new OpenApiComponents();
+        doc.Security ??= new List<OpenApiSecurityRequirement>();
+        doc.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
         doc.Components.SecuritySchemes.Clear();
         if (allowTestingTokens) {
             doc.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme {
@@ -51,29 +53,19 @@ builder.Services.AddOpenApi(opts => {
                 BearerFormat = "JWT",
                 Scheme = "bearer"
             };
-            doc.SecurityRequirements.Add(new() {
-                [new OpenApiSecurityScheme {
-                    Reference = new() {
-                        Id = "Bearer",
-                        Type = ReferenceType.SecurityScheme
-                    }
-                }] = Array.Empty<string>()
+            doc.Security.Add(new() {
+                [new OpenApiSecuritySchemeReference("Bearer", doc)] = []
             });
         }
-        doc.Components.SecuritySchemes["oidc"] = new() {
+        doc.Components.SecuritySchemes["oidc"] = new OpenApiSecurityScheme {
             Type = SecuritySchemeType.OpenIdConnect,
             OpenIdConnectUrl = new Uri("https://su-dev.fit.vutbr.cz/.well-known/openid-configuration/"),
             Description = "OpenID Connect authentication via KIS.Auth",
             Name = "Authorization",
             In = ParameterLocation.Header
         };
-        doc.SecurityRequirements.Add(new() {
-            [new OpenApiSecurityScheme {
-                Reference = new() {
-                    Id = "oidc",
-                    Type = ReferenceType.SecurityScheme
-                }
-            }] = Array.Empty<string>()
+        doc.Security.Add(new() {
+            [new OpenApiSecuritySchemeReference("oidc", doc)] = []
         });
         return Task.CompletedTask;
     });

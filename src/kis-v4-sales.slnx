@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Api/Api.csproj" />
+  <Project Path="BL.EF.Tests/BL.EF.Tests.csproj" />
+  <Project Path="BL.EF/BL.EF.csproj" />
+  <Project Path="Common/Common.csproj" />
+  <Project Path="DAL.EF/DAL.EF.csproj" />
+  <Project Path="Frontend/Frontend.csproj" />
+</Solution>
