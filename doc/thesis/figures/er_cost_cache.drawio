@@ -1,0 +1,41 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram name="Page-1" id="xFzfXOFQfi1oBYhbChOt">
+    <mxGraphModel dx="1833" dy="610" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="zDAknXPS_BPO67h2AvtR-1" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="&lt;div&gt;StoreItem&lt;/div&gt;" vertex="1">
+          <mxGeometry height="150" width="192" x="-30" y="617.4" as="geometry" />
+        </mxCell>
+        <mxCell id="zDAknXPS_BPO67h2AvtR-2" parent="zDAknXPS_BPO67h2AvtR-1" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="&lt;div&gt;+ id: int&lt;/div&gt;&lt;div&gt;+ name: string&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ hidden: bool&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ unit_name: string&lt;/div&gt;&lt;div&gt;+ is_container_item: bool&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;+ current_cost: decimal(11,2)&lt;/b&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="192" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zDAknXPS_BPO67h2AvtR-3" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="Cost" vertex="1">
+          <mxGeometry height="104.79" width="160" x="280" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="zDAknXPS_BPO67h2AvtR-4" parent="zDAknXPS_BPO67h2AvtR-3" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="&lt;div&gt;+ amount: decimal(11,2)&lt;/div&gt;&lt;div&gt;+ valid_since: timestamp&lt;/div&gt;&lt;div&gt;+ description: string&lt;/div&gt;" vertex="1">
+          <mxGeometry height="54.790000000000006" width="160" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zDAknXPS_BPO67h2AvtR-5" edge="1" parent="1" source="zDAknXPS_BPO67h2AvtR-3" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zDAknXPS_BPO67h2AvtR-1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="680" />
+              <mxPoint x="320" y="680" />
+            </Array>
+            <mxPoint x="527.54" y="439.28999999999996" as="sourcePoint" />
+            <mxPoint x="977.5588235294117" y="597.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zDAknXPS_BPO67h2AvtR-6" connectable="0" parent="zDAknXPS_BPO67h2AvtR-5" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" value="has cost" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zDAknXPS_BPO67h2AvtR-7" connectable="0" parent="zDAknXPS_BPO67h2AvtR-5" style="edgeLabel;resizable=0;html=1;;align=right;verticalAlign=bottom;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry" />
+        </mxCell>
+        <mxCell id="zDAknXPS_BPO67h2AvtR-8" connectable="0" parent="zDAknXPS_BPO67h2AvtR-5" style="edgeLabel;resizable=0;html=1;;align=left;verticalAlign=bottom;" value="1" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

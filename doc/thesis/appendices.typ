@@ -1,7 +1,7 @@
 #import "custom-bibliography.typ": custom-cite
 #import "common.typ": *
 
-= Data model
+= Entity relationship diagram <er_diagram>
 
 The Figures @er_diagram_products, @er_diagram_transactions, @er_diagram_layouts and
 @er_diagram_containers depict the data model of the new KIS Sales back-end, as designed according to

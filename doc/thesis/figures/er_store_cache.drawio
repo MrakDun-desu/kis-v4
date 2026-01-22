@@ -1,0 +1,171 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram name="Page-1" id="wJ225tBIKMqdCSvo7L1u">
+    <mxGraphModel dx="1426" dy="884" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--1" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="&lt;div&gt;StoreItem&lt;/div&gt;" vertex="1">
+          <mxGeometry height="133.5" width="192" x="470" y="499.99999999999994" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--2" parent="zx65KI8cyHX5nQ9VOZd--1" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="&lt;div&gt;+ id: int&lt;/div&gt;&lt;div&gt;+ name: string&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ hidden: bool&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ unit_name: string&lt;/div&gt;&lt;div&gt;+ is_container_item: bool&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="83.5" width="192" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--3" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="Store" vertex="1">
+          <mxGeometry height="107.46" width="160" x="240" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--4" parent="zx65KI8cyHX5nQ9VOZd--3" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="&lt;div&gt;+ ID: int&lt;/div&gt;&lt;div&gt;+ name: string&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ deleted: bool&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="57.459999999999994" width="160" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--5" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;" value="Composition" vertex="1">
+          <mxGeometry height="96" width="190" x="710" y="547.42" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--6" parent="zx65KI8cyHX5nQ9VOZd--5" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="&lt;div&gt;+ amount: decimal(11,2)&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="190" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--7" edge="1" parent="1" source="zx65KI8cyHX5nQ9VOZd--1" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zx65KI8cyHX5nQ9VOZd--5" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="580" />
+              <mxPoint x="690" y="580" />
+            </Array>
+            <mxPoint x="181.99999999999994" y="642.38" as="sourcePoint" />
+            <mxPoint x="371.99999999999994" y="642.38" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--8" connectable="0" parent="zx65KI8cyHX5nQ9VOZd--7" style="edgeLabel;resizable=0;html=1;;align=left;verticalAlign=bottom;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--11" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="Composite" vertex="1">
+          <mxGeometry height="170.26" width="200.25" x="704.875" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--12" parent="zx65KI8cyHX5nQ9VOZd--11" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;+ id: int&lt;/div&gt;&lt;div&gt;+ name: string&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;+ image: string?&lt;/div&gt;&lt;div&gt;+ hidden: bool&lt;/div&gt;&lt;/div&gt;&lt;div&gt;+ margin_percent: decimal(11, 2)&lt;/div&gt;&lt;div&gt;+ margin_static: decimal(11, 2)&lt;br&gt;+ prestige_amount: decimal(11,2)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120.25999999999999" width="200.25" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--13" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;fontColor=default;" value="StoreTransactionItem" vertex="1">
+          <mxGeometry height="96" width="190" x="225" y="547.42" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--14" parent="zx65KI8cyHX5nQ9VOZd--13" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ item_amount: decimal(11,2)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ cost: decimal(11,2)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="190" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--15" edge="1" parent="1" source="zx65KI8cyHX5nQ9VOZd--13" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zx65KI8cyHX5nQ9VOZd--3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="450.53999999999996" y="710.16" as="sourcePoint" />
+            <mxPoint x="556.54" y="710.16" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--16" connectable="0" parent="zx65KI8cyHX5nQ9VOZd--15" style="edgeLabel;resizable=0;html=1;;align=right;verticalAlign=bottom;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--17" edge="1" parent="1" source="zx65KI8cyHX5nQ9VOZd--13" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zx65KI8cyHX5nQ9VOZd--1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="580" />
+              <mxPoint x="440" y="580" />
+            </Array>
+            <mxPoint x="616.54" y="889.17" as="sourcePoint" />
+            <mxPoint x="616.54" y="985.17" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--18" connectable="0" parent="zx65KI8cyHX5nQ9VOZd--17" style="edgeLabel;resizable=0;html=1;;align=right;verticalAlign=top;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--19" parent="1" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#141400;align=left;verticalAlign=top;" value="Store transaction items represent all&lt;div&gt;the actual movements within stores. This is treated as the source of truth within the system for the total amount of items stored in a particular store.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="220" x="330" y="662.17" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--21" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;fontColor=default;strokeWidth=3;" value="StoreItemAmount" vertex="1">
+          <mxGeometry height="96" width="190" x="470" y="755.73" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--22" parent="zx65KI8cyHX5nQ9VOZd--21" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="+ current_amount: decimal(11,2)" vertex="1">
+          <mxGeometry height="70" width="190" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--25" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="StoreTransaction" vertex="1">
+          <mxGeometry height="83.79" width="160" x="240.00000000000003" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--26" parent="zx65KI8cyHX5nQ9VOZd--25" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="&lt;div&gt;+ reason: enum&lt;/div&gt;" vertex="1">
+          <mxGeometry height="33.790000000000006" width="160" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--27" edge="1" parent="1" source="zx65KI8cyHX5nQ9VOZd--13" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zx65KI8cyHX5nQ9VOZd--25" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="235" y="528.675" as="sourcePoint" />
+            <mxPoint x="321.9599999999999" y="214.25" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--28" connectable="0" parent="zx65KI8cyHX5nQ9VOZd--27" style="edgeLabel;resizable=0;html=1;;align=right;verticalAlign=top;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--29" edge="1" parent="1" source="zx65KI8cyHX5nQ9VOZd--21" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zx65KI8cyHX5nQ9VOZd--1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="566" y="720" />
+              <mxPoint x="566" y="720" />
+            </Array>
+            <mxPoint x="630" y="720" as="sourcePoint" />
+            <mxPoint x="780" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--30" connectable="0" parent="zx65KI8cyHX5nQ9VOZd--29" style="edgeLabel;resizable=0;html=1;;align=right;verticalAlign=top;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--33" parent="1" style="shape=note;strokeWidth=2;fontSize=11;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#141400;align=left;verticalAlign=top;" value="&lt;font style=&quot;color: rgb(13, 13, 13);&quot;&gt;Store item amount and composite&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(13, 13, 13);&quot;&gt;amount entities represent the&amp;nbsp;&lt;span style=&quot;background-color: transparent;&quot;&gt;current amounts of a store items and composites in a given store. They need to be recalculated every time the amount of the given store items changes&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="90" width="220" x="600" y="652.1700000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--34" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;fontColor=default;strokeWidth=3;" value="CompositeAmount" vertex="1">
+          <mxGeometry height="96" width="190" x="470" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--35" parent="zx65KI8cyHX5nQ9VOZd--34" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" value="+ current_amount: decimal(11,2)" vertex="1">
+          <mxGeometry height="70" width="190" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--36" edge="1" parent="1" source="zx65KI8cyHX5nQ9VOZd--34" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zx65KI8cyHX5nQ9VOZd--11" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="948" />
+              <mxPoint x="710" y="948" />
+            </Array>
+            <mxPoint x="1080" y="766.87" as="sourcePoint" />
+            <mxPoint x="1016" y="708.87" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--37" connectable="0" parent="zx65KI8cyHX5nQ9VOZd--36" style="edgeLabel;resizable=0;html=1;;align=right;verticalAlign=top;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--42" edge="1" parent="1" source="zx65KI8cyHX5nQ9VOZd--21" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zx65KI8cyHX5nQ9VOZd--3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="330" y="700" as="sourcePoint" />
+            <mxPoint x="330" y="807" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--43" connectable="0" parent="zx65KI8cyHX5nQ9VOZd--42" style="edgeLabel;resizable=0;html=1;;align=left;verticalAlign=bottom;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--44" edge="1" parent="1" source="zx65KI8cyHX5nQ9VOZd--34" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zx65KI8cyHX5nQ9VOZd--3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="948" />
+            </Array>
+            <mxPoint x="400" y="1000" as="sourcePoint" />
+            <mxPoint x="440" y="870" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--45" connectable="0" parent="zx65KI8cyHX5nQ9VOZd--44" style="edgeLabel;resizable=0;html=1;;align=right;verticalAlign=top;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--46" edge="1" parent="1" source="zx65KI8cyHX5nQ9VOZd--11" style="endArrow=none;html=1;rounded=0;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="zx65KI8cyHX5nQ9VOZd--5" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="790" />
+              <mxPoint x="860" y="790" />
+            </Array>
+            <mxPoint x="940" y="720" as="sourcePoint" />
+            <mxPoint x="988" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zx65KI8cyHX5nQ9VOZd--47" connectable="0" parent="zx65KI8cyHX5nQ9VOZd--46" style="edgeLabel;resizable=0;html=1;;align=left;verticalAlign=bottom;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

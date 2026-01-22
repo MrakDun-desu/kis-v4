@@ -738,6 +738,57 @@ stock-taking.
 *POS Layout management* --- creating, editing and deleting fixed layouts in the Point-of-Sales UI
 (KIS Operator).
 
+== Data model <data_model>
+
+Based on the informal specification and the use-case diagram, a data model has been created to
+include all the necessary entities for proper functionality of the system. The appendix @er_diagram
+shows the full entity relationship diagram. The main entities tracked by the new system are:
+
+- *Store items* -- items that are bought by the club and stored in the individual stores.
+- *Costs* -- buying costs for store items. The active cost for a given store item is always the last
+  set one, and the prices for composite items are computed from the active costs of its store items.
+- *Stores* -- places where the individual store items or kegs can be stored in. The store items are
+  stored by creating store transaction items which track the amounts of added or removed amounts of
+  store items within the store.
+- *Containers* -- represent individual kegs, or potentially other container entities that could be
+  used in the future. Their state is also tracked and state changes are timestamped.
+- *Container templates* -- added to the new system to simplify the creation and tracking of
+  individual keg types.
+- *Taps* -- represent taps where the kegs can be opened.
+- *Categories* -- an equivalent to labels in the older system, can be used to sort store items or
+  composite items.
+- *Composites* -- items that are composed of any number of different store items in specific
+  amounts. To compute their prices, they store sales margin in percentual and fixed value.
+  - *Sale items* -- composites which can be sold as individual items.
+  - *Modifiers* -- composites which can be used to modify the prices and compositions of sale items.
+- *Transactions* -- similar to operations in the older system. Transactions represent changes in the
+  store item amounts in the individual stores or changes in account currency amounts. Transactions
+  can also be marked as stock-takings, which don't represent changes in the system, but rather
+  setting the amounts of items to their real values in the store.
+  - *Store transactions* -- represent changes of store item amounts in the specified stores. Each
+    store transaction also tracks the reason for why it was performed, for example addition of
+    items, moving of items or write-offs.
+  - *Sale transactions* -- represent the sale of sale items along with specified modifiers. Each
+    sale transaction can also have multiple store transactions associated with it. It is also
+    tracked how much each sale transaction changed the amounts of cash in a cash-box and for a user.
+- *Users* -- user accounts are stored to track individual club members' contribution, but also to
+  track the operations in the database. For every important action, such as changing a price of a
+  store item, starting or cancelling a transaction, and discount usage, the responsible user is
+  tracked.
+- *Cash-boxes* -- represent real-life cash-boxes and track the amounts of cash and contributions in
+  them.
+- *Layouts* -- store information about how the individual layout items should be displayed in the
+  Point-of-Sales UI. Each layout represents a grid and holds a number of layout items, which can be
+  sale items, taps, or links to other layouts.
+- *Discounts* -- represent the discounts that could be implemented by the Student Union. Each
+  discount also tracks its usages for each user, and how much the each discount usage changes the
+  price of the affected sale items.
+
+After talking in more detail with the Students Union, it has been decided that the requirement to
+process payments in multiple currencies would require a lot of effort and is not very important
+compared to other requirements. Because of this, the 1option to pay in multiple currencies has been
+removed for this project, and it might be implemented as an extension in the future.
+
 = Application design <design>
 
 This chapter describes the design of the replaced parts of KIS, which
@@ -764,8 +815,8 @@ following technologies have been chosen:
   for interfacing with the database and *Minimal API architecture* for defining endpoints.
   - KIS Auth uses the Duende IdentityServer
     #footnote[#link("https://duendesoftware.com/products/identityserver")] package to implement its
-    authentication protocols. documentation for this package includes many examples in c\# and is made
-    to be especially easily integrated into other c\# web applications.
+    authentication protocols. documentation for this package includes many examples in C\# and is made
+    to be especially easily integrated into other C\# web applications.
   - C\# is also the language I have the most experience with, and it requires the least amount of
     familiarizing myself with the structure of applications written in it.
   - Modern C\# Minimal API architecture provides a type-safe way of defining REST API
@@ -797,6 +848,55 @@ following technologies have been chosen:
     currently the second most used after WebPack, according to #custom-cite("state-of-js").
 
 == Database design
+
+The database was designed first, as the whole structure of the system depends on the
+structure of its data. All the required entities from the data model (Section @data_model) need to
+be represented as efficiently as possible. The final database design closely resembles the entity
+relationship diagram (Appendix @er_diagram).
+
+=== Denormalization
+
+Some denormalizations have been implemented to simplify and speed up the read queries on the
+database. In some instances, it is better to store the same data in multiple different locations to
+decrease the number of table joins.
+
+For all the entities that have state tracked by other entities (for example store item costs), it is
+practical to store the tracked state at least partially in the entity itself. This will simplify the
+queries and speed them up due to smaller number of joins needed. Example of this can be seen on the
+Figure @cost_cache.
+
+#figure(
+  image("figures/er_cost_cache.pdf"),
+  caption: [Part of an ER diagram showing denormalization of the store item costs.],
+  placement: top,
+) <cost_cache>
+
+Another useful denormalization is tracking the amounts of store items and composites in the
+individual stores. This information is necessary to be as recent as possible, so the bartenders know
+whether or not it is possible to sell a given product in a given amount. However, aggreggating the
+amounts of items every time would be costly and inefficient. For this reason, it is more practical
+to create tables to track these amounts. This can be seen on the Figure @store_amounts_cache.
+
+#figure(
+  image("./figures/er_store_cache.pdf"),
+  caption: [Path of an ER diagram showing denormalization of store item amounts and composite
+    amounts within stores.],
+  placement: top,
+) <store_amounts_cache>
+
+=== Inheritance
+
+When implementing a relational database with inheritance, it is necessary to decide what inheritance
+pattern to use to best handle the data. In the KIS Sales database, there are three inheritance
+hierarchies -- composites, layout items and transactions. For each of these hierarchies, the vast majority
+of the data is shared in the parent type, and in case of layout items, all the data is shared. The
+different types of layout items hold the same data, the only difference is that the foreign keys for
+each derived type points to a different table.
+
+For tables where the majority or all the data is shared between derived types, it is best to use the
+table-per-hierarchy pattern. In this pattern, all the types are stored in one table and to
+distingiush between them, a discriminator field is added. This approach potentially takes up more
+space than others, but it is the simplest to query, as no joins are needed.
 
 == Application architecture
 
