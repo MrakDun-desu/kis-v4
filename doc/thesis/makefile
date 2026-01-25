@@ -10,6 +10,7 @@ thesis.pdf: main.typ $(DRAWIO_FIGURES)
 	typst c main.typ $@
 
 clean:
+	rm $(DRAWIO_FIGURES)
 	rm *.pdf
 
 .PHONY: all clean

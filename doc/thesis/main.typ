@@ -37,9 +37,9 @@
     informační systém, správa produktů, prodej, modulární návrh, webová aplikace, full-stack
   ],
   abstract: [
-    This thesis deals with redesing of an information system for a students club. The basis of the
+    This thesis deals with redesign of an information system for a students club. The basis of the
     work is an outdated information system for handling sales, product administration and user
-    contribution monitoring. The output is a design of a more modern system, allowing also for
+    contribution tracking. The output is a design of a more modern system, allowing also for
     management of multiple stores, automatic price calculation, management of product modifiers and
     programmable discounts. The new system is also designed to integrate with an existing
     authentication server.
@@ -68,6 +68,7 @@
     Ondryáš. I have stated all literary sources, publications and other resources that I have used.
   ],
   acknowledgments: [
-    #todo[Todo]
+    I would like to thank my supervisor, Ing. Ondřej Ondryáš, for his guidance and valuable advice,
+    and the members of the Students Union for their feedback.
   ],
 )

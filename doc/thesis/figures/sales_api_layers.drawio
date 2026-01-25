@@ -1,0 +1,68 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram name="Page-1" id="0Pw_JN5YSjfq2fsQucss">
+    <mxGraphModel dx="1426" dy="840" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-12" edge="1" parent="1" source="ddYGPKymuyq5c3Hr2AEG-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startSize=10;endSize=10;" target="ddYGPKymuyq5c3Hr2AEG-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Data access layer" vertex="1">
+          <mxGeometry height="40" width="460" x="210" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-9" edge="1" parent="1" source="ddYGPKymuyq5c3Hr2AEG-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startSize=10;endSize=10;" target="ddYGPKymuyq5c3Hr2AEG-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="425" />
+              <mxPoint x="400" y="425" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Business layer&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20parent%3D%221%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20value%3D%22Data%20access%20layer%22%20vertex%3D%221%22%3E%3CmxGeometry%20height%3D%2240%22%20width%3D%22240%22%20x%3D%22305%22%20y%3D%22450%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" vertex="1">
+          <mxGeometry height="40" width="220" x="210" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-10" edge="1" parent="1" source="ddYGPKymuyq5c3Hr2AEG-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startSize=10;endSize=10;" target="ddYGPKymuyq5c3Hr2AEG-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="425" />
+              <mxPoint x="480" y="425" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Validation layer" vertex="1">
+          <mxGeometry height="40" width="220" x="450" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-5" edge="1" parent="1" source="ddYGPKymuyq5c3Hr2AEG-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=none;endFill=0;startSize=10;endSize=10;" target="ddYGPKymuyq5c3Hr2AEG-6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="460" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-7" edge="1" parent="1" source="ddYGPKymuyq5c3Hr2AEG-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startSize=10;endSize=10;" target="ddYGPKymuyq5c3Hr2AEG-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="335" />
+              <mxPoint x="320" y="335" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-8" edge="1" parent="1" source="ddYGPKymuyq5c3Hr2AEG-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startSize=10;endSize=10;" target="ddYGPKymuyq5c3Hr2AEG-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="335" />
+              <mxPoint x="560" y="335" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="API Layer" vertex="1">
+          <mxGeometry height="40" width="240" x="320" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="External requests" vertex="1">
+          <mxGeometry height="30" width="110" x="385" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="ddYGPKymuyq5c3Hr2AEG-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Database" vertex="1">
+          <mxGeometry height="30" width="110" x="385" y="530" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
