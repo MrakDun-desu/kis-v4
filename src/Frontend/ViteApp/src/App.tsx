@@ -33,12 +33,29 @@ function App() {
       <CssBaseline />
       <BrowserRouter>
         <Routes>
+
           <Route index element={<HomePage />} />
+
           <Route path="admin" element={<AdminPage />}>
             <Route path="store-items" element={<StoreItems />} />
+            <Route path="stores" element={<StoreItems />} />
+            <Route path="store-transactions" element={<StoreItems />} />
+            <Route path="sale-items" element={<StoreItems />} />
+            <Route path="modifiers" element={<StoreItems />} />
+            <Route path="sale-transactions" element={<StoreItems />} />
+            <Route path="cashboxes" element={<StoreItems />} />
+            <Route path="container-templates" element={<StoreItems />} />
+            <Route path="containers" element={<StoreItems />} />
+            <Route path="taps" element={<StoreItems />} />
+            <Route path="users" element={<StoreItems />} />
+            <Route path="layouts" element={<StoreItems />} />
+            <Route path="discounts" element={<StoreItems />} />
           </Route>
+
           <Route path="pos" element={<PosMain />} />
+
           <Route path="*" element={<NotFoundPage />} />
+
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

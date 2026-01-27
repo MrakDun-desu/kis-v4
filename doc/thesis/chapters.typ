@@ -669,7 +669,7 @@ lack of time and prioritization of more important features.
 
 == Use-case diagram
 
-After multiple meetings with the Students Union, the requirements have been formalized into an use-case
+After multiple meetings with the Students Union, the requirements have been formalized into a use-case
 diagram for the privileged user roles in the information system. The roles are as follows:
 
 - *Storekeeper* -- manages products and their amounts in individual stores.
@@ -680,7 +680,7 @@ diagram for the privileged user roles in the information system. The roles are a
 - *Administrator* -- manages users and all persistent entities that other roles don't have access
   to. Also has access to everything the other roles can do.
 
-An use-case diagram for the given roles is depicted on the Figure @usecase_diagram.
+A use-case diagram for the given roles is depicted on the Figure @usecase_diagram.
 
 #figure(
   image("figures/usecase_diagram.pdf"),
@@ -934,7 +934,7 @@ Different approaches for handling inheritance include:
   created for each type, even abstract types which will not be queried for. This approach stores the
   least amount of data, but can introduce performance issues because of extensive number of table
   joins.
-- *Table-per-concrete-typs* -- with this pattern, only the tables that represent instantiable
+- *Table-per-concrete-type* -- with this pattern, only the tables that represent instantiable
   entities are created. This duplicates all the columns that are shared to multiple tables. When
   working only with concrete tables, it is the fastest approach, but when selecting multiple
   different types, it can be more problematic. It also complicates relationships, as the foreign key
@@ -948,7 +948,7 @@ performance and simpler queries.
 
 With modern systems, one of the common decisions is whether to use an ORM system or not. In most
 cases, it is highly beneficial to use it, as it provides safer way to query and update data, easier
-and type-safe data definition, and and easy way of switching the underlying database in case it's
+and type-safe data definition, and easy way of switching the underlying database in case it's
 necessary.
 
 For some information systems, the database communication needs to be extremely fast, and it's
@@ -958,7 +958,7 @@ object-relational mapping system will be felt very strongly when defining the da
 while the main benefit of using SQL directly -- performance -- would not be felt very much.
 
 Because of this, the ORM Entity Framework Core
-#footnote[#link("https://learn.microsoft.com/en-us/ef/core/")] has been chosen as the way to
+#footnote[Entity Framework Core: #link("https://learn.microsoft.com/en-us/ef/core/")] has been chosen as the way to
 communicate with the database. Entity Framework Core is the official ORM directly from Microsoft, and
 it allows creating code-first data model and sync it with a database using migrations. It also
 supports querying data in a type-safe way with LINQ, the alternative to SQL built into C\#.
@@ -968,31 +968,8 @@ supports querying data in a type-safe way with LINQ, the alternative to SQL buil
 The REST API is the backbone of the system, and as such, it needs to be as robust and maintainable
 as possible. The .NET ecosystem offers an official framework for building web applications that is
 open-source, actively maintained and supported by Microsoft -- ASP.NET Core
-#footnote(link("https://dotnet.microsoft.com/en-us/apps/aspnet")). It is the standard for developing
+#footnote[ASP.NET Core: #link("https://dotnet.microsoft.com/en-us/apps/aspnet")]. It is the standard for developing
 modern web applications in C\#, so it was an easy choice as the main framework to use.
-
-=== Endpoint definition
-
-ASP.NET Core offers two main approaches of defining REST API endpoints:
-
-- *Controllers* -- an older way that defines endpoints as methods on "controller" classes. With this
-  approach, most metadata about endpoints is set via attributes. It is a time-proven and supports a
-  wide range of use-cases. The structure of the API with this approach is fixed, which simplifies
-  the design, but can sometimes feel like "magic", where a lot of information is just inferred from
-  conventions and non-type-safe attributes.
-- *Minimal APIs* -- the more modern approach where methods are directly mapped to specific endpoints
-  using type-safe syntax. It doesn't give the developers clear direction and conventions like
-  controller-based approach does, but that also means more flexibility. The main advantage of this
-  approach is its type-safety -- it is not necessary to specify return types of methods, HTTP verbs,
-  or any other metadata with attributes, as everything is defined via the type system and extension
-  methods. Minimal APIs are also significantly faster than controllers, and they're currently
-  recommended by Microsoft as the default for new web applications.
-
-For this project, Minimal API approach has been chosen for its type-safety, which enables very
-easy definition of OpenAPI #footnote[#link("https://www.openapis.org/")] documents. With the OpenAPI
-description, it is possible to easily generate front-end code for interacting with the API itself,
-which simplifies the workflow of developing a full-stack application. The speed of Minimal APIs is
-also a welcome feature, while not being as important as the type-safety and ease of use.
 
 === Architecture
 
@@ -1017,26 +994,49 @@ has been chosen:
   interface to external services that want to communicate with the API, and an entry point for each
   request.
 
-The architecture of the individual layers can be seen on the Figure @api_layers. The flow a typical
-web request will be processed as follows:
-
-+ The request is sent by the web framework to the API layer, where an appropriate method is picked to
-  handle the endpoint.
-+ The API layer method will call the appropriate methods on the validation layer, and it makes sure
-  the data in the request is valid. The validation layer might call the data access layer to make
-  sure database constraints and business constraints are satisfied. If the request is not valid, it
-  stops executing and returns a "validation problem" HTTP response.
-+ If the data has been successfully validated, the business layer is called to process the data.
-  This includes calling the data access layer to query, aggregate and return data, or performing a
-  transaction to update the state of the database. After getting to this layer, error responses
-  should never be returned unless the server itself is unhealthy.
-
 #figure(
-  image("./figures/sales_api_layers.pdf"),
+  image("./figures/sales_api_layers.pdf", height: 23.5em),
   caption: [
     Architecture of the new KIS Sales API. The arrows show direction from the caller to the callee.
   ],
 ) <api_layers>
+
+The architecture of the individual layers can be seen on the Figure @api_layers. The flow a typical
+web request will be processed as follows:
+
++ The request is sent by the web framework to the API layer, where an appropriate method is picked
+  to handle the endpoint.
++ The API layer method will call the appropriate methods on the validation layer, which makes sure
+  the data in the request is valid. The validation layer might call the data access layer to make
+  sure database constraints and business logic constraints are satisfied. If the request is not valid,
+  it stops executing and returns a "validation problem" HTTP response.
++ If the data has been successfully validated, the business layer is called to process the data. It
+  then calls the data access layer to query, aggregate and return data, or performs a transaction to
+  update the state of the database. After getting to this layer, error responses should never be
+  returned unless the server itself is unhealthy.
+
+=== Endpoint definition
+
+ASP.NET Core offers two main approaches of defining REST API endpoints:
+
+- *Controllers* -- an older way that defines endpoints as methods on "controller" classes. With this
+  approach, most metadata about endpoints is set via attributes. It is a time-proven and supports a
+  wide range of use-cases. The structure of the API with this approach is fixed, which simplifies
+  the design, but can sometimes feel like "magic", where a lot of information is just inferred from
+  conventions and non-type-safe attributes.
+- *Minimal APIs* -- the more modern approach where methods are directly mapped to specific endpoints
+  using type-safe syntax. It doesn't give the developers clear direction and conventions like
+  controller-based approach does, but that also means more flexibility. The main advantage of this
+  approach is its type-safety -- it is not necessary to specify return types of methods, HTTP verbs,
+  or any other metadata with attributes, as everything is defined via the type system and extension
+  methods. Minimal APIs are also significantly faster than controllers, and they're currently
+  recommended by Microsoft as the default for new web applications.
+
+For this project, Minimal API approach has been chosen for its type-safety, which enables very
+easy definition of OpenAPI #footnote[#link("https://www.openapis.org/")] documents. With the OpenAPI
+description, it is possible to easily generate front-end code for interacting with the API itself,
+which simplifies the workflow of developing a full-stack application. The speed of Minimal APIs is
+also a welcome feature, while not being as important as the type-safety and ease of use.
 
 // === Contract definition
 //
@@ -1109,6 +1109,101 @@ incorrectly by mistake.
 
 == Front-end
 
+Front-end part of the application will be the part of the application to actually be used directly
+by volunteers at the Students Club. It is necessary for it to have fast response times,
+easy-to-navigate interface, and consistent look.
+
+=== Architecture
+
+In the new version of KIS, both user interfaces are combined in a single application, which comes
+with the benefit of being able to use the same components for both of them more easily. The
+architecture of the front-end, however, can stay relatively similar to the old system, which already
+had a link to the Operator UI directly in the Admin UI.
+
+#bigskip()
+
+The architecture of the system can be seen on Figure @frontend_architecture. The navigation will
+follow a simple pattern:
+
++ First, the user will be required to sign in with KIS Auth. Once the user has a valid access token,
+  the UI will open on one of the pages of the administrative interface.
++ In the administrative interface, user will be able to navigate to pages with list views of each
+  main entities from the main navigation panel, or to the operator interface.
++ On the list views, the user will be able to perform limited operations or group operations on the
+  given entities, dependent on the type of the entity. They will also be able to navigate to
+  detailed view of each entity (if necessary).
++ On the detailed view, the user will be able to manage relationships and view aggregate data about
+  a given entity.
++ In the operator user interface, the user will be able to navigate between item layouts and other
+  necessary views, such as cancellable transactions, card pairing interface, and pipes.
+
+All the administrative interface views will include the header with the user information as well as
+a side panel with navigation to all the list views. All operator interface views will include
+information about the current order, as well as a side panel with navigation to all operator
+specialized views, and back to administration.
+
+#figure(
+  image("./figures/frontend_architecture.pdf"),
+  caption: [Architecture of the pages of the new KIS Front-end.],
+) <frontend_architecture>
+
+=== Design framework
+
+It is highly beneficial to use a design framework to provide a set of premade components with
+desired functionality that have unified and high quality design. It has been decided that for this
+project, the library Material UI #footnote[Material UI: #link("https://mui.com/")] will prove the
+best choice. It is a collection of React components that implement Google's Material Design
+#footnote[Material UI: #link("https://m3.material.io/")]. It is also highly customizable, and
+offers a big set of icons and a "Data Grid" component, which will be very useful to render all the
+list views of individual entities. The Data Grid component has built-in pagination, filtering,
+sorting, and also supports server-side equivalents to all of them for datasets that are
+particularly large.
+
+#bigskip()
+
+The other benefits of using this framework include:
+
+- Easy color configuration with a palette, and also a set of multiple light and dark color themes.
+- Simple and straightforward basic component functionality, including more complex interactions --
+  loading animations, autocomplete, selection and multiple selection, various feedback and
+  navigation components, and others.
+- Composability of simple components into more complex patterns. The Data Grid component
+  is itself a complex component that serves as a high-level interface to the more low-level Table
+  component.
+- Container and layout components such as Paper, Modal, Drawer, and AppBar.
+
+Thanks to all the provided benefits of the Material UI library, it will be quite simple to create a
+full Material Design experience with unified design of the whole application.
+
+=== Communication with back-end
+
+Usually, communication with back-end part of the application needs to be hand-written. This would
+mean that all changes to the API scheme would need to be manually rewritten. Even in case of
+non-breaking changes, this would take up a lot of time and slow down the development.
+
+However, thanks to the OpenAPI document generation that is provided in .NET back-ends, it is trivial
+to generate a document with the entire spec of the API. And using the OpenAPI Generator tool
+#footnote[OpenAPI Generator: #link("https://openapi-generator.tech/")], it is similarly trivial to
+generate corresponding client-side code to handle calling the API.
+
+OpenAPI Generator offers a command line interface that can be called every time the API compiles to
+generate the front-end code that uses a particular way of fetching data. It offers a multitude of
+options for generating TypeScript code, which include:
+
+- *`typescript-fetch`* -- the modern browser standard fetch API without any external dependencies,
+  that utilizes the modern JavaScript Promises for asynchronous calls,
+- *`typescript-axios`* -- the Axios #footnote[Axios HTTP client: #link("https://axios-http.com/")]
+  JavaScript HTTP client that is also based on Promises,
+- and others, usually based on framework-specific ways to fetch data.
+
+With this approach, it is possible to choose one interface and have the entire code for accessing
+back-end data generated, and if necessary, it's also possible to switch the underlying functionality
+without needing to rewrite the entire code.
+
+For this project, the `typescript-fetch` generator has been chosen, as the application is required
+to run only in modern browsers, which all support this API. It removes the need for external
+dependencies, which will result in smaller build sizes and better performance.
+
 = Conclusion <concl>
 
 The main goal of this project was to redesign an information system tailored to the real-world needs
@@ -1130,4 +1225,9 @@ General improvements include:
 - Front-end: More consistent UI thanks to using a component library, automatically generated SDK for
   communication with the back-end from the OpenAPI document, and Point-of-Sales UI that stays
   consistently ordered when new products are added.
-- Security: Integration with existing infrastructure that was mostly unused until recently
+- Security: Integration with existing infrastructure that was mostly unused until recently, usage of
+  more modern standards, and removal of vulnerabilities of outdated libraries.
+
+Overall, once implemented, the new system should serve its purpose a lot better than the older
+system, be more secure, and easier to extend with further features or integrate with other
+applications in the future.

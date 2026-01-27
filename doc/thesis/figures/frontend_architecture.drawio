@@ -1,0 +1,37 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram name="Page-1" id="xzBSUzo5ICr5N9M5H6dN">
+    <mxGraphModel dx="1426" dy="840" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="_q70eO_9GprIbgBTVgX2-5" edge="1" parent="1" source="_q70eO_9GprIbgBTVgX2-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endSize=10;startSize=10;" target="_q70eO_9GprIbgBTVgX2-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_q70eO_9GprIbgBTVgX2-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Sign in page" vertex="1">
+          <mxGeometry height="40" width="110" x="345" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="KOZ83FVtLkoz5Ein7Yw9-1" edge="1" parent="1" source="_q70eO_9GprIbgBTVgX2-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endSize=10;startSize=10;" target="_q70eO_9GprIbgBTVgX2-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_q70eO_9GprIbgBTVgX2-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontSize=12;spacingTop=5;" value="Administrative interface" vertex="1">
+          <mxGeometry height="187" width="220" x="290" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="_q70eO_9GprIbgBTVgX2-9" edge="1" parent="1" source="_q70eO_9GprIbgBTVgX2-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="_q70eO_9GprIbgBTVgX2-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_q70eO_9GprIbgBTVgX2-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Entity list views" vertex="1">
+          <mxGeometry height="40" width="110" x="345" y="327" as="geometry" />
+        </mxCell>
+        <mxCell id="_q70eO_9GprIbgBTVgX2-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingBottom=0;spacingTop=5;" value="Operator interface" vertex="1">
+          <mxGeometry height="110" width="220" x="290" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="_q70eO_9GprIbgBTVgX2-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Entity detail views" vertex="1">
+          <mxGeometry height="40" width="110" x="345" y="405" as="geometry" />
+        </mxCell>
+        <mxCell id="_q70eO_9GprIbgBTVgX2-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Specialized operator views" vertex="1">
+          <mxGeometry height="40" width="110" x="345" y="560" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

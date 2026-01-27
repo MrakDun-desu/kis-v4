@@ -22,7 +22,7 @@ export const HomePage = () => {
         <Button
           variant="outlined"
           size="large"
-          onClick={() => navigate("admin")}
+          onClick={() => navigate("admin/store-items")}
         >
           Admin
         </Button>
