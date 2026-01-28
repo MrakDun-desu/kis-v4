@@ -52,13 +52,13 @@ successful.
 The following chapters will contain:
 
 - information about modern information systems and what requirements are usually expected when
-  implementing them, as well as what security measures are usually employed (chapter @theory),
-- the current state of the information systems used by the Students Club "U~Kachničky" (chapter
+  implementing them, as well as what security measures are usually employed (Chapter @theory),
+- the current state of the information systems used by the Students Club "U~Kachničky" (Chapter
   @current),
 - analysis of requirements of the Students Union and formalization of them into a use-case diagram
-  (chapter @analysis),
-- design of the individual parts of the new system (chapter @design),
-- and finally the summary of the work (chapter @concl).
+  (Chapter @analysis),
+- design of the individual parts of the new system (Chapter @design),
+- and finally the summary of the work (Chapter @concl).
 
 
 = Modern information systems <theory>
@@ -646,26 +646,26 @@ The full informal specification includes various levels of necessity:
 The fullfilment of these requirements can be used to judge the functional suitability of the product
 (mentioned in Subsection @func_req). Some of the nice-to-have requirements may be skipped due to
 lack of time and prioritization of more important features.
-//
-// == General web application requirements
-//
-// In the Section @general_req, the general requirements for a modern web application have been
-// described. In this section, it will be described what the requirements mean in the context of this
-// application, and to what extent they need to be applied.
-//
-// - *Functional suitability* -- the required functionality is described in the Section @informal_spec,
-//   and the functional suitability will be judged according to how well the application fullfils all
-//   the requirements stated there.
-// - *Performance efficiency* -- it is required for the product to have good time behavior and resource
-//   utilization. The required capacity is fairly small, as the amount of expected concurrent users is
-//   in dozens.
-// - *Compatibility* -- the product is required to inter-operate with existing services that will not
-//   be changed, such as KIS Auth, KIS Food, and Kachna Online.
-// - *Interaction capability* -- all the subcharacteristics of interaction capablity are important,
-//   but some are less so, as it is not expected that the product will be used by people of various
-//   backgrounds and physical and mental capabilities. Inclusivity and user assistance are therefore
-//   secondary for this product.
-// - *Reliability* -- it is very important for the product to function reliably when needed
+
+== General web application requirements
+
+In the Section @general_req, the general requirements for a modern web application have been
+described. In this section, it will be described what the requirements mean in the context of this
+application, and to what extent they need to be applied.
+
+- *Functional suitability* -- the required functionality is described in the Section @informal_spec,
+  and the functional suitability will be judged according to how well the application fullfils all
+  the requirements stated there.
+- *Performance efficiency* -- it is required for the product to have good time behavior and resource
+  utilization. The required capacity is fairly small, as the amount of expected concurrent users is
+  in dozens.
+- *Compatibility* -- the product is required to inter-operate with existing services that will not
+  be changed, such as KIS Auth, KIS Food, and Kachna Online.
+- *Interaction capability* -- all the subcharacteristics of interaction capablity are important,
+  but some are less so, as it is not expected that the product will be used by people of various
+  backgrounds and physical and mental capabilities. Inclusivity and user assistance are therefore
+  secondary for this product.
+- *Reliability* -- it is very important for the product to function reliably when needed
 
 == Use-case diagram
 
@@ -694,70 +694,70 @@ user account, such as their nickname in the system.
 
 === Description of individual use cases
 
-*Store management* --- creating and editing store entities in which products (store items) can be
+*Store management* -- creating and editing store entities in which products (store items) can be
 stored.
 
 #bigskip()
 
-*Tap management* --- creating and editing tap entities that the kegs can be opened for.
+*Tap management* -- creating and editing tap entities that the kegs can be opened for.
 
 #bigskip()
 
-*User management* --- in the context of the new KIS Sales API, this will include only browsing users
+*User management* -- in the context of the new KIS Sales API, this will include only browsing users
 and displaying information about them. Other actions, such as blocking or forcefully editing other
 users' profiles will be provided by KIS Auth.
 
 #bigskip()
 
-*Cash-box management* --- creating and editing cash-box entities, setting the amounts of currency in
+*Cash-box management* -- creating and editing cash-box entities, setting the amounts of currency in
 each of them and displaying history of transactions for each given cash-box.
 
 #bigskip()
 
-*Sale transaction management* --- creating, updating and cancelling sale transactions. This also
+*Sale transaction management* -- creating, updating and cancelling sale transactions. This also
 incudes associating sale items with sale transactions, adding modifiers to sale items, and applying
 discounts to sale transactions.
 
 #bigskip()
 
-*Price management* --- updating and recalculating prices for store items, changing sale margins for
+*Price management* -- updating and recalculating prices for store items, changing sale margins for
 sale items and modifiers.
 
 #bigskip()
 
-*Discount management* --- creating and browsing discounts, displaying the usages associated with
+*Discount management* -- creating and browsing discounts, displaying the usages associated with
 them and marking discounts as out-of-date.
 
 #bigskip()
 
-*Keg management* --- creating, updating and deleting keg types, and viewing aggregate
+*Keg management* -- creating, updating and deleting keg types, and viewing aggregate
 information about them.
 
 #bigskip()
 
-*Sale item management* --- creating, updating and deleting sale items. This also includes
+*Sale item management* -- creating, updating and deleting sale items. This also includes
 associating sale items with their components, displaying amounts of sale items in individual
 stores, and associating them with categories.
 
 #bigskip()
 
-*Store item management* --- creating, updating and deleting store items. This also includes
+*Store item management* -- creating, updating and deleting store items. This also includes
 displaying amounts of store items in individual stores, and associating them with categories.
 
 #bigskip()
 
-*Store item amount management* --- adding store items to stores, moving them from one store to
+*Store item amount management* -- adding store items to stores, moving them from one store to
 another, marking store items as written off and setting the amounts of store items in
 stock-takings.
 
 #bigskip()
 
-*Product category management* --- creating, editing and deleting individual product categories, and
+*Product category management* -- creating, editing and deleting individual product categories, and
 associating the products with them.
 
 #bigskip()
 
-*POS Layout management* --- creating, editing and deleting fixed layouts in the Point-of-Sales UI
+*POS Layout management* -- creating, editing and deleting fixed layouts in the Point-of-Sales UI
 (KIS Operator).
 
 == Data model <data_model>
@@ -863,9 +863,6 @@ better to reuse the same components for both KIS Admin and KIS Operator.
 In the new system, KIS Operator will be integrated into KIS Admin. They will share the same
 application, which will also simplify the authorization, since instead of two separate clients, only
 one will need to be configured.
-
-#bigskip()
-
 The new architecture is depicted on the figure @kis_architecture_new.
 
 #figure(
@@ -1210,10 +1207,9 @@ The main goal of this project was to redesign an information system tailored to 
 of a specific students club. The new system will manage product stock around multiple stores, sales,
 student contributions, static product layouts, individual kegs, and dynamic discounts. It will
 provide database auditing, product cost tracking and automatic price calculation. It will also
-integrate fully with the newer authentication subsystem through OAuth 2.0 and OpenID Connect.
-
+integrate fully with the newer authentication subsystem through OAuth 2.0 and OpenID Connect 1.0.
 Compared to the older system, the newer system will offer more functionality that has been missing
-until now. It will also remove a lot of security vulnerabilities caused by unmaintained libraries.
+until now.
 
 #bigskip()
 

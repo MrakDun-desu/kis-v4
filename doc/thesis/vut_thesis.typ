@@ -328,6 +328,8 @@
     outline(title: var_heading(dyn_text(lang, _contents)))
   }
 
+  // short captions instead of the long ones
+
   {
     show outline.entry: it => {
       show it.element.caption.at("supplement").text: none
