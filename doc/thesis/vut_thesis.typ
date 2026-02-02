@@ -318,6 +318,13 @@
   counter(page).update(0)
   set page(numbering: "1")
 
+  let in-outline = state("in-outline", false)
+  show outline: it => {
+    in-outline.update(true)
+    it
+    in-outline.update(false)
+  }
+
   {
     show outline.entry.where(level: 1): set outline.entry(fill: h(1fr))
     show outline.entry.where(level: 1): it => {

@@ -329,11 +329,14 @@ displaying longer orders, and for KIS Auth to authenticate against KIS Food.
 
 #figure(
   image("figures/kis_relationships.pdf"),
-  caption: [
-    Top-level architecture of the currently employed information system for the Student Club
-    "U~Kachničky". The arrows show the flow of data and the colors show very strongly connected
-    components.
-  ],
+  caption: flex-caption(
+    long: [
+      Top-level architecture of the currently employed information system for the Student Club
+      "U~Kachničky". The arrows show the flow of data and the colors show very strongly connected
+      components.
+    ],
+    short: [Architecture of the currently used information system],
+  ),
 ) <kis_architecture>
 
 == Sales subsystem <kis_sales>
@@ -448,20 +451,26 @@ and kegs on the Figure @operator_taps.
 
 #figure(
   image("./figures/operator_orders.png"),
-  caption: [
-    Main user interface in the current version of KIS Operator. It allows displaying the individual
-    articles with their current stock amounts, filtering of the articles by labels and
-    managing the amounts of articles in the currently open order.
-  ],
+  caption: flex-caption(
+    long: [
+      Main user interface in the current version of KIS Operator. It allows displaying the individual
+      articles with their current stock amounts, filtering of the articles by labels and
+      managing the amounts of articles in the currently open order.
+    ],
+    short: [The currently used Point-of-Sales user interface],
+  ),
 ) <operator_orders>
 
 #figure(
   image("./figures/operator_taps.png"),
-  caption: [
-    The user interface for managing taps in the current version of KIS Operator. It allows
-    displaying the currently available kegs, their current approximate amounts, and opening them when
-    needed.
-  ],
+  caption: flex-caption(
+    long: [
+      The user interface for managing taps in the current version of KIS Operator. It allows
+      displaying the currently available kegs, their current approximate amounts, and opening them when
+      needed.
+    ],
+    short: [The currently used tap management interface],
+  ),
 ) <operator_taps>
 
 == Administration subsystem <kis_admin>
@@ -492,27 +501,36 @@ Different pages of the current KIS Admin UI can be seen on the Figures @admin_ar
 
 #figure(
   image("figures/admin_article_list.png"),
-  caption: [
-    Article list view in the old KIS Admin user interface -- it displays each article, its
-    labels and optionally the current stock status.
-  ],
+  caption: flex-caption(
+    long: [
+      Article list view in the old KIS Admin user interface -- it displays each article, its
+      labels and optionally the current stock status.
+    ],
+    short: [Article list view in the old administrative interface],
+  ),
 ) <admin_article_list>
 
 #figure(
   image("figures/admin_sale_reports.png"),
-  caption: [
-    Sales report in the old KIS Admin user interface -- it displays the total amounts of
-    contributions, order payments, and other cash movements for each cash-box.
-  ],
+  caption: flex-caption(
+    long: [
+      Sales report in the old KIS Admin user interface -- it displays the total amounts of
+      contributions, order payments, and other cash movements for each cash-box.
+    ],
+    short: [Sales report view in the old administrative interface],
+  ),
 ) <admin_sales_report>
 
 #figure(
   image("figures/admin_cash-box_detail.png", height: 35em),
-  caption: [
-    Detail view of a cash-box in the old KIS Admin user interface -- it displays the current amount
-    of cash in the cash-box, and lets the users change the cash-box name, save a cash change, or
-    perform a stock-taking.
-  ],
+  caption: flex-caption(
+    long: [
+      Detailed view of a cash-box in the old KIS Admin user interface -- it displays the current amount
+      of cash in the cash-box, and lets the users change the cash-box name, save a cash change, or
+      perform a stock-taking.
+    ],
+    short: [Cash-box detailed view in the old administrative interface],
+  ),
 ) <admin_cash-box_detail>
 
 The current KIS Admin UI has several problems:
@@ -606,7 +624,7 @@ integration with the new authentication system, as well as more unified UI. It w
 data was easily transferrable to the new database, but since the amount of products isn't that
 large (in order of hundreds), it is possible to rewrite data manually if necessary.
 
-The general requirements are very similar to any sales management application, with some additional
+The functional requirements are very similar to any sales management application, with some additional
 requirements on top. There is no requirement for the implementation platform used, but some
 technologies are easier to integrate with existing subsystems than others.
 
@@ -665,7 +683,12 @@ application, and to what extent they need to be applied.
   but some are less so, as it is not expected that the product will be used by people of various
   backgrounds and physical and mental capabilities. Inclusivity and user assistance are therefore
   secondary for this product.
-- *Reliability* -- it is very important for the product to function reliably when needed
+- *Reliability* -- it is very important for the product to function reliably when needed and be
+  operational when required for use. If faults occur in the system, it is not expected for system to
+  continue working, as the only system fault that should occur would be database failure, which
+  would certainly require manual intervention. When faults occur, however, data should be
+  recoverable after the failure is resolved.
+- *Security* -- #todo[TODO]
 
 == Use-case diagram
 
@@ -867,10 +890,13 @@ The new architecture is depicted on the figure @kis_architecture_new.
 
 #figure(
   image("figures/kis_relationships_new.pdf"),
-  caption: [
-    Top-level architecture of the new information system for Students Club "U~Kachničky".
-    The arrows show the flow of data and the colors show very strongly connected components.
-  ],
+  caption: flex-caption(
+    long: [
+      Top-level architecture of the new information system for Students Club "U~Kachničky".
+      The arrows show the flow of data and the colors show very strongly connected components.
+    ],
+    short: [Architecture of the new information system],
+  ),
   placement: top,
 ) <kis_architecture_new>
 
@@ -894,7 +920,10 @@ Figure @cost_cache.
 
 #figure(
   image("figures/er_cost_cache.pdf"),
-  caption: [Part of an ER diagram showing denormalization of the store item costs.],
+  caption: flex-caption(
+    long: [Part of an ER diagram showing denormalization of the store item costs.],
+    short: [ER diagram showing cost denormalization],
+  ),
 ) <cost_cache>
 
 Another useful denormalization is tracking the amounts of store items and composites in the
@@ -905,8 +934,11 @@ to create tables to track these amounts. This can be seen on the Figure @store_a
 
 #figure(
   image("./figures/er_store_cache.pdf"),
-  caption: [Path of an ER diagram showing denormalization of store item amounts and composite
-    amounts within stores.],
+  caption: flex-caption(
+    long: [Part of an ER diagram showing denormalization of store item amounts and composite
+      amounts within stores.],
+    short: [ER diagram showing product amount denormalization],
+  ),
   placement: top,
 ) <store_amounts_cache>
 
@@ -993,9 +1025,11 @@ has been chosen:
 
 #figure(
   image("./figures/sales_api_layers.pdf", height: 23.5em),
-  caption: [
-    Architecture of the new KIS Sales API. The arrows show direction from the caller to the callee.
-  ],
+  caption: flex-caption(
+    long: [Architecture of the new KIS Sales API. The arrows show direction from
+      the caller to the callee.],
+    short: [Architecture of the new REST API],
+  ),
 ) <api_layers>
 
 The architecture of the individual layers can be seen on the Figure @api_layers. The flow a typical

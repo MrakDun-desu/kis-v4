@@ -10,21 +10,34 @@ multiple figures because of its complexity.
 
 #figure(
   image("figures/er_diagram_products.pdf"),
-  caption: [Entity Relationship diagram for the new KIS Sales -- Products],
+  caption: flex-caption(
+    long: [Entity relationship diagram for the new KIS Sales -- Products],
+    short: [Entity relationship diagram -- Products],
+  ),
 ) <er_diagram_products>
 
 #figure(
   image("figures/er_diagram_transactions.pdf", height: 62%),
-  caption: [Entity Relationship diagram for the new KIS Sales -- Transactions],
+  caption: flex-caption(
+    long: [Entity relationship diagram for the new KIS Sales -- Transactions],
+    short: [Entity relationship diagram -- Transactions],
+  ),
 ) <er_diagram_transactions>
 
 #figure(
   image("figures/er_diagram_layouts.pdf"),
-  caption: [Entity Relationship diagram for the new KIS Sales -- Layouts],
+  caption: flex-caption(
+    long: [Entity relationship diagram for the new KIS Sales -- Layouts],
+    short: [Entity relationship diagram -- Layouts],
+  ),
 ) <er_diagram_layouts>
 
 #figure(
   image("figures/er_diagram_containers.pdf"),
-  caption: [Entity Relationship diagram for the new KIS Sales -- Containers (Kegs for tapped drinks)],
+  caption: flex-caption(
+    long: [Entity relationship diagram for the new KIS Sales -- Containers (Kegs
+      for tapped drinks)],
+    short: [Entity relationship diagram -- Containers],
+  ),
 ) <er_diagram_containers>
 
