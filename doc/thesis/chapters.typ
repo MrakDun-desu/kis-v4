@@ -661,34 +661,47 @@ The full informal specification includes various levels of necessity:
     deprecating discounts that are out-of-date,
   - and being able to process payments in different currencies.
 
-The fullfilment of these requirements can be used to judge the functional suitability of the product
+The fulfillment of these requirements can be used to judge the functional suitability of the product
 (mentioned in Subsection @func_req). Some of the nice-to-have requirements may be skipped due to
 lack of time and prioritization of more important features.
 
-== General web application requirements
+== General web application requirements <general_req_analysis>
 
 In the Section @general_req, the general requirements for a modern web application have been
 described. In this section, it will be described what the requirements mean in the context of this
 application, and to what extent they need to be applied.
 
 - *Functional suitability* -- the required functionality is described in the Section @informal_spec,
-  and the functional suitability will be judged according to how well the application fullfils all
+  and the functional suitability will be judged according to how well the application fulfills all
   the requirements stated there.
 - *Performance efficiency* -- it is required for the product to have good time behavior and resource
   utilization. The required capacity is fairly small, as the amount of expected concurrent users is
   in dozens.
-- *Compatibility* -- the product is required to inter-operate with existing services that will not
+- *Compatibility* -- the product is required to interoperate with existing services that will not
   be changed, such as KIS Auth, KIS Food, and Kachna Online.
-- *Interaction capability* -- all the subcharacteristics of interaction capablity are important,
+- *Interaction capability* -- all the sub-characteristics of interaction capability are important,
   but some are less so, as it is not expected that the product will be used by people of various
   backgrounds and physical and mental capabilities. Inclusivity and user assistance are therefore
-  secondary for this product.
+  secondary for this product, while appropriateness recognizability, learnability, operability,
+  self-descriptiveness, and user error protection are all very important.
 - *Reliability* -- it is very important for the product to function reliably when needed and be
   operational when required for use. If faults occur in the system, it is not expected for system to
-  continue working, as the only system fault that should occur would be database failure, which
-  would certainly require manual intervention. When faults occur, however, data should be
+  continue working, as the only system fault that should possibly occur would be database failure,
+  which would certainly require manual intervention. When faults occur, however, data should be
   recoverable after the failure is resolved.
-- *Security* -- #todo[TODO]
+- *Security* -- security is important for any modern application that distinguishes between its
+  users. Confidentiality, integrity, accountability and authenticity are top priorities. Resistance
+  is not as important as others, since it is not expected that the system would be under attack --
+  it doesn't function as a source-of-truth for any of the information it holds, and it's also not
+  necessary for the system to function at all times.
+- *Maintainability* -- maintainability is one of characteristics that should be improved greatly in
+  the new system. The components should be more modular, reusable, and easily modifiable. Because of
+  the layered architecture, the components should be also more testable than before.
+- *Flexibility* -- when it comes to flexibility, it's not as important as other requirements for a
+  modern system. The system will run on the same hardware all the time, so adaptability and
+  installability are not very important. Scalability is also not very important, since the product
+  will only be used by a small students club. Replaceability, however, is very important as it needs
+  to replace the old system perfectly.
 
 == Use-case diagram
 
@@ -832,7 +845,25 @@ shows the full entity relationship diagram. The main entities tracked by the new
 After talking in more detail with the Students Union, it has been decided that the requirement to
 process payments in multiple currencies would require a lot of effort and is not very important
 compared to other requirements. Because of this, the option to pay in multiple currencies has been
-removed for this project, and it might be implemented as an extension in the future.
+removed from this project, and it might be implemented as an extension in the future.
+
+== Testing
+
+To ensure all the requirements are met to a satisfactory level, the project will be tested both
+manually and automatically. Manual testing will include developer testing of the individual
+API endpoints and front-end application, and also user testing of the front-end.
+
+As stated in Section @general_req_analysis, it is not only important for the product to be
+functional. It also needs to be fast to interact with, and easy to learn and operate for the members
+of the Students Union. After the first iteration of the UX design will be completed, user scenarios
+will be prepared to test the functionality of the application. After the user scenarios, the testers
+will also be asked for feedback about the general requirements for the application.
+
+For automated testing, the most crucial part to test will be the business logic of the back-end
+application. To make absolutely sure that the application functions as required, it will be tested
+against a real database which will be cleaned after every test. This approach will be slow, however
+it will perfectly replicate the real environment. This will ensure that the tests will only pass if
+they would also pass in real scenarios.
 
 = Application design <design>
 
@@ -902,9 +933,9 @@ The new architecture is depicted on the figure @kis_architecture_new.
 
 == Database design
 
-The database was designed first, as the whole structure of the system depends on the
-structure of its data. All the required entities from the data model (Section @data_model) need to
-be represented well for the use-case as possible. The final database design closely resembles the entity
+The database was designed first, as the whole structure of the system depends on the structure of
+its data. All the required entities from the data model (Section @data_model) need to be represented
+well for the use-case as possible. The final database design closely resembles the entity
 relationship diagram (Appendix @er_diagram).
 
 === Denormalization
@@ -1178,17 +1209,17 @@ specialized views, and back to administration.
   caption: [Architecture of the pages of the new KIS Front-end.],
 ) <frontend_architecture>
 
-=== Design framework
+=== Design framework <design_framework>
 
 It is highly beneficial to use a design framework to provide a set of premade components with
 desired functionality that have unified and high quality design. It has been decided that for this
 project, the library Material UI #footnote[Material UI: #link("https://mui.com/")] will prove the
 best choice. It is a collection of React components that implement Google's Material Design
-#footnote[Material UI: #link("https://m3.material.io/")]. It is also highly customizable, and
-offers a big set of icons and a "Data Grid" component, which will be very useful to render all the
-list views of individual entities. The Data Grid component has built-in pagination, filtering,
-sorting, and also supports server-side equivalents to all of them for datasets that are
-particularly large.
+#footnote[Google's Material Design system: #link("https://m3.material.io/")]. It is also highly
+customizable, and offers a big set of icons and a "Data Grid" component, which will be very useful
+to render all the list views of individual entities. The Data Grid component has built-in
+pagination, filtering, sorting, and also supports server-side equivalents to all of them for
+datasets that are particularly large.
 
 #bigskip()
 
@@ -1221,7 +1252,7 @@ OpenAPI Generator offers a command line interface that can be called every time 
 generate the front-end code that uses a particular way of fetching data. It offers a multitude of
 options for generating TypeScript code, which include:
 
-- *`typescript-fetch`* -- the modern browser standard fetch API without any external dependencies,
+- *`typescript-fetch`* -- the modern browser standard fetch API without any external dependencies
   that utilizes the modern JavaScript Promises for asynchronous calls,
 - *`typescript-axios`* -- the Axios #footnote[Axios HTTP client: #link("https://axios-http.com/")]
   JavaScript HTTP client that is also based on Promises,
@@ -1234,6 +1265,62 @@ without needing to rewrite the entire code.
 For this project, the `typescript-fetch` generator has been chosen, as the application is required
 to run only in modern browsers, which all support this API. It removes the need for external
 dependencies, which will result in smaller build sizes and better performance.
+
+=== User interface and experience
+
+User interface is the most visible part of any application, and improvement of user experience
+in the new application is one of the major goals for this project. The main changes will include:
+
+- Unified list view design in the Admin UI with the Material UI Data Table component (mentioned in
+  Section @design_framework),
+- removal of scrolling elements from the Operator UI,
+- and addition of nested grid layouts in the Operator UI.
+
+The current KIS Admin UI works well, the only problem is that each page looks slightly differently,
+even if they are serving almost the same purpose. To prevent this from happening in the new system,
+all the list views will be using the same component, with only differences being the data it
+displays. This will also enable all the views to be updated just after changing the one component.
+The design draft for a list view can be seen on the figure @new_kis_list_view.
+
+#figure(
+  image("./figures/new_kis_list_view.png"),
+  caption: flex-caption(
+    long: [Draft for the list view page for store items in the new
+      administration subsystem.],
+    short: [Draft for the list view page in the new KIS Admin],
+  ),
+) <new_kis_list_view>
+
+For the KIS Operator, users have had problems with the ordering and filtering of the items for a
+long time. The "label" system for categorizing items did work, but over time, many labels were added
+over time, and scrolling was introduced to keep them all in one container. Similarly, the main grid
+display for the sale items didn't have a fixed layout, but just displayed all the items in
+alphabetical order, so when a new item was added, all the other items were shifted.
+
+With the new system, all items will need to be manually added into the Operator layout in a certain
+position. The layouts will also be able to hold links to nested layouts to be able to contain more
+items. This way, a sale item will always be accessible by clicking the screen on the same positions,
+no matter if new sale items are added. Of course, it will still be possible to reorder the grid
+items when necessary, but it should be done very rarely and for a good reason.
+
+Having items in fixed positions also has a different benefit -- sale items will only be visible
+in the Operator UI if they are a part of an existing layout that has link to itself from the
+top-level layout. Thanks to this, it will be very easily possible to make new layouts before adding
+them as items into the UI. Then, once the layout is actually necessary, it can simply be added as a
+child to a visible layout and be immediately ready to use. It will also be possible to simply turn
+off different layouts for different modes of the Students Club.
+
+#figure(
+  image("./figures/new_operator_grid.svg"),
+  caption: flex-caption(
+    long: [Draft for the main view of the new operator system. The labels have been removed, and
+      it's not possible to scroll anymore. Instead, the items are arranged into a grid with fixed
+      positions, and navigating to additional items can be done through nested layouts. In this
+      example, the top four grid items are nested layouts, and the bottom six are sale items.],
+    short: [Draft for the main page in the new KIS Operator],
+  ),
+  placement: top,
+)
 
 = Conclusion <concl>
 

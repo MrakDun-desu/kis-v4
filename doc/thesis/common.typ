@@ -14,7 +14,4 @@
 #let flex-caption(short: none, long: none) = context if state(
   "in-outline",
   false,
-).get() { short }
-else {
-long
-}
+).get() { short } else { long }
