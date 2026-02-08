@@ -2880,28 +2880,6 @@
           }
         }
       }
-    },
-    "/identity": {
-      "get": {
-        "tags": [
-          "Api"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AnonymousTypeOfstringAndstring"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -2974,27 +2952,6 @@
           },
           "meta": {
             "$ref": "#/components/schemas/PageMeta"
-          }
-        }
-      },
-      "AnonymousTypeOfstringAndstring": {
-        "required": [
-          "type",
-          "value"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "value": {
-            "type": [
-              "null",
-              "string"
-            ]
           }
         }
       },
@@ -7144,9 +7101,6 @@
     },
     {
       "name": "Users"
-    },
-    {
-      "name": "Api"
     }
   ]
 }

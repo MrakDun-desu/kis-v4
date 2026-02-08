@@ -19,11 +19,14 @@ builder.Services.AddCors(opts => {
 });
 
 // Auth
+const string oidcAuthority = "https://su-dev.fit.vutbr.cz/";
 var allowTestingTokens = args.Contains("--testing-auth");
 builder.Services.AddAuthentication(allowTestingTokens ? "Bearer" : "oidc")
     .AddJwtBearer("Bearer")
     .AddJwtBearer("oidc", opts => {
         if (builder.Environment.IsDevelopment()) {
+            opts.Authority = oidcAuthority;
+            opts.TokenValidationParameters.ValidateAudience = false;
             opts.BackchannelHttpHandler = new HttpClientHandler {
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
@@ -56,9 +59,6 @@ builder.Services.AddOpenApi(opts => {
             });
         }
 
-        var oidcAuthority = builder.Configuration.GetValue<string>(
-                "Authentication:Schemes:oidc:Authority"
-            );
         doc.Components.SecuritySchemes["oidc"] = new OpenApiSecurityScheme {
             Name = "Authorization",
             Description = "OpenID Connect authentication via KIS.Auth",
