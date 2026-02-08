@@ -2,11 +2,12 @@
 # Kachna Information System version 4
 
 This is a complex information system for product management created by bc. Marek Dančo for the
-school club Kachna at FIT BUT.
+school club Kachna at FIT BUT. It offers an API (in the folder ./src/Api/) and a new front-end (in
+the folder ./src/Frontend/).
 
 ## Prerequisites for running locally
 
-Dependencies: .NET 9, Docker
+Dependencies: .NET 10, Docker, npm
 
 To setup the local database, installing necesary .NET tools is required. The tools are set up for
 the workspace, so just run following to install them:

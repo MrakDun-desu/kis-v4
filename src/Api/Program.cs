@@ -1,6 +1,5 @@
 using System.Data;
 using System.Reflection;
-using System.Security.Claims;
 using KisV4.Api.Endpoints;
 using KisV4.BL.EF;
 using KisV4.DAL.EF;
@@ -24,8 +23,6 @@ var allowTestingTokens = args.Contains("--testing-auth");
 builder.Services.AddAuthentication(allowTestingTokens ? "Bearer" : "oidc")
     .AddJwtBearer("Bearer")
     .AddJwtBearer("oidc", opts => {
-        opts.Authority = "https://su-dev.fit.vutbr.cz";
-        opts.TokenValidationParameters.ValidateAudience = false;
         if (builder.Environment.IsDevelopment()) {
             opts.BackchannelHttpHandler = new HttpClientHandler {
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
@@ -40,6 +37,7 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddOpenApi(opts => {
     opts.AddDocumentTransformer((doc, _, _) => {
         doc.Info.Title = "KISv4 API";
+        doc.Info.Version = "1.0.0";
         doc.Components ??= new OpenApiComponents();
         doc.Security ??= new List<OpenApiSecurityRequirement>();
         doc.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
@@ -57,12 +55,17 @@ builder.Services.AddOpenApi(opts => {
                 [new OpenApiSecuritySchemeReference("Bearer", doc)] = []
             });
         }
+
+        var oidcAuthority = builder.Configuration.GetValue<string>(
+                "Authentication:Schemes:oidc:Authority"
+            );
         doc.Components.SecuritySchemes["oidc"] = new OpenApiSecurityScheme {
-            Type = SecuritySchemeType.OpenIdConnect,
-            OpenIdConnectUrl = new Uri("https://su-dev.fit.vutbr.cz/.well-known/openid-configuration/"),
-            Description = "OpenID Connect authentication via KIS.Auth",
             Name = "Authorization",
-            In = ParameterLocation.Header
+            Description = "OpenID Connect authentication via KIS.Auth",
+            Type = SecuritySchemeType.OpenIdConnect,
+            In = ParameterLocation.Header,
+            OpenIdConnectUrl = new Uri($"{oidcAuthority}.well-known/openid-configuration/"),
+            Scheme = "openIdConnect"
         };
         doc.Security.Add(new() {
             [new OpenApiSecuritySchemeReference("oidc", doc)] = []
@@ -120,9 +123,5 @@ Users.MapEndpoints(app);
 // OpenAPI
 app.MapOpenApi().AllowAnonymous();
 app.MapScalarApiReference().AllowAnonymous();
-
-app.MapGet("identity", (ClaimsPrincipal user) => {
-    return user.Claims.Select(u => new { u.Type, u.Value });
-});
 
 app.Run();

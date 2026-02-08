@@ -15,8 +15,8 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
 # Copy entire source code
 COPY ./Api/. Api/
 COPY ./BL.EF/. BL.EF/
-COPY ../DAL.EF/ DAL.EF/
-COPY ../Common/ Common/
+COPY ./DAL.EF/ DAL.EF/
+COPY ./Common/ Common/
 
 # Build and publish
 WORKDIR /src/Api
