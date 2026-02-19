@@ -1,7 +1,7 @@
 ﻿services:
 
   database:
-    image: postgres:latest
+    image: postgres:18
     container_name: postgres_db
     environment: # environment vars for configuration of db
       - POSTGRES_USER=postgres

@@ -1,8 +1,9 @@
 namespace KisV4.Common.Enums;
 
-public enum StoreTransactionReason {
+public enum TransactionReason {
     AddingToStore = 0,
     ChangingStores,
     WriteOff,
-    Sale
+    Sale,
+    StockTaking
 }

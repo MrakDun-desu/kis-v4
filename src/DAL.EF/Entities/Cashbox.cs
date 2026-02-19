@@ -6,8 +6,7 @@ public record Cashbox {
     public required string Name { get; set; }
 
     public int SalesAccountId { get; init; }
-    public Account SalesAccount { get; init; } = new();
+    public Account? SalesAccount { get; init; } = new();
     public int DonationsAccountId { get; init; }
-    public Account DonationsAccount { get; init; } = new();
-    public ICollection<StockTaking> StockTakings { get; init; } = [];
+    public Account? DonationsAccount { get; init; } = new();
 }

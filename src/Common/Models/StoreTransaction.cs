@@ -11,7 +11,7 @@ public record StoreTransactionListModel {
     public required DateTimeOffset? CancelledAt { get; init; }
     public required UserListModel StartedBy { get; init; }
     public required UserListModel? CancelledBy { get; init; }
-    public required StoreTransactionReason Reason { get; init; }
+    public required TransactionReason Reason { get; init; }
     public required int? SaleTransactionId { get; init; }
 }
 
@@ -22,7 +22,7 @@ public record StoreTransactionDetailModel {
     public required DateTimeOffset? CancelledAt { get; init; }
     public required UserListModel StartedBy { get; init; }
     public required UserListModel? CancelledBy { get; init; }
-    public required StoreTransactionReason Reason { get; init; }
+    public required TransactionReason Reason { get; init; }
     public required int? SaleTransactionId { get; init; }
     public required StoreTransactionItemModel[] StoreTransactionItems { get; init; }
 }
@@ -39,7 +39,7 @@ public record StoreTransactionReadAllResponse : PagedResponse<StoreTransactionLi
 public record StoreTransactionCreateRequest {
     public string? Note { get; init; }
     public required StoreTransactionItemCreateRequest[] StoreTransactionItems { get; init; }
-    public required StoreTransactionReason Reason { get; init; }
+    public required TransactionReason Reason { get; init; }
     public required int StoreId { get; init; }
     public int? SourceStoreId { get; init; }
     public bool UpdateCosts { get; init; }

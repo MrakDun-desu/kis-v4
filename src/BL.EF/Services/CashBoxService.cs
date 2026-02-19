@@ -1,4 +1,5 @@
 using KisV4.Common.DependencyInjection;
+using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
@@ -10,14 +11,12 @@ public class CashBoxService(
         KisDbContext dbContext,
         TimeProvider timeProvider,
         UserService userService,
-        StockTakingService stockTakingService,
         AccountTransactionService accountTransactionService
         ) : IScopedService {
 
     private readonly KisDbContext _dbContext = dbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
     private readonly UserService _userService = userService;
-    private readonly StockTakingService _stockTakingService = stockTakingService;
     private readonly AccountTransactionService _accountTransactionService = accountTransactionService;
 
     public async Task<CashBoxReadAllResponse> ReadAllAsync(CancellationToken token = default) {
@@ -51,20 +50,22 @@ public class CashBoxService(
             return null;
         }
 
-        var stockTakings = await _stockTakingService.ReadAllAsync(new StockTakingReadAllRequest {
-            CashBoxId = id,
-        }, token);
+        var stockTakings = await _dbContext.AccountTransactions
+            .Where(at => at.AccountId == entity.SalesAccountId)
+            .Include(at => at.SaleTransaction)
+            .Where(at => at.SaleTransaction!.Reason == TransactionReason.StockTaking)
+            .Select(at => at.SaleTransaction!.StartedAt)
+            .OrderDescending()
+            .ToArrayAsync(token);
 
-        var accountTransactionsFrom = stockTakings.Data.FirstOrDefault()?.Timestamp;
+        var accountTransactionsFrom = stockTakings.FirstOrDefault();
 
         var donationsTransactions = await _accountTransactionService.ReadAllAsync(new() {
             AccountId = entity.DonationsAccountId,
-            From = accountTransactionsFrom
         }, token);
 
         var salesTransacions = await _accountTransactionService.ReadAllAsync(new() {
             AccountId = entity.SalesAccountId,
-            From = accountTransactionsFrom
         }, token);
 
         return new CashBoxReadResponse {

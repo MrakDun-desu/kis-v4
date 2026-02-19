@@ -33,7 +33,6 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
     public DbSet<SaleItem> SaleItems { get; init; } = null!;
     public DbSet<SaleTransaction> SaleTransactions { get; init; } = null!;
     public DbSet<SaleTransactionItem> SaleTransactionItems { get; init; } = null!;
-    public DbSet<StockTaking> StockTakings { get; init; } = null!;
     public DbSet<Store> Stores { get; init; } = null!;
     public DbSet<StoreItem> StoreItems { get; init; } = null!;
     public DbSet<StoreItemAmount> StoreItemAmounts { get; init; } = null!;

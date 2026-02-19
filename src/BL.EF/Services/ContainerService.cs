@@ -100,7 +100,7 @@ public class ContainerService(
         try {
             await StoreTransactionService.CreateInternalAsync(
                     new StoreTransactionCreateRequest {
-                        Reason = StoreTransactionReason.AddingToStore,
+                        Reason = TransactionReason.AddingToStore,
                         StoreId = req.StoreId,
                         StoreTransactionItems = [
                             new StoreTransactionItemCreateRequest {
@@ -156,7 +156,7 @@ public class ContainerService(
             if (entity.StoreId != req.StoreId) {
                 await StoreTransactionService.CreateInternalAsync(
                         new StoreTransactionCreateRequest {
-                            Reason = StoreTransactionReason.ChangingStores,
+                            Reason = TransactionReason.ChangingStores,
                             StoreId = req.StoreId,
                             SourceStoreId = entity.StoreId,
                             StoreTransactionItems = [
