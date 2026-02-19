@@ -45,36 +45,6 @@ public class CashBoxService(
         return new CashBoxCreateResponse { Id = entity.Id, Name = entity.Name };
     }
 
-    public async Task<StockTakingCreateResponse?> StockTakingAsync(
-            int id,
-            int userId,
-            CancellationToken token = default
-            ) {
-        var reqTime = _timeProvider.GetUtcNow();
-
-        var entity = await _dbContext.Cashboxes.FindAsync(id, token);
-        if (entity is null) {
-            return null;
-        }
-
-        var user = await _userService.GetOrCreateAsync(userId, token);
-
-        var stockTaking = new StockTaking {
-            Timestamp = reqTime,
-            CashBoxId = id,
-            UserId = userId
-        };
-
-        _dbContext.StockTakings.Add(stockTaking);
-        await _dbContext.SaveChangesAsync(token);
-
-        return new StockTakingCreateResponse {
-            Timestamp = stockTaking.Timestamp,
-            CashBoxId = stockTaking.CashBoxId,
-            User = user
-        };
-    }
-
     public async Task<CashBoxReadResponse?> ReadAsync(int id, CancellationToken token = default) {
         var entity = await _dbContext.Cashboxes.FindAsync(id, token);
         if (entity is null) {
@@ -113,6 +83,7 @@ public class CashBoxService(
         }
 
         entity.Name = req.Name;
+        entity.Deleted = false;
 
         _dbContext.Cashboxes.Update(entity);
         await _dbContext.SaveChangesAsync(token);

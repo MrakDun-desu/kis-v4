@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using FluentValidation;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
@@ -12,7 +11,6 @@ public static class CashBoxes {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("cashboxes", ReadAll);
         routeBuilder.MapPost("cashboxes", Create);
-        routeBuilder.MapPost("cashboxes/{id:int}/stock-taking", StockTaking);
         routeBuilder.MapGet("cashboxes/{id:int}", Read)
             .WithName(ReadRouteName);
         routeBuilder.MapPut("cashboxes/{id:int}", Update);
@@ -39,18 +37,6 @@ public static class CashBoxes {
 
         var output = await service.CreateAsync(req, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
-    }
-
-    public static async Task<Results<Ok<StockTakingCreateResponse>, NotFound>> StockTaking(
-            CashBoxService service,
-            ClaimsPrincipal claims,
-            int id,
-            CancellationToken token = default
-            ) {
-        return await service.StockTakingAsync(id, claims.GetUserId(), token) switch {
-            null => TypedResults.NotFound(),
-            var response => TypedResults.Ok(response)
-        };
     }
 
     public static async Task<Results<Ok<CashBoxReadResponse>, NotFound>> Read(

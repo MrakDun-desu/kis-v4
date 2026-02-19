@@ -83,7 +83,7 @@ public class ContainerService(
         var template = await _dbContext.ContainerTemplates
             .Include(t => t.StoreItem)
             .FirstAsync(t => t.Id == req.TemplateId, token);
-        var store = _dbContext.Stores.Find(req.StoreId);
+        var store = await _dbContext.Stores.FindAsync(req.StoreId, token);
         var user = await _userService.GetOrCreateAsync(userId, token);
 
         var containers = Enumerable.Range(0, req.Amount).Select(_ => new Container {
