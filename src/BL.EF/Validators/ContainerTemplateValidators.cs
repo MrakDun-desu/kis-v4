@@ -11,14 +11,18 @@ public class ContainerTemplateReadAllValidator : AbstractValidator<ContainerTemp
         _dbContext = dbContext;
 
         RuleFor(x => x.StoreItemId)
-            .MustAsync(BeNullOrExistingStoreItem)
-            .WithMessage("StoreItemId must either be null or identify an existing store item");
+            .MustAsync(BeNullOrContainerItem)
+            .WithMessage("The queried store item must be null or container item");
     }
 
-    private async Task<bool> BeNullOrExistingStoreItem(int? storeItemId, CancellationToken token = default) =>
+    private async Task<bool> BeNullOrContainerItem(int? storeItemId, CancellationToken token = default) =>
         storeItemId switch {
             null => true,
-            { } val => await _dbContext.StoreItems.FindAsync(val, token) is not null
+            { } id => await _dbContext.StoreItems.FindAsync(id, token)
+            switch {
+                null => false,
+                var val => val.IsContainerItem
+            }
         };
 }
 
@@ -29,12 +33,15 @@ public class ContainerTemplateCreateValidator : AbstractValidator<ContainerTempl
         _dbContext = dbContext;
 
         RuleFor(x => x.StoreItemId)
-            .MustAsync(StoreItemExists)
-            .WithMessage("Specified store item must exist");
+            .MustAsync(StoreItemIsContainerItem)
+            .WithMessage("Specified store item must be an existing container item");
     }
 
-    private async Task<bool> StoreItemExists(int storeItemId, CancellationToken token = default) =>
-        await _dbContext.StoreItems.FindAsync(storeItemId, token) is not null;
+    private async Task<bool> StoreItemIsContainerItem(int storeItemId, CancellationToken token = default) =>
+        await _dbContext.StoreItems.FindAsync(storeItemId, token) switch {
+            null => false,
+            var val => val.IsContainerItem
+        };
 }
 
 public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTemplateUpdateRequest> {
@@ -44,10 +51,13 @@ public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTempl
         _dbContext = dbContext;
 
         RuleFor(x => x.StoreItemId)
-            .MustAsync(StoreItemExists)
-            .WithMessage("Specified store item must exist");
+            .MustAsync(StoreItemIsContainerItem)
+            .WithMessage("Specified store item must be an existing container item");
     }
 
-    private async Task<bool> StoreItemExists(int storeItemId, CancellationToken token = default) =>
-        await _dbContext.StoreItems.FindAsync(storeItemId, token) is not null;
+    private async Task<bool> StoreItemIsContainerItem(int storeItemId, CancellationToken token = default) =>
+        await _dbContext.StoreItems.FindAsync(storeItemId, token) switch {
+            null => false,
+            var val => val.IsContainerItem
+        };
 }

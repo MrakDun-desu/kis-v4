@@ -25,7 +25,7 @@ public class CashBoxService(
                 Id = cb.Id,
                 Name = cb.Name
             }
-        ).ToArrayAsync();
+        ).ToArrayAsync(token);
 
         return new CashBoxReadAllResponse { Data = data };
     }
@@ -78,13 +78,13 @@ public class CashBoxService(
     }
 
     public async Task<CashBoxUpdateResponse?> UpdateAsync(int id, CashBoxUpdateRequest req, CancellationToken token = default) {
-        var entity = await _dbContext.Cashboxes.FindAsync(id, token);
+        var entity = await _dbContext.Cashboxes
+            .FindAsync(id, token);
         if (entity is null) {
             return null;
         }
 
         entity.Name = req.Name;
-        entity.Deleted = false;
 
         _dbContext.Cashboxes.Update(entity);
         await _dbContext.SaveChangesAsync(token);

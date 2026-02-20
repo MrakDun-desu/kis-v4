@@ -82,7 +82,6 @@ public class ContainerTemplateService(
         entity.Amount = req.Amount;
         entity.Name = req.Name;
         entity.StoreItemId = req.StoreItemId;
-        entity.Deleted = false;
 
         _dbContext.Update(entity);
 

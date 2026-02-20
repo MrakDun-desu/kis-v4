@@ -31,6 +31,7 @@ public static class IQueryableExtensions {
 
         var queried = await ordered
             .Take(req.PageSize + 1)
+            .AsAsyncEnumerable()
             .ToArrayAsync(token);
 
         TKey? nextPageStart = (queried.Length > req.PageSize)
@@ -75,7 +76,7 @@ public static class IQueryableExtensions {
                 .Skip((req.Page - 1) * req.PageSize)
                 .Take(req.PageSize)
                 .Select(mapping)
-                .AsQueryable()
+                .ToAsyncEnumerable()
                 .ToArrayAsync(token),
             new PageMeta {
                 Page = req.Page,
