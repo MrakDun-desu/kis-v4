@@ -33,11 +33,11 @@ public class ContainerTemplateCreateValidator : AbstractValidator<ContainerTempl
         _dbContext = dbContext;
 
         RuleFor(x => x.StoreItemId)
-            .MustAsync(StoreItemIsContainerItem)
+            .MustAsync(BeContainerItem)
             .WithMessage("Specified store item must be an existing container item");
     }
 
-    private async Task<bool> StoreItemIsContainerItem(int storeItemId, CancellationToken token = default) =>
+    private async Task<bool> BeContainerItem(int storeItemId, CancellationToken token = default) =>
         await _dbContext.StoreItems.FindAsync(storeItemId, token) switch {
             null => false,
             var val => val.IsContainerItem
@@ -51,11 +51,11 @@ public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTempl
         _dbContext = dbContext;
 
         RuleFor(x => x.StoreItemId)
-            .MustAsync(StoreItemIsContainerItem)
+            .MustAsync(BeContainerItem)
             .WithMessage("Specified store item must be an existing container item");
     }
 
-    private async Task<bool> StoreItemIsContainerItem(int storeItemId, CancellationToken token = default) =>
+    private async Task<bool> BeContainerItem(int storeItemId, CancellationToken token = default) =>
         await _dbContext.StoreItems.FindAsync(storeItemId, token) switch {
             null => false,
             var val => val.IsContainerItem
