@@ -10,7 +10,7 @@ public record Cost {
     public required DateTimeOffset Timestamp { get; init; }
     public required string Description { get; init; }
 
-    public required int StoreItemId { get; init; }
+    public int StoreItemId { get; init; }
     public StoreItem? StoreItem { get; set; }
     public required int UserId { get; init; }
     public User? User { get; set; }

@@ -10,6 +10,6 @@ public record StoreItem {
 
     public ICollection<Category> Categories { get; init; } = [];
     public ICollection<Composition> Compositions { get; init; } = [];
-    public ICollection<StoreTransactionItem> StoreTransactionItems = [];
+    public ICollection<StoreTransactionItem> StoreTransactionItems { get; init; } = [];
     public ICollection<Cost> Costs { get; init; } = [];
 }

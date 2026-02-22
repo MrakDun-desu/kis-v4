@@ -24,7 +24,7 @@ public record StoreTransactionDetailModel {
     public required UserListModel? CancelledBy { get; init; }
     public required TransactionReason Reason { get; init; }
     public required int? SaleTransactionId { get; init; }
-    public required StoreTransactionItemModel[] StoreTransactionItems { get; init; }
+    public required IEnumerable<StoreTransactionItemModel> StoreTransactionItems { get; init; }
 }
 
 // Requests and responses

@@ -17,25 +17,6 @@ public class CostService(
     private readonly UserService _userService = userService;
     private readonly TimeProvider _timeProvider = timeProvider;
 
-    public async Task<CostReadAllResponse> ReadAll(
-            CostReadAllRequest req,
-            CancellationToken token = default) {
-        var data = await _dbContext.Costs
-            .Where(c => c.StoreItemId == req.StoreItemId)
-            .Include(c => c.User)
-            .Include(c => c.StoreItem)
-            .Select(c => new CostModel {
-                Amount = c.Amount,
-                Description = c.Description,
-                Timestamp = c.Timestamp,
-                User = c.User.ToModel()!,
-                StoreItem = c.StoreItem!.ToModel()
-            })
-            .ToArrayAsync(token);
-
-        return new CostReadAllResponse { Data = data };
-    }
-
     public async Task<CostCreateResponse> Create(
             CostCreateRequest req,
             int userId,
@@ -43,10 +24,10 @@ public class CostService(
             ) {
         var reqTime = _timeProvider.GetUtcNow();
 
-        var storeItem = await _dbContext.StoreItems
-            .FindAsync(req.StoreItemId, token);
-
         var user = await _userService.GetOrCreateAsync(userId, token);
+
+        var storeItem = await _dbContext.StoreItems.FindAsync(req.StoreItemId, token);
+        storeItem!.CurrentCost = req.Amount;
 
         var entity = new Cost {
             Amount = req.Amount,
@@ -62,7 +43,7 @@ public class CostService(
         return new CostCreateResponse {
             Amount = entity.Amount,
             Description = entity.Description,
-            StoreItem = entity.StoreItem!.ToModel(),
+            StoreItemId = entity.StoreItemId,
             User = entity.User.ToModel()!,
             Timestamp = entity.Timestamp
         };

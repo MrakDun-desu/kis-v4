@@ -121,6 +121,37 @@ public class StoreTransactionService(
                         return output;
                     });
 
+        List<int> storesToUpdate = [req.StoreId];
+        if (req.SourceStoreId is { } sourceStoreId) {
+            storesToUpdate.Add(sourceStoreId);
+        }
+
+        var storeItemsToUpdate = req.StoreTransactionItems.Select(sti => sti.StoreItemId);
+
+        var existingStoreItemAmounts = await dbContext.StoreItemAmounts
+            .Where(sia => storesToUpdate.Contains(sia.StoreId))
+            .Where(sia => storeItemsToUpdate.Contains(sia.StoreItemId))
+            .ToArrayAsync(token);
+
+        var missingStoreItemAmounts = storeItemAmountChanges
+            .Where(x => !existingStoreItemAmounts
+                    .Any(sia => sia.StoreItemId == x.StoreItemId && sia.StoreId == x.StoreId)
+                    )
+            .ToArray();
+
+        // add zero amount to every store item amount that hasn't been found so far
+        foreach (var missingAmount in missingStoreItemAmounts) {
+            dbContext.StoreItemAmounts.Add(
+                    new StoreItemAmount {
+                        StoreItemId = missingAmount.StoreItemId,
+                        StoreId = missingAmount.StoreId,
+                        Amount = 0
+                    }
+                );
+        }
+
+        await dbContext.SaveChangesAsync(token);
+
         // update all the store item amounts in one database call
         await dbContext.StoreItemAmounts
             .Join(
@@ -151,13 +182,8 @@ public class StoreTransactionService(
             .ToArrayAsync(token);
         var relevantStoreItemIds = compositions.SelectMany(g => g.Select(c => c.StoreItemId)).Distinct();
 
-        List<int> storesToUpdate = [req.StoreId];
-        if (req.SourceStoreId is { } sourceStoreId) {
-            storesToUpdate.Add(sourceStoreId);
-        }
-
         // get store item amounts for all the composites
-        var storeItemAmounts = await dbContext.StoreItemAmounts
+        var newStoreItemAmounts = await dbContext.StoreItemAmounts
             .Where(sia => storesToUpdate.Contains(sia.StoreId))
             .Where(sia => relevantStoreItemIds.Contains(sia.StoreItemId))
             .GroupBy(sia => sia.StoreId)
@@ -175,7 +201,7 @@ public class StoreTransactionService(
             foreach (var storeId in storesToUpdate) {
                 var newAmount = composition
                     .Join(
-                            storeItemAmounts.First(sia => sia.StoreId == storeId).ItemAmounts,
+                            newStoreItemAmounts.First(sia => sia.StoreId == storeId).ItemAmounts,
                             c => c.StoreItemId,
                             sia => sia.StoreItemId,
                             (c, sia) => new { NeededAmount = c.Amount, AvailableAmount = sia.Amount }
@@ -185,6 +211,27 @@ public class StoreTransactionService(
                 newCompositeAmounts.Add((composition.Key, storeId, newAmount));
             }
         }
+
+        var existingCompositeAmounts = await dbContext.CompositeAmounts
+            .Where(ca => storesToUpdate.Contains(ca.StoreId))
+            .Where(ca => compositeIds.Contains(ca.CompositeId))
+            .ToArrayAsync(token);
+
+        var missingCompositeAmounts = newCompositeAmounts
+            .Where(ca => !existingCompositeAmounts
+                    .Any(eca => eca.StoreId == ca.StoreId && eca.CompositeId == ca.CompositeId))
+            .ToArray();
+
+        // adding missing composite amounts
+        foreach (var missingAmount in missingCompositeAmounts) {
+            dbContext.CompositeAmounts.Add(new CompositeAmount {
+                CompositeId = missingAmount.CompositeId,
+                StoreId = missingAmount.StoreId,
+                Amount = 0
+            });
+        }
+
+        await dbContext.SaveChangesAsync(token);
 
         // update all composite amounts in one database call
         await dbContext.CompositeAmounts

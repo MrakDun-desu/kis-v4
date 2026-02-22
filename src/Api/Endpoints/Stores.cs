@@ -1,3 +1,4 @@
+using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -15,7 +16,10 @@ public static class Stores {
         routeBuilder.MapDelete("stores/{id:int}", Delete);
     }
 
-    public static StoreReadAllResponse ReadAll() {
+    public static async Task<StoreReadAllResponse> ReadAll(
+            StoreService service,
+            CancellationToken token
+            ) {
         throw new NotImplementedException();
     }
 

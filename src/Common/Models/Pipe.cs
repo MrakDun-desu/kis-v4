@@ -11,8 +11,8 @@ public record PipeListModel {
 public record PipeDetailModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
-    public required SaleItemReadAllResponse SaleItems { get; init; }
-    public required ContainerReadAllResponse Containers { get; init; }
+    public required IEnumerable<SaleItemListModel> SaleItems { get; init; }
+    public required IEnumerable<ContainerListModel> Containers { get; init; }
 }
 
 // Requests and responses

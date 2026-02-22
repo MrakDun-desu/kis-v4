@@ -323,7 +323,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -336,7 +335,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -579,7 +577,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -592,7 +589,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -778,7 +774,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -791,7 +786,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -933,38 +927,6 @@
       }
     },
     "/costs": {
-      "get": {
-        "tags": [
-          "Costs"
-        ],
-        "parameters": [
-          {
-            "name": "StoreItemId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CostReadAllResponse"
-                }
-              }
-            }
-          }
-        }
-      },
       "post": {
         "tags": [
           "Costs"
@@ -980,8 +942,8 @@
           "required": true
         },
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -999,33 +961,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/costs/{id}": {
-      "delete": {
-        "tags": [
-          "Costs"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "404": {
-            "description": "Not Found"
           }
         }
       }
@@ -1301,7 +1236,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -1314,7 +1248,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -1666,7 +1599,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -1679,7 +1611,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -1886,7 +1817,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -1899,7 +1829,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -2227,7 +2156,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -2240,7 +2168,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -2258,6 +2185,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StoreItemAmountReadAllResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
                 }
               }
             }
@@ -2300,7 +2237,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -2313,7 +2249,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -2331,6 +2266,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StoreItemReadAllResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
                 }
               }
             }
@@ -2665,7 +2610,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -2678,7 +2622,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -2809,7 +2752,6 @@
           {
             "name": "Page",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -2822,7 +2764,6 @@
           {
             "name": "PageSize",
             "in": "query",
-            "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -3822,7 +3763,7 @@
           "amount",
           "timestamp",
           "description",
-          "storeItem",
+          "storeItemId",
           "user"
         ],
         "type": "object",
@@ -3842,8 +3783,13 @@
           "description": {
             "type": "string"
           },
-          "storeItem": {
-            "$ref": "#/components/schemas/StoreItemListModel"
+          "storeItemId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           },
           "user": {
             "$ref": "#/components/schemas/UserListModel"
@@ -3855,7 +3801,7 @@
           "amount",
           "timestamp",
           "description",
-          "storeItem",
+          "storeItemId",
           "user"
         ],
         "type": "object",
@@ -3875,25 +3821,16 @@
           "description": {
             "type": "string"
           },
-          "storeItem": {
-            "$ref": "#/components/schemas/StoreItemListModel"
+          "storeItemId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           },
           "user": {
             "$ref": "#/components/schemas/UserListModel"
-          }
-        }
-      },
-      "CostReadAllResponse": {
-        "required": [
-          "data"
-        ],
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CostModel"
-            }
           }
         }
       },
@@ -4049,6 +3986,9 @@
         }
       },
       "LayoutItemModel": {
+        "required": [
+          "Type"
+        ],
         "type": "object",
         "anyOf": [
           {
@@ -4059,43 +3999,19 @@
           },
           {
             "$ref": "#/components/schemas/LayoutItemModelLayoutPipeModel"
-          },
-          {
-            "$ref": "#/components/schemas/LayoutItemModelBase"
           }
-        ]
-      },
-      "LayoutItemModelBase": {
-        "required": [
-          "x",
-          "y",
-          "type"
         ],
-        "properties": {
-          "x": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "y": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "type": {
-            "type": "string"
+        "discriminator": {
+          "propertyName": "Type",
+          "mapping": {
+            "SaleItem": "#/components/schemas/LayoutItemModelLayoutSaleItemModel",
+            "Layout": "#/components/schemas/LayoutItemModelLayoutLinkModel",
+            "Pipe": "#/components/schemas/LayoutItemModelLayoutPipeModel"
           }
         }
       },
       "LayoutItemModelLayoutLinkModel": {
         "required": [
-          "Type",
           "target",
           "x",
           "y",
@@ -4134,7 +4050,6 @@
       },
       "LayoutItemModelLayoutPipeModel": {
         "required": [
-          "Type",
           "target",
           "x",
           "y",
@@ -4173,7 +4088,6 @@
       },
       "LayoutItemModelLayoutSaleItemModel": {
         "required": [
-          "Type",
           "target",
           "x",
           "y",
@@ -4418,20 +4332,6 @@
           }
         }
       },
-      "ModificationReadAllResponse": {
-        "required": [
-          "data"
-        ],
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ModificationModel"
-            }
-          }
-        }
-      },
       "ModifierCreateRequest": {
         "required": [
           "id",
@@ -4501,6 +4401,10 @@
         "required": [
           "id",
           "name",
+          "image",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
           "categories",
           "compositions",
           "targets"
@@ -4549,20 +4453,33 @@
             "format": "double"
           },
           "categories": {
-            "$ref": "#/components/schemas/CategoryReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryModel"
+            }
           },
           "compositions": {
-            "$ref": "#/components/schemas/CompositionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositionModel"
+            }
           },
           "targets": {
-            "$ref": "#/components/schemas/SaleItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleItemListModel"
+            }
           }
         }
       },
       "ModifierListModel": {
         "required": [
           "id",
-          "name"
+          "name",
+          "image",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount"
         ],
         "type": "object",
         "properties": {
@@ -4631,6 +4548,10 @@
         "required": [
           "id",
           "name",
+          "image",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
           "categories",
           "compositions",
           "targets"
@@ -4679,13 +4600,22 @@
             "format": "double"
           },
           "categories": {
-            "$ref": "#/components/schemas/CategoryReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryModel"
+            }
           },
           "compositions": {
-            "$ref": "#/components/schemas/CompositionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositionModel"
+            }
           },
           "targets": {
-            "$ref": "#/components/schemas/SaleItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleItemListModel"
+            }
           }
         }
       },
@@ -4758,6 +4688,10 @@
         "required": [
           "id",
           "name",
+          "image",
+          "marginPercent",
+          "marginStatic",
+          "prestigeAmount",
           "categories",
           "compositions",
           "targets"
@@ -4806,13 +4740,22 @@
             "format": "double"
           },
           "categories": {
-            "$ref": "#/components/schemas/CategoryReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryModel"
+            }
           },
           "compositions": {
-            "$ref": "#/components/schemas/CompositionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositionModel"
+            }
           },
           "targets": {
-            "$ref": "#/components/schemas/SaleItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleItemListModel"
+            }
           }
         }
       },
@@ -4936,10 +4879,16 @@
             "type": "string"
           },
           "saleItems": {
-            "$ref": "#/components/schemas/SaleItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleItemListModel"
+            }
           },
           "containers": {
-            "$ref": "#/components/schemas/ContainerReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContainerListModel"
+            }
           }
         }
       },
@@ -5050,6 +4999,7 @@
         "required": [
           "id",
           "name",
+          "image",
           "marginPercent",
           "marginStatic",
           "prestigeAmount",
@@ -5103,7 +5053,10 @@
             "$ref": "#/components/schemas/PrintType"
           },
           "applicableModifiers": {
-            "$ref": "#/components/schemas/ModifierReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModifierListModel"
+            }
           }
         }
       },
@@ -5111,6 +5064,7 @@
         "required": [
           "id",
           "name",
+          "image",
           "marginPercent",
           "marginStatic",
           "prestigeAmount",
@@ -5186,6 +5140,7 @@
         "required": [
           "id",
           "name",
+          "image",
           "marginPercent",
           "marginStatic",
           "prestigeAmount",
@@ -5239,7 +5194,10 @@
             "$ref": "#/components/schemas/PrintType"
           },
           "applicableModifiers": {
-            "$ref": "#/components/schemas/ModifierReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModifierListModel"
+            }
           }
         }
       },
@@ -5316,6 +5274,7 @@
         "required": [
           "id",
           "name",
+          "image",
           "marginPercent",
           "marginStatic",
           "prestigeAmount",
@@ -5369,7 +5328,10 @@
             "$ref": "#/components/schemas/PrintType"
           },
           "applicableModifiers": {
-            "$ref": "#/components/schemas/ModifierReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModifierListModel"
+            }
           }
         }
       },
@@ -5441,9 +5403,13 @@
       "SaleTransactionCloseResponse": {
         "required": [
           "id",
+          "note",
           "startedAt",
+          "cancelledAt",
           "startedBy",
+          "cancelledBy",
           "open",
+          "openedBy",
           "saleTransactionItems",
           "accountTransactions",
           "storeTransactions"
@@ -5502,13 +5468,22 @@
             ]
           },
           "saleTransactionItems": {
-            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
           },
           "accountTransactions": {
-            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
           },
           "storeTransactions": {
-            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
+            }
           }
         }
       },
@@ -5571,9 +5546,13 @@
       "SaleTransactionCreateResponse": {
         "required": [
           "id",
+          "note",
           "startedAt",
+          "cancelledAt",
           "startedBy",
+          "cancelledBy",
           "open",
+          "openedBy",
           "saleTransactionItems",
           "accountTransactions",
           "storeTransactions"
@@ -5632,13 +5611,22 @@
             ]
           },
           "saleTransactionItems": {
-            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
           },
           "accountTransactions": {
-            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
           },
           "storeTransactions": {
-            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
+            }
           }
         }
       },
@@ -5712,7 +5700,10 @@
             "format": "int32"
           },
           "modifications": {
-            "$ref": "#/components/schemas/ModificationReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModificationModel"
+            }
           }
         }
       },
@@ -5733,8 +5724,14 @@
       "SaleTransactionListModel": {
         "required": [
           "id",
+          "note",
           "startedAt",
-          "startedBy"
+          "cancelledAt",
+          "startedBy",
+          "cancelledBy",
+          "open",
+          "openedBy",
+          "reason"
         ],
         "type": "object",
         "properties": {
@@ -5788,6 +5785,9 @@
                 "$ref": "#/components/schemas/UserListModel"
               }
             ]
+          },
+          "reason": {
+            "$ref": "#/components/schemas/TransactionReason"
           }
         }
       },
@@ -5827,9 +5827,13 @@
       "SaleTransactionOpenResponse": {
         "required": [
           "id",
+          "note",
           "startedAt",
+          "cancelledAt",
           "startedBy",
+          "cancelledBy",
           "open",
+          "openedBy",
           "saleTransactionItems",
           "accountTransactions",
           "storeTransactions"
@@ -5888,13 +5892,22 @@
             ]
           },
           "saleTransactionItems": {
-            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
           },
           "accountTransactions": {
-            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
           },
           "storeTransactions": {
-            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
+            }
           }
         }
       },
@@ -5927,9 +5940,13 @@
       "SaleTransactionReadResponse": {
         "required": [
           "id",
+          "note",
           "startedAt",
+          "cancelledAt",
           "startedBy",
+          "cancelledBy",
           "open",
+          "openedBy",
           "saleTransactionItems",
           "accountTransactions",
           "storeTransactions"
@@ -5988,13 +6005,22 @@
             ]
           },
           "saleTransactionItems": {
-            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
           },
           "accountTransactions": {
-            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
           },
           "storeTransactions": {
-            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
+            }
           }
         }
       },
@@ -6030,9 +6056,13 @@
       "SaleTransactionUpdateResponse": {
         "required": [
           "id",
+          "note",
           "startedAt",
+          "cancelledAt",
           "startedBy",
+          "cancelledBy",
           "open",
+          "openedBy",
           "saleTransactionItems",
           "accountTransactions",
           "storeTransactions"
@@ -6091,13 +6121,22 @@
             ]
           },
           "saleTransactionItems": {
-            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
           },
           "accountTransactions": {
-            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
           },
           "storeTransactions": {
-            "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
+            }
           }
         }
       },
@@ -6186,22 +6225,14 @@
       },
       "StoreItemCreateRequest": {
         "required": [
-          "id",
           "name",
           "unitName",
           "isContainerItem",
-          "categoryIds"
+          "categoryIds",
+          "initialCost"
         ],
         "type": "object",
         "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
           "name": {
             "type": "string"
           },
@@ -6221,6 +6252,14 @@
               ],
               "format": "int32"
             }
+          },
+          "initialCost": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
           }
         }
       },
@@ -6262,10 +6301,16 @@
             "format": "double"
           },
           "categories": {
-            "$ref": "#/components/schemas/CategoryReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryModel"
+            }
           },
           "costs": {
-            "$ref": "#/components/schemas/CostReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CostModel"
+            }
           }
         }
       },
@@ -6362,39 +6407,32 @@
             "format": "double"
           },
           "categories": {
-            "$ref": "#/components/schemas/CategoryReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryModel"
+            }
           },
           "costs": {
-            "$ref": "#/components/schemas/CostReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CostModel"
+            }
           }
         }
       },
       "StoreItemUpdateRequest": {
         "required": [
-          "id",
           "name",
           "unitName",
-          "isContainerItem",
           "categoryIds"
         ],
         "type": "object",
         "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
           "name": {
             "type": "string"
           },
           "unitName": {
             "type": "string"
-          },
-          "isContainerItem": {
-            "type": "boolean"
           },
           "categoryIds": {
             "type": "array",
@@ -6447,10 +6485,16 @@
             "format": "double"
           },
           "categories": {
-            "$ref": "#/components/schemas/CategoryReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryModel"
+            }
           },
           "costs": {
-            "$ref": "#/components/schemas/CostReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CostModel"
+            }
           }
         }
       },

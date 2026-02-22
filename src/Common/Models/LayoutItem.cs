@@ -9,7 +9,7 @@ namespace KisV4.Common.Models;
 [JsonDerivedType(typeof(LayoutSaleItemModel), LayoutItemType.SaleItem)]
 [JsonDerivedType(typeof(LayoutLinkModel), LayoutItemType.Layout)]
 [JsonDerivedType(typeof(LayoutPipeModel), LayoutItemType.Pipe)]
-public record LayoutItemModel {
+public abstract record LayoutItemModel {
     public required int X { get; init; }
     public required int Y { get; init; }
     public required string Type { get; init; }

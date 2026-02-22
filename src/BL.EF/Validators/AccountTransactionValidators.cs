@@ -5,11 +5,7 @@ using KisV4.DAL.EF;
 namespace KisV4.BL.EF.Validators;
 
 public class AccountTransactionReadAllValidator : AbstractValidator<AccountTransactionReadAllRequest> {
-    private readonly KisDbContext _dbContext;
-
-    public AccountTransactionReadAllValidator(KisDbContext dbContext) {
-        _dbContext = dbContext;
-
+    public AccountTransactionReadAllValidator(ValidationHelper helper) {
         Include(new PagedRequestValidator());
         RuleFor(x => x)
             .Must(x => {
@@ -22,10 +18,7 @@ public class AccountTransactionReadAllValidator : AbstractValidator<AccountTrans
             .WithMessage("The datetime From must be earlier than the datetime To");
 
         RuleFor(x => x.AccountId)
-            .MustAsync(AccountExists)
+            .MustAsync(helper.IdentifyExistingAccount)
             .WithMessage("Account must exist");
     }
-
-    private async Task<bool> AccountExists(int accountId, CancellationToken token = default) =>
-        await _dbContext.Accounts.FindAsync(accountId, token) is not null;
 }

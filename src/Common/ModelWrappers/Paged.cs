@@ -1,8 +1,8 @@
 namespace KisV4.Common.ModelWrappers;
 
 public abstract record PagedRequest {
-    public int Page { get; init; } = 1;
-    public int PageSize { get; init; } = 30;
+    public int? Page { get; init; }
+    public int? PageSize { get; init; }
 }
 
 public record PageMeta {

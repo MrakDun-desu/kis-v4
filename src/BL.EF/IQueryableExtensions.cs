@@ -5,6 +5,8 @@ namespace KisV4.BL.EF;
 
 public static class IQueryableExtensions {
 
+    private const int DefaultPageSize = 50;
+
     public static async Task<TOutPage> KeysetPaginate<TOutPage, TOut, TSource, TKey>(
             this IQueryable<TSource> source,
             KeysetPagedRequest<TKey> req,
@@ -29,8 +31,10 @@ public static class IQueryableExtensions {
             ? offsetCollection.OrderByDescending(order)
             : offsetCollection.OrderBy(order)).AsQueryable();
 
+        var pageSize = req.PageSize ?? DefaultPageSize;
+
         var queried = await ordered
-            .Take(req.PageSize + 1)
+            .Take(pageSize + 1)
             .AsAsyncEnumerable()
             .ToArrayAsync(token);
 
@@ -44,12 +48,12 @@ public static class IQueryableExtensions {
         };
 
         return factory(
-            queried[..req.PageSize].Select(mapping).ToArray(),
+            queried[..pageSize].Select(mapping).ToArray(),
             new KeysetPageMeta<TKey> {
                 Total = total,
                 PageStart = realPageStart,
                 NextPageStart = nextPageStart,
-                PageSize = req.PageSize,
+                PageSize = pageSize,
             }
         );
     }
@@ -71,16 +75,19 @@ public static class IQueryableExtensions {
             false => source.OrderBy(order)
         };
 
+        var page = req.Page ?? 1;
+        var pageSize = req.PageSize ?? DefaultPageSize;
+
         return factory(
             await ordered
-                .Skip((req.Page - 1) * req.PageSize)
-                .Take(req.PageSize)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(mapping)
                 .ToAsyncEnumerable()
                 .ToArrayAsync(token),
             new PageMeta {
-                Page = req.Page,
-                PageSize = req.PageSize,
+                Page = page,
+                PageSize = pageSize,
                 Total = total
             }
         );

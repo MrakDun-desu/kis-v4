@@ -1,3 +1,4 @@
+using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -5,28 +6,29 @@ namespace KisV4.Common.Models;
 // Base models
 public record SaleTransactionListModel {
     public required int Id { get; init; }
-    public string? Note { get; init; }
+    public required string? Note { get; init; }
     public required DateTimeOffset StartedAt { get; init; }
-    public DateTimeOffset? CancelledAt { get; init; }
+    public required DateTimeOffset? CancelledAt { get; init; }
     public required UserListModel StartedBy { get; init; }
-    public UserListModel? CancelledBy { get; init; }
-    public bool Open { get; init; }
-    public UserListModel? OpenedBy { get; init; }
+    public required UserListModel? CancelledBy { get; init; }
+    public required bool Open { get; init; }
+    public required UserListModel? OpenedBy { get; init; }
+    public required TransactionReason Reason { get; init; }
 }
 
 public record SaleTransactionDetailModel {
     public required int Id { get; init; }
-    public string? Note { get; init; }
+    public required string? Note { get; init; }
     public required DateTimeOffset StartedAt { get; init; }
-    public DateTimeOffset? CancelledAt { get; init; }
+    public required DateTimeOffset? CancelledAt { get; init; }
     public required UserListModel StartedBy { get; init; }
-    public UserListModel? CancelledBy { get; init; }
+    public required UserListModel? CancelledBy { get; init; }
     public required bool Open { get; init; }
-    public UserListModel? OpenedBy { get; init; }
+    public required UserListModel? OpenedBy { get; init; }
 
-    public required SaleTransactionItemReadAllResponse SaleTransactionItems { get; init; }
-    public required AccountTransactionReadAllResponse AccountTransactions { get; init; }
-    public required StoreTransactionReadAllResponse StoreTransactions { get; init; }
+    public required IEnumerable<SaleTransactionItemModel> SaleTransactionItems { get; init; }
+    public required IEnumerable<AccountTransactionModel> AccountTransactions { get; init; }
+    public required IEnumerable<StoreTransactionListModel> StoreTransactions { get; init; }
 }
 
 // Requests and responses

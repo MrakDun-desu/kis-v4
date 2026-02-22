@@ -8,7 +8,7 @@ public record SaleTransactionItemModel {
     public required int ItemAmount { get; init; }
     public required SaleItemListModel SaleItem { get; init; }
     public required int SaleTransactionId { get; init; }
-    public required ModificationReadAllResponse Modifications { get; init; }
+    public required IEnumerable<ModificationModel> Modifications { get; init; }
 }
 
 // Requests and responses

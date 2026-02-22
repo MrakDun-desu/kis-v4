@@ -1,8 +1,10 @@
+using System.ComponentModel;
+
 namespace KisV4.Common.ModelWrappers;
 
 public abstract record KeysetPagedRequest<TKey> where TKey : struct {
     public TKey? PageStart { get; init; }
-    public int PageSize { get; init; } = 30;
+    public int? PageSize { get; init; }
 }
 
 public record KeysetPageMeta<TKey> where TKey : struct {

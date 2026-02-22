@@ -1,3 +1,5 @@
+using FluentValidation;
+using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -9,7 +11,17 @@ public static class StoreItemAmounts {
         routeBuilder.MapGet("store-item-amounts", ReadAll);
     }
 
-    public static StoreItemAmountReadAllResponse ReadAll([AsParameters] StoreItemAmountReadAllRequest req) {
-        throw new NotImplementedException();
+    public static async Task<Results<Ok<StoreItemAmountReadAllResponse>, ValidationProblem>> ReadAll(
+            [AsParameters] StoreItemAmountReadAllRequest req,
+            StoreItemAmountService service,
+            IValidator<StoreItemAmountReadAllRequest> validator,
+            CancellationToken token = default
+            ) {
+        var validationResult = await validator.ValidateAsync(req, token);
+        if (!validationResult.IsValid) {
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        }
+
+        return TypedResults.Ok(await service.ReadAllAsync(req, token));
     }
 }

@@ -17,8 +17,8 @@ public record StoreItemDetailModel {
     public required string UnitName { get; init; }
     public required bool IsContainerItem { get; init; }
     public required decimal CurrentCost { get; init; }
-    public required CategoryReadAllResponse Categories { get; init; }
-    public required CostReadAllResponse Costs { get; init; }
+    public required IEnumerable<CategoryModel> Categories { get; init; }
+    public required IEnumerable<CostModel> Costs { get; init; }
 }
 
 // Requests and responses
@@ -31,20 +31,18 @@ public record StoreItemReadAllRequest : PagedRequest {
 public record StoreItemReadAllResponse : PagedResponse<StoreItemListModel>;
 
 public record StoreItemCreateRequest {
-    public required int Id { get; init; }
     public required string Name { get; init; }
     public required string UnitName { get; init; }
     public required bool IsContainerItem { get; init; }
     public required int[] CategoryIds { get; init; }
+    public required decimal InitialCost { get; init; }
 }
 
 public record StoreItemCreateResponse : StoreItemDetailModel;
 
 public record StoreItemUpdateRequest {
-    public required int Id { get; init; }
     public required string Name { get; init; }
     public required string UnitName { get; init; }
-    public required bool IsContainerItem { get; init; }
     public required int[] CategoryIds { get; init; }
 }
 

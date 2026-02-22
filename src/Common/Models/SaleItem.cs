@@ -7,7 +7,7 @@ namespace KisV4.Common.Models;
 public record SaleItemListModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
-    public string? Image { get; init; }
+    public required string? Image { get; init; }
     public required decimal MarginPercent { get; init; }
     public required decimal MarginStatic { get; init; }
     public required decimal PrestigeAmount { get; init; }
@@ -17,12 +17,12 @@ public record SaleItemListModel {
 public record SaleItemDetailModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
-    public string? Image { get; init; }
+    public required string? Image { get; init; }
     public required decimal MarginPercent { get; init; }
     public required decimal MarginStatic { get; init; }
     public required decimal PrestigeAmount { get; init; }
     public required PrintType PrintType { get; init; }
-    public required ModifierReadAllResponse ApplicableModifiers { get; init; }
+    public required IEnumerable<ModifierListModel> ApplicableModifiers { get; init; }
 }
 
 // Requests and responses

@@ -6,22 +6,22 @@ namespace KisV4.Common.Models;
 public record ModifierListModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
-    public string? Image { get; init; }
-    public decimal MarginPercent { get; init; }
-    public decimal MarginStatic { get; init; }
-    public decimal PrestigeAmount { get; init; }
+    public required string? Image { get; init; }
+    public required decimal MarginPercent { get; init; }
+    public required decimal MarginStatic { get; init; }
+    public required decimal PrestigeAmount { get; init; }
 }
 
 public record ModifierDetailModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
-    public string? Image { get; init; }
-    public decimal MarginPercent { get; init; }
-    public decimal MarginStatic { get; init; }
-    public decimal PrestigeAmount { get; init; }
-    public required CategoryReadAllResponse Categories { get; init; }
-    public required CompositionReadAllResponse Compositions { get; init; }
-    public required SaleItemReadAllResponse Targets { get; init; }
+    public required string? Image { get; init; }
+    public required decimal MarginPercent { get; init; }
+    public required decimal MarginStatic { get; init; }
+    public required decimal PrestigeAmount { get; init; }
+    public required IEnumerable<CategoryModel> Categories { get; init; }
+    public required IEnumerable<CompositionModel> Compositions { get; init; }
+    public required IEnumerable<SaleItemListModel> Targets { get; init; }
 }
 
 // Requests and responses
