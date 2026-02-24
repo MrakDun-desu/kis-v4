@@ -1,6 +1,5 @@
 using FluentValidation;
 using KisV4.Common.Models;
-using KisV4.DAL.EF;
 
 namespace KisV4.BL.EF.Validators;
 
@@ -9,5 +8,10 @@ public class CostsCreateValidator : AbstractValidator<CostCreateRequest> {
         RuleFor(x => x.StoreItemId)
             .MustAsync(helper.IdentifyExistingStoreItem)
             .WithMessage("Specified store item must exist");
+        RuleFor(x => x.Description)
+            .MaximumLength(ValidationConstants.MaxDescriptionLength);
+        RuleFor(x => x.Amount)
+            .LessThan(ValidationConstants.MaxAllowedCost)
+            .GreaterThan(0);
     }
 }

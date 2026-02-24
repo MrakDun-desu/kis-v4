@@ -13,16 +13,29 @@ public class StoreItemsReadAllValidator : AbstractValidator<StoreItemReadAllRequ
 
 public class StoreItemCreateRequestValidator : AbstractValidator<StoreItemCreateRequest> {
     public StoreItemCreateRequestValidator(ValidationHelper helper) {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MaximumLength(ValidationConstants.MaxNameLength);
+        RuleFor(x => x.UnitName)
+            .NotEmpty()
+            .MaximumLength(ValidationConstants.MaxUnitNameLength);
         RuleFor(x => x.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
             .WithMessage("All category IDs must identify existing categories");
         RuleFor(x => x.InitialCost)
-            .GreaterThan(0);
+            .GreaterThan(0)
+            .LessThan(ValidationConstants.MaxAllowedCost);
     }
 }
 
 public class StoreItemUpdateRequestValidator : AbstractValidator<StoreItemUpdateRequest> {
     public StoreItemUpdateRequestValidator(ValidationHelper helper) {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MaximumLength(ValidationConstants.MaxNameLength);
+        RuleFor(x => x.UnitName)
+            .NotEmpty()
+            .MaximumLength(ValidationConstants.MaxUnitNameLength);
         RuleFor(x => x.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
             .WithMessage("All category IDs must identify existing categories");

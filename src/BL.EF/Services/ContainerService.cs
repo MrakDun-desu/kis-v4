@@ -80,24 +80,13 @@ public class ContainerService(
 
     public async Task<ContainerCreateResponse> CreateAsync(ContainerCreateRequest req, int userId, CancellationToken token = default) {
         var reqTime = _timeProvider.GetUtcNow();
-        var template = await _dbContext.ContainerTemplates
-            .Include(t => t.StoreItem)
-            .FirstAsync(t => t.Id == req.TemplateId, token);
-        var store = await _dbContext.Stores.FindAsync(req.StoreId, token);
-        var user = await _userService.GetOrCreateAsync(userId, token);
-
-        var containers = Enumerable.Range(0, req.Amount).Select(_ => new Container {
-            Template = template,
-            TemplateId = req.TemplateId,
-            Store = store,
-            StoreId = req.StoreId,
-            Amount = template.Amount
-        });
-
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(token);
-        _dbContext.Containers.AddRange(containers);
 
         try {
+            // create a transaction to add all the required container items to the store
+            var template = await _dbContext.ContainerTemplates
+                .Include(t => t.StoreItem)
+                .FirstAsync(t => t.Id == req.TemplateId, token);
             await StoreTransactionService.CreateInternalAsync(
                     new StoreTransactionCreateRequest {
                         Reason = TransactionReason.AddingToStore,
@@ -116,23 +105,33 @@ public class ContainerService(
                 token: token
             );
 
+            var store = await _dbContext.Stores.FindAsync(req.StoreId, token);
+            var user = await _userService.GetOrCreateAsync(userId, token);
+
+            var containers = Enumerable.Range(0, req.Amount).Select(_ => new Container {
+                TemplateId = req.TemplateId,
+                StoreId = req.StoreId,
+                Amount = template.Amount
+            })
+            .ToArray();
+            _dbContext.Containers.AddRange(containers);
             await _dbContext.SaveChangesAsync(token);
-            await transaction.CommitAsync();
+            await transaction.CommitAsync(token);
+
+            var data = containers.Select(c => new ContainerListModel {
+                Id = c.Id,
+                Amount = c.Amount,
+                State = c.State,
+                Store = store!.ToModel(),
+                Pipe = null,
+                Template = template.ToModel()
+            }).ToArray();
+
+            return new ContainerCreateResponse { Data = data };
         } catch {
             await transaction.RollbackAsync(token);
             throw;
         }
-
-        var data = containers.Select(c => new ContainerListModel {
-            Id = c.Id,
-            Amount = c.Amount,
-            State = c.State,
-            Store = c.Store!.ToModel(),
-            Pipe = c.Pipe.ToModel(),
-            Template = c.Template!.ToModel()
-        }).ToArray();
-
-        return new ContainerCreateResponse { Data = data };
     }
 
     public async Task<ContainerUpdateResponse?> UpdateAsync(int id, ContainerUpdateRequest req, int userId, CancellationToken token) {

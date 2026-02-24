@@ -56,4 +56,59 @@ public class StoreService(
             StoreItemAmounts = storeItemAmounts
         };
     }
+
+    public async Task<StoreCreateResponse> CreateAsync(
+            StoreCreateRequest req,
+            CancellationToken token = default
+            ) {
+        var entity = new Store {
+            Name = req.Name
+        };
+
+        _dbContext.Stores.Add(entity);
+        await _dbContext.SaveChangesAsync(token);
+
+        return new StoreCreateResponse {
+            Id = entity.Id,
+            Name = entity.Name
+        };
+    }
+
+    public async Task<StoreUpdateResponse?> UpdateAsync(
+            int id,
+            StoreUpdateRequest req,
+            CancellationToken token = default
+            ) {
+        var entity = await _dbContext.Stores.FindAsync(id, token);
+
+        if (entity is null) {
+            return null;
+        }
+
+        entity.Name = req.Name;
+        _dbContext.Stores.Update(entity);
+        await _dbContext.SaveChangesAsync(token);
+
+        return new StoreUpdateResponse {
+            Name = entity.Name,
+            Id = entity.Id
+        };
+    }
+
+    public async Task<bool> DeleteAsync(
+            int id,
+            CancellationToken token = default
+            ) {
+        var entity = await _dbContext.Stores.FindAsync(id, token);
+
+        if (entity is null) {
+            return false;
+        }
+
+        entity.Deleted = true;
+        _dbContext.Stores.Update(entity);
+        await _dbContext.SaveChangesAsync(token);
+
+        return true;
+    }
 }

@@ -32,4 +32,9 @@ public record ContainerTemplateUpdateRequest {
     public required int StoreItemId { get; init; }
 }
 
+public record ContainerTemplateUpdateCommand {
+    public required ContainerTemplateUpdateRequest Request { get; init; }
+    public required int Id { get; init; }
+}
+
 public record ContainerTemplateUpdateResponse : ContainerTemplateModel;

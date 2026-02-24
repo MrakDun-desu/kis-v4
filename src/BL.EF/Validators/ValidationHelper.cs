@@ -76,11 +76,16 @@ public class ValidationHelper(
             var val => await _dbContext.Categories.FindAsync(val, token) is not null
         };
 
-    internal async Task<bool> AllIdentifyExistingCategories(int[] categoryIds, CancellationToken token) {
+    internal async Task<bool> AllIdentifyExistingCategories(int[] categoryIds, CancellationToken token = default) {
         var categoryCount = await _dbContext.Categories
             .Where(c => categoryIds.Contains(c.Id))
             .CountAsync(token);
 
         return categoryCount == categoryIds.Length;
+    }
+
+    internal async Task<bool> NotHaveExistingContainers(ContainerTemplateUpdateCommand command, CancellationToken token = default) {
+        var hasContainers = await _dbContext.Containers.AnyAsync(c => c.TemplateId == command.Id, token);
+        return !hasContainers;
     }
 }

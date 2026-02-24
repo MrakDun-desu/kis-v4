@@ -39,16 +39,20 @@ public static class ContainerTemplates {
     public static async Task<Results<Ok<ContainerTemplateUpdateResponse>, NotFound, ValidationProblem>> Update(
             int id,
             ContainerTemplateUpdateRequest req,
-            IValidator<ContainerTemplateUpdateRequest> validator,
+            IValidator<ContainerTemplateUpdateCommand> validator,
             ContainerTemplateService service,
             CancellationToken token = default
             ) {
-        var validationResult = await validator.ValidateAsync(req, token);
+        var command = new ContainerTemplateUpdateCommand {
+            Id = id,
+            Request = req
+        };
+        var validationResult = await validator.ValidateAsync(command, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return await service.UpdateAsync(id, req, token) switch {
+        return await service.UpdateAsync(command, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
         };

@@ -1,3 +1,4 @@
+using FluentValidation;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -18,24 +19,62 @@ public static class Stores {
 
     public static async Task<StoreReadAllResponse> ReadAll(
             StoreService service,
-            CancellationToken token
+            CancellationToken token = default
             ) {
-        throw new NotImplementedException();
+        return await service.ReadAllAsync(token);
     }
 
-    public static StoreReadResponse Read(int id) {
-        throw new NotImplementedException();
+    public static async Task<Results<Ok<StoreReadResponse>, NotFound>> Read(
+            int id,
+            StoreService service,
+            CancellationToken token = default
+            ) {
+        return await service.ReadAsync(id, token) switch {
+            null => TypedResults.NotFound(),
+            var val => TypedResults.Ok(val)
+        };
     }
 
-    public static CreatedAtRoute<StoreCreateResponse> Create(StoreCreateRequest req) {
-        throw new NotImplementedException();
+    public static async Task<Results<CreatedAtRoute<StoreCreateResponse>, ValidationProblem>> Create(
+            StoreCreateRequest req,
+            IValidator<StoreCreateRequest> validator,
+            StoreService service,
+            CancellationToken token = default
+            ) {
+        var validationResult = await validator.ValidateAsync(req, token);
+        if (!validationResult.IsValid) {
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        }
+
+        var output = await service.CreateAsync(req, token);
+        return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
-    public static Results<Ok<StoreUpdateResponse>, NotFound> Update(int id, StoreUpdateRequest req) {
-        throw new NotImplementedException();
+    public static async Task<Results<Ok<StoreUpdateResponse>, NotFound, ValidationProblem>> Update(
+            int id,
+            StoreUpdateRequest req,
+            IValidator<StoreUpdateRequest> validator,
+            StoreService service,
+            CancellationToken token = default
+            ) {
+        var validationResult = await validator.ValidateAsync(req, token);
+        if (!validationResult.IsValid) {
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        }
+
+        return await service.UpdateAsync(id, req, token) switch {
+            null => TypedResults.NotFound(),
+            var val => TypedResults.Ok(val)
+        };
     }
 
-    public static Results<NoContent, NotFound> Delete(int id) {
-        throw new NotImplementedException();
+    public static async Task<Results<NoContent, NotFound>> Delete(
+            int id,
+            StoreService service,
+            CancellationToken token = default
+            ) {
+        return await service.DeleteAsync(id, token)
+            ? TypedResults.NoContent()
+            : TypedResults.NotFound();
     }
 }

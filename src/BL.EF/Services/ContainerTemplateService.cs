@@ -67,13 +67,13 @@ public class ContainerTemplateService(
     }
 
     public async Task<ContainerTemplateUpdateResponse?> UpdateAsync(
-            int id,
-            ContainerTemplateUpdateRequest req,
+            ContainerTemplateUpdateCommand cmd,
             CancellationToken token = default
             ) {
+        var req = cmd.Request;
         var storeItem = await _dbContext.StoreItems.FindAsync(req.StoreItemId, token);
 
-        var entity = await _dbContext.ContainerTemplates.FindAsync(id, token);
+        var entity = await _dbContext.ContainerTemplates.FindAsync(cmd.Id, token);
 
         if (entity is null) {
             return null;

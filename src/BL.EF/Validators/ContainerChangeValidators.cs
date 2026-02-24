@@ -15,12 +15,12 @@ public class ContainerChangeCreateValidator : AbstractValidator<ContainerChangeC
     public ContainerChangeCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.NewAmount)
             .GreaterThanOrEqualTo(0);
-        RuleFor(x => x.ContainerId)
-            .MustAsync(helper.IdentifyExistingContainer)
-            .WithMessage("Specified container must exist");
         RuleFor(x => x)
             .MustAsync(helper.HaveAmountLowerOrEqualToCurrent)
             .WithMessage("New container amount must be lower or equal to the current one");
+        RuleFor(x => x.ContainerId)
+            .MustAsync(helper.IdentifyExistingContainer)
+            .WithMessage("Specified container must exist");
     }
 
 }

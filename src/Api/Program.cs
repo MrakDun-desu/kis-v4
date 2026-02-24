@@ -1,4 +1,5 @@
 using System.Data;
+using System.Globalization;
 using System.Reflection;
 using KisV4.Api.Endpoints;
 using KisV4.BL.EF;
@@ -7,6 +8,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
+
+var applicationCulture = new CultureInfo("cs-CZ");
+CultureInfo.CurrentCulture = applicationCulture;
+CultureInfo.DefaultThreadCurrentCulture = applicationCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 

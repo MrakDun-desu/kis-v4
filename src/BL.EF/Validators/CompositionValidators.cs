@@ -20,5 +20,10 @@ public class CompositionPutValidator : AbstractValidator<CompositionPutRequest> 
         RuleFor(x => x.StoreItemId)
             .MustAsync(helper.IdentifyExistingStoreItem)
             .WithMessage("Specified store item must exist");
+
+        RuleFor(x => x.Amount)
+            .LessThan(ValidationConstants.MaxCompositionAmount)
+            .GreaterThan(ValidationConstants.MinCompositionAmount);
+
     }
 }

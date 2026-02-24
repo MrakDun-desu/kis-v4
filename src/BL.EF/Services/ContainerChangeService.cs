@@ -27,6 +27,7 @@ public class ContainerChangeService(
                 NewState = cc.NewState,
                 Timestamp = cc.Timestamp
             })
+            .OrderByDescending(cc => cc.Timestamp)
             .ToArrayAsync(token);
 
         return new ContainerChangeReadAllResponse { Data = data };

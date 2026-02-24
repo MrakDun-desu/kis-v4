@@ -5,12 +5,16 @@ namespace KisV4.BL.EF.Validators;
 
 public class CashBoxCreateValidator : AbstractValidator<CashBoxCreateRequest> {
     public CashBoxCreateValidator() {
-        RuleFor(x => x.Name).NotEmpty();
+        RuleFor(x => x.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .NotEmpty();
     }
 }
 
 public class CashBoxUpdateValidator : AbstractValidator<CashBoxUpdateRequest> {
     public CashBoxUpdateValidator() {
-        RuleFor(x => x.Name).NotEmpty();
+        RuleFor(x => x.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .NotEmpty();
     }
 }
