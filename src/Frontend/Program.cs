@@ -9,7 +9,6 @@ builder.Services
     .AddBff()
     .AddRemoteApis();
 
-
 builder.Services
     .AddAuthentication(options => {
         options.DefaultScheme = "Cookies";

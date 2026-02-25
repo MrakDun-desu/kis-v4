@@ -1,8 +1,10 @@
+using Audit.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.DAL.EF.Entities;
 
 [PrimaryKey(nameof(StoreId), nameof(CompositeId))]
+[AuditIgnore]
 public record CompositeAmount {
     public decimal Amount { get; set; }
 

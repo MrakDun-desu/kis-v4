@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -387,6 +388,29 @@ namespace KisV4.DAL.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AuditLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EntityType = table.Column<string>(type: "text", nullable: false),
+                    Action = table.Column<string>(type: "text", nullable: false),
+                    Changes = table.Column<JsonDocument>(type: "jsonb", nullable: false),
+                    StartDate = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: false),
+                    EndDate = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuditLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AuditLogs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Costs",
                 columns: table => new
                 {
@@ -694,6 +718,11 @@ namespace KisV4.DAL.EF.Migrations
                 column: "TargetsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_UserId",
+                table: "AuditLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Cashboxes_DonationsAccountId",
                 table: "Cashboxes",
                 column: "DonationsAccountId");
@@ -847,6 +876,9 @@ namespace KisV4.DAL.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "ApplicableModifiers");
+
+            migrationBuilder.DropTable(
+                name: "AuditLogs");
 
             migrationBuilder.DropTable(
                 name: "Cashboxes");

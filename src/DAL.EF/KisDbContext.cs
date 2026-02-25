@@ -10,6 +10,7 @@ namespace KisV4.DAL.EF;
 public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbContext(options) {
     public DbSet<Account> Accounts { get; init; } = null!;
     public DbSet<AccountTransaction> AccountTransactions { get; init; } = null!;
+    public DbSet<AuditLog> AuditLogs { get; init; } = null!;
     public DbSet<Cashbox> Cashboxes { get; init; } = null!;
     public DbSet<Category> Categories { get; init; } = null!;
     public DbSet<Composite> Composites { get; init; } = null!;
@@ -83,6 +84,11 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
             .HasValue<LayoutSaleItem>(LayoutItemType.SaleItem)
             .HasValue<LayoutLink>(LayoutItemType.Layout)
             .HasValue<LayoutPipe>(LayoutItemType.Pipe);
+
+        modelBuilder.Entity<AuditLog>(b => {
+            b.Property(x => x.Changes).HasColumnType("jsonb");
+            b.Property(x => x.EntityKeys).HasColumnType("jsonb");
+        });
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) {

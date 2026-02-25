@@ -1,9 +1,13 @@
 using System.Data;
 using System.Globalization;
 using System.Reflection;
+using System.Text.Json;
+using Audit.EntityFramework.Providers;
+using KisV4.Api;
 using KisV4.Api.Endpoints;
 using KisV4.BL.EF;
 using KisV4.DAL.EF;
+using KisV4.DAL.EF.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
@@ -47,7 +51,7 @@ builder.Services.AddOpenApi(opts => {
         doc.Info.Title = "KISv4 API";
         doc.Info.Version = "1.0.0";
         doc.Components ??= new OpenApiComponents();
-        doc.Security ??= new List<OpenApiSecurityRequirement>();
+        doc.Security ??= [];
         doc.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
         doc.Components.SecuritySchemes.Clear();
         if (allowTestingTokens) {
@@ -91,10 +95,32 @@ if (Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider") {
 }
 builder.Services.AddEntityFrameworkBL();
 
+// HTTP context accessor for getting the user ID during auditing
+builder.Services.AddHttpContextAccessor();
+
 // Time
 builder.Services.AddSingleton(TimeProvider.System);
 
 var app = builder.Build();
+
+// Auditing
+var contextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
+Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => {
+    opts
+        .AuditTypeMapper(t => typeof(AuditLog))
+        .AuditEntityAction<AuditLog>((auditEvent, entry, entity) => {
+            var claims = contextAccessor.HttpContext?.User;
+
+            entity.EntityType = entry.EntityType.Name;
+            entity.Action = entry.Action;
+            entity.Changes = JsonSerializer.SerializeToDocument(entry.Changes);
+            entity.EntityKeys = JsonSerializer.SerializeToDocument(entry.PrimaryKey);
+            entity.StartDate = auditEvent.StartDate;
+            entity.EndDate = auditEvent.EndDate;
+            entity.UserId = claims?.GetUserId();
+        })
+        .IgnoreMatchedProperties(true);
+});
 
 // Middlewares
 app.UseCors();

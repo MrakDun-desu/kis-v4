@@ -4,6 +4,7 @@ using System.Text.Json;
 using KisV4.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KisV4.DAL.EF.Migrations
 {
     [DbContext(typeof(KisDbContext))]
-    partial class KisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260225125058_AddPrimaryKeysToAudits")]
+    partial class AddPrimaryKeysToAudits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -9,14 +9,10 @@ namespace KisV4.BL.EF.Services;
 
 public class CashBoxService(
         KisDbContext dbContext,
-        TimeProvider timeProvider,
-        UserService userService,
         AccountTransactionService accountTransactionService
         ) : IScopedService {
 
     private readonly KisDbContext _dbContext = dbContext;
-    private readonly TimeProvider _timeProvider = timeProvider;
-    private readonly UserService _userService = userService;
     private readonly AccountTransactionService _accountTransactionService = accountTransactionService;
 
     public async Task<CashBoxReadAllResponse> ReadAllAsync(CancellationToken token = default) {

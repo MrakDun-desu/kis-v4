@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace KisV4.DAL.EF.Entities;
 
 [PrimaryKey(nameof(AccountId), nameof(SaleTransactionId))]
+[AuditIgnore]
 public record AccountTransaction {
     public decimal Amount { get; init; }
     public DateTimeOffset Timestamp { get; init; }
