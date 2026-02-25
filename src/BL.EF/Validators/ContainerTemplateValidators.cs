@@ -41,6 +41,6 @@ public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTempl
 
         RuleFor(x => x)
             .MustAsync(helper.NotHaveExistingContainers)
-            .WithMessage("Containers templates that have existing containers can't be updated");
+            .WithMessage("Container templates that have existing containers can't be updated");
     }
 }

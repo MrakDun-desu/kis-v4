@@ -38,7 +38,9 @@ public class ContainerService(
             query = query.Where(c => c.PipeId == pipeId);
         }
 
-        if (!req.IncludeUnusable) {
+        var includeUnusable = req.IncludeUnusable ?? false;
+
+        if (!includeUnusable) {
             query = query.Where(c => c.State == ContainerState.New || c.State == ContainerState.Opened);
         }
 

@@ -18,6 +18,9 @@ public class ContainerChangeCreateValidator : AbstractValidator<ContainerChangeC
         RuleFor(x => x)
             .MustAsync(helper.HaveAmountLowerOrEqualToCurrent)
             .WithMessage("New container amount must be lower or equal to the current one");
+        RuleFor(x => x)
+            .MustAsync(helper.HaveCorrectStateTransition)
+            .WithMessage("This container state transition isn't allowed");
         RuleFor(x => x.ContainerId)
             .MustAsync(helper.IdentifyExistingContainer)
             .WithMessage("Specified container must exist");

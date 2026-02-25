@@ -28,7 +28,7 @@ public record ContainerReadAllRequest : PagedRequest {
     public int? StoreId { get; init; }
     public int? TemplateId { get; init; }
     public int? PipeId { get; init; }
-    public bool IncludeUnusable { get; init; }
+    public bool? IncludeUnusable { get; init; }
 }
 
 public record ContainerReadAllResponse : PagedResponse<ContainerListModel>;

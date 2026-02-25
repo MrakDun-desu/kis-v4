@@ -1,4 +1,5 @@
 using KisV4.Common.DependencyInjection;
+using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using Microsoft.EntityFrameworkCore;
@@ -87,5 +88,36 @@ public class ValidationHelper(
     internal async Task<bool> NotHaveExistingContainers(ContainerTemplateUpdateCommand command, CancellationToken token = default) {
         var hasContainers = await _dbContext.Containers.AnyAsync(c => c.TemplateId == command.Id, token);
         return !hasContainers;
+    }
+
+    internal async Task<bool> HaveCorrectStateTransition(
+        ContainerChangeCreateRequest request, CancellationToken token) {
+        var container = await _dbContext.Containers.FindAsync(request.ContainerId, token);
+        if (container is null) {
+            return true;
+        }
+
+        var currentState = container.State;
+        var newState = request.NewState;
+
+        return currentState switch {
+            // new containers can change to any state
+            ContainerState.New => true,
+            // opened containers can't get back to "new" state
+            ContainerState.Opened => newState switch {
+                ContainerState.New => false,
+                _ => true,
+            },
+            // written off containers and bad containers can't change states anymore
+            ContainerState.WrittenOff => newState switch {
+                ContainerState.WrittenOff => true,
+                _ => false
+            },
+            ContainerState.Bad => newState switch {
+                ContainerState.Bad => true,
+                _ => false
+            },
+            _ => throw new ArgumentOutOfRangeException("Invalid enum value"),
+        };
     }
 }
