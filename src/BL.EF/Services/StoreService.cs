@@ -99,16 +99,10 @@ public class StoreService(
             int id,
             CancellationToken token = default
             ) {
-        var entity = await _dbContext.Stores.FindAsync(id, token);
+        var deletedCount = await _dbContext.Stores
+            .Where(s => s.Id == id)
+            .ExecuteUpdateAsync(props => props.SetProperty(s => s.Deleted, true), token);
 
-        if (entity is null) {
-            return false;
-        }
-
-        entity.Deleted = true;
-        _dbContext.Stores.Update(entity);
-        await _dbContext.SaveChangesAsync(token);
-
-        return true;
+        return deletedCount > 0;
     }
 }

@@ -16,7 +16,7 @@ public abstract record LayoutItemModel {
 }
 
 public record LayoutSaleItemModel : LayoutItemModel {
-    public required SaleItemListModel Target { get; init; }
+    public required SaleItemOperatorModel Target { get; init; }
 }
 
 public record LayoutLinkModel : LayoutItemModel {
@@ -28,8 +28,6 @@ public record LayoutPipeModel : LayoutItemModel {
 }
 
 // Requests and responses
-public record LayoutItemReadAllResponse : CollectionResponse<LayoutItemModel>;
-
 public record LayoutItemCreateRequest {
     public required int X { get; init; }
     public required int Y { get; init; }

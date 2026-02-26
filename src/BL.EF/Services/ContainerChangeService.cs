@@ -84,6 +84,8 @@ public class ContainerChangeService(
                     _dbContext,
                     token: token
                 );
+                // if writing off or marking container as bad, also remove it from the pipe
+                container.PipeId = null;
             }
 
             container.Amount = req.NewAmount;

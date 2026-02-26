@@ -9,10 +9,7 @@ public class AccountTransactionReadAllValidator : AbstractValidator<AccountTrans
         RuleFor(x => x)
             .Must(x => {
                 // if either of them is null, no need to check
-                if (x.From is null || x.To is null) {
-                    return true;
-                }
-                return x.From < x.To;
+                return x.From is null || x.To is null || x.From < x.To;
             })
             .WithMessage("The datetime From must be earlier than the datetime To");
 

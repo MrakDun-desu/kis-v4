@@ -27,11 +27,7 @@ public class ValidationHelper(
             ContainerChangeCreateRequest req,
             CancellationToken token = default) {
         var container = await _dbContext.Containers.FindAsync(req.ContainerId, token);
-        if (container is null) {
-            return true;
-        }
-
-        return container.Amount >= req.NewAmount;
+        return container is null || container.Amount >= req.NewAmount;
     }
 
     internal async Task<bool> BeNullOrIdentifyExistingContainerItem(int? storeItemId, CancellationToken token = default) =>
@@ -86,7 +82,9 @@ public class ValidationHelper(
     }
 
     internal async Task<bool> NotHaveExistingContainers(ContainerTemplateUpdateCommand command, CancellationToken token = default) {
-        var hasContainers = await _dbContext.Containers.AnyAsync(c => c.TemplateId == command.Id, token);
+        var hasContainers = await _dbContext.Containers
+            .IgnoreQueryFilters()
+            .AnyAsync(c => c.TemplateId == command.Id, token);
         return !hasContainers;
     }
 

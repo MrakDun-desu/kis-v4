@@ -48,14 +48,10 @@ public class CategoryService(
     }
 
     public async Task<bool> DeleteAsync(int id, CancellationToken token = default) {
-        var entity = await _dbContext.Categories.FindAsync(id, token);
-        if (entity is null) {
-            return false;
-        }
+        var deletedAmount = await _dbContext.Categories
+            .Where(c => c.Id == id)
+            .ExecuteDeleteAsync(token);
 
-        _dbContext.Categories.Remove(entity);
-        await _dbContext.SaveChangesAsync(token);
-
-        return true;
+        return deletedAmount > 0;
     }
 }

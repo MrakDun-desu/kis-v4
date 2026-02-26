@@ -4,6 +4,7 @@ using KisV4.Common.ModelWrappers;
 namespace KisV4.Common.Models;
 
 // Base models
+// Used in admin for list view
 public record SaleItemListModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
@@ -14,6 +15,16 @@ public record SaleItemListModel {
     public required PrintType PrintType { get; init; }
 }
 
+// Used in operator for listing sale items in the grid
+public record SaleItemOperatorModel {
+    public required int Id { get; init; }
+    public required string Name { get; init; }
+    public required string? Image { get; init; }
+    public required decimal CurrentPrice { get; init; }
+    public required decimal AmountInStore { get; init; }
+}
+
+// Used in admin for detail view (composition is fetched separately)
 public record SaleItemDetailModel {
     public required int Id { get; init; }
     public required string Name { get; init; }

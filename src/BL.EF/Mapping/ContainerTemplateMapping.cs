@@ -5,7 +5,7 @@ namespace KisV4.BL.EF.Mapping;
 
 public static class ContainerTemplateMapping {
     public static ContainerTemplateModel ToModel(this ContainerTemplate source) =>
-        new ContainerTemplateModel {
+        new() {
             Id = source.Id,
             Name = source.Name,
             Amount = source.Amount,

@@ -26,7 +26,7 @@ public class StoreItemService(
             .AsQueryable();
 
         if (req.Name is { } name) {
-            query = query.Where(si => si.Name == name);
+            query = query.Where(si => si.Name.ToLowerInvariant().Contains(name));
         }
 
         if (req.IsContainerItem is { } isContainerItem) {
@@ -67,7 +67,7 @@ public class StoreItemService(
                 IsContainerItem = si.IsContainerItem,
                 CurrentCost = si.CurrentCost,
                 Categories = si.Categories.Select(c => c.ToModel()),
-                Costs = si.Costs.OrderByDescending(c => c.Timestamp).Select(c => c.ToModel())
+                Costs = si.Costs.OrderBy(c => c.Timestamp).Select(c => c.ToModel())
             })
             .FirstOrDefaultAsync(si => si.Id == id, token);
     }
@@ -158,22 +158,10 @@ public class StoreItemService(
             int id,
             CancellationToken token = default
             ) {
-        var changedAmount = _dbContext.StoreItems
+        var changedAmount = await _dbContext.StoreItems
             .Where(si => si.Id == id)
-            .ExecuteUpdate(props => props.SetProperty(si => si.Hidden, true));
+            .ExecuteUpdateAsync(props => props.SetProperty(si => si.Hidden, true), token);
 
         return changedAmount > 0;
-        //
-        // var entity = await _dbContext.StoreItems.FindAsync(id, token);
-        //
-        // if (entity is null) {
-        //     return false;
-        // }
-        //
-        // entity.Hidden = true;
-        // _dbContext.StoreItems.Update(entity);
-        // await _dbContext.SaveChangesAsync(token);
-        //
-        // return true;
     }
 }

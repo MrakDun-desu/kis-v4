@@ -99,17 +99,10 @@ public class ContainerTemplateService(
             int id,
             CancellationToken token = default
             ) {
-        var entity = await _dbContext.ContainerTemplates.FindAsync(id, token);
+        var deletedCount = await _dbContext.ContainerTemplates
+            .Where(ct => ct.Id == id)
+            .ExecuteUpdateAsync(props => props.SetProperty(ct => ct.Deleted, true), token);
 
-        if (entity is null) {
-            return false;
-        }
-
-        entity.Deleted = true;
-        _dbContext.Update(entity);
-
-        await _dbContext.SaveChangesAsync(token);
-
-        return true;
+        return deletedCount > 0;
     }
 }

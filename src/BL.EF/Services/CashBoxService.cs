@@ -89,17 +89,12 @@ public class CashBoxService(
     }
 
     public async Task<bool> DeleteAsync(int id, CancellationToken token = default) {
-        var entity = await _dbContext.Cashboxes.FindAsync(id, token);
-        if (entity == null) {
-            return false;
-        }
-
-        entity.Deleted = true;
         // no need to mark account transactions as cancelled since they won't show up anywhere
         // anyways. Also deleting a cashbox shouldn't mean that its transactions just disappear
+        var deletedCount = await _dbContext.Cashboxes
+            .Where(cb => cb.Id == id)
+            .ExecuteUpdateAsync(props => props.SetProperty(cb => cb.Deleted, true), token);
 
-        await _dbContext.SaveChangesAsync(token);
-
-        return true;
+        return deletedCount > 0;
     }
 }

@@ -182,19 +182,18 @@ public class ContainerService(
         }
 
         return await _dbContext.Containers
-            .AsNoTracking()
             .Include(c => c.Store)
             .Include(c => c.Pipe)
             .Include(c => c.Template)
             .ThenInclude(ct => ct!.StoreItem)
             .Select(c =>
                 new ContainerUpdateResponse {
-                    Id = entity.Id,
-                    Amount = entity.Amount,
-                    State = entity.State,
-                    Pipe = entity.Pipe.ToModel(),
-                    Store = entity.Store!.ToModel(),
-                    Template = entity.Template!.ToModel()
+                    Id = c.Id,
+                    Amount = c.Amount,
+                    State = c.State,
+                    Pipe = c.Pipe.ToModel(),
+                    Store = c.Store!.ToModel(),
+                    Template = c.Template!.ToModel()
                 }
             )
             .FirstAsync(c => c.Id == id, token);

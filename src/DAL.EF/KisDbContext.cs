@@ -85,6 +85,12 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
             .HasValue<LayoutLink>(LayoutItemType.Layout)
             .HasValue<LayoutPipe>(LayoutItemType.Pipe);
 
+        modelBuilder.Entity<Container>()
+            .HasOne(c => c.Pipe)
+            .WithMany(p => p.Containers)
+            .HasForeignKey(c => c.PipeId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         modelBuilder.Entity<AuditLog>(b => {
             b.Property(x => x.Changes).HasColumnType("jsonb");
             b.Property(x => x.EntityKeys).HasColumnType("jsonb");

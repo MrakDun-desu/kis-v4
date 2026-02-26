@@ -3,16 +3,16 @@ using KisV4.Common.Models;
 
 namespace KisV4.BL.EF.Validators;
 
-public class StoreCreateValidator : AbstractValidator<StoreCreateRequest> {
-    public StoreCreateValidator() {
+public class PipeCreateValidator : AbstractValidator<PipeCreateRequest> {
+    public PipeCreateValidator() {
         RuleFor(x => x.Name)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxNameLength);
     }
 }
 
-public class StoreUpdateValidator : AbstractValidator<StoreUpdateRequest> {
-    public StoreUpdateValidator() {
+public class PipeUpdateValdiator : AbstractValidator<PipeUpdateRequest> {
+    public PipeUpdateValdiator() {
         RuleFor(x => x.Name)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxNameLength);

@@ -15,7 +15,7 @@ public record LayoutDetailModel {
     public required string Name { get; init; }
     public string? Image { get; init; }
     public required bool TopLevel { get; init; }
-    public required LayoutItemReadAllResponse LayoutItems { get; init; }
+    public required IEnumerable<LayoutItemModel> LayoutItems { get; init; }
 }
 
 // Requests and responses
@@ -43,5 +43,11 @@ public record LayoutUpdateRequest {
 }
 
 public record LayoutUpdateResponse : LayoutDetailModel;
+
+// layouts need to be read with store ID specified so backend knows which store to display
+// store amounts from
+public record LayoutReadRequest {
+    public int StoreId { get; init; }
+}
 
 public record LayoutReadResponse : LayoutDetailModel;
