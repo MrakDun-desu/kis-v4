@@ -118,4 +118,16 @@ public class ValidationHelper(
             _ => throw new ArgumentOutOfRangeException("Invalid enum value"),
         };
     }
+
+    internal async Task<bool> AllIdentifyExistingModifiers(int[] modifierIds, CancellationToken token) {
+        return await _dbContext.Modifiers
+            .Where(m => modifierIds.Contains(m.Id))
+            .CountAsync(token) == modifierIds.Length;
+    }
+
+    internal async Task<bool> AllIdentifyExistingSaleItems(int[] saleItemIds, CancellationToken token) {
+        return await _dbContext.SaleItems
+            .Where(si => saleItemIds.Contains(si.Id))
+            .CountAsync(token) == saleItemIds.Length;
+    }
 }

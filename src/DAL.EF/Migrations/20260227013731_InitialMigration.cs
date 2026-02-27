@@ -343,7 +343,7 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     CompositeId = table.Column<int>(type: "integer", nullable: false),
                     StoreId = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false)
+                    Amount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -394,6 +394,7 @@ namespace KisV4.DAL.EF.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     EntityType = table.Column<string>(type: "text", nullable: false),
+                    EntityKeys = table.Column<JsonDocument>(type: "jsonb", nullable: false),
                     Action = table.Column<string>(type: "text", nullable: false),
                     Changes = table.Column<JsonDocument>(type: "jsonb", nullable: false),
                     StartDate = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: false),
@@ -532,7 +533,8 @@ namespace KisV4.DAL.EF.Migrations
                         name: "FK_Containers_Pipes_PipeId",
                         column: x => x.PipeId,
                         principalTable: "Pipes",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Containers_Stores_StoreId",
                         column: x => x.StoreId,

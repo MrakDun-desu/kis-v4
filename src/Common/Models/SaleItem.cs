@@ -34,6 +34,7 @@ public record SaleItemDetailModel {
     public required decimal PrestigeAmount { get; init; }
     public required PrintType PrintType { get; init; }
     public required IEnumerable<ModifierListModel> ApplicableModifiers { get; init; }
+    public required IEnumerable<CategoryModel> Categories { get; init; }
 }
 
 // Requests and responses
@@ -45,7 +46,6 @@ public record SaleItemReadAllRequest : PagedRequest {
 public record SaleItemReadAllResponse : PagedResponse<SaleItemListModel>;
 
 public record SaleItemCreateRequest {
-    public required int Id { get; init; }
     public required string Name { get; init; }
     public string? Image { get; init; }
     public required decimal MarginPercent { get; init; }
@@ -53,19 +53,20 @@ public record SaleItemCreateRequest {
     public required decimal PrestigeAmount { get; init; }
     public required PrintType PrintType { get; init; }
     public required int[] CategoryIds { get; init; }
+    public int[] ModifierIds { get; init; } = [];
 }
 
 public record SaleItemCreateResponse : SaleItemDetailModel;
 
 public record SaleItemUpdateRequest {
-    public required int Id { get; init; }
-    public required string Name { get; init; }
+    public string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
-    public required decimal MarginPercent { get; init; }
-    public required decimal MarginStatic { get; init; }
-    public required decimal PrestigeAmount { get; init; }
-    public required PrintType PrintType { get; init; }
-    public required int[] CategoryIds { get; init; }
+    public decimal MarginPercent { get; init; }
+    public decimal MarginStatic { get; init; }
+    public decimal PrestigeAmount { get; init; }
+    public PrintType PrintType { get; init; }
+    public int[] CategoryIds { get; init; } = [];
+    public int[] ModifierIds { get; init; } = [];
 }
 
 public record SaleItemUpdateResponse : SaleItemDetailModel;

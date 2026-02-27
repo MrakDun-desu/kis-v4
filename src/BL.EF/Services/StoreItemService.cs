@@ -21,9 +21,7 @@ public class StoreItemService(
             StoreItemReadAllRequest req,
             CancellationToken token = default
             ) {
-        var query = _dbContext.StoreItems
-            .Include(si => si.Categories)
-            .AsQueryable();
+        var query = _dbContext.StoreItems.AsQueryable();
 
         if (req.Name is { } name) {
             query = query.Where(si => si.Name.ToLowerInvariant().Contains(name));
@@ -101,6 +99,13 @@ public class StoreItemService(
         };
 
         _dbContext.StoreItems.Add(entity);
+        // add amounts for the new entity
+        _dbContext.StoreItemAmounts.AddRange(
+            _dbContext.Stores.Select(s => new StoreItemAmount {
+                StoreItem = entity,
+                StoreId = s.Id
+            })
+        );
         await _dbContext.SaveChangesAsync(token);
 
         return new StoreItemCreateResponse {

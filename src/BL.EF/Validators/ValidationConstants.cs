@@ -10,6 +10,7 @@ public static class ValidationConstants {
     public const int MaxPageSize = 100;
 
     public const decimal MaxAllowedCost = 100_000;
+    public const decimal MaxMarginPercent = 300;
 
     public const decimal MaxTransactionAmount = 100_000;
     public const decimal MinTransactionAmount = -100_000;

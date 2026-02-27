@@ -233,9 +233,8 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("CompositeId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(11, 2)
-                        .HasColumnType("numeric(11,2)");
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
 
                     b.HasKey("StoreId", "CompositeId");
 
@@ -947,7 +946,8 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     b.HasOne("KisV4.DAL.EF.Entities.Pipe", "Pipe")
                         .WithMany("Containers")
-                        .HasForeignKey("PipeId");
+                        .HasForeignKey("PipeId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("KisV4.DAL.EF.Entities.Store", "Store")
                         .WithMany("Containers")

@@ -6,7 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 [PrimaryKey(nameof(StoreId), nameof(CompositeId))]
 [AuditIgnore]
 public record CompositeAmount {
-    public decimal Amount { get; set; }
+    public int Amount { get; set; }
 
     public int CompositeId { get; init; }
     public Composite? Composite { get; set; }

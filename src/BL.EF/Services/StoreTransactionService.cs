@@ -97,54 +97,21 @@ public class StoreTransactionService(
         dbContext.StoreTransactions.Add(entity);
         await dbContext.SaveChangesAsync(token);
 
-        await UpdateItemAmountsAsync(storeTransactionItems, entity.Id, dbContext, token);
+        await UpdateItemAmountsAsync(entity.Id, dbContext, token);
 
         return entity;
     }
 
     private static async Task UpdateItemAmountsAsync(
-            List<StoreTransactionItem> newTransactionItems,
             int transactionId,
             KisDbContext dbContext,
             CancellationToken token = default
-            ) {
-
-        var storesToUpdate = newTransactionItems
-            .Select(sti => sti.StoreId)
-            .Distinct()
-            .ToArray();
-
-        var storeItemsToUpdate = newTransactionItems
-            .Select(sti => sti.StoreItemId)
-            .Distinct()
-            .ToArray();
-
-        var existingStoreItemAmounts = await dbContext.StoreItemAmounts
-            .Where(sia => storesToUpdate.Contains(sia.StoreId))
-            .Where(sia => storeItemsToUpdate.Contains(sia.StoreItemId))
-            .ToArrayAsync(token);
-
-        var missingStoreItemAmounts = newTransactionItems
-            .Where(x => !existingStoreItemAmounts
-                    .Any(sia => sia.StoreItemId == x.StoreItemId && sia.StoreId == x.StoreId)
-                    )
-            .ToArray();
-
-        // add zero amount to every store item amount that hasn't been found so far
-        if (missingStoreItemAmounts.Length > 0) {
-            dbContext.StoreItemAmounts
-                .AddRange(missingStoreItemAmounts
-                        .Select(a => new StoreItemAmount {
-                            StoreItemId = a.StoreItemId,
-                            StoreId = a.StoreId,
-                            Amount = 0
-                        })
-                );
-
-            await dbContext.SaveChangesAsync(token);
-        }
-
+        ) {
         // update all the store item amounts in one database call
+        // honestly not sure if this is faster than just updating the items with normal Update calls,
+        // could be interesting to optimize
+        // It's a shame that ExecuteUpdate doesn't work with in-memory collections for lists of
+        // updates, so it's necessary to aggregate everything here (or add a temp table, or use raw SQL)
         await dbContext.StoreItemAmounts
             .Where(sia => dbContext.StoreTransactionItems
                     .Any(c => c.StoreId == sia.StoreId
@@ -181,12 +148,11 @@ public class StoreTransactionService(
                             .Select(c => (int)(dbContext.StoreItemAmounts
                                 .Where(sia => sia.StoreItemId == c.StoreItemId
                                     && sia.StoreId == x.StoreId)
-                                .Sum(sia => sia.Amount) / c.Amount)
-                                )
+                                .Select(sia => sia.Amount)
+                                .Sum() / c.Amount)
+                            )
                             .Min()
                         )
                     );
     }
 }
-
-

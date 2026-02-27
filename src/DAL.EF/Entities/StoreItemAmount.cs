@@ -6,10 +6,10 @@ namespace KisV4.DAL.EF.Entities;
 [AuditIgnore]
 [PrimaryKey(nameof(StoreId), nameof(StoreItemId))]
 public record StoreItemAmount {
-    public required decimal Amount { get; set; }
+    public decimal Amount { get; set; }
 
     public int StoreItemId { get; init; }
     public StoreItem? StoreItem { get; set; }
-    public required int StoreId { get; init; }
+    public int StoreId { get; init; }
     public Store? Store { get; set; }
 }

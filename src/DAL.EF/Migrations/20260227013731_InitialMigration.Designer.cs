@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KisV4.DAL.EF.Migrations
 {
     [DbContext(typeof(KisDbContext))]
-    [Migration("20260225124249_InitialMigration")]
+    [Migration("20260227013731_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -114,6 +114,10 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<DateTimeOffset?>("EndDate")
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
+
+                    b.Property<JsonDocument>("EntityKeys")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("EntityType")
                         .IsRequired()
@@ -232,9 +236,8 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("CompositeId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(11, 2)
-                        .HasColumnType("numeric(11,2)");
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
 
                     b.HasKey("StoreId", "CompositeId");
 
@@ -946,7 +949,8 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     b.HasOne("KisV4.DAL.EF.Entities.Pipe", "Pipe")
                         .WithMany("Containers")
-                        .HasForeignKey("PipeId");
+                        .HasForeignKey("PipeId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("KisV4.DAL.EF.Entities.Store", "Store")
                         .WithMany("Containers")

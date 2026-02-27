@@ -20,7 +20,6 @@ public record ModifierDetailModel {
     public required decimal MarginStatic { get; init; }
     public required decimal PrestigeAmount { get; init; }
     public required IEnumerable<CategoryModel> Categories { get; init; }
-    public required IEnumerable<CompositionModel> Compositions { get; init; }
     public required IEnumerable<SaleItemListModel> Targets { get; init; }
 }
 
@@ -33,27 +32,27 @@ public record ModifierReadAllRequest : PagedRequest {
 
 public record ModifierReadAllResponse : PagedResponse<ModifierListModel>;
 
-public record ModifierCreateRequest {
-    public required int Id { get; init; }
-    public required string Name { get; init; }
-    public string? Image { get; init; }
-    public required decimal MarginPercent { get; init; }
-    public required decimal MarginStatic { get; init; }
-    public required decimal PrestigeAmount { get; init; }
-    public required int[] CategoryIds { get; init; }
-}
+public record ModifierCreateRequest(
+    string Name,
+    string? Image,
+    decimal MarginPercent,
+    decimal MarginStatic,
+    decimal PrestigeAmount,
+    int[] CategoryIds,
+    int[] TargetIds
+);
 
 public record ModifierCreateResponse : ModifierDetailModel;
 
-public record ModifierUpdateRequest {
-    public required int Id { get; init; }
-    public required string Name { get; init; }
-    public string? Image { get; init; }
-    public required decimal MarginPercent { get; init; }
-    public required decimal MarginStatic { get; init; }
-    public required decimal PrestigeAmount { get; init; }
-    public required int[] CategoryIds { get; init; }
-}
+public record ModifierUpdateRequest(
+    string Name,
+    string? Image,
+    decimal MarginPercent,
+    decimal MarginStatic,
+    decimal PrestigeAmount,
+    int[] CategoryIds,
+    int[] TargetIds
+);
 
 public record ModifierUpdateResponse : ModifierDetailModel;
 

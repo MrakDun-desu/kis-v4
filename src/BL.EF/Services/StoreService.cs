@@ -66,6 +66,18 @@ public class StoreService(
         };
 
         _dbContext.Stores.Add(entity);
+        _dbContext.CompositeAmounts.AddRange(
+            _dbContext.Composites.Select(c => new CompositeAmount {
+                CompositeId = c.Id,
+                Store = entity
+            })
+        );
+        _dbContext.StoreItemAmounts.AddRange(
+            _dbContext.StoreItems.Select(c => new StoreItemAmount {
+                StoreItemId = c.Id,
+                Store = entity
+            })
+        );
         await _dbContext.SaveChangesAsync(token);
 
         return new StoreCreateResponse {
