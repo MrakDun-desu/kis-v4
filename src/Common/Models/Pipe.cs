@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -20,13 +21,15 @@ public record PipeDetailModel {
 public record PipeReadAllResponse : CollectionResponse<PipeListModel>;
 
 public record PipeCreateRequest {
-    public required string Name { get; init; }
+    [DefaultValue("Pípa Kachna")]
+    public string Name { get; init; } = string.Empty;
 }
 
 public record PipeCreateResponse : PipeListModel;
 
 public record PipeUpdateRequest {
-    public required string Name { get; init; }
+    [DefaultValue("Pípa Kachna")]
+    public string Name { get; init; } = string.Empty;
 }
 
 public record PipeUpdateResponse : PipeListModel;

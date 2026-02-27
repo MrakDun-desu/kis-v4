@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -31,21 +32,28 @@ public record StoreItemReadAllRequest : PagedRequest {
 public record StoreItemReadAllResponse : PagedResponse<StoreItemListModel>;
 
 public record StoreItemCreateRequest {
-    public required string Name { get; init; }
-    public required string UnitName { get; init; }
-    public required bool IsContainerItem { get; init; }
-    public required int[] CategoryIds { get; init; }
-    public required decimal InitialCost { get; init; }
+    [DefaultValue("Kofola")]
+    public string Name { get; init; } = string.Empty;
+    [DefaultValue("l")]
+    public string UnitName { get; init; } = string.Empty;
+    [DefaultValue(false)]
+    public bool IsContainerItem { get; init; }
+    [DefaultValue(new int[0])]
+    public int[] CategoryIds { get; init; } = [];
+    [DefaultValue(typeof(decimal), "20")]
+    public decimal InitialCost { get; init; }
 }
 
 public record StoreItemCreateResponse : StoreItemDetailModel;
 
 public record StoreItemUpdateRequest {
-    public required string Name { get; init; }
-    public required string UnitName { get; init; }
-    public required int[] CategoryIds { get; init; }
+    [DefaultValue("Kofola")]
+    public string Name { get; init; } = string.Empty;
+    [DefaultValue("l")]
+    public string UnitName { get; init; } = string.Empty;
+    [DefaultValue(new int[0])]
+    public int[] CategoryIds { get; init; } = [];
 }
-
 
 public record StoreItemUpdateResponse : StoreItemDetailModel;
 

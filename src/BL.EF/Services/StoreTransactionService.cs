@@ -150,8 +150,9 @@ public class StoreTransactionService(
                 .ExecuteUpdateAsync(props => {
                     props.SetProperty(sti => sti.Cancelled, true);
                 }, token);
+            var updateCosts = cmd.UpdateCosts ?? false;
 
-            if (cmd.UpdateCosts) {
+            if (updateCosts) {
                 var user = _userService.GetOrCreateAsync(cmd.UserId, token);
                 await UpdateCostsAsync(cmd.Id, user.Id, reqTime, _dbContext, token);
             }

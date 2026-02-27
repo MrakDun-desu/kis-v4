@@ -11,12 +11,12 @@ public record ModificationModel {
 
 // Requests and responses
 public record ModificationReadAllRequest {
-    public required int SaleTransactionItemId { get; init; }
+    public int SaleTransactionItemId { get; init; }
 }
 
 public record ModificationReadAllResponse : CollectionResponse<ModificationModel>;
 
 public record ModificationCreateRequest {
-    public required int Amount { get; init; }
-    public required int ModifierId { get; init; }
+    public int Amount { get; init; }
+    public int ModifierId { get; init; }
 }

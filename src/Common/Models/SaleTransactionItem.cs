@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -13,10 +14,8 @@ public record SaleTransactionItemModel {
 
 // Requests and responses
 public record SaleTransactionItemCreateRequest {
-    public required int ItemAmount { get; init; }
-    public required int SaleItemId { get; init; }
-    public required ModificationCreateRequest[] Modifications { get; init; }
+    [DefaultValue(1)]
+    public int ItemAmount { get; init; }
+    public int SaleItemId { get; init; }
+    public ModificationCreateRequest[] Modifications { get; init; } = [];
 }
-
-public record SaleTransactionItemReadAllResponse : CollectionResponse<SaleTransactionItemModel>;
-

@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace KisV4.Common.Models;
 
 // Base models
@@ -11,9 +13,10 @@ public record CostModel {
 
 // Requests and responses
 public record CostCreateRequest {
-    public required int StoreItemId { get; init; }
-    public required decimal Amount { get; init; }
-    public required string Description { get; init; }
+    public int StoreItemId { get; init; }
+    public decimal Amount { get; init; }
+    [DefaultValue("Nová cena")]
+    public string Description { get; init; } = string.Empty;
 }
 
 public record CostCreateResponse : CostModel;

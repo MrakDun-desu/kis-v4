@@ -1848,7 +1848,6 @@
           {
             "name": "OnlySelfCancellable",
             "in": "query",
-            "required": true,
             "schema": {
               "type": "boolean"
             }
@@ -2881,6 +2880,11 @@
   "components": {
     "schemas": {
       "AccountTransactionModel": {
+        "required": [
+          "amount",
+          "timestamp",
+          "saleTransactionId"
+        ],
         "type": "object",
         "properties": {
           "amount": {
@@ -2958,7 +2962,8 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Kasa Kachna"
           }
         }
       },
@@ -3059,7 +3064,8 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Kasa Kachna"
           }
         }
       },
@@ -3084,13 +3090,11 @@
         }
       },
       "CategoryCreateRequest": {
-        "required": [
-          "name"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Pivo"
           }
         }
       },
@@ -3149,13 +3153,11 @@
         }
       },
       "CategoryUpdateRequest": {
-        "required": [
-          "name"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Pivo"
           }
         }
       },
@@ -3241,11 +3243,6 @@
         }
       },
       "CompositionPutRequest": {
-        "required": [
-          "compositeId",
-          "storeItemId",
-          "amount"
-        ],
         "type": "object",
         "properties": {
           "compositeId": {
@@ -3321,10 +3318,12 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 50
           },
           "updateCosts": {
-            "type": "boolean"
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -3343,11 +3342,6 @@
         }
       },
       "ContainerChangeCreateRequest": {
-        "required": [
-          "newAmount",
-          "newState",
-          "containerId"
-        ],
         "type": "object",
         "properties": {
           "newAmount": {
@@ -3359,6 +3353,7 @@
             "format": "double"
           },
           "newState": {
+            "default": 1,
             "$ref": "#/components/schemas/ContainerState"
           },
           "containerId": {
@@ -3601,15 +3596,11 @@
         "type": "integer"
       },
       "ContainerTemplateCreateRequest": {
-        "required": [
-          "name",
-          "amount",
-          "storeItemId"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Kofola 50l"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3617,7 +3608,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 50
           },
           "storeItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -3714,15 +3706,11 @@
         }
       },
       "ContainerTemplateUpdateRequest": {
-        "required": [
-          "name",
-          "amount",
-          "storeItemId"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Kofola 50l"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3730,7 +3718,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 50
           },
           "storeItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -3776,9 +3765,6 @@
         }
       },
       "ContainerUpdateRequest": {
-        "required": [
-          "storeId"
-        ],
         "type": "object",
         "properties": {
           "storeId": {
@@ -3849,11 +3835,6 @@
         }
       },
       "CostCreateRequest": {
-        "required": [
-          "storeItemId",
-          "amount",
-          "description"
-        ],
         "type": "object",
         "properties": {
           "storeItemId": {
@@ -3873,7 +3854,8 @@
             "format": "double"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "default": "Nová cena"
           }
         }
       },
@@ -4005,15 +3987,11 @@
         "format": "binary"
       },
       "LayoutCreateRequest": {
-        "required": [
-          "name",
-          "topLevel",
-          "layoutItems"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Výchozí layout"
           },
           "image": {
             "type": [
@@ -4022,7 +4000,8 @@
             ]
           },
           "topLevel": {
-            "type": "boolean"
+            "type": "boolean",
+            "default": true
           },
           "layoutItems": {
             "type": "array",
@@ -4036,6 +4015,7 @@
         "required": [
           "id",
           "name",
+          "image",
           "topLevel",
           "layoutItems"
         ],
@@ -4070,12 +4050,6 @@
         }
       },
       "LayoutItemCreateRequest": {
-        "required": [
-          "x",
-          "y",
-          "targetId",
-          "type"
-        ],
         "type": "object",
         "properties": {
           "x": {
@@ -4103,7 +4077,8 @@
             "format": "int32"
           },
           "type": {
-            "type": "string"
+            "type": "string",
+            "default": "SaleItem"
           }
         }
       },
@@ -4250,6 +4225,7 @@
         "required": [
           "id",
           "name",
+          "image",
           "topLevel"
         ],
         "type": "object",
@@ -4294,6 +4270,7 @@
         "required": [
           "id",
           "name",
+          "image",
           "topLevel",
           "layoutItems"
         ],
@@ -4328,15 +4305,11 @@
         }
       },
       "LayoutUpdateRequest": {
-        "required": [
-          "name",
-          "topLevel",
-          "layoutItems"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Test"
           },
           "image": {
             "type": [
@@ -4345,7 +4318,8 @@
             ]
           },
           "topLevel": {
-            "type": "boolean"
+            "type": "boolean",
+            "default": false
           },
           "layoutItems": {
             "type": "array",
@@ -4359,6 +4333,7 @@
         "required": [
           "id",
           "name",
+          "image",
           "topLevel",
           "layoutItems"
         ],
@@ -4393,10 +4368,6 @@
         }
       },
       "ModificationCreateRequest": {
-        "required": [
-          "amount",
-          "modifierId"
-        ],
         "type": "object",
         "properties": {
           "amount": {
@@ -4895,13 +4866,11 @@
         }
       },
       "PipeCreateRequest": {
-        "required": [
-          "name"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Pípa Kachna"
           }
         }
       },
@@ -4987,13 +4956,11 @@
         }
       },
       "PipeUpdateRequest": {
-        "required": [
-          "name"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Pípa Kachna"
           }
         }
       },
@@ -5021,18 +4988,11 @@
         "type": "integer"
       },
       "SaleItemCreateRequest": {
-        "required": [
-          "name",
-          "marginPercent",
-          "marginStatic",
-          "prestigeAmount",
-          "printType",
-          "categoryIds"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Kofola"
           },
           "image": {
             "type": [
@@ -5046,7 +5006,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 5
           },
           "marginStatic": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -5054,7 +5015,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 0
           },
           "prestigeAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -5062,9 +5024,11 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 0
           },
           "printType": {
+            "default": 0,
             "$ref": "#/components/schemas/PrintType"
           },
           "categoryIds": {
@@ -5360,7 +5324,8 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Kofola"
           },
           "image": {
             "type": [
@@ -5374,7 +5339,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 5
           },
           "marginStatic": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -5382,7 +5348,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 0
           },
           "prestigeAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -5390,9 +5357,11 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 0
           },
           "printType": {
+            "default": 0,
             "$ref": "#/components/schemas/PrintType"
           },
           "categoryIds": {
@@ -5492,11 +5461,6 @@
         }
       },
       "SaleTransactionCloseRequest": {
-        "required": [
-          "cashBoxId",
-          "customerId",
-          "paidAmount"
-        ],
         "type": "object",
         "properties": {
           "note": {
@@ -5539,7 +5503,6 @@
           "cancelledAt",
           "startedBy",
           "cancelledBy",
-          "open",
           "openedBy",
           "saleTransactionItems",
           "accountTransactions",
@@ -5585,9 +5548,6 @@
               }
             ]
           },
-          "open": {
-            "type": "boolean"
-          },
           "openedBy": {
             "oneOf": [
               {
@@ -5619,13 +5579,6 @@
         }
       },
       "SaleTransactionCreateRequest": {
-        "required": [
-          "storeId",
-          "cashBoxId",
-          "customerId",
-          "paidAmount",
-          "saleTransactionItems"
-        ],
         "type": "object",
         "properties": {
           "note": {
@@ -5682,7 +5635,6 @@
           "cancelledAt",
           "startedBy",
           "cancelledBy",
-          "open",
           "openedBy",
           "saleTransactionItems",
           "accountTransactions",
@@ -5728,9 +5680,6 @@
               }
             ]
           },
-          "open": {
-            "type": "boolean"
-          },
           "openedBy": {
             "oneOf": [
               {
@@ -5762,9 +5711,6 @@
         }
       },
       "SaleTransactionCheckPriceRequest": {
-        "required": [
-          "saleTransactionItems"
-        ],
         "type": "object",
         "properties": {
           "saleTransactionItems": {
@@ -5782,16 +5728,14 @@
         "type": "object",
         "properties": {
           "saleTransactionItems": {
-            "$ref": "#/components/schemas/SaleTransactionItemReadAllResponse"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
           }
         }
       },
       "SaleTransactionItemCreateRequest": {
-        "required": [
-          "itemAmount",
-          "saleItemId",
-          "modifications"
-        ],
         "type": "object",
         "properties": {
           "itemAmount": {
@@ -5800,7 +5744,8 @@
               "integer",
               "string"
             ],
-            "format": "int32"
+            "format": "int32",
+            "default": 1
           },
           "saleItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -5863,20 +5808,6 @@
           }
         }
       },
-      "SaleTransactionItemReadAllResponse": {
-        "required": [
-          "data"
-        ],
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SaleTransactionItemModel"
-            }
-          }
-        }
-      },
       "SaleTransactionListModel": {
         "required": [
           "id",
@@ -5885,7 +5816,6 @@
           "cancelledAt",
           "startedBy",
           "cancelledBy",
-          "open",
           "openedBy",
           "reason"
         ],
@@ -5929,9 +5859,6 @@
               }
             ]
           },
-          "open": {
-            "type": "boolean"
-          },
           "openedBy": {
             "oneOf": [
               {
@@ -5948,11 +5875,6 @@
         }
       },
       "SaleTransactionOpenRequest": {
-        "required": [
-          "storeId",
-          "assignToCreator",
-          "saleTransactionItems"
-        ],
         "type": "object",
         "properties": {
           "note": {
@@ -5968,9 +5890,6 @@
               "string"
             ],
             "format": "int32"
-          },
-          "assignToCreator": {
-            "type": "boolean"
           },
           "saleTransactionItems": {
             "type": "array",
@@ -5988,7 +5907,6 @@
           "cancelledAt",
           "startedBy",
           "cancelledBy",
-          "open",
           "openedBy",
           "saleTransactionItems",
           "accountTransactions",
@@ -6033,9 +5951,6 @@
                 "$ref": "#/components/schemas/UserListModel"
               }
             ]
-          },
-          "open": {
-            "type": "boolean"
           },
           "openedBy": {
             "oneOf": [
@@ -6075,11 +5990,17 @@
         "type": "object",
         "properties": {
           "from": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           },
           "to": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           },
           "data": {
@@ -6101,7 +6022,6 @@
           "cancelledAt",
           "startedBy",
           "cancelledBy",
-          "open",
           "openedBy",
           "saleTransactionItems",
           "accountTransactions",
@@ -6146,9 +6066,6 @@
                 "$ref": "#/components/schemas/UserListModel"
               }
             ]
-          },
-          "open": {
-            "type": "boolean"
           },
           "openedBy": {
             "oneOf": [
@@ -6181,10 +6098,6 @@
         }
       },
       "SaleTransactionUpdateRequest": {
-        "required": [
-          "storeId",
-          "saleTransactionItems"
-        ],
         "type": "object",
         "properties": {
           "note": {
@@ -6217,7 +6130,6 @@
           "cancelledAt",
           "startedBy",
           "cancelledBy",
-          "open",
           "openedBy",
           "saleTransactionItems",
           "accountTransactions",
@@ -6263,9 +6175,6 @@
               }
             ]
           },
-          "open": {
-            "type": "boolean"
-          },
           "openedBy": {
             "oneOf": [
               {
@@ -6297,13 +6206,11 @@
         }
       },
       "StoreCreateRequest": {
-        "required": [
-          "name"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Sklad Kachna"
           }
         }
       },
@@ -6380,23 +6287,19 @@
         }
       },
       "StoreItemCreateRequest": {
-        "required": [
-          "name",
-          "unitName",
-          "isContainerItem",
-          "categoryIds",
-          "initialCost"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Kofola"
           },
           "unitName": {
-            "type": "string"
+            "type": "string",
+            "default": "l"
           },
           "isContainerItem": {
-            "type": "boolean"
+            "type": "boolean",
+            "default": false
           },
           "categoryIds": {
             "type": "array",
@@ -6415,7 +6318,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 20
           }
         }
       },
@@ -6577,18 +6481,15 @@
         }
       },
       "StoreItemUpdateRequest": {
-        "required": [
-          "name",
-          "unitName",
-          "categoryIds"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Kofola"
           },
           "unitName": {
-            "type": "string"
+            "type": "string",
+            "default": "l"
           },
           "categoryIds": {
             "type": "array",
@@ -6717,11 +6618,6 @@
         }
       },
       "StoreTransactionCreateRequest": {
-        "required": [
-          "storeTransactionItems",
-          "reason",
-          "storeId"
-        ],
         "type": "object",
         "properties": {
           "note": {
@@ -6737,6 +6633,7 @@
             }
           },
           "reason": {
+            "default": 0,
             "$ref": "#/components/schemas/TransactionReason"
           },
           "storeId": {
@@ -6757,7 +6654,8 @@
             "format": "int32"
           },
           "updateCosts": {
-            "type": "boolean"
+            "type": "boolean",
+            "default": true
           }
         }
       },
@@ -6834,11 +6732,6 @@
         }
       },
       "StoreTransactionItemCreateRequest": {
-        "required": [
-          "itemAmount",
-          "cost",
-          "storeItemId"
-        ],
         "type": "object",
         "properties": {
           "itemAmount": {
@@ -7065,13 +6958,11 @@
         }
       },
       "StoreUpdateRequest": {
-        "required": [
-          "name"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Sklad Kachna"
           }
         }
       },

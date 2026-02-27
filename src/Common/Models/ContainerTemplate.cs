@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -19,17 +20,21 @@ public record ContainerTemplateReadAllRequest : PagedRequest {
 public record ContainerTemplateReadAllResponse : PagedResponse<ContainerTemplateModel>;
 
 public record ContainerTemplateCreateRequest {
-    public required string Name { get; init; }
-    public required decimal Amount { get; init; }
-    public required int StoreItemId { get; init; }
+    [DefaultValue("Kofola 50l")]
+    public string Name { get; init; } = string.Empty;
+    [DefaultValue(typeof(decimal), "50")]
+    public decimal Amount { get; init; }
+    public int StoreItemId { get; init; }
 }
 
 public record ContainerTemplateCreateResponse : ContainerTemplateModel;
 
 public record ContainerTemplateUpdateRequest {
-    public required string Name { get; init; }
-    public required decimal Amount { get; init; }
-    public required int StoreItemId { get; init; }
+    [DefaultValue("Kofola 50l")]
+    public string Name { get; init; } = string.Empty;
+    [DefaultValue(typeof(decimal), "50")]
+    public decimal Amount { get; init; }
+    public int StoreItemId { get; init; }
 }
 
 public record ContainerTemplateUpdateCommand {

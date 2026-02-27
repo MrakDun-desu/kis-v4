@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
 
@@ -13,15 +14,16 @@ public record ContainerChangeModel {
 
 // Requests and responses
 public record ContainerChangeReadAllRequest {
-    public required int ContainerId { get; init; }
+    public int ContainerId { get; init; }
 }
 
 public record ContainerChangeReadAllResponse : CollectionResponse<ContainerChangeModel>;
 
 public record ContainerChangeCreateRequest {
-    public required decimal NewAmount { get; init; }
-    public required ContainerState NewState { get; init; }
-    public required int ContainerId { get; init; }
+    public decimal NewAmount { get; init; }
+    [DefaultValue(ContainerState.Opened)]
+    public ContainerState NewState { get; init; }
+    public int ContainerId { get; init; }
 }
 
 public record ContainerChangeCreateResponse : ContainerChangeModel;

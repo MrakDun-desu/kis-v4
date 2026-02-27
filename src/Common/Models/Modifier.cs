@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -33,24 +34,36 @@ public record ModifierReadAllRequest : PagedRequest {
 public record ModifierReadAllResponse : PagedResponse<ModifierListModel>;
 
 public record ModifierCreateRequest(
+    [DefaultValue("Vegánský toust")]
     string Name,
     string? Image,
+    [DefaultValue(typeof(decimal), "5")]
     decimal MarginPercent,
+    [DefaultValue(typeof(decimal), "0")]
     decimal MarginStatic,
+    [DefaultValue(typeof(decimal), "0")]
     decimal PrestigeAmount,
+    [DefaultValue(new int[0])]
     int[] CategoryIds,
+    [DefaultValue(new int[0])]
     int[] TargetIds
 );
 
 public record ModifierCreateResponse : ModifierDetailModel;
 
 public record ModifierUpdateRequest(
+    [DefaultValue("Vegánský toust")]
     string Name,
     string? Image,
+    [DefaultValue(typeof(decimal), "5")]
     decimal MarginPercent,
+    [DefaultValue(typeof(decimal), "0")]
     decimal MarginStatic,
+    [DefaultValue(typeof(decimal), "0")]
     decimal PrestigeAmount,
+    [DefaultValue(new int[0])]
     int[] CategoryIds,
+    [DefaultValue(new int[0])]
     int[] TargetIds
 );
 

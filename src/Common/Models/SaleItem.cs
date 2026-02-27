@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
 
@@ -46,26 +47,40 @@ public record SaleItemReadAllRequest : PagedRequest {
 public record SaleItemReadAllResponse : PagedResponse<SaleItemListModel>;
 
 public record SaleItemCreateRequest {
-    public required string Name { get; init; }
+    [DefaultValue("Kofola")]
+    public string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
-    public required decimal MarginPercent { get; init; }
-    public required decimal MarginStatic { get; init; }
-    public required decimal PrestigeAmount { get; init; }
-    public required PrintType PrintType { get; init; }
-    public required int[] CategoryIds { get; init; }
+    [DefaultValue(typeof(decimal), "5")]
+    public decimal MarginPercent { get; init; }
+    [DefaultValue(typeof(decimal), "0")]
+    public decimal MarginStatic { get; init; }
+    [DefaultValue(typeof(decimal), "0")]
+    public decimal PrestigeAmount { get; init; }
+    [DefaultValue(PrintType.DontPrint)]
+    public PrintType PrintType { get; init; }
+    [DefaultValue(new int[0])]
+    public int[] CategoryIds { get; init; } = [];
+    [DefaultValue(new int[0])]
     public int[] ModifierIds { get; init; } = [];
 }
 
 public record SaleItemCreateResponse : SaleItemDetailModel;
 
 public record SaleItemUpdateRequest {
+    [DefaultValue("Kofola")]
     public string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
+    [DefaultValue(typeof(decimal), "5")]
     public decimal MarginPercent { get; init; }
+    [DefaultValue(typeof(decimal), "0")]
     public decimal MarginStatic { get; init; }
+    [DefaultValue(typeof(decimal), "0")]
     public decimal PrestigeAmount { get; init; }
+    [DefaultValue(PrintType.DontPrint)]
     public PrintType PrintType { get; init; }
+    [DefaultValue(new int[0])]
     public int[] CategoryIds { get; init; } = [];
+    [DefaultValue(new int[0])]
     public int[] ModifierIds { get; init; } = [];
 }
 

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -20,17 +21,17 @@ public record CashBoxDetailModel {
 public record CashBoxReadAllResponse : CollectionResponse<CashBoxListModel>;
 
 public record CashBoxCreateRequest {
+    [DefaultValue("Kasa Kachna")]
     public required string Name { get; init; }
 }
 
 public record CashBoxCreateResponse : CashBoxListModel;
 
 public record CashBoxUpdateRequest {
+    [DefaultValue("Kasa Kachna")]
     public required string Name { get; init; }
 }
 
 public record CashBoxUpdateResponse : CashBoxListModel;
 
 public record CashBoxReadResponse : CashBoxDetailModel;
-
-

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
 
@@ -38,10 +39,12 @@ public record StoreTransactionReadAllResponse : PagedResponse<StoreTransactionLi
 
 public record StoreTransactionCreateRequest {
     public string? Note { get; init; }
-    public required StoreTransactionItemCreateRequest[] StoreTransactionItems { get; init; }
-    public required TransactionReason Reason { get; init; }
-    public required int StoreId { get; init; }
+    public StoreTransactionItemCreateRequest[] StoreTransactionItems { get; init; } = [];
+    [DefaultValue(TransactionReason.AddingToStore)]
+    public TransactionReason Reason { get; init; }
+    public int StoreId { get; init; }
     public int? SourceStoreId { get; init; }
+    [DefaultValue(true)]
     public bool UpdateCosts { get; init; }
 }
 
@@ -53,5 +56,5 @@ public record StoreTransactionReadResponse : StoreTransactionDetailModel;
 public record StoreTransactionDeleteCommand(
     int Id,
     int UserId,
-    bool UpdateCosts
+    bool? UpdateCosts
 );

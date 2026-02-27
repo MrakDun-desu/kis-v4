@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -12,11 +13,13 @@ public record CategoryModel {
 public record CategoryReadAllResponse : CollectionResponse<CategoryModel>;
 
 public record CategoryCreateRequest {
-    public required string Name { get; init; }
+    [DefaultValue("Pivo")]
+    public string Name { get; init; } = string.Empty;
 }
 
 public record CategoryCreateResponse : CategoryModel;
 
 public record CategoryUpdateRequest {
-    public required string Name { get; init; }
+    [DefaultValue("Pivo")]
+    public string Name { get; init; } = string.Empty;
 }

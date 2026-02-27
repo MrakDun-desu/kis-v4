@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -19,13 +20,15 @@ public record StoreDetailModel {
 public record StoreReadAllResponse : CollectionResponse<StoreListModel>;
 
 public record StoreCreateRequest {
-    public required string Name { get; init; }
+    [DefaultValue("Sklad Kachna")]
+    public string Name { get; init; } = string.Empty;
 }
 
 public record StoreCreateResponse : StoreListModel;
 
 public record StoreUpdateRequest {
-    public required string Name { get; init; }
+    [DefaultValue("Sklad Kachna")]
+    public string Name { get; init; } = string.Empty;
 }
 
 public record StoreUpdateResponse : StoreListModel;

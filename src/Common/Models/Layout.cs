@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -6,14 +7,14 @@ namespace KisV4.Common.Models;
 public record LayoutListModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
-    public string? Image { get; init; }
+    public required string? Image { get; init; }
     public required bool TopLevel { get; set; }
 }
 
 public record LayoutDetailModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
-    public string? Image { get; init; }
+    public required string? Image { get; init; }
     public required bool TopLevel { get; init; }
     public required IEnumerable<LayoutItemModel> LayoutItems { get; init; }
 }
@@ -27,27 +28,25 @@ public record LayoutReadAllRequest {
 public record LayoutReadAllResponse : CollectionResponse<LayoutListModel>;
 
 public record LayoutCreateRequest {
-    public required string Name { get; init; }
+    [DefaultValue("Výchozí layout")]
+    public string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
-    public required bool TopLevel { get; init; }
-    public required LayoutItemCreateRequest[] LayoutItems { get; init; }
+    [DefaultValue(true)]
+    public bool TopLevel { get; init; }
+    public LayoutItemCreateRequest[] LayoutItems { get; init; } = [];
 }
 
 public record LayoutCreateResponse : LayoutDetailModel;
 
 public record LayoutUpdateRequest {
-    public required string Name { get; init; }
+    [DefaultValue("Test")]
+    public string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
-    public required bool TopLevel { get; init; }
-    public required LayoutItemCreateRequest[] LayoutItems { get; init; }
+    [DefaultValue(false)]
+    public bool TopLevel { get; init; }
+    public LayoutItemCreateRequest[] LayoutItems { get; init; } = [];
 }
 
 public record LayoutUpdateResponse : LayoutDetailModel;
-
-// layouts need to be read with store ID specified so backend knows which store to display
-// store amounts from
-public record LayoutReadRequest {
-    public int StoreId { get; init; }
-}
 
 public record LayoutReadResponse : LayoutDetailModel;

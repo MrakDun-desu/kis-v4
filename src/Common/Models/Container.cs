@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
 
@@ -56,14 +57,16 @@ public record ContainerCreateRequest {
     public int TemplateId { get; init; }
     public int StoreId { get; init; }
     public int Amount { get; init; }
+    [DefaultValue(typeof(decimal), "50")]
     public decimal Cost { get; init; }
+    [DefaultValue(false)]
     public bool UpdateCosts { get; init; }
 }
 
 public record ContainerCreateResponse : CollectionResponse<ContainerListModel>;
 
 public record ContainerUpdateRequest {
-    public required int StoreId { get; init; }
+    public int StoreId { get; init; }
     public int? PipeId { get; init; }
 }
 
