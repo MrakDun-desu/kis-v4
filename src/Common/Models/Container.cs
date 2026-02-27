@@ -34,15 +34,6 @@ public record ContainerDetailModel {
     public required IEnumerable<ContainerChangeModel> ContainerChanges { get; init; }
 }
 
-// Used in operator when displaying sale items from a container
-public record ContainerOperatorModel {
-    public required int Id { get; init; }
-    public required decimal Amount { get; init; }
-    public required ContainerState State { get; init; }
-    public required ContainerTemplateModel Template { get; init; }
-    public required IEnumerable<SaleItemOperatorModel> SaleItems { get; init; }
-}
-
 // Requests and responses
 public record ContainerReadAllRequest : PagedRequest {
     public int? StoreId { get; init; }
@@ -73,3 +64,11 @@ public record ContainerUpdateRequest {
 public record ContainerUpdateResponse : ContainerListModel;
 
 public record ContainerReadResponse : ContainerDetailModel;
+
+public record ContainerOperatorReadResponse {
+    public required int Id { get; init; }
+    public required decimal Amount { get; init; }
+    public required ContainerState State { get; init; }
+    public required ContainerTemplateModel Template { get; init; }
+    public required IEnumerable<SaleItemOperatorModel> SaleItems { get; init; }
+}

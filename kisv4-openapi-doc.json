@@ -745,6 +745,40 @@
         }
       }
     },
+    "/containers/{id}/operator": {
+      "get": {
+        "tags": [
+          "Containers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerOperatorReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/container-templates": {
       "get": {
         "tags": [
@@ -3486,6 +3520,46 @@
           }
         }
       },
+      "ContainerOperatorReadResponse": {
+        "required": [
+          "id",
+          "amount",
+          "state",
+          "template",
+          "saleItems"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "amount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ContainerState"
+          },
+          "template": {
+            "$ref": "#/components/schemas/ContainerTemplateModel"
+          },
+          "saleItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleItemOperatorModel"
+            }
+          }
+        }
+      },
       "ContainerPipeModel": {
         "required": [
           "id",
@@ -5190,7 +5264,7 @@
           "id",
           "name",
           "image",
-          "currentPrice",
+          "currentCost",
           "amountInStore"
         ],
         "type": "object",
@@ -5212,7 +5286,7 @@
               "string"
             ]
           },
-          "currentPrice": {
+          "currentCost": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": [
               "number",

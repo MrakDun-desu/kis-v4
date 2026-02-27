@@ -21,7 +21,7 @@ public record SaleItemOperatorModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
     public required string? Image { get; init; }
-    public required decimal CurrentPrice { get; init; }
+    public required decimal CurrentCost { get; init; }
     public required decimal AmountInStore { get; init; }
 }
 

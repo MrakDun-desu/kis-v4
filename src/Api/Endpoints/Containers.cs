@@ -13,6 +13,7 @@ public static class Containers {
         routeBuilder.MapGet("containers", ReadAll);
         routeBuilder.MapPost("containers", Create);
         routeBuilder.MapGet("containers/{id:int}", Read);
+        routeBuilder.MapGet("containers/{id:int}/operator", OperatorRead);
         routeBuilder.MapPut("containers/{id:int}", Update);
     }
 
@@ -36,6 +37,17 @@ public static class Containers {
             CancellationToken token = default
             ) {
         return await service.ReadAsync(id, token) switch {
+            null => TypedResults.NotFound(),
+            var val => TypedResults.Ok(val)
+        };
+    }
+
+    public static async Task<Results<Ok<ContainerOperatorReadResponse>, NotFound>> OperatorRead(
+            int id,
+            ContainerService service,
+            CancellationToken token = default
+            ) {
+        return await service.ReadOperatorAsync(id, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
         };

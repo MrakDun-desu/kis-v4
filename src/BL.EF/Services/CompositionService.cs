@@ -57,7 +57,7 @@ public class CompositionService(
                             x => x.Amount,
                             x => _dbContext.Compositions
                                 .Where(c => c.CompositeId == x.CompositeId)
-                                .Select(c => (int)(_dbContext.StoreItemAmounts
+                                .Select(c => (int)Math.Floor(_dbContext.StoreItemAmounts
                                     .Where(sia => sia.StoreItemId == c.StoreItemId
                                         && sia.StoreId == x.StoreId)
                                     .Select(sia => sia.Amount)

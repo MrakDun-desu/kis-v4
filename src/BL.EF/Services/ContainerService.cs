@@ -80,6 +80,52 @@ public class ContainerService(
             .FirstOrDefaultAsync(c => c.Id == id, token);
     }
 
+    public async Task<ContainerOperatorReadResponse?> ReadOperatorAsync(
+        int id,
+        CancellationToken token = default
+    ) {
+        var container = await _dbContext.Containers
+            .Include(c => c.Template)
+            .ThenInclude(ct => ct!.StoreItem)
+            .Select(c => new {
+                c.Id,
+                c.Amount,
+                c.State,
+                c.StoreId,
+                Template = c.Template!.ToModel()
+            })
+            .FirstOrDefaultAsync(c => id == c.Id, token);
+
+        if (container is null) {
+            return null;
+        }
+
+        var storeItem = container.Template!.StoreItem;
+        var saleItems = await _dbContext.SaleItems
+            .Include(si => si.Compositions)
+            .Where(si => si.Compositions.Any())
+            .Where(si => si.Compositions.All(c => c.StoreItemId == storeItem!.Id))
+            .Select(si => new SaleItemOperatorModel {
+                Id = si.Id,
+                Name = si.Name,
+                Image = si.Image,
+                CurrentCost = Math.Round(storeItem.CurrentCost * si.Compositions.First().Amount
+                    * (si.MarginPercent * 0.01m + 1m) + si.MarginStatic, 2),
+                AmountInStore = _dbContext.CompositeAmounts.First(
+                    ca => ca.CompositeId == si.Id && ca.StoreId == container.StoreId
+                ).Amount
+            })
+            .ToArrayAsync(token);
+
+        return new ContainerOperatorReadResponse {
+            Id = container.Id,
+            Amount = container.Amount,
+            State = container.State,
+            Template = container.Template,
+            SaleItems = saleItems
+        };
+    }
+
     public async Task<ContainerCreateResponse> CreateAsync(ContainerCreateRequest req, int userId, CancellationToken token = default) {
         var reqTime = _timeProvider.GetUtcNow();
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(token);
@@ -208,4 +254,5 @@ public class ContainerService(
             throw;
         }
     }
+
 }

@@ -266,7 +266,7 @@ public class StoreTransactionService(
                         x => x.Amount,
                         x => dbContext.Compositions
                             .Where(c => c.CompositeId == x.CompositeId)
-                            .Select(c => (int)(dbContext.StoreItemAmounts
+                            .Select(c => (int)Math.Floor(dbContext.StoreItemAmounts
                                 .Where(sia => sia.StoreItemId == c.StoreItemId
                                     && sia.StoreId == x.StoreId)
                                 .Select(sia => sia.Amount)
