@@ -11,7 +11,7 @@ public class AccountTransactionReadAllValidator : AbstractValidator<AccountTrans
                 // if either of them is null, no need to check
                 return x.From is null || x.To is null || x.From < x.To;
             })
-            .WithMessage("The datetime From must be earlier than the datetime To");
+            .WithMessage("The datetime From must be earlier than the datetime To if both of them are set");
 
         RuleFor(x => x.AccountId)
             .MustAsync(helper.IdentifyExistingAccount)

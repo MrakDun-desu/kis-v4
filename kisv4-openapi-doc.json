@@ -2664,7 +2664,6 @@
           {
             "name": "OnlySelfCancellable",
             "in": "query",
-            "required": true,
             "schema": {
               "type": "boolean"
             }
@@ -2701,6 +2700,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StoreTransactionReadAllResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
                 }
               }
             }
@@ -2793,6 +2802,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "updateCosts",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -2801,6 +2818,16 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -3262,12 +3289,6 @@
         }
       },
       "ContainerCreateRequest": {
-        "required": [
-          "templateId",
-          "storeId",
-          "amount",
-          "cost"
-        ],
         "type": "object",
         "properties": {
           "templateId": {
@@ -3301,6 +3322,9 @@
               "string"
             ],
             "format": "double"
+          },
+          "updateCosts": {
+            "type": "boolean"
           }
         }
       },

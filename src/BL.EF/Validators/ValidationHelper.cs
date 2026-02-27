@@ -7,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 namespace KisV4.BL.EF.Validators;
 
 public class ValidationHelper(
-        KisDbContext dbContext
+        KisDbContext dbContext,
+        TimeProvider timeProvider
         ) : IScopedService {
     private readonly KisDbContext _dbContext = dbContext;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     internal async Task<bool> IdentifyExistingAccount(int accountId, CancellationToken token = default) =>
         await _dbContext.Accounts.FindAsync(accountId, token) is not null;
@@ -129,5 +131,39 @@ public class ValidationHelper(
         return await _dbContext.SaleItems
             .Where(si => saleItemIds.Contains(si.Id))
             .CountAsync(token) == saleItemIds.Length;
+    }
+
+    internal async Task<bool> BeAllowedToDeleteTransaction(
+        StoreTransactionDeleteCommand command,
+        CancellationToken token = default
+    ) {
+        var reqTime = _timeProvider.GetUtcNow();
+        var storeTransaction = await _dbContext.StoreTransactions.FindAsync(command.Id, token);
+        if (storeTransaction is null) {
+            return true;
+        }
+
+        return storeTransaction.StartedById == command.UserId &&
+            storeTransaction.StartedAt + ValidationConstants.SelfCancellablePeriod > reqTime;
+    }
+
+    internal async Task<bool> AllHaveNonContainerStoreItems(
+        StoreTransactionItemCreateRequest[] storeTransactionItems,
+        CancellationToken token = default
+    ) {
+        var storeItemIds = storeTransactionItems.Select(sti => sti.StoreItemId);
+        return !await _dbContext.StoreItems
+            .Where(si => storeItemIds.Contains(si.Id))
+            .AnyAsync(si => si.IsContainerItem, token);
+    }
+
+    internal async Task<bool> AllHaveExistingStoreItems(
+        StoreTransactionItemCreateRequest[] storeTransactionItems,
+        CancellationToken token = default
+    ) {
+        var storeItemIds = storeTransactionItems.Select(sti => sti.StoreItemId);
+        return await _dbContext.StoreItems
+            .Where(si => storeItemIds.Contains(si.Id))
+            .CountAsync(token) == storeTransactionItems.Distinct().Count();
     }
 }

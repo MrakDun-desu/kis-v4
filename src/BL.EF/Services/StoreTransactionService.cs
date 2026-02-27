@@ -1,5 +1,7 @@
 using KisV4.BL.EF.Mapping;
+using KisV4.BL.EF.Validators;
 using KisV4.Common.DependencyInjection;
+using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
@@ -17,6 +19,76 @@ public class StoreTransactionService(
     private readonly TimeProvider _timeProvider = timeProvider;
     private readonly UserService _userService = userService;
 
+    public async Task<StoreTransactionReadAllResponse> ReadAllAsync(
+        StoreTransactionReadAllRequest req,
+        int userId,
+        CancellationToken token = default
+    ) {
+        var reqTime = _timeProvider.GetUtcNow();
+        var query = _dbContext.StoreTransactions
+            .Include(st => st.StartedBy)
+            .Include(st => st.CancelledBy)
+            .AsQueryable();
+
+        if (req.From is { } from) {
+            query = query.Where(st => st.StartedAt > from);
+        }
+
+        if (req.To is { } to) {
+            query = query.Where(st => st.StartedAt < to);
+        }
+
+        var onlySelfCancellable = req.OnlySelfCancellable ?? false;
+        if (onlySelfCancellable) {
+            query = query.Where(st => st.StartedById == userId)
+                .Where(st => st.StartedAt > reqTime - ValidationConstants.SelfCancellablePeriod);
+        }
+
+        return await query.PaginateAsync(
+            req,
+            entity => new StoreTransactionListModel {
+                Id = entity.Id,
+                Note = entity.Note,
+                StartedAt = entity.StartedAt,
+                CancelledAt = entity.CancelledAt,
+                StartedBy = entity.StartedBy.ToModel()!,
+                CancelledBy = entity.CancelledBy.ToModel(),
+                Reason = entity.Reason,
+                SaleTransactionId = entity.SaleTransactionId
+            },
+            (data, meta) => new StoreTransactionReadAllResponse { Data = data, Meta = meta },
+            entity => entity.StartedAt,
+            true,
+            token
+        );
+    }
+
+    public async Task<StoreTransactionReadResponse?> ReadAsync(
+        int id,
+        CancellationToken token = default
+    ) {
+        return await _dbContext.StoreTransactions
+            .Include(st => st.StartedBy)
+            .Include(st => st.CancelledBy)
+            .Include(st => st.StoreTransactionItems)
+            .ThenInclude(st => st.StoreItem)
+            .Include(st => st.StoreTransactionItems)
+            .ThenInclude(st => st.Store)
+            .Select(st => new StoreTransactionReadResponse {
+                Id = st.Id,
+                Note = st.Note,
+                StartedAt = st.StartedAt,
+                CancelledAt = st.CancelledAt,
+                StartedBy = st.StartedBy.ToModel()!,
+                CancelledBy = st.CancelledBy.ToModel(),
+                Reason = st.Reason,
+                SaleTransactionId = st.SaleTransactionId,
+                StoreTransactionItems = st.StoreTransactionItems
+                    .Select(sti => sti.ToModel())
+            })
+            .FirstOrDefaultAsync(st => st.Id == id, token);
+    }
+
     public async Task<StoreTransactionCreateResponse> CreateAsync(
             StoreTransactionCreateRequest req,
             int userId,
@@ -25,25 +97,69 @@ public class StoreTransactionService(
         var reqTime = _timeProvider.GetUtcNow();
         var user = await _userService.GetOrCreateAsync(userId, token);
 
-        await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(token);
 
         try {
             var entity = await CreateInternalAsync(req, userId, reqTime, _dbContext, token: token);
-            await transaction.CommitAsync();
 
-            return new StoreTransactionCreateResponse {
+            var output = new StoreTransactionCreateResponse {
                 Id = entity.Id,
                 Note = entity.Note,
                 Reason = entity.Reason,
                 StartedAt = entity.StartedAt,
-                StoreTransactionItems = entity.StoreTransactionItems.Select(sti => sti.ToModel()).ToArray(),
+                StoreTransactionItems = _dbContext.StoreTransactionItems
+                    .Where(sti => sti.StoreTransactionId == entity.Id)
+                    .Include(sti => sti.StoreItem)
+                    .Include(sti => sti.Store)
+                    .Select(StoreTransactionItemMapping.ToModel),
                 CancelledAt = entity.CancelledAt,
                 CancelledBy = entity.CancelledBy.ToModel(),
                 SaleTransactionId = entity.SaleTransactionId,
                 StartedBy = user
             };
+
+            await transaction.CommitAsync(token);
+            return output;
         } catch {
-            await transaction.RollbackAsync();
+            await transaction.RollbackAsync(token);
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteAsync(
+        StoreTransactionDeleteCommand cmd,
+        CancellationToken token = default
+    ) {
+        var reqTime = _timeProvider.GetUtcNow();
+        await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
+        try {
+            var deletedCount = await _dbContext.StoreTransactions
+                .Where(st => st.Id == cmd.Id)
+                .ExecuteUpdateAsync(props => {
+                    props.SetProperty(st => st.CancelledById, cmd.UserId);
+                    props.SetProperty(st => st.CancelledAt, reqTime);
+                }, token);
+
+            if (deletedCount == 0) {
+                return false;
+            }
+
+            await _dbContext.StoreTransactionItems
+                .IgnoreQueryFilters()
+                .Where(sti => sti.StoreTransactionId == cmd.Id)
+                .ExecuteUpdateAsync(props => {
+                    props.SetProperty(sti => sti.Cancelled, true);
+                }, token);
+
+            if (cmd.UpdateCosts) {
+                var user = _userService.GetOrCreateAsync(cmd.UserId, token);
+                await UpdateCostsAsync(cmd.Id, user.Id, reqTime, _dbContext, token);
+            }
+
+            await dbTransaction.CommitAsync(token);
+            return true;
+        } catch {
+            await dbTransaction.RollbackAsync(token);
             throw;
         }
     }
@@ -98,6 +214,10 @@ public class StoreTransactionService(
         await dbContext.SaveChangesAsync(token);
 
         await UpdateItemAmountsAsync(entity.Id, dbContext, token);
+
+        if (req.UpdateCosts) {
+            await UpdateCostsAsync(entity.Id, userId, reqTime, dbContext, token);
+        }
 
         return entity;
     }
@@ -154,5 +274,49 @@ public class StoreTransactionService(
                             .Min()
                         )
                     );
+    }
+
+    private static async Task UpdateCostsAsync(
+        int transactionId,
+        int userId,
+        DateTimeOffset reqTime,
+        KisDbContext dbContext,
+        CancellationToken token = default
+    ) {
+        var storeItemsToUpdate = await dbContext.StoreTransactionItems
+            .IgnoreQueryFilters()
+            .Where(sti => sti.StoreTransactionId == transactionId)
+            .Select(sti => sti.StoreItemId)
+            .Distinct()
+            .ToArrayAsync(token);
+
+        var newCosts = await dbContext.StoreTransactionItems
+            .Where(sti => storeItemsToUpdate.Contains(sti.StoreItemId))
+            .Include(sti => sti.StoreTransaction)
+            .Where(sti => sti.StoreTransaction!.Reason == TransactionReason.AddingToStore)
+            .GroupBy(sti => sti.StoreItemId)
+            .Select(g => new {
+                StoreItemId = g.Key,
+                NewCost = g.Sum(sti => sti.Cost) / g.Sum(sti => sti.ItemAmount)
+            })
+            .ToArrayAsync(token);
+
+        dbContext.Costs.AddRange(newCosts.Select(c => new Cost {
+            Amount = c.NewCost,
+            Description = "Automatically recalculated",
+            Timestamp = reqTime,
+            StoreItemId = c.StoreItemId,
+            UserId = userId
+        }));
+        await dbContext.SaveChangesAsync(token);
+
+        await dbContext.StoreItems
+            .Where(si => storeItemsToUpdate.Contains(si.Id))
+            .ExecuteUpdateAsync(props => props.SetProperty(
+                si => si.CurrentCost,
+                si => si.Costs.OrderByDescending(c => c.Timestamp)
+                    .Select(c => c.Amount)
+                    .First()
+            ), token);
     }
 }

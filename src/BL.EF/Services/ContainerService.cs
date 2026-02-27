@@ -91,14 +91,16 @@ public class ContainerService(
                 .FirstAsync(t => t.Id == req.TemplateId, token);
             await StoreTransactionService.CreateInternalAsync(
                     new StoreTransactionCreateRequest {
+                        Note = "Automatic store transaction triggered by container creation",
+                        UpdateCosts = req.UpdateCosts,
                         Reason = TransactionReason.AddingToStore,
                         StoreId = req.StoreId,
                         StoreTransactionItems = [
                             new StoreTransactionItemCreateRequest {
-                            Cost = req.Cost,
-                            ItemAmount = req.Amount * template.Amount,
-                            StoreItemId = template.StoreItemId
-                        }
+                                Cost = req.Cost,
+                                ItemAmount = req.Amount * template.Amount,
+                                StoreItemId = template.StoreItemId
+                            }
                         ]
                     },
                 userId,
@@ -118,7 +120,6 @@ public class ContainerService(
             .ToArray();
             _dbContext.Containers.AddRange(containers);
             await _dbContext.SaveChangesAsync(token);
-            await transaction.CommitAsync(token);
 
             var data = containers.Select(c => new ContainerListModel {
                 Id = c.Id,
@@ -129,6 +130,7 @@ public class ContainerService(
                 Template = template.ToModel()
             }).ToArray();
 
+            await transaction.CommitAsync(token);
             return new ContainerCreateResponse { Data = data };
         } catch {
             await transaction.RollbackAsync(token);
@@ -136,7 +138,12 @@ public class ContainerService(
         }
     }
 
-    public async Task<ContainerUpdateResponse?> UpdateAsync(int id, ContainerUpdateRequest req, int userId, CancellationToken token) {
+    public async Task<ContainerUpdateResponse?> UpdateAsync(
+        int id,
+        ContainerUpdateRequest req,
+        int userId,
+        CancellationToken token
+    ) {
         var reqTime = _timeProvider.GetUtcNow();
         var user = await _userService.GetOrCreateAsync(userId, token);
 
@@ -149,11 +156,13 @@ public class ContainerService(
 
         await using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-        entity.StoreId = req.StoreId;
-        entity.PipeId = req.PipeId;
-
-        _dbContext.Containers.Update(entity);
         try {
+            entity.StoreId = req.StoreId;
+            entity.PipeId = req.PipeId;
+
+            _dbContext.Containers.Update(entity);
+            await _dbContext.SaveChangesAsync(token);
+
             if (entity.StoreId != req.StoreId) {
                 await StoreTransactionService.CreateInternalAsync(
                         new StoreTransactionCreateRequest {
@@ -174,28 +183,29 @@ public class ContainerService(
                     token: token
                 );
             }
-            await _dbContext.SaveChangesAsync(token);
+
+            var output = await _dbContext.Containers
+                .Include(c => c.Store)
+                .Include(c => c.Pipe)
+                .Include(c => c.Template)
+                .ThenInclude(ct => ct!.StoreItem)
+                .Select(c =>
+                    new ContainerUpdateResponse {
+                        Id = c.Id,
+                        Amount = c.Amount,
+                        State = c.State,
+                        Pipe = c.Pipe.ToModel(),
+                        Store = c.Store!.ToModel(),
+                        Template = c.Template!.ToModel()
+                    }
+                )
+                .FirstAsync(c => c.Id == id, token);
+
             await transaction.CommitAsync(token);
+            return output;
         } catch {
             await transaction.RollbackAsync(token);
             throw;
         }
-
-        return await _dbContext.Containers
-            .Include(c => c.Store)
-            .Include(c => c.Pipe)
-            .Include(c => c.Template)
-            .ThenInclude(ct => ct!.StoreItem)
-            .Select(c =>
-                new ContainerUpdateResponse {
-                    Id = c.Id,
-                    Amount = c.Amount,
-                    State = c.State,
-                    Pipe = c.Pipe.ToModel(),
-                    Store = c.Store!.ToModel(),
-                    Template = c.Template!.ToModel()
-                }
-            )
-            .FirstAsync(c => c.Id == id, token);
     }
 }

@@ -31,7 +31,7 @@ public record StoreTransactionDetailModel {
 public record StoreTransactionReadAllRequest : PagedRequest {
     public DateTimeOffset? From { get; init; }
     public DateTimeOffset? To { get; init; }
-    public bool OnlySelfCancellable { get; init; } = true;
+    public bool? OnlySelfCancellable { get; init; }
 }
 
 public record StoreTransactionReadAllResponse : PagedResponse<StoreTransactionListModel>;
@@ -49,6 +49,9 @@ public record StoreTransactionCreateResponse : StoreTransactionDetailModel;
 
 public record StoreTransactionReadResponse : StoreTransactionDetailModel;
 
-public record StoreTransactionDeleteRequest {
-    public bool UpdateCosts { get; init; }
-}
+// Commands
+public record StoreTransactionDeleteCommand(
+    int Id,
+    int UserId,
+    bool UpdateCosts
+);

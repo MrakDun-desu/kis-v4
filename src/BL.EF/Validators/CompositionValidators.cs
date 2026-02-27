@@ -23,7 +23,7 @@ public class CompositionPutValidator : AbstractValidator<CompositionPutRequest> 
 
         RuleFor(x => x.Amount)
             .LessThan(ValidationConstants.MaxCompositionAmount)
-            .GreaterThan(ValidationConstants.MinCompositionAmount);
+            .GreaterThan(-ValidationConstants.MaxCompositionAmount);
 
     }
 }

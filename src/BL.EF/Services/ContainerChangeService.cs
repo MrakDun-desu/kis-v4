@@ -95,14 +95,15 @@ public class ContainerChangeService(
             await _dbContext.SaveChangesAsync(token);
 
 
-            await transaction.CommitAsync(token);
-
-            return new ContainerChangeCreateResponse {
+            var output = new ContainerChangeCreateResponse {
                 ContainerId = entity.ContainerId,
                 NewState = entity.NewState,
                 Timestamp = entity.Timestamp,
                 User = user
             };
+
+            await transaction.CommitAsync(token);
+            return output;
         } catch {
             await transaction.RollbackAsync(token);
             throw;

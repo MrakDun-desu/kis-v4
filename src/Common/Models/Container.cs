@@ -53,10 +53,11 @@ public record ContainerReadAllRequest : PagedRequest {
 public record ContainerReadAllResponse : PagedResponse<ContainerListModel>;
 
 public record ContainerCreateRequest {
-    public required int TemplateId { get; init; }
-    public required int StoreId { get; init; }
-    public required int Amount { get; init; }
-    public required decimal Cost { get; init; }
+    public int TemplateId { get; init; }
+    public int StoreId { get; init; }
+    public int Amount { get; init; }
+    public decimal Cost { get; init; }
+    public bool UpdateCosts { get; init; }
 }
 
 public record ContainerCreateResponse : CollectionResponse<ContainerListModel>;
