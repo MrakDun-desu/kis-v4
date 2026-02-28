@@ -2916,7 +2916,6 @@
           {
             "name": "updateCosts",
             "in": "query",
-            "required": true,
             "schema": {
               "type": "boolean"
             }
@@ -3464,7 +3463,7 @@
             "format": "double"
           },
           "newState": {
-            "default": 1,
+            "default": "Opened",
             "$ref": "#/components/schemas/ContainerState"
           },
           "containerId": {
@@ -3744,7 +3743,12 @@
         }
       },
       "ContainerState": {
-        "type": "integer"
+        "enum": [
+          "New",
+          "Opened",
+          "WrittenOff",
+          "Bad"
+        ]
       },
       "ContainerTemplateCreateRequest": {
         "type": "object",
@@ -4228,8 +4232,8 @@
             "format": "int32"
           },
           "type": {
-            "type": "string",
-            "default": "SaleItem"
+            "default": "SaleItem",
+            "$ref": "#/components/schemas/LayoutItemType"
           }
         }
       },
@@ -4359,6 +4363,13 @@
             "format": "int32"
           }
         }
+      },
+      "LayoutItemType": {
+        "enum": [
+          "SaleItem",
+          "Pipe",
+          "Layout"
+        ]
       },
       "LayoutListModel": {
         "required": [
@@ -5124,7 +5135,12 @@
         }
       },
       "PrintType": {
-        "type": "integer"
+        "enum": [
+          "DontPrint",
+          "PrintForCustomer",
+          "PrintForEmployee",
+          "PrintForBoth"
+        ]
       },
       "SaleItemCreateRequest": {
         "type": "object",
@@ -5167,7 +5183,7 @@
             "default": 0
           },
           "printType": {
-            "default": 0,
+            "default": "DontPrint",
             "$ref": "#/components/schemas/PrintType"
           },
           "categoryIds": {
@@ -5501,7 +5517,7 @@
             "default": 0
           },
           "printType": {
-            "default": 0,
+            "default": "DontPrint",
             "$ref": "#/components/schemas/PrintType"
           },
           "categoryIds": {
@@ -6773,7 +6789,7 @@
             }
           },
           "reason": {
-            "default": 0,
+            "default": "AddingToStore",
             "$ref": "#/components/schemas/TransactionReason"
           },
           "storeId": {
@@ -7127,7 +7143,13 @@
         }
       },
       "TransactionReason": {
-        "type": "integer"
+        "enum": [
+          "AddingToStore",
+          "ChangingStores",
+          "WriteOff",
+          "Sale",
+          "StockTaking"
+        ]
       },
       "UserListModel": {
         "required": [

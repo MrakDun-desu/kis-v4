@@ -7,6 +7,7 @@ using Audit.EntityFramework.Providers;
 using KisV4.Api;
 using KisV4.Api.Endpoints;
 using KisV4.BL.EF;
+using KisV4.BL.EF.Services;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -102,9 +103,9 @@ builder.Services.AddHttpContextAccessor();
 // Time
 builder.Services.AddSingleton(TimeProvider.System);
 
-// builder.Services.ConfigureHttpJsonOptions(opts => {
-//     opts.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-// });
+builder.Services.ConfigureHttpJsonOptions(opts => {
+    opts.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 var app = builder.Build();
 
@@ -113,8 +114,17 @@ var contextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => {
     opts
         .AuditTypeMapper(t => typeof(AuditLog))
-        .AuditEntityAction<AuditLog>((auditEvent, entry, entity) => {
-            var claims = contextAccessor.HttpContext?.User;
+        .AuditEntityAction<AuditLog>(async (auditEvent, entry, entity) => {
+            var context = contextAccessor.HttpContext!;
+            var claims = context.User;
+
+            var services = context.RequestServices;
+            if (services is not null) {
+                var userService = services.GetRequiredService<UserService>();
+                var userId = claims.GetUserId();
+                var user = await userService.GetOrCreateAsync(userId);
+                entity.UserId = user.Id;
+            }
 
             entity.EntityType = entry.EntityType.Name;
             entity.Action = entry.Action;
@@ -122,7 +132,6 @@ Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => 
             entity.EntityKeys = JsonSerializer.SerializeToDocument(entry.PrimaryKey);
             entity.StartDate = auditEvent.StartDate;
             entity.EndDate = auditEvent.EndDate;
-            entity.UserId = claims?.GetUserId();
         })
         .IgnoreMatchedProperties(true);
 });

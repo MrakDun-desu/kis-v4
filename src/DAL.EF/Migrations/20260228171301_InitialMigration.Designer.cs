@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KisV4.DAL.EF.Migrations
 {
     [DbContext(typeof(KisDbContext))]
-    [Migration("20260227013731_InitialMigration")]
+    [Migration("20260228171301_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -463,16 +463,14 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("Y")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("character varying(13)");
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.HasKey("LayoutId", "X", "Y");
 
                     b.ToTable("LayoutItems");
 
-                    b.HasDiscriminator<string>("Type").HasValue("LayoutItem");
+                    b.HasDiscriminator<int>("Type");
 
                     b.UseTphMappingStrategy();
                 });
@@ -763,7 +761,7 @@ namespace KisV4.DAL.EF.Migrations
 
                     b.HasIndex("TargetId");
 
-                    b.HasDiscriminator().HasValue("Layout");
+                    b.HasDiscriminator().HasValue(2);
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.LayoutPipe", b =>
@@ -781,7 +779,7 @@ namespace KisV4.DAL.EF.Migrations
                                 .HasColumnName("LayoutPipe_TargetId");
                         });
 
-                    b.HasDiscriminator().HasValue("Pipe");
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.LayoutSaleItem", b =>
@@ -799,7 +797,7 @@ namespace KisV4.DAL.EF.Migrations
                                 .HasColumnName("LayoutSaleItem_TargetId");
                         });
 
-                    b.HasDiscriminator().HasValue("SaleItem");
+                    b.HasDiscriminator().HasValue(0);
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.SaleTransaction", b =>

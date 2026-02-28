@@ -150,8 +150,10 @@ public class StoreTransactionService(
                 .ExecuteUpdateAsync(props => {
                     props.SetProperty(sti => sti.Cancelled, true);
                 }, token);
-            var updateCosts = cmd.UpdateCosts ?? false;
 
+            await UpdateItemAmountsAsync(cmd.Id, true, _dbContext, token);
+
+            var updateCosts = cmd.UpdateCosts ?? false;
             if (updateCosts) {
                 var user = _userService.GetOrCreateAsync(cmd.UserId, token);
                 await UpdateCostsAsync(cmd.Id, user.Id, reqTime, _dbContext, token);
@@ -214,7 +216,7 @@ public class StoreTransactionService(
         dbContext.StoreTransactions.Add(entity);
         await dbContext.SaveChangesAsync(token);
 
-        await UpdateItemAmountsAsync(entity.Id, dbContext, token);
+        await UpdateItemAmountsAsync(entity.Id, false, dbContext, token);
 
         if (req.UpdateCosts) {
             await UpdateCostsAsync(entity.Id, userId, reqTime, dbContext, token);
@@ -225,6 +227,7 @@ public class StoreTransactionService(
 
     private static async Task UpdateItemAmountsAsync(
             int transactionId,
+            bool cancelledTransaction,
             KisDbContext dbContext,
             CancellationToken token = default
         ) {
@@ -233,6 +236,7 @@ public class StoreTransactionService(
         // could be interesting to optimize
         // It's a shame that ExecuteUpdate doesn't work with in-memory collections for lists of
         // updates, so it's necessary to aggregate everything here (or add a temp table, or use raw SQL)
+        var multiplier = cancelledTransaction ? -1m : 1m;
         await dbContext.StoreItemAmounts
             .Where(sia => dbContext.StoreTransactionItems
                     .Any(c => c.StoreId == sia.StoreId
@@ -243,11 +247,12 @@ public class StoreTransactionService(
                 props => props.SetProperty(
                     x => x.Amount,
                     x => x.Amount + dbContext.StoreTransactionItems
+                    .IgnoreQueryFilters()
                     .Where(sti => sti.StoreId == x.StoreId
                         && sti.StoreItemId == x.StoreItemId
                         && sti.StoreTransactionId == transactionId
                     )
-                    .Sum(sti => sti.ItemAmount)
+                    .Sum(sti => sti.ItemAmount) * multiplier
                 ), token
             );
 

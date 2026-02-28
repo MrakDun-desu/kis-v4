@@ -64,7 +64,7 @@ public static class StoreTransactions {
 
     public static async Task<Results<NoContent, NotFound, ValidationProblem>> Delete(
         int id,
-        [FromQuery] bool updateCosts,
+        [FromQuery] bool? updateCosts,
         IValidator<StoreTransactionDeleteCommand> validator,
         ClaimsPrincipal claims,
         StoreTransactionService service,

@@ -232,7 +232,7 @@ namespace KisV4.DAL.EF.Migrations
                     X = table.Column<int>(type: "integer", nullable: false),
                     Y = table.Column<int>(type: "integer", nullable: false),
                     LayoutId = table.Column<int>(type: "integer", nullable: false),
-                    Type = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
                     TargetId = table.Column<int>(type: "integer", nullable: true),
                     LayoutPipe_TargetId = table.Column<int>(type: "integer", nullable: true),
                     LayoutSaleItem_TargetId = table.Column<int>(type: "integer", nullable: true)
