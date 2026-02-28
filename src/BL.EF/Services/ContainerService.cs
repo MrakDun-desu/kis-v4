@@ -84,46 +84,30 @@ public class ContainerService(
         int id,
         CancellationToken token = default
     ) {
-        var container = await _dbContext.Containers
+        return await _dbContext.Containers
             .Include(c => c.Template)
             .ThenInclude(ct => ct!.StoreItem)
-            .Select(c => new {
-                c.Id,
-                c.Amount,
-                c.State,
-                c.StoreId,
-                Template = c.Template!.ToModel()
+            .Select(c => new ContainerOperatorReadResponse {
+                Id = c.Id,
+                Amount = c.Amount,
+                State = c.State,
+                Template = c.Template!.ToModel(),
+                SaleItems = _dbContext.SaleItems
+                    .Include(si => si.Compositions)
+                    .Where(si => si.Compositions.Any())
+                    .Where(si => si.Compositions.All(comp => comp.StoreItemId == c.Template!.StoreItemId))
+                    .Select(si => new SaleItemOperatorModel {
+                        Id = si.Id,
+                        Name = si.Name,
+                        Image = si.Image,
+                        CurrentCost = Math.Round(c.Template!.StoreItem!.CurrentCost * si.Compositions.First().Amount
+                            * (si.MarginPercent * 0.01m + 1m) + si.MarginStatic, 2),
+                        AmountInStore = _dbContext.CompositeAmounts.First(
+                            ca => ca.CompositeId == si.Id && ca.StoreId == c.StoreId
+                        ).Amount
+                    }).ToArray()
             })
-            .FirstOrDefaultAsync(c => id == c.Id, token);
-
-        if (container is null) {
-            return null;
-        }
-
-        var storeItem = container.Template!.StoreItem;
-        var saleItems = await _dbContext.SaleItems
-            .Include(si => si.Compositions)
-            .Where(si => si.Compositions.Any())
-            .Where(si => si.Compositions.All(c => c.StoreItemId == storeItem!.Id))
-            .Select(si => new SaleItemOperatorModel {
-                Id = si.Id,
-                Name = si.Name,
-                Image = si.Image,
-                CurrentCost = Math.Round(storeItem.CurrentCost * si.Compositions.First().Amount
-                    * (si.MarginPercent * 0.01m + 1m) + si.MarginStatic, 2),
-                AmountInStore = _dbContext.CompositeAmounts.First(
-                    ca => ca.CompositeId == si.Id && ca.StoreId == container.StoreId
-                ).Amount
-            })
-            .ToArrayAsync(token);
-
-        return new ContainerOperatorReadResponse {
-            Id = container.Id,
-            Amount = container.Amount,
-            State = container.State,
-            Template = container.Template,
-            SaleItems = saleItems
-        };
+            .FirstOrDefaultAsync(c => c.Id == id, token);
     }
 
     public async Task<ContainerCreateResponse> CreateAsync(ContainerCreateRequest req, int userId, CancellationToken token = default) {
