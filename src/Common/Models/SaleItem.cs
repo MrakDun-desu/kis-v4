@@ -16,13 +16,13 @@ public record SaleItemListModel {
     public required PrintType PrintType { get; init; }
 }
 
-// Used in operator for listing sale items in the grid
+// Used in operator for listing sale items in layouts
 public record SaleItemOperatorModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
     public required string? Image { get; init; }
     public required decimal CurrentCost { get; init; }
-    public required decimal AmountInStore { get; init; }
+    public required decimal? AmountInStore { get; init; }
 }
 
 // Used in admin for detail view (composition is fetched separately)

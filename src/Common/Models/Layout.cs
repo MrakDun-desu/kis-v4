@@ -21,7 +21,6 @@ public record LayoutDetailModel {
 
 // Requests and responses
 public record LayoutReadAllRequest {
-    public bool? TopLevel { get; init; }
     public string? Name { get; init; }
 }
 
@@ -50,3 +49,24 @@ public record LayoutUpdateRequest {
 public record LayoutUpdateResponse : LayoutDetailModel;
 
 public record LayoutReadResponse : LayoutDetailModel;
+
+// Commands
+public record LayoutReadCommand(
+    int Id,
+    int? StoreId
+);
+
+public record LayoutReadTopLevelCommand(
+    int? StoreId
+);
+
+public record LayoutCreateCommand(
+    LayoutCreateRequest Request,
+    int? StoreId
+);
+
+public record LayoutUpdateCommand(
+    int Id,
+    LayoutUpdateRequest Request,
+    int? StoreId
+);

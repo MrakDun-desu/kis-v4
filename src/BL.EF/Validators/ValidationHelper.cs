@@ -166,4 +166,35 @@ public class ValidationHelper(
             .Where(si => storeItemIds.Contains(si.Id))
             .CountAsync(token) == storeTransactionItems.Distinct().Count();
     }
+
+    internal async Task<bool> HaveValidTargets(
+        LayoutItemCreateRequest[] layoutItems,
+        CancellationToken token = default
+    ) {
+        var saleItemIds = layoutItems
+            .Where(li => li.Type == LayoutItemType.SaleItem)
+            .Select(li => li.TargetId)
+            .Distinct()
+            .ToArray();
+        var pipeIds = layoutItems
+            .Where(li => li.Type == LayoutItemType.Pipe)
+            .Select(li => li.TargetId)
+            .Distinct()
+            .ToArray();
+        var layoutIds = layoutItems
+            .Where(li => li.Type == LayoutItemType.Layout)
+            .Select(li => li.TargetId)
+            .Distinct()
+            .ToArray();
+
+        return await _dbContext.SaleItems
+                .Where(si => saleItemIds.Contains(si.Id))
+                .CountAsync(token) == saleItemIds.Length &&
+            await _dbContext.Pipes
+                .Where(p => pipeIds.Contains(p.Id))
+                .CountAsync(token) == pipeIds.Length &&
+            await _dbContext.Layouts
+                .Where(l => layoutIds.Contains(l.Id))
+                .CountAsync(token) == layoutIds.Length;
+    }
 }

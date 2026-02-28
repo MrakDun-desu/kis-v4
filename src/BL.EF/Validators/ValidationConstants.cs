@@ -20,4 +20,6 @@ public static class ValidationConstants {
 
     // timing
     public static readonly TimeSpan SelfCancellablePeriod = TimeSpan.FromMinutes(30);
+    public const int LayoutWidth = 4;
+    public const int LayoutHeight = 4;
 }

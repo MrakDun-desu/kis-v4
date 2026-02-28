@@ -1045,13 +1045,6 @@
         ],
         "parameters": [
           {
-            "name": "TopLevel",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
             "name": "Name",
             "in": "query",
             "schema": {
@@ -1075,6 +1068,20 @@
       "post": {
         "tags": [
           "Layouts"
+        ],
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
         ],
         "requestBody": {
           "content": {
@@ -1126,6 +1133,18 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -1163,6 +1182,18 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -1225,6 +1256,52 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/layouts/top-level": {
+      "get": {
+        "tags": [
+          "Layouts"
+        ],
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -4158,7 +4235,7 @@
       },
       "LayoutItemModel": {
         "required": [
-          "Type"
+          "type"
         ],
         "type": "object",
         "anyOf": [
@@ -4173,7 +4250,7 @@
           }
         ],
         "discriminator": {
-          "propertyName": "Type",
+          "propertyName": "type",
           "mapping": {
             "SaleItem": "#/components/schemas/LayoutItemModelLayoutSaleItemModel",
             "Layout": "#/components/schemas/LayoutItemModelLayoutLinkModel",
@@ -4185,11 +4262,10 @@
         "required": [
           "target",
           "x",
-          "y",
-          "type"
+          "y"
         ],
         "properties": {
-          "Type": {
+          "type": {
             "enum": [
               "Layout"
             ],
@@ -4213,9 +4289,6 @@
               "string"
             ],
             "format": "int32"
-          },
-          "type": {
-            "type": "string"
           }
         }
       },
@@ -4223,11 +4296,10 @@
         "required": [
           "target",
           "x",
-          "y",
-          "type"
+          "y"
         ],
         "properties": {
-          "Type": {
+          "type": {
             "enum": [
               "Pipe"
             ],
@@ -4251,9 +4323,6 @@
               "string"
             ],
             "format": "int32"
-          },
-          "type": {
-            "type": "string"
           }
         }
       },
@@ -4261,11 +4330,10 @@
         "required": [
           "target",
           "x",
-          "y",
-          "type"
+          "y"
         ],
         "properties": {
-          "Type": {
+          "type": {
             "enum": [
               "SaleItem"
             ],
@@ -4289,9 +4357,6 @@
               "string"
             ],
             "format": "int32"
-          },
-          "type": {
-            "type": "string"
           }
         }
       },
@@ -5297,6 +5362,7 @@
           "amountInStore": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": [
+              "null",
               "number",
               "string"
             ],

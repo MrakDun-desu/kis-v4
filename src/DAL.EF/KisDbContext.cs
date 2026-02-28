@@ -56,6 +56,12 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
         modelBuilder.Entity<StoreTransactionItem>().HasQueryFilter(e => !e.Cancelled);
         modelBuilder.Entity<Transaction>().HasQueryFilter(e => e.CancelledAt == null);
 
+        // Maybe use this to auto-include some properties that are used even in
+        // list models in the future
+        // modelBuilder.Entity<ContainerTemplate>()
+        //     .Navigation(ct => ct.StoreItem)
+        //     .AutoInclude();
+
         modelBuilder.Entity<Category>()
             .HasMany(c => c.Composites)
             .WithMany(c => c.Categories)

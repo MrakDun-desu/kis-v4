@@ -94,13 +94,14 @@ public class ContainerService(
                 Template = c.Template!.ToModel(),
                 SaleItems = _dbContext.SaleItems
                     .Include(si => si.Compositions)
-                    .Where(si => si.Compositions.Any())
-                    .Where(si => si.Compositions.All(comp => comp.StoreItemId == c.Template!.StoreItemId))
+                    .ThenInclude(c => c.StoreItem)
+                    .Where(si => si.Compositions.Any(comp => comp.StoreItemId == c.Template!.StoreItemId))
                     .Select(si => new SaleItemOperatorModel {
                         Id = si.Id,
                         Name = si.Name,
                         Image = si.Image,
-                        CurrentCost = Math.Round(c.Template!.StoreItem!.CurrentCost * si.Compositions.First().Amount
+                        CurrentCost = Math.Round(si.Compositions
+                            .Sum(c => c.Amount * c.StoreItem!.CurrentCost)
                             * (si.MarginPercent * 0.01m + 1m) + si.MarginStatic, 2),
                         AmountInStore = _dbContext.CompositeAmounts.First(
                             ca => ca.CompositeId == si.Id && ca.StoreId == c.StoreId

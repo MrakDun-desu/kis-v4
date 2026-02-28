@@ -2,6 +2,7 @@ using System.Data;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Audit.EntityFramework.Providers;
 using KisV4.Api;
 using KisV4.Api.Endpoints;
@@ -100,6 +101,10 @@ builder.Services.AddHttpContextAccessor();
 
 // Time
 builder.Services.AddSingleton(TimeProvider.System);
+
+// builder.Services.ConfigureHttpJsonOptions(opts => {
+//     opts.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+// });
 
 var app = builder.Build();
 
