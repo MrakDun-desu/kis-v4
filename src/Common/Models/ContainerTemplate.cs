@@ -30,6 +30,7 @@ public record ContainerTemplateCreateRequest {
 public record ContainerTemplateCreateResponse : ContainerTemplateModel;
 
 public record ContainerTemplateUpdateRequest {
+    public int Id { get; init; }
     [DefaultValue("Kofola 50l")]
     public string Name { get; init; } = string.Empty;
     [DefaultValue(typeof(decimal), "50")]

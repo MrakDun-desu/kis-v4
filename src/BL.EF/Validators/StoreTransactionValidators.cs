@@ -50,12 +50,3 @@ public class StoreTransactionCreateValidator : AbstractValidator<StoreTransactio
             .WithMessage("All the store item IDs must identify existing store items");
     }
 }
-
-public class StoreTransactionDeleteValidator : AbstractValidator<StoreTransactionDeleteCommand> {
-    public StoreTransactionDeleteValidator(ValidationHelper helper) {
-        // TODO: Add more validation for roles (admins should be able to cancel any transaction)
-        RuleFor(x => x)
-            .MustAsync(helper.BeAllowedToDeleteTransaction)
-            .WithMessage("You don't have permission to cancel this transaction");
-    }
-}

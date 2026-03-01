@@ -39,10 +39,11 @@ public class StoreTransactionService(
         }
 
         var onlySelfCancellable = req.OnlySelfCancellable ?? false;
-        if (onlySelfCancellable) {
-            query = query.Where(st => st.StartedById == userId)
-                .Where(st => st.StartedAt > reqTime - ValidationConstants.SelfCancellablePeriod);
-        }
+        // TODO: make this work in a different way
+        // if (onlySelfCancellable) {
+        //     query = query.Where(st => st.StartedById == userId)
+        //         .Where(st => st.StartedAt > reqTime - ValidationConstants.SelfCancellablePeriod);
+        // }
 
         return await query.PaginateAsync(
             req,

@@ -18,8 +18,7 @@ public static class ValidationConstants {
     public const decimal MaxTransactionAmount = 100_000;
     public const decimal MaxCompositionAmount = 100_000;
 
-    // timing
-    public static readonly TimeSpan SelfCancellablePeriod = TimeSpan.FromMinutes(30);
+    // layouts
     public const int LayoutWidth = 4;
     public const int LayoutHeight = 4;
 }

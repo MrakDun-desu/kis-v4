@@ -1998,6 +1998,16 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -2152,7 +2162,7 @@
       }
     },
     "/sale-transactions/check-price": {
-      "get": {
+      "post": {
         "tags": [
           "SaleTransactions"
         ],
@@ -3863,6 +3873,14 @@
       "ContainerTemplateUpdateRequest": {
         "type": "object",
         "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
           "name": {
             "type": "string",
             "default": "Kofola 50l"

@@ -133,20 +133,6 @@ public class ValidationHelper(
             .CountAsync(token) == saleItemIds.Length;
     }
 
-    internal async Task<bool> BeAllowedToDeleteTransaction(
-        StoreTransactionDeleteCommand command,
-        CancellationToken token = default
-    ) {
-        var reqTime = _timeProvider.GetUtcNow();
-        var storeTransaction = await _dbContext.StoreTransactions.FindAsync(command.Id, token);
-        if (storeTransaction is null) {
-            return true;
-        }
-
-        return storeTransaction.StartedById == command.UserId &&
-            storeTransaction.StartedAt + ValidationConstants.SelfCancellablePeriod > reqTime;
-    }
-
     internal async Task<bool> AllHaveNonContainerStoreItems(
         StoreTransactionItemCreateRequest[] storeTransactionItems,
         CancellationToken token = default

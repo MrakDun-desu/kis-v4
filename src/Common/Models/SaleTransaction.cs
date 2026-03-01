@@ -86,3 +86,21 @@ public record SaleTransactionCloseRequest {
 public record SaleTransactionCloseResponse : SaleTransactionDetailModel;
 
 public record SaleTransactionReadResponse : SaleTransactionDetailModel;
+
+// Commands
+public record SaleTransactionUpdateCommand(
+    int Id,
+    int UserId,
+    SaleTransactionUpdateRequest Request
+);
+
+public record SaleTransactionCloseCommand(
+    int Id,
+    int UserId,
+    SaleTransactionCloseRequest Request
+);
+
+public record SaleTransactionDeleteCommand(
+    int Id,
+    int UserId
+);

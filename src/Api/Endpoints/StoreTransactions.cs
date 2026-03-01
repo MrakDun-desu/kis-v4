@@ -65,7 +65,7 @@ public static class StoreTransactions {
     public static async Task<Results<NoContent, NotFound, ValidationProblem>> Delete(
         int id,
         [FromQuery] bool? updateCosts,
-        IValidator<StoreTransactionDeleteCommand> validator,
+        // IValidator<StoreTransactionDeleteCommand> validator,
         ClaimsPrincipal claims,
         StoreTransactionService service,
         CancellationToken token = default
@@ -76,10 +76,10 @@ public static class StoreTransactions {
             UserId: userId,
             UpdateCosts: updateCosts
         );
-        var validationResult = await validator.ValidateAsync(command, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
+        // var validationResult = await validator.ValidateAsync(command, token);
+        // if (!validationResult.IsValid) {
+        //     return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        // }
 
         return await service.DeleteAsync(command, token)
             ? TypedResults.NoContent()
