@@ -55,7 +55,7 @@ public class SaleTransactionService(
     }
 
     public async Task<SaleTransactionUpdateResponse?> UpdateAsync(
-        SaleTransactionUpdateCommand cmd,
+        SaleTransactionUpdateRequest cmd,
         CancellationToken token = default
     ) {
 
@@ -63,7 +63,7 @@ public class SaleTransactionService(
     }
 
     public async Task<SaleTransactionCloseResponse?> CloseAsync(
-        SaleTransactionCloseCommand cmd,
+        SaleTransactionCloseRequest cmd,
         CancellationToken token = default
     ) {
 
@@ -71,7 +71,7 @@ public class SaleTransactionService(
     }
 
     public async Task<bool> DeleteAsync(
-        SaleTransactionDeleteCommand cmd,
+        SaleTransactionDeleteRequest cmd,
         CancellationToken token = default
     ) {
 

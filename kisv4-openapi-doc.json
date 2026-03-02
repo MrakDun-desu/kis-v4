@@ -27,16 +27,17 @@
         "tags": [
           "CashBoxes"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CashBoxCreateRequest"
-              }
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Kasa Kachna"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created",
@@ -74,7 +75,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -106,7 +110,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -115,7 +122,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CashBoxUpdateRequest"
+                "$ref": "#/components/schemas/CashBoxUpdateRequestModel"
               }
             }
           },
@@ -158,7 +165,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -241,7 +251,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -250,7 +263,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CategoryUpdateRequest"
+                "$ref": "#/components/schemas/CategoryUpdateRequestModel"
               }
             }
           },
@@ -703,7 +716,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -712,7 +728,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ContainerUpdateRequest"
+                "$ref": "#/components/schemas/ContainerUpdateModel"
               }
             }
           },
@@ -839,6 +855,16 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -892,7 +918,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -901,7 +930,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ContainerTemplateUpdateRequest"
+                "$ref": "#/components/schemas/ContainerTemplateUpdateRequestModel"
               }
             }
           },
@@ -1071,7 +1100,7 @@
         ],
         "parameters": [
           {
-            "name": "storeId",
+            "name": "StoreId",
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -1087,7 +1116,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LayoutCreateRequest"
+                "$ref": "#/components/schemas/LayoutCreateRequestModel"
               }
             }
           },
@@ -1130,12 +1159,15 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           },
           {
-            "name": "storeId",
+            "name": "StoreId",
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -1181,12 +1213,15 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           },
           {
-            "name": "storeId",
+            "name": "StoreId",
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -1202,7 +1237,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LayoutUpdateRequest"
+                "$ref": "#/components/schemas/LayoutUpdateRequestModel"
               }
             }
           },
@@ -1267,7 +1302,7 @@
         ],
         "parameters": [
           {
-            "name": "storeId",
+            "name": "StoreId",
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -1476,7 +1511,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -1485,7 +1523,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ModifierUpdateRequest"
+                "$ref": "#/components/schemas/ModifierUpdateModel"
               }
             }
           },
@@ -1644,7 +1682,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -1653,7 +1694,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PipeUpdateRequest"
+                "$ref": "#/components/schemas/PipeUpdateModel"
               }
             }
           },
@@ -1867,7 +1908,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -1876,7 +1920,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SaleItemUpdateRequest"
+                "$ref": "#/components/schemas/SaleItemUpdateModel"
               }
             }
           },
@@ -2094,7 +2138,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -2103,7 +2150,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SaleTransactionUpdateRequest"
+                "$ref": "#/components/schemas/SaleTransactionUpdateRequestModel"
               }
             }
           },
@@ -2251,7 +2298,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -2260,7 +2310,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SaleTransactionCloseRequest"
+                "$ref": "#/components/schemas/SaleTransactionCloseRequestModel"
               }
             }
           },
@@ -2524,7 +2574,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -2533,7 +2586,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StoreItemUpdateRequest"
+                "$ref": "#/components/schemas/StoreItemUpdateModel"
               }
             }
           },
@@ -2919,12 +2972,15 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           },
           {
-            "name": "updateCosts",
+            "name": "UpdateCosts",
             "in": "query",
             "schema": {
               "type": "boolean"
@@ -2989,6 +3045,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserReadAllResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
                 }
               }
             }
@@ -3072,18 +3138,6 @@
           },
           "meta": {
             "$ref": "#/components/schemas/PageMeta"
-          }
-        }
-      },
-      "CashBoxCreateRequest": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "default": "Kasa Kachna"
           }
         }
       },
@@ -3177,7 +3231,7 @@
           }
         }
       },
-      "CashBoxUpdateRequest": {
+      "CashBoxUpdateRequestModel": {
         "required": [
           "name"
         ],
@@ -3272,7 +3326,7 @@
           }
         }
       },
-      "CategoryUpdateRequest": {
+      "CategoryUpdateRequestModel": {
         "type": "object",
         "properties": {
           "name": {
@@ -3870,17 +3924,9 @@
           }
         }
       },
-      "ContainerTemplateUpdateRequest": {
+      "ContainerTemplateUpdateRequestModel": {
         "type": "object",
         "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
           "name": {
             "type": "string",
             "default": "Kofola 50l"
@@ -3937,7 +3983,11 @@
           }
         }
       },
-      "ContainerUpdateRequest": {
+      "ContainerUpdateModel": {
+        "required": [
+          "storeId",
+          "pipeId"
+        ],
         "type": "object",
         "properties": {
           "storeId": {
@@ -4159,7 +4209,7 @@
         "type": "string",
         "format": "binary"
       },
-      "LayoutCreateRequest": {
+      "LayoutCreateRequestModel": {
         "type": "object",
         "properties": {
           "name": {
@@ -4472,7 +4522,7 @@
           }
         }
       },
-      "LayoutUpdateRequest": {
+      "LayoutUpdateRequestModel": {
         "type": "object",
         "properties": {
           "name": {
@@ -4862,7 +4912,7 @@
           }
         }
       },
-      "ModifierUpdateRequest": {
+      "ModifierUpdateModel": {
         "required": [
           "name",
           "image",
@@ -5123,7 +5173,7 @@
           }
         }
       },
-      "PipeUpdateRequest": {
+      "PipeUpdateModel": {
         "type": "object",
         "properties": {
           "name": {
@@ -5494,7 +5544,7 @@
           }
         }
       },
-      "SaleItemUpdateRequest": {
+      "SaleItemUpdateModel": {
         "type": "object",
         "properties": {
           "name": {
@@ -5634,7 +5684,7 @@
           }
         }
       },
-      "SaleTransactionCloseRequest": {
+      "SaleTransactionCloseRequestModel": {
         "type": "object",
         "properties": {
           "note": {
@@ -6271,7 +6321,7 @@
           }
         }
       },
-      "SaleTransactionUpdateRequest": {
+      "SaleTransactionUpdateRequestModel": {
         "type": "object",
         "properties": {
           "note": {
@@ -6654,7 +6704,7 @@
           }
         }
       },
-      "StoreItemUpdateRequest": {
+      "StoreItemUpdateModel": {
         "type": "object",
         "properties": {
           "name": {

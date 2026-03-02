@@ -1,8 +1,8 @@
 using FluentValidation;
+using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Api.Endpoints;
 
@@ -12,10 +12,14 @@ public static class Layouts {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("layouts", ReadAll);
         routeBuilder.MapGet("layouts/{id:int}", Read)
+            .AddValidation<LayoutReadRequest>()
             .WithName(ReadRouteName);
-        routeBuilder.MapGet("layouts/top-level", ReadTopLevel);
-        routeBuilder.MapPost("layouts", Create);
-        routeBuilder.MapPut("layouts/{id:int}", Update);
+        routeBuilder.MapGet("layouts/top-level", ReadTopLevel)
+            .AddValidation<LayoutReadTopLevelRequest>();
+        routeBuilder.MapPost("layouts", Create)
+            .AddValidation<LayoutCreateRequest>();
+        routeBuilder.MapPut("layouts/{id:int}", Update)
+            .AddValidation<LayoutUpdateRequest>();
         routeBuilder.MapDelete("layouts/{id:int}", Delete);
     }
 
@@ -28,83 +32,43 @@ public static class Layouts {
     }
 
     private static async Task<Results<Ok<LayoutReadResponse>, ValidationProblem>> Read(
-        int id,
-        [FromQuery] int? storeId,
+        [AsParameters]
+        LayoutReadRequest req,
         LayoutService service,
-        IValidator<LayoutReadCommand> validator,
         CancellationToken token = default
     ) {
-        var command = new LayoutReadCommand(
-            Id: id,
-            StoreId: storeId
-        );
-        var validationResult = await validator.ValidateAsync(command, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
-        return TypedResults.Ok(await service.ReadAsync(command, token));
+        return TypedResults.Ok(await service.ReadAsync(req, token));
     }
 
     private static async Task<Results<Ok<LayoutReadResponse>, NotFound, ValidationProblem>> ReadTopLevel(
-        [FromQuery] int? storeId,
-        IValidator<LayoutReadTopLevelCommand> validator,
+        [AsParameters]
+        LayoutReadTopLevelRequest req,
         LayoutService service,
         CancellationToken token = default
     ) {
-        var command = new LayoutReadTopLevelCommand(
-            StoreId: storeId
-        );
-        var validationResult = await validator.ValidateAsync(command, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
-        return await service.ReadTopLevelAsync(command, token) switch {
+        return await service.ReadTopLevelAsync(req, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
         };
     }
 
     private static async Task<Results<CreatedAtRoute<LayoutCreateResponse>, ValidationProblem>> Create(
-        [FromQuery] int? storeId,
+        [AsParameters]
         LayoutCreateRequest req,
-        IValidator<LayoutCreateCommand> validator,
         LayoutService service,
         CancellationToken token = default
     ) {
-        var command = new LayoutCreateCommand(
-            Request: req,
-            StoreId: storeId
-        );
-        var validationResult = await validator.ValidateAsync(command, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
-        var output = await service.CreateAsync(command, token);
+        var output = await service.CreateAsync(req, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
     private static async Task<Results<Ok<LayoutUpdateResponse>, NotFound, ValidationProblem>> Update(
-        int id,
-        [FromQuery] int? storeId,
+        [AsParameters]
         LayoutUpdateRequest req,
-        IValidator<LayoutUpdateCommand> validator,
         LayoutService service,
         CancellationToken token = default
     ) {
-        var command = new LayoutUpdateCommand(
-            Id: id,
-            StoreId: storeId,
-            Request: req
-        );
-        var validationResult = await validator.ValidateAsync(command, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
-        var output = await service.UpdateAsync(command, token);
+        var output = await service.UpdateAsync(req, token);
         return TypedResults.Ok(output);
     }
 

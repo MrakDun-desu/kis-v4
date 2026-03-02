@@ -1,18 +1,18 @@
 using FluentValidation;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
-public class PipeCreateValidator : AbstractValidator<PipeCreateRequest> {
-    public PipeCreateValidator() {
+public class StoreCreateValidator : AbstractValidator<StoreCreateRequest> {
+    public StoreCreateValidator() {
         RuleFor(x => x.Name)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxNameLength);
     }
 }
 
-public class PipeUpdateValdiator : AbstractValidator<PipeUpdateRequest> {
-    public PipeUpdateValdiator() {
+public class StoreUpdateValidator : AbstractValidator<StoreUpdateRequest> {
+    public StoreUpdateValidator() {
         RuleFor(x => x.Name)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxNameLength);

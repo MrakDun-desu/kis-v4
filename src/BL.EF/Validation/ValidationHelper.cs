@@ -4,7 +4,7 @@ using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public class ValidationHelper(
         KisDbContext dbContext,
@@ -83,7 +83,7 @@ public class ValidationHelper(
         return categoryCount == categoryIds.Length;
     }
 
-    internal async Task<bool> NotHaveExistingContainers(ContainerTemplateUpdateCommand command, CancellationToken token = default) {
+    internal async Task<bool> NotHaveExistingContainers(ContainerTemplateUpdateRequest command, CancellationToken token = default) {
         var hasContainers = await _dbContext.Containers
             .IgnoreQueryFilters()
             .AnyAsync(c => c.TemplateId == command.Id, token);

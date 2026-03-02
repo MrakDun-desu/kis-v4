@@ -1,7 +1,7 @@
 using FluentValidation;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public class CashBoxCreateValidator : AbstractValidator<CashBoxCreateRequest> {
     public CashBoxCreateValidator() {
@@ -13,7 +13,7 @@ public class CashBoxCreateValidator : AbstractValidator<CashBoxCreateRequest> {
 
 public class CashBoxUpdateValidator : AbstractValidator<CashBoxUpdateRequest> {
     public CashBoxUpdateValidator() {
-        RuleFor(x => x.Name)
+        RuleFor(x => x.Model.Name)
             .MaximumLength(ValidationConstants.MaxNameLength)
             .NotEmpty();
     }

@@ -21,8 +21,8 @@ public class LayoutService(
         var query = _dbContext.Layouts.AsQueryable();
         if (req.Name is { } name) {
             query = query.Where(l => l.Name
-                .ToLowerInvariant()
-                .Contains(name.ToLowerInvariant())
+                .ToLower()
+                .Contains(name.ToLower())
             );
         }
 
@@ -39,7 +39,7 @@ public class LayoutService(
     }
 
     public async Task<LayoutReadResponse?> ReadTopLevelAsync(
-        LayoutReadTopLevelCommand cmd,
+        LayoutReadTopLevelRequest cmd,
         CancellationToken token = default
     ) {
         var storeId = cmd.StoreId;
@@ -60,7 +60,7 @@ public class LayoutService(
     }
 
     public async Task<LayoutReadResponse?> ReadAsync(
-        LayoutReadCommand cmd,
+        LayoutReadRequest cmd,
         CancellationToken token = default
     ) {
         var layout = await _dbContext.Layouts.FindAsync(cmd.Id, token);
@@ -80,10 +80,10 @@ public class LayoutService(
     }
 
     public async Task<LayoutCreateResponse> CreateAsync(
-        LayoutCreateCommand cmd,
+        LayoutCreateRequest cmd,
         CancellationToken token = default
     ) {
-        var req = cmd.Request;
+        var req = cmd.Model;
         var entity = new Layout {
             Name = req.Name,
             Image = req.Image,
@@ -137,11 +137,11 @@ public class LayoutService(
     }
 
     public async Task<LayoutUpdateResponse?> UpdateAsync(
-        LayoutUpdateCommand cmd,
+        LayoutUpdateRequest cmd,
         CancellationToken token = default
     ) {
         var id = cmd.Id;
-        var req = cmd.Request;
+        var req = cmd.Model;
         var entity = await _dbContext.Layouts
             .Include(l => l.LayoutItems)
             .FirstOrDefaultAsync(l => l.Id == id, token);

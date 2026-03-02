@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -23,6 +24,22 @@ public record ModifierDetailModel {
     public required IEnumerable<CategoryModel> Categories { get; init; }
     public required IEnumerable<SaleItemListModel> Targets { get; init; }
 }
+
+public record ModifierUpdateModel(
+    [DefaultValue("Vegánský toust")]
+    string Name,
+    string? Image,
+    [DefaultValue(typeof(decimal), "5")]
+    decimal MarginPercent,
+    [DefaultValue(typeof(decimal), "0")]
+    decimal MarginStatic,
+    [DefaultValue(typeof(decimal), "0")]
+    decimal PrestigeAmount,
+    [DefaultValue(new int[0])]
+    int[] CategoryIds,
+    [DefaultValue(new int[0])]
+    int[] TargetIds
+);
 
 // Requests and responses
 public record ModifierReadAllRequest : PagedRequest {
@@ -52,19 +69,10 @@ public record ModifierCreateRequest(
 public record ModifierCreateResponse : ModifierDetailModel;
 
 public record ModifierUpdateRequest(
-    [DefaultValue("Vegánský toust")]
-    string Name,
-    string? Image,
-    [DefaultValue(typeof(decimal), "5")]
-    decimal MarginPercent,
-    [DefaultValue(typeof(decimal), "0")]
-    decimal MarginStatic,
-    [DefaultValue(typeof(decimal), "0")]
-    decimal PrestigeAmount,
-    [DefaultValue(new int[0])]
-    int[] CategoryIds,
-    [DefaultValue(new int[0])]
-    int[] TargetIds
+    [FromRoute]
+    int Id,
+    [FromBody]
+    ModifierUpdateModel Model
 );
 
 public record ModifierUpdateResponse : ModifierDetailModel;

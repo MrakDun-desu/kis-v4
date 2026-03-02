@@ -1,4 +1,5 @@
 using FluentValidation;
+using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,10 +11,12 @@ public static class CashBoxes {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("cashboxes", ReadAll);
-        routeBuilder.MapPost("cashboxes", Create);
+        routeBuilder.MapPost("cashboxes", Create)
+            .AddValidation<CashBoxCreateRequest>();
         routeBuilder.MapGet("cashboxes/{id:int}", Read)
             .WithName(ReadRouteName);
-        routeBuilder.MapPut("cashboxes/{id:int}", Update);
+        routeBuilder.MapPut("cashboxes/{id:int}", Update)
+            .AddValidation<CashBoxUpdateRequest>();
         routeBuilder.MapDelete("cashboxes/{id:int}", Delete);
     }
 
@@ -26,25 +29,21 @@ public static class CashBoxes {
 
     public static async Task<Results<CreatedAtRoute<CashBoxCreateResponse>, ValidationProblem>> Create(
             CashBoxService service,
+            [AsParameters]
             CashBoxCreateRequest req,
-            IValidator<CashBoxCreateRequest> validator,
             CancellationToken token = default
             ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
         var output = await service.CreateAsync(req, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
     public static async Task<Results<Ok<CashBoxReadResponse>, NotFound>> Read(
-            CashBoxService service,
-            int id,
+        [AsParameters]
+        CashBoxReadRequest req,
+        CashBoxService service,
             CancellationToken token = default
             ) {
-        return await service.ReadAsync(id, token) switch {
+        return await service.ReadAsync(req, token) switch {
             null => TypedResults.NotFound(),
             var response => TypedResults.Ok(response)
         };
@@ -52,18 +51,11 @@ public static class CashBoxes {
 
     public static async Task<Results<Ok<CashBoxUpdateResponse>, NotFound, ValidationProblem>> Update(
             CashBoxService service,
-            int id,
+            [AsParameters]
             CashBoxUpdateRequest req,
-            IValidator<CashBoxUpdateRequest> validator,
             CancellationToken token = default
             ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
-        return await service.UpdateAsync(id, req, token) switch {
+        return await service.UpdateAsync(req, token) switch {
             null => TypedResults.NotFound(),
             var response => TypedResults.Ok(response)
         };
@@ -71,10 +63,11 @@ public static class CashBoxes {
 
     public static async Task<Results<NoContent, NotFound>> Delete(
             CashBoxService service,
-            int id,
+            [AsParameters]
+            CashBoxDeleteRequest req,
             CancellationToken token = default
             ) {
-        return await service.DeleteAsync(id, token)
+        return await service.DeleteAsync(req, token)
             ? TypedResults.NoContent()
             : TypedResults.NotFound();
     }

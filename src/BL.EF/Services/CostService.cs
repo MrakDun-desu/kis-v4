@@ -24,7 +24,7 @@ public class CostService(
             ) {
         var reqTime = _timeProvider.GetUtcNow();
 
-        var user = await _userService.GetOrCreateAsync(userId, token);
+        var user = await _userService.GetAsync(userId, token);
 
         var storeItem = await _dbContext.StoreItems.FindAsync(req.StoreItemId, token);
         storeItem!.CurrentCost = req.Amount;

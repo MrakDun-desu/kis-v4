@@ -1,7 +1,7 @@
 using FluentValidation;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public class ModifiersReadAllValidator : AbstractValidator<ModifierReadAllRequest> {
     public ModifiersReadAllValidator(ValidationHelper helper) {
@@ -36,22 +36,22 @@ public class ModifierCreateRequestValidator : AbstractValidator<ModifierCreateRe
 
 public class ModifierUpdateRequestValidator : AbstractValidator<ModifierUpdateRequest> {
     public ModifierUpdateRequestValidator(ValidationHelper helper) {
-        RuleFor(x => x.Name)
+        RuleFor(x => x.Model.Name)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxNameLength);
-        RuleFor(x => x.MarginStatic)
+        RuleFor(x => x.Model.MarginStatic)
             .GreaterThan(-ValidationConstants.MaxAllowedCost)
             .LessThan(ValidationConstants.MaxAllowedCost);
-        RuleFor(x => x.MarginPercent)
+        RuleFor(x => x.Model.MarginPercent)
             .GreaterThan(-ValidationConstants.MaxMarginPercent)
             .LessThan(ValidationConstants.MaxMarginPercent);
-        RuleFor(x => x.PrestigeAmount)
+        RuleFor(x => x.Model.PrestigeAmount)
             .GreaterThan(-ValidationConstants.MaxAllowedCost)
             .LessThan(ValidationConstants.MaxAllowedCost);
-        RuleFor(x => x.CategoryIds)
+        RuleFor(x => x.Model.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
             .WithMessage("All category IDs must identify existing categories");
-        RuleFor(x => x.TargetIds)
+        RuleFor(x => x.Model.TargetIds)
             .MustAsync(helper.AllIdentifyExistingSaleItems)
             .WithMessage("All modification target IDs must identify existing sale items");
     }

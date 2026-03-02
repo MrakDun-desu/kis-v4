@@ -1,5 +1,6 @@
 using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -68,39 +69,40 @@ public record SaleTransactionOpenRequest {
 
 public record SaleTransactionOpenResponse : SaleTransactionDetailModel;
 
-public record SaleTransactionUpdateRequest {
+public record SaleTransactionUpdateRequestModel {
     public string? Note { get; init; }
     public int StoreId { get; init; }
     public SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
 }
 
+public record SaleTransactionUpdateRequest(
+    [FromRoute]
+    int Id,
+    [FromBody]
+    SaleTransactionUpdateRequestModel Model
+);
+
 public record SaleTransactionUpdateResponse : SaleTransactionDetailModel;
 
-public record SaleTransactionCloseRequest {
+public record SaleTransactionCloseRequestModel {
     public string? Note { get; init; }
     public int CashBoxId { get; init; }
     public int CustomerId { get; init; }
     public decimal PaidAmount { get; init; }
 }
 
+public record SaleTransactionCloseRequest(
+    [FromRoute]
+    int Id,
+    [FromBody]
+    SaleTransactionCloseRequestModel Model
+);
+
 public record SaleTransactionCloseResponse : SaleTransactionDetailModel;
 
 public record SaleTransactionReadResponse : SaleTransactionDetailModel;
 
-// Commands
-public record SaleTransactionUpdateCommand(
-    int Id,
-    int UserId,
-    SaleTransactionUpdateRequest Request
-);
-
-public record SaleTransactionCloseCommand(
-    int Id,
-    int UserId,
-    SaleTransactionCloseRequest Request
-);
-
-public record SaleTransactionDeleteCommand(
-    int Id,
-    int UserId
+public record SaleTransactionDeleteRequest(
+    [FromRoute]
+    int Id
 );

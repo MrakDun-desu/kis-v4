@@ -141,7 +141,7 @@ public class ContainerService(
             );
 
             var store = await _dbContext.Stores.FindAsync(req.StoreId, token);
-            var user = await _userService.GetOrCreateAsync(userId, token);
+            var user = await _userService.GetAsync(userId, token);
 
             var containers = Enumerable.Range(0, req.Amount).Select(_ => new Container {
                 TemplateId = req.TemplateId,
@@ -170,13 +170,14 @@ public class ContainerService(
     }
 
     public async Task<ContainerUpdateResponse?> UpdateAsync(
-        int id,
         ContainerUpdateRequest req,
         int userId,
         CancellationToken token
     ) {
+        var id = req.Id;
+        var model = req.Model;
         var reqTime = _timeProvider.GetUtcNow();
-        var user = await _userService.GetOrCreateAsync(userId, token);
+        var user = await _userService.GetAsync(userId, token);
 
         var entity = await _dbContext.Containers
             .FirstOrDefaultAsync(c => c.Id == id, token);
@@ -188,17 +189,17 @@ public class ContainerService(
         await using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
         try {
-            entity.StoreId = req.StoreId;
-            entity.PipeId = req.PipeId;
+            entity.StoreId = model.StoreId;
+            entity.PipeId = model.PipeId;
 
             _dbContext.Containers.Update(entity);
             await _dbContext.SaveChangesAsync(token);
 
-            if (entity.StoreId != req.StoreId) {
+            if (entity.StoreId != model.StoreId) {
                 await StoreTransactionService.CreateInternalAsync(
                         new StoreTransactionCreateRequest {
                             Reason = TransactionReason.ChangingStores,
-                            StoreId = req.StoreId,
+                            StoreId = model.StoreId,
                             SourceStoreId = entity.StoreId,
                             StoreTransactionItems = [
                                 new StoreTransactionItemCreateRequest {

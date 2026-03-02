@@ -43,7 +43,7 @@ public class ContainerChangeService(
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
-        var user = await _userService.GetOrCreateAsync(userId, token);
+        var user = await _userService.GetAsync(userId, token);
         var entity = new ContainerChange {
             ContainerId = req.ContainerId,
             NewState = req.NewState,

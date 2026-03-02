@@ -1,7 +1,7 @@
 using FluentValidation;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public class ContainerReadAllValidator : AbstractValidator<ContainerReadAllRequest> {
     public ContainerReadAllValidator(ValidationHelper helper) {
@@ -35,10 +35,10 @@ public class ContainerCreateValidator : AbstractValidator<ContainerCreateRequest
 
 public class ContainerUpdateValidator : AbstractValidator<ContainerUpdateRequest> {
     public ContainerUpdateValidator(ValidationHelper helper) {
-        RuleFor(x => x.StoreId)
+        RuleFor(x => x.Model.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
             .WithMessage("Specified store must exist");
-        RuleFor(x => x.PipeId)
+        RuleFor(x => x.Model.PipeId)
             .MustAsync(helper.BeNullOrIdentifyExistingPipe)
             .WithMessage("PipeId must either be null or identify an existing pipe");
     }

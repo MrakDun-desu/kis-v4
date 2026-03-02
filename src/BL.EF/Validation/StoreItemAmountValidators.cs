@@ -1,10 +1,10 @@
 using FluentValidation;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
-public class CompositeAmountReadAllValidator : AbstractValidator<CompositeAmountReadAllRequest> {
-    public CompositeAmountReadAllValidator(ValidationHelper helper) {
+public class StoreItemAmountReadAllValidator : AbstractValidator<StoreItemAmountReadAllRequest> {
+    public StoreItemAmountReadAllValidator(ValidationHelper helper) {
         Include(new PagedRequestValidator());
 
         RuleFor(x => x.StoreId)
@@ -12,4 +12,3 @@ public class CompositeAmountReadAllValidator : AbstractValidator<CompositeAmount
             .WithMessage("Specified store must exist");
     }
 }
-

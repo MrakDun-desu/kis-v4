@@ -1,4 +1,5 @@
 using FluentValidation;
+using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,25 +10,22 @@ public static class SaleItems {
     private const string ReadRouteName = "SaleItemsRead";
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("sale-items", ReadAll);
-        routeBuilder.MapPost("sale-items", Create);
+        routeBuilder.MapGet("sale-items", ReadAll)
+            .AddValidation<SaleItemReadAllRequest>();
+        routeBuilder.MapPost("sale-items", Create)
+            .AddValidation<SaleItemCreateRequest>();
         routeBuilder.MapGet("sale-items/{id:int}", Read)
             .WithName(ReadRouteName);
-        routeBuilder.MapPut("sale-items/{id:int}", Update);
+        routeBuilder.MapPut("sale-items/{id:int}", Update)
+            .AddValidation<SaleItemUpdateRequest>();
         routeBuilder.MapDelete("sale-items/{id:int}", Delete);
     }
 
     public static async Task<Results<Ok<SaleItemReadAllResponse>, ValidationProblem>> ReadAll(
         [AsParameters] SaleItemReadAllRequest req,
-        IValidator<SaleItemReadAllRequest> validator,
         SaleItemService service,
         CancellationToken token = default
     ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
         var data = await service.ReadAllAsync(req, token);
         return TypedResults.Ok(data);
     }
@@ -46,31 +44,19 @@ public static class SaleItems {
     public static async Task<Results<CreatedAtRoute<SaleItemCreateResponse>, ValidationProblem>> Create(
         SaleItemCreateRequest req,
         SaleItemService service,
-        IValidator<SaleItemCreateRequest> validator,
         CancellationToken token = default
     ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
         var output = await service.CreateAsync(req, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
     public static async Task<Results<Ok<SaleItemUpdateResponse>, NotFound, ValidationProblem>> Update(
-        int id,
+        [AsParameters]
         SaleItemUpdateRequest req,
-        IValidator<SaleItemUpdateRequest> validator,
         SaleItemService service,
         CancellationToken token = default
     ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
-        return await service.UpdateAsync(id, req, token) switch {
+        return await service.UpdateAsync(req, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
         };

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -38,6 +39,24 @@ public record SaleItemDetailModel {
     public required IEnumerable<CategoryModel> Categories { get; init; }
 }
 
+public record SaleItemUpdateModel {
+    [DefaultValue("Kofola")]
+    public string Name { get; init; } = string.Empty;
+    public string? Image { get; init; }
+    [DefaultValue(typeof(decimal), "5")]
+    public decimal MarginPercent { get; init; }
+    [DefaultValue(typeof(decimal), "0")]
+    public decimal MarginStatic { get; init; }
+    [DefaultValue(typeof(decimal), "0")]
+    public decimal PrestigeAmount { get; init; }
+    [DefaultValue(PrintType.DontPrint)]
+    public PrintType PrintType { get; init; }
+    [DefaultValue(new int[0])]
+    public int[] CategoryIds { get; init; } = [];
+    [DefaultValue(new int[0])]
+    public int[] ModifierIds { get; init; } = [];
+}
+
 // Requests and responses
 public record SaleItemReadAllRequest : PagedRequest {
     public string? Name { get; init; }
@@ -66,23 +85,12 @@ public record SaleItemCreateRequest {
 
 public record SaleItemCreateResponse : SaleItemDetailModel;
 
-public record SaleItemUpdateRequest {
-    [DefaultValue("Kofola")]
-    public string Name { get; init; } = string.Empty;
-    public string? Image { get; init; }
-    [DefaultValue(typeof(decimal), "5")]
-    public decimal MarginPercent { get; init; }
-    [DefaultValue(typeof(decimal), "0")]
-    public decimal MarginStatic { get; init; }
-    [DefaultValue(typeof(decimal), "0")]
-    public decimal PrestigeAmount { get; init; }
-    [DefaultValue(PrintType.DontPrint)]
-    public PrintType PrintType { get; init; }
-    [DefaultValue(new int[0])]
-    public int[] CategoryIds { get; init; } = [];
-    [DefaultValue(new int[0])]
-    public int[] ModifierIds { get; init; } = [];
-}
+public record SaleItemUpdateRequest(
+    [FromRoute]
+    int Id,
+    [FromBody]
+    SaleItemUpdateModel Model
+);
 
 public record SaleItemUpdateResponse : SaleItemDetailModel;
 

@@ -14,7 +14,10 @@ public static class Categories {
         routeBuilder.MapDelete("categories/{id:int}", Delete);
     }
 
-    public static async Task<CategoryReadAllResponse> ReadAll(CategoryService service, CancellationToken token = default) {
+    public static async Task<CategoryReadAllResponse> ReadAll(
+        CategoryService service,
+        CancellationToken token = default
+    ) {
         return await service.ReadAllAsync(token);
     }
 
@@ -35,7 +38,7 @@ public static class Categories {
     public static async Task<Results<NoContent, NotFound, ValidationProblem>> Update(
             CategoryService service,
             IValidator<CategoryUpdateRequest> validator,
-            int id,
+            [AsParameters]
             CategoryUpdateRequest req,
             CancellationToken token = default
             ) {
@@ -44,7 +47,7 @@ public static class Categories {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        return await service.UpdateAsync(id, req, token) ? TypedResults.NoContent() : TypedResults.NotFound();
+        return await service.UpdateAsync(req, token) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 
     public static async Task<Results<NoContent, NotFound>> Delete(

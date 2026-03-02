@@ -1,7 +1,7 @@
 using FluentValidation;
 using KisV4.Common.ModelWrappers;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public class PagedRequestValidator : AbstractValidator<PagedRequest> {
     public PagedRequestValidator() {

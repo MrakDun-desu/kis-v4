@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -20,6 +21,15 @@ public record StoreItemDetailModel {
     public required decimal CurrentCost { get; init; }
     public required IEnumerable<CategoryModel> Categories { get; init; }
     public required IEnumerable<CostModel> Costs { get; init; }
+}
+
+public record StoreItemUpdateModel {
+    [DefaultValue("Kofola")]
+    public string Name { get; init; } = string.Empty;
+    [DefaultValue("l")]
+    public string UnitName { get; init; } = string.Empty;
+    [DefaultValue(new int[0])]
+    public int[] CategoryIds { get; init; } = [];
 }
 
 // Requests and responses
@@ -46,14 +56,12 @@ public record StoreItemCreateRequest {
 
 public record StoreItemCreateResponse : StoreItemDetailModel;
 
-public record StoreItemUpdateRequest {
-    [DefaultValue("Kofola")]
-    public string Name { get; init; } = string.Empty;
-    [DefaultValue("l")]
-    public string UnitName { get; init; } = string.Empty;
-    [DefaultValue(new int[0])]
-    public int[] CategoryIds { get; init; } = [];
-}
+public record StoreItemUpdateRequest(
+    [FromRoute]
+    int Id,
+    [FromBody]
+    StoreItemUpdateModel Model
+);
 
 public record StoreItemUpdateResponse : StoreItemDetailModel;
 

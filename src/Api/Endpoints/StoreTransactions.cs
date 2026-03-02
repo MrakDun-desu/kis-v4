@@ -1,9 +1,11 @@
 using System.Security.Claims;
 using FluentValidation;
+using KisV4.Api.RouteFilters;
+using KisV4.BL.EF.Authorization.Requirements;
 using KisV4.BL.EF.Services;
+using KisV4.Common;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Api.Endpoints;
 
@@ -11,11 +13,15 @@ public static class StoreTransactions {
     private const string ReadRouteName = "StoreTransactionsRead";
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("store-transactions", ReadAll);
+        routeBuilder.MapGet("store-transactions", ReadAll)
+            .AddValidation<StoreTransactionReadAllRequest>();
         routeBuilder.MapGet("store-transactions/{id:int}", Read)
             .WithName(ReadRouteName);
-        routeBuilder.MapPost("store-transactions", Create);
-        routeBuilder.MapDelete("store-transactions/{id:int}", Delete);
+        routeBuilder.MapPost("store-transactions", Create)
+            .AddValidation<StoreTransactionCreateRequest>();
+        routeBuilder.MapDelete("store-transactions/{id:int}", Delete)
+            .RequireAuthorization<StoreTransactionDeleteRequest>()
+            .WithAdminOverride();
     }
 
     public static async Task<Results<Ok<StoreTransactionReadAllResponse>, ValidationProblem>> ReadAll(
@@ -48,40 +54,23 @@ public static class StoreTransactions {
     public static async Task<Results<CreatedAtRoute<StoreTransactionCreateResponse>, ValidationProblem>> Create(
         StoreTransactionCreateRequest req,
         StoreTransactionService service,
-        IValidator<StoreTransactionCreateRequest> validator,
         ClaimsPrincipal claims,
         CancellationToken token = default
     ) {
         var userId = claims.GetUserId();
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
         var output = await service.CreateAsync(req, userId, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
     public static async Task<Results<NoContent, NotFound, ValidationProblem>> Delete(
-        int id,
-        [FromQuery] bool? updateCosts,
-        // IValidator<StoreTransactionDeleteCommand> validator,
+        [AsParameters]
+        StoreTransactionDeleteRequest req,
         ClaimsPrincipal claims,
         StoreTransactionService service,
         CancellationToken token = default
     ) {
         var userId = claims.GetUserId();
-        var command = new StoreTransactionDeleteCommand(
-            Id: id,
-            UserId: userId,
-            UpdateCosts: updateCosts
-        );
-        // var validationResult = await validator.ValidateAsync(command, token);
-        // if (!validationResult.IsValid) {
-        //     return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        // }
-
-        return await service.DeleteAsync(command, token)
+        return await service.DeleteAsync(req, userId, token)
             ? TypedResults.NoContent()
             : TypedResults.NotFound();
     }

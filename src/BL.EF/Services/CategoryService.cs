@@ -33,14 +33,19 @@ public class CategoryService(
         };
     }
 
-    public async Task<bool> UpdateAsync(int id, CategoryUpdateRequest req, CancellationToken token = default) {
+    public async Task<bool> UpdateAsync(
+        CategoryUpdateRequest req,
+        CancellationToken token = default
+    ) {
+        var model = req.Model;
+        var id = req.Id;
         var entity = await _dbContext.Categories.FindAsync(id, token);
 
         if (entity is null) {
             return false;
         }
 
-        entity.Name = req.Name;
+        entity.Name = model.Name;
         _dbContext.Categories.Update(entity);
         await _dbContext.SaveChangesAsync(token);
 

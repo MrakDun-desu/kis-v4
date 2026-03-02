@@ -40,7 +40,11 @@ public class CashBoxService(
         return new CashBoxCreateResponse { Id = entity.Id, Name = entity.Name };
     }
 
-    public async Task<CashBoxReadResponse?> ReadAsync(int id, CancellationToken token = default) {
+    public async Task<CashBoxReadResponse?> ReadAsync(
+        CashBoxReadRequest req,
+        CancellationToken token = default
+    ) {
+        var id = req.Id;
         var entity = await _dbContext.Cashboxes.FindAsync(id, token);
         if (entity is null) {
             return null;
@@ -73,14 +77,19 @@ public class CashBoxService(
         };
     }
 
-    public async Task<CashBoxUpdateResponse?> UpdateAsync(int id, CashBoxUpdateRequest req, CancellationToken token = default) {
+    public async Task<CashBoxUpdateResponse?> UpdateAsync(
+        CashBoxUpdateRequest req,
+        CancellationToken token = default
+    ) {
+        var id = req.Id;
+        var body = req.Model;
         var entity = await _dbContext.Cashboxes
             .FindAsync(id, token);
         if (entity is null) {
             return null;
         }
 
-        entity.Name = req.Name;
+        entity.Name = body.Name;
 
         _dbContext.Cashboxes.Update(entity);
         await _dbContext.SaveChangesAsync(token);
@@ -88,7 +97,11 @@ public class CashBoxService(
         return new CashBoxUpdateResponse { Id = entity.Id, Name = entity.Name, };
     }
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken token = default) {
+    public async Task<bool> DeleteAsync(
+        CashBoxDeleteRequest req,
+        CancellationToken token = default
+    ) {
+        var id = req.Id;
         // no need to mark account transactions as cancelled since they won't show up anywhere
         // anyways. Also deleting a cashbox shouldn't mean that its transactions just disappear
         var deletedCount = await _dbContext.Cashboxes

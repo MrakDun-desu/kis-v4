@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -17,6 +18,11 @@ public record PipeDetailModel {
     public required IEnumerable<ContainerPipeModel> Containers { get; init; }
 }
 
+public record PipeUpdateModel {
+    [DefaultValue("Pípa Kachna")]
+    public string Name { get; init; } = string.Empty;
+}
+
 // Requests and responses
 public record PipeReadAllResponse : CollectionResponse<PipeListModel>;
 
@@ -27,10 +33,12 @@ public record PipeCreateRequest {
 
 public record PipeCreateResponse : PipeListModel;
 
-public record PipeUpdateRequest {
-    [DefaultValue("Pípa Kachna")]
-    public string Name { get; init; } = string.Empty;
-}
+public record PipeUpdateRequest(
+    [FromRoute]
+    int Id,
+    [FromBody]
+    PipeUpdateModel Model
+);
 
 public record PipeUpdateResponse : PipeListModel;
 

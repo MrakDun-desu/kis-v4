@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using FluentValidation;
+using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
+using KisV4.Common;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -10,11 +12,14 @@ public static class StoreItems {
     private const string ReadRouteName = "StoreItemsRead";
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("store-items", ReadAll);
-        routeBuilder.MapPost("store-items", Create);
+        routeBuilder.MapGet("store-items", ReadAll)
+            .AddValidation<StoreItemReadAllRequest>();
+        routeBuilder.MapPost("store-items", Create)
+            .AddValidation<StoreItemCreateRequest>();
         routeBuilder.MapGet("store-items/{id:int}", Read)
             .WithName(ReadRouteName);
-        routeBuilder.MapPut("store-items/{id:int}", Update);
+        routeBuilder.MapPut("store-items/{id:int}", Update)
+            .AddValidation<StoreItemUpdateRequest>();
         routeBuilder.MapDelete("store-items/{id:int}", Delete);
     }
 
@@ -44,12 +49,12 @@ public static class StoreItems {
     }
 
     public static async Task<Results<CreatedAtRoute<StoreItemCreateResponse>, ValidationProblem>> Create(
-            StoreItemCreateRequest req,
-            StoreItemService service,
-            IValidator<StoreItemCreateRequest> validator,
-            ClaimsPrincipal claims,
-            CancellationToken token = default
-            ) {
+        StoreItemCreateRequest req,
+        StoreItemService service,
+        IValidator<StoreItemCreateRequest> validator,
+        ClaimsPrincipal claims,
+        CancellationToken token = default
+    ) {
         var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
@@ -62,18 +67,18 @@ public static class StoreItems {
     }
 
     public static async Task<Results<Ok<StoreItemUpdateResponse>, NotFound, ValidationProblem>> Update(
-            int id,
-            StoreItemUpdateRequest req,
-            StoreItemService service,
-            IValidator<StoreItemUpdateRequest> validator,
-            CancellationToken token = default
-            ) {
+        [AsParameters]
+        StoreItemUpdateRequest req,
+        StoreItemService service,
+        IValidator<StoreItemUpdateRequest> validator,
+        CancellationToken token = default
+    ) {
         var validationResult = await validator.ValidateAsync(req, token);
         if (!validationResult.IsValid) {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var output = await service.UpdateAsync(id, req, token);
+        var output = await service.UpdateAsync(req, token);
         return output switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(output),

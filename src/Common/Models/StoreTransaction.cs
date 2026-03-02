@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -53,8 +54,9 @@ public record StoreTransactionCreateResponse : StoreTransactionDetailModel;
 public record StoreTransactionReadResponse : StoreTransactionDetailModel;
 
 // Commands
-public record StoreTransactionDeleteCommand(
+public record StoreTransactionDeleteRequest(
+    [FromRoute]
     int Id,
-    int UserId,
+    [FromQuery]
     bool? UpdateCosts
 );

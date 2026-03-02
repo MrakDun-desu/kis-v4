@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -26,7 +27,7 @@ public record LayoutReadAllRequest {
 
 public record LayoutReadAllResponse : CollectionResponse<LayoutListModel>;
 
-public record LayoutCreateRequest {
+public record LayoutCreateRequestModel {
     [DefaultValue("Výchozí layout")]
     public string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
@@ -35,9 +36,16 @@ public record LayoutCreateRequest {
     public LayoutItemCreateRequest[] LayoutItems { get; init; } = [];
 }
 
+public record LayoutCreateRequest(
+    [FromQuery]
+    int? StoreId,
+    [FromBody]
+    LayoutCreateRequestModel Model
+);
+
 public record LayoutCreateResponse : LayoutDetailModel;
 
-public record LayoutUpdateRequest {
+public record LayoutUpdateRequestModel {
     [DefaultValue("Test")]
     public string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
@@ -46,27 +54,23 @@ public record LayoutUpdateRequest {
     public LayoutItemCreateRequest[] LayoutItems { get; init; } = [];
 }
 
+public record LayoutUpdateRequest(
+    [FromRoute] int Id,
+    [FromBody] LayoutUpdateRequestModel Model,
+    [FromQuery] int? StoreId
+);
+
 public record LayoutUpdateResponse : LayoutDetailModel;
 
+public record LayoutReadRequest(
+    [FromRoute]
+    int Id,
+    [FromQuery]
+    int? StoreId
+);
+
+public record LayoutReadTopLevelRequest(
+    int? StoreId
+);
+
 public record LayoutReadResponse : LayoutDetailModel;
-
-// Commands
-public record LayoutReadCommand(
-    int Id,
-    int? StoreId
-);
-
-public record LayoutReadTopLevelCommand(
-    int? StoreId
-);
-
-public record LayoutCreateCommand(
-    LayoutCreateRequest Request,
-    int? StoreId
-);
-
-public record LayoutUpdateCommand(
-    int Id,
-    LayoutUpdateRequest Request,
-    int? StoreId
-);

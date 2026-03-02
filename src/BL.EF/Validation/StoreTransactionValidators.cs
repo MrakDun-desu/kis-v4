@@ -2,7 +2,7 @@ using FluentValidation;
 using KisV4.Common.Enums;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public class StoreTransactionReadAllValidator : AbstractValidator<StoreTransactionReadAllRequest> {
     public StoreTransactionReadAllValidator() {

@@ -1,5 +1,6 @@
 using KisV4.BL.EF.Mapping;
-using KisV4.BL.EF.Validators;
+using KisV4.BL.EF.Validation;
+using KisV4.Common.Authorization;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;
 using KisV4.Common.Models;
@@ -39,11 +40,10 @@ public class StoreTransactionService(
         }
 
         var onlySelfCancellable = req.OnlySelfCancellable ?? false;
-        // TODO: make this work in a different way
-        // if (onlySelfCancellable) {
-        //     query = query.Where(st => st.StartedById == userId)
-        //         .Where(st => st.StartedAt > reqTime - ValidationConstants.SelfCancellablePeriod);
-        // }
+        if (onlySelfCancellable) {
+            query = query.Where(st => st.StartedById == userId)
+                .Where(st => st.StartedAt + AuthorizationConstants.TransactionCancelTimeout >= reqTime);
+        }
 
         return await query.PaginateAsync(
             req,
@@ -96,7 +96,7 @@ public class StoreTransactionService(
             CancellationToken token = default
             ) {
         var reqTime = _timeProvider.GetUtcNow();
-        var user = await _userService.GetOrCreateAsync(userId, token);
+        var user = await _userService.GetAsync(userId, token);
 
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(token);
 
@@ -128,16 +128,18 @@ public class StoreTransactionService(
     }
 
     public async Task<bool> DeleteAsync(
-        StoreTransactionDeleteCommand cmd,
+        StoreTransactionDeleteRequest req,
+        int userId,
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
         await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
         try {
+            var user = _userService.GetAsync(userId);
             var deletedCount = await _dbContext.StoreTransactions
-                .Where(st => st.Id == cmd.Id)
+                .Where(st => st.Id == req.Id)
                 .ExecuteUpdateAsync(props => {
-                    props.SetProperty(st => st.CancelledById, cmd.UserId);
+                    props.SetProperty(st => st.CancelledById, userId);
                     props.SetProperty(st => st.CancelledAt, reqTime);
                 }, token);
 
@@ -147,17 +149,16 @@ public class StoreTransactionService(
 
             await _dbContext.StoreTransactionItems
                 .IgnoreQueryFilters()
-                .Where(sti => sti.StoreTransactionId == cmd.Id)
+                .Where(sti => sti.StoreTransactionId == req.Id)
                 .ExecuteUpdateAsync(props => {
                     props.SetProperty(sti => sti.Cancelled, true);
                 }, token);
 
-            await UpdateItemAmountsAsync(cmd.Id, true, _dbContext, token);
+            await UpdateItemAmountsAsync(req.Id, true, _dbContext, token);
 
-            var updateCosts = cmd.UpdateCosts ?? false;
+            var updateCosts = req.UpdateCosts ?? false;
             if (updateCosts) {
-                var user = _userService.GetOrCreateAsync(cmd.UserId, token);
-                await UpdateCostsAsync(cmd.Id, user.Id, reqTime, _dbContext, token);
+                await UpdateCostsAsync(req.Id, user.Id, reqTime, _dbContext, token);
             }
 
             await dbTransaction.CommitAsync(token);

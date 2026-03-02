@@ -1,4 +1,5 @@
 using FluentValidation;
+using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -12,8 +13,10 @@ public static class Stores {
         routeBuilder.MapGet("stores", ReadAll);
         routeBuilder.MapGet("stores/{id:int}", Read)
             .WithName(ReadRouteName);
-        routeBuilder.MapPost("stores", Create);
-        routeBuilder.MapPut("stores/{id:int}", Update);
+        routeBuilder.MapPost("stores", Create)
+            .AddValidation<StoreCreateRequest>();
+        routeBuilder.MapPut("stores/{id:int}", Update)
+            .AddValidation<StoreUpdateRequest>();
         routeBuilder.MapDelete("stores/{id:int}", Delete);
     }
 
@@ -37,15 +40,9 @@ public static class Stores {
 
     public static async Task<Results<CreatedAtRoute<StoreCreateResponse>, ValidationProblem>> Create(
             StoreCreateRequest req,
-            IValidator<StoreCreateRequest> validator,
             StoreService service,
             CancellationToken token = default
             ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
         var output = await service.CreateAsync(req, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
@@ -53,15 +50,9 @@ public static class Stores {
     public static async Task<Results<Ok<StoreUpdateResponse>, NotFound, ValidationProblem>> Update(
             int id,
             StoreUpdateRequest req,
-            IValidator<StoreUpdateRequest> validator,
             StoreService service,
             CancellationToken token = default
             ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
         return await service.UpdateAsync(id, req, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)

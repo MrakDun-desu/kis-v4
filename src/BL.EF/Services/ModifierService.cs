@@ -20,7 +20,7 @@ public class ModifierService(
         var query = _dbContext.Modifiers.AsQueryable();
 
         if (req.Name is { } name) {
-            query = query.Where(si => si.Name.ToLowerInvariant().Contains(name));
+            query = query.Where(si => si.Name.ToLower().Contains(name));
         }
 
         if (req.CategoryId is { } categoryId) {
@@ -112,10 +112,11 @@ public class ModifierService(
     }
 
     public async Task<ModifierUpdateResponse?> UpdateAsync(
-            int id,
             ModifierUpdateRequest req,
             CancellationToken token = default
             ) {
+        var id = req.Id;
+        var model = req.Model;
         var entity = await _dbContext.Modifiers
             .Include(si => si.Categories)
             .Include(si => si.Targets)
@@ -127,18 +128,18 @@ public class ModifierService(
         }
 
         var categories = await _dbContext.Categories
-            .Where(c => req.CategoryIds.Contains(c.Id))
+            .Where(c => model.CategoryIds.Contains(c.Id))
             .ToArrayAsync(token);
 
         var targets = await _dbContext.SaleItems
-            .Where(si => req.TargetIds.Contains(si.Id))
+            .Where(si => model.TargetIds.Contains(si.Id))
             .ToArrayAsync(token);
 
-        entity.Name = req.Name;
-        entity.Image = req.Image;
-        entity.MarginPercent = req.MarginPercent;
-        entity.MarginStatic = req.MarginStatic;
-        entity.PrestigeAmount = req.PrestigeAmount;
+        entity.Name = model.Name;
+        entity.Image = model.Image;
+        entity.MarginPercent = model.MarginPercent;
+        entity.MarginStatic = model.MarginStatic;
+        entity.PrestigeAmount = model.PrestigeAmount;
         entity.Categories.Clear();
         foreach (var category in categories) {
             entity.Categories.Add(category);

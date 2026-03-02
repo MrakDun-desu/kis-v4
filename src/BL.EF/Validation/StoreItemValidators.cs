@@ -1,7 +1,7 @@
 using FluentValidation;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public class StoreItemsReadAllValidator : AbstractValidator<StoreItemReadAllRequest> {
     public StoreItemsReadAllValidator(ValidationHelper helper) {
@@ -30,13 +30,13 @@ public class StoreItemCreateRequestValidator : AbstractValidator<StoreItemCreate
 
 public class StoreItemUpdateRequestValidator : AbstractValidator<StoreItemUpdateRequest> {
     public StoreItemUpdateRequestValidator(ValidationHelper helper) {
-        RuleFor(x => x.Name)
+        RuleFor(x => x.Model.Name)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxNameLength);
-        RuleFor(x => x.UnitName)
+        RuleFor(x => x.Model.UnitName)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxUnitNameLength);
-        RuleFor(x => x.CategoryIds)
+        RuleFor(x => x.Model.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
             .WithMessage("All category IDs must identify existing categories");
     }

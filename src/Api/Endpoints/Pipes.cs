@@ -1,5 +1,7 @@
 using FluentValidation;
+using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
+using KisV4.BL.EF.Validation;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -12,8 +14,10 @@ public static class Pipes {
         routeBuilder.MapGet("pipes", ReadAll);
         routeBuilder.MapGet("pipes/{id:int}", Read)
             .WithName(ReadRouteName);
-        routeBuilder.MapPost("pipes", Create);
-        routeBuilder.MapPut("pipes/{id:int}", Update);
+        routeBuilder.MapPost("pipes", Create)
+            .AddValidation<PipeCreateRequest>();
+        routeBuilder.MapPut("pipes/{id:int}", Update)
+            .AddValidation<PipeUpdateRequest>();
         routeBuilder.MapDelete("pipes/{id:int}", Delete);
     }
 
@@ -38,31 +42,19 @@ public static class Pipes {
     public static async Task<Results<CreatedAtRoute<PipeCreateResponse>, ValidationProblem>> Create(
         PipeCreateRequest req,
         PipeService service,
-        IValidator<PipeCreateRequest> validator,
         CancellationToken token = default
     ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
         var output = await service.CreateAsync(req, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
     public static async Task<Results<Ok<PipeUpdateResponse>, NotFound, ValidationProblem>> Update(
-        int id,
+        [AsParameters]
         PipeUpdateRequest req,
         PipeService service,
-        IValidator<PipeUpdateRequest> validator,
         CancellationToken token = default
     ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
-        var output = await service.UpdateAsync(id, req, token);
+        var output = await service.UpdateAsync(req, token);
         return TypedResults.Ok(output);
     }
 

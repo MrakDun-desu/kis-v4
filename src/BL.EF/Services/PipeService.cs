@@ -43,17 +43,18 @@ public class PipeService(
     }
 
     public async Task<PipeUpdateResponse?> UpdateAsync(
-        int id,
         PipeUpdateRequest req,
         CancellationToken token = default
     ) {
+        var id = req.Id;
+        var model = req.Model;
         var entity = await _dbContext.Pipes.FindAsync(id, token);
 
         if (entity is null) {
             return null;
         }
 
-        entity.Name = req.Name;
+        entity.Name = model.Name;
         _dbContext.Pipes.Update(entity);
         await _dbContext.SaveChangesAsync(token);
 

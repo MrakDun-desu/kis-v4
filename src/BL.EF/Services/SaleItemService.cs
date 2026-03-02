@@ -20,7 +20,7 @@ public class SaleItemService(
         var query = _dbContext.SaleItems.AsQueryable();
 
         if (req.Name is { } name) {
-            query = query.Where(si => si.Name.ToLowerInvariant().Contains(name));
+            query = query.Where(si => si.Name.ToLower().Contains(name));
         }
 
         if (req.CategoryId is { } categoryId) {
@@ -114,10 +114,11 @@ public class SaleItemService(
     }
 
     public async Task<SaleItemUpdateResponse?> UpdateAsync(
-            int id,
             SaleItemUpdateRequest req,
             CancellationToken token = default
             ) {
+        var id = req.Id;
+        var model = req.Model;
         var entity = await _dbContext.SaleItems
             .Include(si => si.Categories)
             .Include(si => si.ApplicableModifiers)
@@ -129,19 +130,19 @@ public class SaleItemService(
         }
 
         var categories = await _dbContext.Categories
-            .Where(c => req.CategoryIds.Contains(c.Id))
+            .Where(c => model.CategoryIds.Contains(c.Id))
             .ToArrayAsync(token);
 
         var modifiers = await _dbContext.Modifiers
-            .Where(c => req.ModifierIds.Contains(c.Id))
+            .Where(c => model.ModifierIds.Contains(c.Id))
             .ToArrayAsync(token);
 
-        entity.Name = req.Name;
-        entity.Image = req.Image;
-        entity.MarginPercent = req.MarginPercent;
-        entity.MarginStatic = req.MarginStatic;
-        entity.PrestigeAmount = req.PrestigeAmount;
-        entity.PrintType = req.PrintType;
+        entity.Name = model.Name;
+        entity.Image = model.Image;
+        entity.MarginPercent = model.MarginPercent;
+        entity.MarginStatic = model.MarginStatic;
+        entity.PrestigeAmount = model.PrestigeAmount;
+        entity.PrintType = model.PrintType;
         entity.Categories.Clear();
         foreach (var category in categories) {
             entity.Categories.Add(category);

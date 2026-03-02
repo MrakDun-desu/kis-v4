@@ -1,41 +1,38 @@
 using System.Security.Claims;
 using FluentValidation;
+using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
+using KisV4.Common;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace KisV4.Api.Endpoints;
 
 public static class Containers {
-    private const string ReadRouteName = "ContainersRead";
-
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("containers", ReadAll);
-        routeBuilder.MapPost("containers", Create);
+        routeBuilder.MapGet("containers", ReadAll)
+            .AddValidation<ContainerReadAllRequest>();
+        routeBuilder.MapPost("containers", Create)
+            .AddValidation<ContainerCreateRequest>();
         routeBuilder.MapGet("containers/{id:int}", Read);
         routeBuilder.MapGet("containers/{id:int}/operator", OperatorRead);
-        routeBuilder.MapPut("containers/{id:int}", Update);
+        routeBuilder.MapPut("containers/{id:int}", Update)
+            .AddValidation<ContainerUpdateRequest>();
     }
 
     public static async Task<Results<Ok<ContainerReadAllResponse>, ValidationProblem>> ReadAll(
-            ContainerService service,
-            IValidator<ContainerReadAllRequest> validator,
-            [AsParameters] ContainerReadAllRequest req,
-            CancellationToken token = default
-            ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
+        ContainerService service,
+        [AsParameters] ContainerReadAllRequest req,
+        CancellationToken token = default
+    ) {
         return TypedResults.Ok(await service.ReadAllAsync(req, token));
     }
 
     public static async Task<Results<Ok<ContainerReadResponse>, NotFound>> Read(
-            ContainerService service,
-            int id,
-            CancellationToken token = default
-            ) {
+        ContainerService service,
+        int id,
+        CancellationToken token = default
+    ) {
         return await service.ReadAsync(id, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
@@ -43,10 +40,10 @@ public static class Containers {
     }
 
     public static async Task<Results<Ok<ContainerOperatorReadResponse>, NotFound>> OperatorRead(
-            int id,
-            ContainerService service,
-            CancellationToken token = default
-            ) {
+        int id,
+        ContainerService service,
+        CancellationToken token = default
+    ) {
         return await service.ReadOperatorAsync(id, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
@@ -54,35 +51,22 @@ public static class Containers {
     }
 
     public static async Task<Results<Ok<ContainerCreateResponse>, ValidationProblem>> Create(
-            ContainerService service,
-            IValidator<ContainerCreateRequest> validator,
-            ClaimsPrincipal user,
-            ContainerCreateRequest req,
-            CancellationToken token = default
-            ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
+        ContainerService service,
+        ClaimsPrincipal user,
+        ContainerCreateRequest req,
+        CancellationToken token = default
+    ) {
         return TypedResults.Ok(await service.CreateAsync(req, user.GetUserId(), token));
     }
 
     public static async Task<Results<Ok<ContainerUpdateResponse>, NotFound, ValidationProblem>> Update(
-            ContainerService service,
-            IValidator<ContainerUpdateRequest> validator,
-            ClaimsPrincipal user,
-            int id,
-            ContainerUpdateRequest req,
-            CancellationToken token = default
-            ) {
-
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
-        return await service.UpdateAsync(id, req, user.GetUserId(), token) switch {
+        ContainerService service,
+        ClaimsPrincipal user,
+        [AsParameters]
+        ContainerUpdateRequest req,
+        CancellationToken token = default
+    ) {
+        return await service.UpdateAsync(req, user.GetUserId(), token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
         };

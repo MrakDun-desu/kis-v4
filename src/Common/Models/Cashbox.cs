@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -20,6 +21,11 @@ public record CashBoxDetailModel {
 // Requests and responses
 public record CashBoxReadAllResponse : CollectionResponse<CashBoxListModel>;
 
+public record CashBoxReadRequest(
+    [FromRoute]
+    int Id
+);
+
 public record CashBoxCreateRequest {
     [DefaultValue("Kasa Kachna")]
     public required string Name { get; init; }
@@ -27,11 +33,23 @@ public record CashBoxCreateRequest {
 
 public record CashBoxCreateResponse : CashBoxListModel;
 
-public record CashBoxUpdateRequest {
+public record CashBoxUpdateRequestModel {
     [DefaultValue("Kasa Kachna")]
     public required string Name { get; init; }
 }
 
+public record CashBoxUpdateRequest(
+    [FromRoute]
+    int Id,
+    [FromBody]
+    CashBoxUpdateRequestModel Model
+);
+
 public record CashBoxUpdateResponse : CashBoxListModel;
 
 public record CashBoxReadResponse : CashBoxDetailModel;
+
+public record CashBoxDeleteRequest(
+    [FromRoute]
+    int Id
+);

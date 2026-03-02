@@ -1,7 +1,7 @@
 using FluentValidation;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public class ContainerTemplateReadAllValidator : AbstractValidator<ContainerTemplateReadAllRequest> {
     public ContainerTemplateReadAllValidator(ValidationHelper helper) {
@@ -29,13 +29,13 @@ public class ContainerTemplateCreateValidator : AbstractValidator<ContainerTempl
     }
 }
 
-public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTemplateUpdateCommand> {
+public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTemplateUpdateRequest> {
     public ContainerTemplateUpdateValidator(ValidationHelper helper) {
-        RuleFor(x => x.Request.StoreItemId)
+        RuleFor(x => x.Model.StoreItemId)
             .MustAsync(helper.IdentifyExistingContainerItem)
             .WithMessage("Specified store item must be an existing container item");
 
-        RuleFor(x => x.Request.Name)
+        RuleFor(x => x.Model.Name)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxNameLength);
 

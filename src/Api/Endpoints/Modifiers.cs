@@ -1,4 +1,5 @@
 using FluentValidation;
+using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,25 +10,22 @@ public static class Modifiers {
     private const string ReadRouteName = "ModifiersRead";
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("modifiers", ReadAll);
+        routeBuilder.MapGet("modifiers", ReadAll)
+            .AddValidation<ModifierReadAllRequest>();
         routeBuilder.MapGet("modifers/{id:int}", Read)
             .WithName(ReadRouteName);
-        routeBuilder.MapPost("modifiers", Create);
-        routeBuilder.MapPut("modifiers/{id:int}", Update);
+        routeBuilder.MapPost("modifiers", Create)
+            .AddValidation<ModifierCreateRequest>();
+        routeBuilder.MapPut("modifiers/{id:int}", Update)
+            .AddValidation<ModifierUpdateRequest>();
         routeBuilder.MapDelete("modifiers/{id:int}", Delete);
     }
 
     public static async Task<Results<Ok<ModifierReadAllResponse>, ValidationProblem>> ReadAll(
         [AsParameters] ModifierReadAllRequest req,
         ModifierService service,
-        IValidator<ModifierReadAllRequest> validator,
         CancellationToken token = default
     ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
         return TypedResults.Ok(await service.ReadAllAsync(req, token));
     }
 
@@ -45,31 +43,20 @@ public static class Modifiers {
     public static async Task<Results<CreatedAtRoute<ModifierCreateResponse>, ValidationProblem>> Create(
         ModifierCreateRequest req,
         ModifierService service,
-        IValidator<ModifierCreateRequest> validator,
         CancellationToken token = default
     ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
         var output = await service.CreateAsync(req, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
     public static async Task<Results<Ok<ModifierUpdateResponse>, NotFound, ValidationProblem>> Update(
-        int id,
+        [AsParameters]
         ModifierUpdateRequest req,
         IValidator<ModifierUpdateRequest> validator,
         ModifierService service,
         CancellationToken token = default
     ) {
-        var validationResult = await validator.ValidateAsync(req, token);
-        if (!validationResult.IsValid) {
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        }
-
-        var output = await service.UpdateAsync(id, req, token);
+        var output = await service.UpdateAsync(req, token);
         return TypedResults.Ok(output);
     }
 

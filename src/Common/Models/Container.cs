@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -34,6 +36,11 @@ public record ContainerDetailModel {
     public required IEnumerable<ContainerChangeModel> ContainerChanges { get; init; }
 }
 
+public record ContainerUpdateModel(
+    int StoreId,
+    int? PipeId
+);
+
 // Requests and responses
 public record ContainerReadAllRequest : PagedRequest {
     public int? StoreId { get; init; }
@@ -56,10 +63,12 @@ public record ContainerCreateRequest {
 
 public record ContainerCreateResponse : CollectionResponse<ContainerListModel>;
 
-public record ContainerUpdateRequest {
-    public int StoreId { get; init; }
-    public int? PipeId { get; init; }
-}
+public record ContainerUpdateRequest(
+    [FromRoute]
+    int Id,
+    [FromBody]
+    ContainerUpdateModel Model
+);
 
 public record ContainerUpdateResponse : ContainerListModel;
 

@@ -24,7 +24,7 @@ public class StoreItemService(
         var query = _dbContext.StoreItems.AsQueryable();
 
         if (req.Name is { } name) {
-            query = query.Where(si => si.Name.ToLowerInvariant().Contains(name));
+            query = query.Where(si => si.Name.ToLower().Contains(name));
         }
 
         if (req.IsContainerItem is { } isContainerItem) {
@@ -76,7 +76,7 @@ public class StoreItemService(
             CancellationToken token = default
             ) {
         var reqTime = _timeProvider.GetUtcNow();
-        var user = await _userService.GetOrCreateAsync(userId, token);
+        var user = await _userService.GetAsync(userId, token);
 
         var categories = await _dbContext.Categories
             .Where(c => req.CategoryIds.Contains(c.Id))
@@ -120,10 +120,11 @@ public class StoreItemService(
     }
 
     public async Task<StoreItemUpdateResponse?> UpdateAsync(
-            int id,
-            StoreItemUpdateRequest req,
+            StoreItemUpdateRequest sth,
             CancellationToken token = default
             ) {
+        var id = sth.Id;
+        var model = sth.Model;
         var entity = await _dbContext.StoreItems
             .Include(si => si.Categories)
             .Include(si => si.Costs)
@@ -135,11 +136,11 @@ public class StoreItemService(
         }
 
         var categories = await _dbContext.Categories
-            .Where(c => req.CategoryIds.Contains(c.Id))
+            .Where(c => model.CategoryIds.Contains(c.Id))
             .ToArrayAsync(token);
 
-        entity.Name = req.Name;
-        entity.UnitName = req.UnitName;
+        entity.Name = model.Name;
+        entity.UnitName = model.UnitName;
         entity.Categories.Clear();
         foreach (var category in categories) {
             entity.Categories.Add(category);

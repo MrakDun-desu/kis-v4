@@ -2,9 +2,9 @@ using FluentValidation;
 using KisV4.Common.Enums;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
-public class LayoutReadValidator : AbstractValidator<LayoutReadCommand> {
+public class LayoutReadValidator : AbstractValidator<LayoutReadRequest> {
     public LayoutReadValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
@@ -12,7 +12,7 @@ public class LayoutReadValidator : AbstractValidator<LayoutReadCommand> {
     }
 }
 
-public class LayoutCreateRequestValidator : AbstractValidator<LayoutCreateRequest> {
+public class LayoutCreateRequestValidator : AbstractValidator<LayoutCreateRequestModel> {
     public LayoutCreateRequestValidator(ValidationHelper helper) {
         RuleFor(x => x.Name)
             .NotEmpty()
@@ -28,12 +28,12 @@ public class LayoutCreateRequestValidator : AbstractValidator<LayoutCreateReques
     }
 }
 
-public class LayoutCreateValidator : AbstractValidator<LayoutCreateCommand> {
+public class LayoutCreateValidator : AbstractValidator<LayoutCreateRequest> {
     public LayoutCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
             .WithMessage("Store ID must be null or identify existing store");
-        RuleFor(x => x.Request)
+        RuleFor(x => x.Model)
             .SetValidator(new LayoutCreateRequestValidator(helper));
     }
 }
@@ -53,7 +53,7 @@ public class LayoutItemValidator : AbstractValidator<LayoutItemCreateRequest> {
     }
 }
 
-public class LayoutUpdateRequestValidator : AbstractValidator<LayoutUpdateRequest> {
+public class LayoutUpdateRequestValidator : AbstractValidator<LayoutUpdateRequestModel> {
     public LayoutUpdateRequestValidator(ValidationHelper helper) {
         RuleFor(x => x.Name)
             .NotEmpty()
@@ -69,17 +69,17 @@ public class LayoutUpdateRequestValidator : AbstractValidator<LayoutUpdateReques
     }
 }
 
-public class LayoutUpdateValidator : AbstractValidator<LayoutUpdateCommand> {
+public class LayoutUpdateValidator : AbstractValidator<LayoutUpdateRequest> {
     public LayoutUpdateValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
             .WithMessage("Store ID must be null or identify existing store");
-        RuleFor(x => x.Request)
+        RuleFor(x => x.Model)
             .SetValidator(new LayoutUpdateRequestValidator(helper));
     }
 }
 
-public class LayoutReadTopLevelValidator : AbstractValidator<LayoutReadTopLevelCommand> {
+public class LayoutReadTopLevelValidator : AbstractValidator<LayoutReadTopLevelRequest> {
     public LayoutReadTopLevelValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)

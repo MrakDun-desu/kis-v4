@@ -1,7 +1,7 @@
 using FluentValidation;
 using KisV4.Common.Models;
 
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public class ContainerChangeReadAllValidator : AbstractValidator<ContainerChangeReadAllRequest> {
     public ContainerChangeReadAllValidator(ValidationHelper helper) {

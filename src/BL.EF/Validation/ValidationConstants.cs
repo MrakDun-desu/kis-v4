@@ -1,4 +1,4 @@
-namespace KisV4.BL.EF.Validators;
+namespace KisV4.BL.EF.Validation;
 
 public static class ValidationConstants {
     // string lengths

@@ -4,10 +4,12 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Audit.EntityFramework.Providers;
-using KisV4.Api;
+using FluentValidation;
 using KisV4.Api.Endpoints;
+using KisV4.Api.Middlewares;
 using KisV4.BL.EF;
 using KisV4.BL.EF.Services;
+using KisV4.Common;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -35,9 +37,9 @@ var allowTestingTokens = args.Contains("--testing-auth");
 builder.Services.AddAuthentication(allowTestingTokens ? "Bearer" : "oidc")
     .AddJwtBearer("Bearer")
     .AddJwtBearer("oidc", opts => {
+        opts.Authority = oidcAuthority;
+        opts.TokenValidationParameters.ValidateAudience = false;
         if (builder.Environment.IsDevelopment()) {
-            opts.Authority = oidcAuthority;
-            opts.TokenValidationParameters.ValidateAudience = false;
             opts.BackchannelHttpHandler = new HttpClientHandler {
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
@@ -95,6 +97,8 @@ if (Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider") {
             ?? throw new NoNullAllowedException("Database connection string");
     builder.Services.AddEntityFrameworkDAL(connectionString);
 }
+
+// Business layer (services, validation, authorization handlers)
 builder.Services.AddEntityFrameworkBL();
 
 // HTTP context accessor for getting the user ID during auditing
@@ -103,9 +107,26 @@ builder.Services.AddHttpContextAccessor();
 // Time
 builder.Services.AddSingleton(TimeProvider.System);
 
+// Formatting
 builder.Services.ConfigureHttpJsonOptions(opts => {
     opts.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+ValidatorOptions.Global.PropertyNameResolver = (type, memberInfo, expression) => {
+    if (expression is null) {
+        return memberInfo?.Name;
+    }
+    var chain = FluentValidation.Internal.PropertyChain.FromExpression(expression);
+    // For requests that nest models inside, remove the model so the errors are easier to read
+    if (chain.Count > 0) {
+        return chain.ToString().Replace("Model.", string.Empty);
+    }
+    return memberInfo?.Name;
+};
+
+// Production exception handling
+if (!builder.Environment.IsDevelopment()) {
+    builder.Services.AddExceptionHandler<ExceptionHandlerMiddleware>();
+}
 
 var app = builder.Build();
 
@@ -118,13 +139,7 @@ Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => 
             var context = contextAccessor.HttpContext!;
             var claims = context.User;
 
-            var services = context.RequestServices;
-            if (services is not null) {
-                var userService = services.GetRequiredService<UserService>();
-                var userId = claims.GetUserId();
-                var user = await userService.GetOrCreateAsync(userId);
-                entity.UserId = user.Id;
-            }
+            entity.UserId = claims.GetUserId();
 
             entity.EntityType = entry.EntityType.Name;
             entity.Action = entry.Action;
@@ -140,8 +155,13 @@ Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => 
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseRouting();
+if (!app.Environment.IsDevelopment()) {
+    app.UseHsts();
+}
 app.UseAuthentication();
 app.UseAuthorization();
+// users are not managed by this API, so just create a new one every time a new ID arrives
+app.UseMiddleware<UserCreationMiddleware>();
 app.UseStaticFiles(); // static files only for serving images
 
 // Endpoints

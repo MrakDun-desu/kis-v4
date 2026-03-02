@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using KisV4.Common.ModelWrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
 
@@ -7,6 +8,11 @@ namespace KisV4.Common.Models;
 public record CategoryModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
+}
+
+public record CategoryUpdateRequestModel {
+    [DefaultValue("Pivo")]
+    public string Name { get; init; } = string.Empty;
 }
 
 // Requests and responses
@@ -19,7 +25,9 @@ public record CategoryCreateRequest {
 
 public record CategoryCreateResponse : CategoryModel;
 
-public record CategoryUpdateRequest {
-    [DefaultValue("Pivo")]
-    public string Name { get; init; } = string.Empty;
-}
+public record CategoryUpdateRequest(
+    [FromRoute]
+    int Id,
+    [FromBody]
+    CategoryUpdateRequestModel Model
+);
