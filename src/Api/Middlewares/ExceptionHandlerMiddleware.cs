@@ -11,7 +11,7 @@ public class ExceptionHandlerMiddleware(
         Exception exception,
         CancellationToken cancellationToken
     ) {
-        logger.LogError("An unexpected exception occured", exception);
+        logger.LogError($"An unexpected exception occured {exception.Message}");
 
         var response = new ProblemDetails {
             Status = StatusCodes.Status500InternalServerError,

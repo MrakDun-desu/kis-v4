@@ -11,7 +11,7 @@ public record StoreItemAmountModel {
 
 // Requests and responses
 public record StoreItemAmountReadAllRequest : PagedRequest {
-    public int StoreId { get; init; }
+    public required int StoreId { get; init; }
 }
 
 public record StoreItemAmountReadAllResponse : PagedResponse<StoreItemAmountModel>;

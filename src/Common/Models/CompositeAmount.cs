@@ -11,7 +11,7 @@ public record CompositeAmountModel {
 
 // Requests and responses
 public record CompositeAmountReadAllRequest : PagedRequest {
-    public int StoreId { get; init; }
+    public required int StoreId { get; init; }
 }
 
 public record CompositeAmountReadAllResponse : PagedResponse<CompositeAmountModel>;

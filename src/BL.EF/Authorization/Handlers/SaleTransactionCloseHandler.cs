@@ -8,11 +8,11 @@ namespace KisV4.BL.EF.Authorization.Handlers;
 
 public class SaleTransactionCloseHandler(
     KisDbContext dbContext
-) : AuthorizationHandler<PassThroughRequirement, SaleTransactionUpdateRequest> {
+) : AuthorizationHandler<PassThroughRequirement, SaleTransactionCloseRequest> {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         PassThroughRequirement requirement,
-        SaleTransactionUpdateRequest request
+        SaleTransactionCloseRequest request
     ) {
         var saleTransaction = await dbContext.SaleTransactions.FindAsync(request.Id);
         // if the sale transaction doesn't exist, no need to bother with further authorization,

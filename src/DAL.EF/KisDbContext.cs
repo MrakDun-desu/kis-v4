@@ -85,6 +85,11 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
             .HasOne(e => e.StartedBy)
             .WithMany(e => e.StartedTransactions);
 
+        modelBuilder.Entity<SaleTransactionItem>()
+            .HasMany(sti => sti.Modifications)
+            .WithOne(m => m.SaleTransactionItem)
+            .HasForeignKey(m => new { m.SaleTransactionItemLineNumber, m.SaleTransactionId });
+
         modelBuilder.Entity<LayoutItem>()
             .HasDiscriminator(e => e.Type)
             .HasValue<LayoutSaleItem>(LayoutItemType.SaleItem)

@@ -12,7 +12,7 @@ public record CategoryModel {
 
 public record CategoryUpdateRequestModel {
     [DefaultValue("Pivo")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; }
 }
 
 // Requests and responses
@@ -20,14 +20,14 @@ public record CategoryReadAllResponse : CollectionResponse<CategoryModel>;
 
 public record CategoryCreateRequest {
     [DefaultValue("Pivo")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; }
 }
 
 public record CategoryCreateResponse : CategoryModel;
 
-public record CategoryUpdateRequest(
+public record CategoryUpdateRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromBody]
-    CategoryUpdateRequestModel Model
-);
+    public required CategoryUpdateRequestModel Model { get; init; }
+};

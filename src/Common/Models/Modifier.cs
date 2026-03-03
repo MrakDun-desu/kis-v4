@@ -25,21 +25,21 @@ public record ModifierDetailModel {
     public required IEnumerable<SaleItemListModel> Targets { get; init; }
 }
 
-public record ModifierUpdateModel(
+public record ModifierUpdateModel {
     [DefaultValue("Vegánský toust")]
-    string Name,
-    string? Image,
+    public required string Name { get; init; }
+    public required string? Image { get; init; }
     [DefaultValue(typeof(decimal), "5")]
-    decimal MarginPercent,
+    public required decimal MarginPercent { get; init; }
     [DefaultValue(typeof(decimal), "0")]
-    decimal MarginStatic,
+    public required decimal MarginStatic { get; init; }
     [DefaultValue(typeof(decimal), "0")]
-    decimal PrestigeAmount,
+    public required decimal PrestigeAmount { get; init; }
     [DefaultValue(new int[0])]
-    int[] CategoryIds,
+    public required int[] CategoryIds { get; init; }
     [DefaultValue(new int[0])]
-    int[] TargetIds
-);
+    public required int[] TargetIds { get; init; }
+};
 
 // Requests and responses
 public record ModifierReadAllRequest : PagedRequest {
@@ -50,30 +50,30 @@ public record ModifierReadAllRequest : PagedRequest {
 
 public record ModifierReadAllResponse : PagedResponse<ModifierListModel>;
 
-public record ModifierCreateRequest(
+public record ModifierCreateRequest {
     [DefaultValue("Vegánský toust")]
-    string Name,
-    string? Image,
+    public required string Name { get; init; }
+    public required string? Image { get; init; }
     [DefaultValue(typeof(decimal), "5")]
-    decimal MarginPercent,
+    public required decimal MarginPercent { get; init; }
     [DefaultValue(typeof(decimal), "0")]
-    decimal MarginStatic,
+    public required decimal MarginStatic { get; init; }
     [DefaultValue(typeof(decimal), "0")]
-    decimal PrestigeAmount,
+    public required decimal PrestigeAmount { get; init; }
     [DefaultValue(new int[0])]
-    int[] CategoryIds,
+    public required int[] CategoryIds { get; init; }
     [DefaultValue(new int[0])]
-    int[] TargetIds
-);
+    public required int[] TargetIds { get; init; }
+}
 
 public record ModifierCreateResponse : ModifierDetailModel;
 
-public record ModifierUpdateRequest(
+public record ModifierUpdateRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromBody]
-    ModifierUpdateModel Model
-);
+    public required ModifierUpdateModel Model { get; init; }
+};
 
 public record ModifierUpdateResponse : ModifierDetailModel;
 

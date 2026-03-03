@@ -29,48 +29,51 @@ public record LayoutReadAllResponse : CollectionResponse<LayoutListModel>;
 
 public record LayoutCreateRequestModel {
     [DefaultValue("Výchozí layout")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
     [DefaultValue(true)]
     public bool TopLevel { get; init; }
-    public LayoutItemCreateRequest[] LayoutItems { get; init; } = [];
+    public required LayoutItemCreateRequest[] LayoutItems { get; init; } = [];
 }
 
-public record LayoutCreateRequest(
+public record LayoutCreateRequest {
     [FromQuery]
-    int? StoreId,
+    public int? StoreId { get; init; }
     [FromBody]
-    LayoutCreateRequestModel Model
-);
+    public required LayoutCreateRequestModel Model { get; init; }
+};
 
 public record LayoutCreateResponse : LayoutDetailModel;
 
 public record LayoutUpdateRequestModel {
     [DefaultValue("Test")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
     [DefaultValue(false)]
     public bool TopLevel { get; init; }
-    public LayoutItemCreateRequest[] LayoutItems { get; init; } = [];
+    public required LayoutItemCreateRequest[] LayoutItems { get; init; } = [];
 }
 
-public record LayoutUpdateRequest(
-    [FromRoute] int Id,
-    [FromBody] LayoutUpdateRequestModel Model,
-    [FromQuery] int? StoreId
-);
+public record LayoutUpdateRequest {
+    [FromRoute]
+    public required int Id { get; init; }
+    [FromBody]
+    public required LayoutUpdateRequestModel Model { get; init; }
+    [FromQuery]
+    public int? StoreId { get; init; }
+};
 
 public record LayoutUpdateResponse : LayoutDetailModel;
 
-public record LayoutReadRequest(
+public record LayoutReadRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromQuery]
-    int? StoreId
-);
+    public int? StoreId { get; init; }
+}
 
-public record LayoutReadTopLevelRequest(
-    int? StoreId
-);
+public record LayoutReadTopLevelRequest {
+    public int? StoreId { get; init; }
+}
 
 public record LayoutReadResponse : LayoutDetailModel;

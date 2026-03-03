@@ -29,9 +29,9 @@ public record LayoutPipeModel : LayoutItemModel {
 
 // Requests and responses
 public record LayoutItemCreateRequest {
-    public int X { get; init; }
-    public int Y { get; init; }
-    public int TargetId { get; init; }
+    public required int X { get; init; }
+    public required int Y { get; init; }
+    public required int TargetId { get; init; }
     [DefaultValue(LayoutItemType.SaleItem)]
-    public LayoutItemType Type { get; init; }
+    public required LayoutItemType Type { get; init; }
 }

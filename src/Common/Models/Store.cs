@@ -21,14 +21,14 @@ public record StoreReadAllResponse : CollectionResponse<StoreListModel>;
 
 public record StoreCreateRequest {
     [DefaultValue("Sklad Kachna")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; } = string.Empty;
 }
 
 public record StoreCreateResponse : StoreListModel;
 
 public record StoreUpdateRequest {
     [DefaultValue("Sklad Kachna")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; } = string.Empty;
 }
 
 public record StoreUpdateResponse : StoreListModel;

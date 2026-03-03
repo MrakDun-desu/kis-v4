@@ -2075,7 +2075,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionCreateResponse"
+                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
                 }
               }
             }
@@ -2117,7 +2117,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionReadResponse"
+                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
                 }
               }
             }
@@ -2162,7 +2162,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionUpdateResponse"
+                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
                 }
               }
             }
@@ -2193,7 +2193,10 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "integer",
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
@@ -2268,7 +2271,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionOpenResponse"
+                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
                 }
               }
             }
@@ -2322,7 +2325,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionCloseResponse"
+                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
                 }
               }
             }
@@ -3068,8 +3071,9 @@
       "AccountTransactionModel": {
         "required": [
           "amount",
+          "saleTransactionId",
           "timestamp",
-          "saleTransactionId"
+          "type"
         ],
         "type": "object",
         "properties": {
@@ -3081,10 +3085,6 @@
             ],
             "format": "double"
           },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time"
-          },
           "saleTransactionId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
@@ -3092,6 +3092,13 @@
               "string"
             ],
             "format": "int32"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AccountTransactionType"
           }
         }
       },
@@ -3140,6 +3147,13 @@
             "$ref": "#/components/schemas/PageMeta"
           }
         }
+      },
+      "AccountTransactionType": {
+        "enum": [
+          "SaleMoney",
+          "DonationMoney",
+          "Prestige"
+        ]
       },
       "CashBoxCreateResponse": {
         "required": [
@@ -3264,6 +3278,9 @@
         }
       },
       "CategoryCreateRequest": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -3327,6 +3344,9 @@
         }
       },
       "CategoryUpdateRequestModel": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -3417,6 +3437,10 @@
         }
       },
       "CompositionPutRequest": {
+        "required": [
+          "compositeId",
+          "storeItemId"
+        ],
         "type": "object",
         "properties": {
           "compositeId": {
@@ -3460,6 +3484,12 @@
         }
       },
       "ContainerCreateRequest": {
+        "required": [
+          "templateId",
+          "storeId",
+          "amount",
+          "cost"
+        ],
         "type": "object",
         "properties": {
           "templateId": {
@@ -3516,6 +3546,11 @@
         }
       },
       "ContainerChangeCreateRequest": {
+        "required": [
+          "newAmount",
+          "newState",
+          "containerId"
+        ],
         "type": "object",
         "properties": {
           "newAmount": {
@@ -3815,6 +3850,11 @@
         ]
       },
       "ContainerTemplateCreateRequest": {
+        "required": [
+          "name",
+          "amount",
+          "storeItemId"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -3925,6 +3965,11 @@
         }
       },
       "ContainerTemplateUpdateRequestModel": {
+        "required": [
+          "name",
+          "amount",
+          "storeItemId"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -3985,8 +4030,7 @@
       },
       "ContainerUpdateModel": {
         "required": [
-          "storeId",
-          "pipeId"
+          "storeId"
         ],
         "type": "object",
         "properties": {
@@ -4058,6 +4102,11 @@
         }
       },
       "CostCreateRequest": {
+        "required": [
+          "storeItemId",
+          "amount",
+          "description"
+        ],
         "type": "object",
         "properties": {
           "storeItemId": {
@@ -4210,6 +4259,10 @@
         "format": "binary"
       },
       "LayoutCreateRequestModel": {
+        "required": [
+          "name",
+          "layoutItems"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -4273,6 +4326,12 @@
         }
       },
       "LayoutItemCreateRequest": {
+        "required": [
+          "x",
+          "y",
+          "targetId",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "x": {
@@ -4523,6 +4582,10 @@
         }
       },
       "LayoutUpdateRequestModel": {
+        "required": [
+          "name",
+          "layoutItems"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -4586,6 +4649,10 @@
         }
       },
       "ModificationCreateRequest": {
+        "required": [
+          "amount",
+          "modifierId"
+        ],
         "type": "object",
         "properties": {
           "amount": {
@@ -4609,8 +4676,8 @@
       "ModificationModel": {
         "required": [
           "amount",
-          "modifier",
-          "saleTransactionItemId"
+          "modifierName",
+          "priceChange"
         ],
         "type": "object",
         "properties": {
@@ -4622,16 +4689,16 @@
             ],
             "format": "int32"
           },
-          "modifier": {
-            "$ref": "#/components/schemas/ModifierListModel"
+          "modifierName": {
+            "type": "string"
           },
-          "saleTransactionItemId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
+          "priceChange": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": [
-              "integer",
+              "number",
               "string"
             ],
-            "format": "int32"
+            "format": "double"
           }
         }
       },
@@ -4648,7 +4715,8 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Vegánský toust"
           },
           "image": {
             "type": [
@@ -4662,7 +4730,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 5
           },
           "marginStatic": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -4670,7 +4739,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 0
           },
           "prestigeAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -4678,7 +4748,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 0
           },
           "categoryIds": {
             "type": "array",
@@ -4925,7 +4996,8 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "default": "Vegánský toust"
           },
           "image": {
             "type": [
@@ -4939,7 +5011,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 5
           },
           "marginStatic": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -4947,7 +5020,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 0
           },
           "prestigeAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -4955,7 +5029,8 @@
               "number",
               "string"
             ],
-            "format": "double"
+            "format": "double",
+            "default": 0
           },
           "categoryIds": {
             "type": "array",
@@ -5084,6 +5159,9 @@
         }
       },
       "PipeCreateRequest": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -5174,6 +5252,9 @@
         }
       },
       "PipeUpdateModel": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -5211,6 +5292,9 @@
         ]
       },
       "SaleItemCreateRequest": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -5545,6 +5629,9 @@
         }
       },
       "SaleItemUpdateModel": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -5685,6 +5772,11 @@
         }
       },
       "SaleTransactionCloseRequestModel": {
+        "required": [
+          "cashBoxId",
+          "customerId",
+          "paidAmount"
+        ],
         "type": "object",
         "properties": {
           "note": {
@@ -5719,90 +5811,13 @@
           }
         }
       },
-      "SaleTransactionCloseResponse": {
-        "required": [
-          "id",
-          "note",
-          "startedAt",
-          "cancelledAt",
-          "startedBy",
-          "cancelledBy",
-          "openedBy",
-          "saleTransactionItems",
-          "accountTransactions",
-          "storeTransactions"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "note": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "cancelledAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "startedBy": {
-            "$ref": "#/components/schemas/UserListModel"
-          },
-          "cancelledBy": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/UserListModel"
-              }
-            ]
-          },
-          "openedBy": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/UserListModel"
-              }
-            ]
-          },
-          "saleTransactionItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SaleTransactionItemModel"
-            }
-          },
-          "accountTransactions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AccountTransactionModel"
-            }
-          },
-          "storeTransactions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StoreTransactionListModel"
-            }
-          }
-        }
-      },
       "SaleTransactionCreateRequest": {
+        "required": [
+          "storeId",
+          "cashBoxId",
+          "customerId",
+          "paidAmount"
+        ],
         "type": "object",
         "properties": {
           "note": {
@@ -5851,7 +5866,7 @@
           }
         }
       },
-      "SaleTransactionCreateResponse": {
+      "SaleTransactionDetailModel": {
         "required": [
           "id",
           "note",
@@ -5935,6 +5950,9 @@
         }
       },
       "SaleTransactionCheckPriceRequest": {
+        "required": [
+          "saleTransactionItems"
+        ],
         "type": "object",
         "properties": {
           "saleTransactionItems": {
@@ -5960,9 +5978,13 @@
         }
       },
       "SaleTransactionItemCreateRequest": {
+        "required": [
+          "amount",
+          "saleItemId"
+        ],
         "type": "object",
         "properties": {
-          "itemAmount": {
+          "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "integer",
@@ -5989,15 +6011,15 @@
       },
       "SaleTransactionItemModel": {
         "required": [
-          "id",
-          "itemAmount",
-          "saleItem",
-          "saleTransactionId",
-          "modifications"
+          "lineNumber",
+          "amount",
+          "saleItemName",
+          "modifications",
+          "basePrice"
         ],
         "type": "object",
         "properties": {
-          "id": {
+          "lineNumber": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "integer",
@@ -6005,7 +6027,7 @@
             ],
             "format": "int32"
           },
-          "itemAmount": {
+          "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "integer",
@@ -6013,22 +6035,22 @@
             ],
             "format": "int32"
           },
-          "saleItem": {
-            "$ref": "#/components/schemas/SaleItemListModel"
-          },
-          "saleTransactionId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+          "saleItemName": {
+            "type": "string"
           },
           "modifications": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ModificationModel"
             }
+          },
+          "basePrice": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
           }
         }
       },
@@ -6040,8 +6062,7 @@
           "cancelledAt",
           "startedBy",
           "cancelledBy",
-          "openedBy",
-          "reason"
+          "openedBy"
         ],
         "type": "object",
         "properties": {
@@ -6092,13 +6113,13 @@
                 "$ref": "#/components/schemas/UserListModel"
               }
             ]
-          },
-          "reason": {
-            "$ref": "#/components/schemas/TransactionReason"
           }
         }
       },
       "SaleTransactionOpenRequest": {
+        "required": [
+          "storeId"
+        ],
         "type": "object",
         "properties": {
           "note": {
@@ -6119,89 +6140,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SaleTransactionItemCreateRequest"
-            }
-          }
-        }
-      },
-      "SaleTransactionOpenResponse": {
-        "required": [
-          "id",
-          "note",
-          "startedAt",
-          "cancelledAt",
-          "startedBy",
-          "cancelledBy",
-          "openedBy",
-          "saleTransactionItems",
-          "accountTransactions",
-          "storeTransactions"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "note": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "cancelledAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "startedBy": {
-            "$ref": "#/components/schemas/UserListModel"
-          },
-          "cancelledBy": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/UserListModel"
-              }
-            ]
-          },
-          "openedBy": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/UserListModel"
-              }
-            ]
-          },
-          "saleTransactionItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SaleTransactionItemModel"
-            }
-          },
-          "accountTransactions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AccountTransactionModel"
-            }
-          },
-          "storeTransactions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StoreTransactionListModel"
             }
           }
         }
@@ -6238,90 +6176,10 @@
           }
         }
       },
-      "SaleTransactionReadResponse": {
-        "required": [
-          "id",
-          "note",
-          "startedAt",
-          "cancelledAt",
-          "startedBy",
-          "cancelledBy",
-          "openedBy",
-          "saleTransactionItems",
-          "accountTransactions",
-          "storeTransactions"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "note": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "cancelledAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "startedBy": {
-            "$ref": "#/components/schemas/UserListModel"
-          },
-          "cancelledBy": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/UserListModel"
-              }
-            ]
-          },
-          "openedBy": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/UserListModel"
-              }
-            ]
-          },
-          "saleTransactionItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SaleTransactionItemModel"
-            }
-          },
-          "accountTransactions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AccountTransactionModel"
-            }
-          },
-          "storeTransactions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StoreTransactionListModel"
-            }
-          }
-        }
-      },
       "SaleTransactionUpdateRequestModel": {
+        "required": [
+          "storeId"
+        ],
         "type": "object",
         "properties": {
           "note": {
@@ -6346,90 +6204,10 @@
           }
         }
       },
-      "SaleTransactionUpdateResponse": {
-        "required": [
-          "id",
-          "note",
-          "startedAt",
-          "cancelledAt",
-          "startedBy",
-          "cancelledBy",
-          "openedBy",
-          "saleTransactionItems",
-          "accountTransactions",
-          "storeTransactions"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "note": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "cancelledAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "startedBy": {
-            "$ref": "#/components/schemas/UserListModel"
-          },
-          "cancelledBy": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/UserListModel"
-              }
-            ]
-          },
-          "openedBy": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/UserListModel"
-              }
-            ]
-          },
-          "saleTransactionItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SaleTransactionItemModel"
-            }
-          },
-          "accountTransactions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AccountTransactionModel"
-            }
-          },
-          "storeTransactions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StoreTransactionListModel"
-            }
-          }
-        }
-      },
       "StoreCreateRequest": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -6511,6 +6289,11 @@
         }
       },
       "StoreItemCreateRequest": {
+        "required": [
+          "name",
+          "unitName",
+          "initialCost"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -6705,6 +6488,10 @@
         }
       },
       "StoreItemUpdateModel": {
+        "required": [
+          "name",
+          "unitName"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -6842,6 +6629,9 @@
         }
       },
       "StoreTransactionCreateRequest": {
+        "required": [
+          "storeId"
+        ],
         "type": "object",
         "properties": {
           "note": {
@@ -6956,6 +6746,11 @@
         }
       },
       "StoreTransactionItemCreateRequest": {
+        "required": [
+          "itemAmount",
+          "cost",
+          "storeItemId"
+        ],
         "type": "object",
         "properties": {
           "itemAmount": {
@@ -7182,6 +6977,9 @@
         }
       },
       "StoreUpdateRequest": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {

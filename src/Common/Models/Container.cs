@@ -36,10 +36,10 @@ public record ContainerDetailModel {
     public required IEnumerable<ContainerChangeModel> ContainerChanges { get; init; }
 }
 
-public record ContainerUpdateModel(
-    int StoreId,
-    int? PipeId
-);
+public record ContainerUpdateModel {
+    public required int StoreId { get; init; }
+    public int? PipeId { get; init; }
+};
 
 // Requests and responses
 public record ContainerReadAllRequest : PagedRequest {
@@ -52,23 +52,23 @@ public record ContainerReadAllRequest : PagedRequest {
 public record ContainerReadAllResponse : PagedResponse<ContainerListModel>;
 
 public record ContainerCreateRequest {
-    public int TemplateId { get; init; }
-    public int StoreId { get; init; }
-    public int Amount { get; init; }
+    public required int TemplateId { get; init; }
+    public required int StoreId { get; init; }
+    public required int Amount { get; init; }
     [DefaultValue(typeof(decimal), "50")]
-    public decimal Cost { get; init; }
+    public required decimal Cost { get; init; }
     [DefaultValue(false)]
     public bool UpdateCosts { get; init; }
 }
 
 public record ContainerCreateResponse : CollectionResponse<ContainerListModel>;
 
-public record ContainerUpdateRequest(
+public record ContainerUpdateRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromBody]
-    ContainerUpdateModel Model
-);
+    public required ContainerUpdateModel Model { get; init; }
+};
 
 public record ContainerUpdateResponse : ContainerListModel;
 

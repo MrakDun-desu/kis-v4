@@ -17,13 +17,20 @@ public class AccountTransactionService(
         var reqTime = _timeProvider.GetUtcNow();
         var query = _dbContext.AccountTransactions
             .Where(at => at.AccountId == req.AccountId)
+            .Include(at => at.SaleTransaction)
             .AsQueryable();
 
         if (req.From is not null) {
-            query = query.Where(at => at.Timestamp > req.From);
+            query = query.Where(at =>
+                (at.SaleTransaction!.ClosedAt ?? at.SaleTransaction!.StartedAt)
+                >= req.From
+            );
         }
         if (req.To is not null) {
-            query = query.Where(at => at.Timestamp < req.To);
+            query = query.Where(at =>
+                (at.SaleTransaction!.ClosedAt ?? at.SaleTransaction!.StartedAt)
+                <= req.To
+            );
         }
 
         var total = await query.SumAsync(at => at.Amount, token);
@@ -31,9 +38,10 @@ public class AccountTransactionService(
         return await query.PaginateAsync(
                 req,
                 at => new AccountTransactionModel {
-                    Timestamp = at.Timestamp,
                     Amount = at.Amount,
-                    SaleTransactionId = at.SaleTransactionId
+                    SaleTransactionId = at.SaleTransactionId,
+                    Timestamp = at.SaleTransaction!.ClosedAt ?? at.SaleTransaction!.StartedAt,
+                    Type = at.Type
                 },
                 (data, meta) => new AccountTransactionReadAllResponse {
                     From = req.From ?? DateTimeOffset.MinValue,
@@ -43,7 +51,7 @@ public class AccountTransactionService(
                     Meta = meta,
                     Total = total
                 },
-                at => at.Timestamp,
+                at => at.SaleTransactionId,
                 true,
                 token
             );

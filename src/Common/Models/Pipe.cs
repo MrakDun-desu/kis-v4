@@ -20,7 +20,7 @@ public record PipeDetailModel {
 
 public record PipeUpdateModel {
     [DefaultValue("Pípa Kachna")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; }
 }
 
 // Requests and responses
@@ -28,17 +28,17 @@ public record PipeReadAllResponse : CollectionResponse<PipeListModel>;
 
 public record PipeCreateRequest {
     [DefaultValue("Pípa Kachna")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; }
 }
 
 public record PipeCreateResponse : PipeListModel;
 
-public record PipeUpdateRequest(
+public record PipeUpdateRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromBody]
-    PipeUpdateModel Model
-);
+    public required PipeUpdateModel Model { get; init; }
+}
 
 public record PipeUpdateResponse : PipeListModel;
 

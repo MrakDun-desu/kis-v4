@@ -4,6 +4,7 @@ using System.Text.Json;
 using KisV4.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KisV4.DAL.EF.Migrations
 {
     [DbContext(typeof(KisDbContext))]
-    partial class KisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260303092014_SaleTransactionUpdates")]
+    partial class SaleTransactionUpdates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,9 +83,6 @@ namespace KisV4.DAL.EF.Migrations
 
                     b.Property<bool>("Cancelled")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
 
                     b.HasKey("AccountId", "SaleTransactionId");
 

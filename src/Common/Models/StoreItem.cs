@@ -25,9 +25,9 @@ public record StoreItemDetailModel {
 
 public record StoreItemUpdateModel {
     [DefaultValue("Kofola")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; } = string.Empty;
     [DefaultValue("l")]
-    public string UnitName { get; init; } = string.Empty;
+    public required string UnitName { get; init; } = string.Empty;
     [DefaultValue(new int[0])]
     public int[] CategoryIds { get; init; } = [];
 }
@@ -43,25 +43,25 @@ public record StoreItemReadAllResponse : PagedResponse<StoreItemListModel>;
 
 public record StoreItemCreateRequest {
     [DefaultValue("Kofola")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; } = string.Empty;
     [DefaultValue("l")]
-    public string UnitName { get; init; } = string.Empty;
+    public required string UnitName { get; init; } = string.Empty;
     [DefaultValue(false)]
     public bool IsContainerItem { get; init; }
     [DefaultValue(new int[0])]
     public int[] CategoryIds { get; init; } = [];
     [DefaultValue(typeof(decimal), "20")]
-    public decimal InitialCost { get; init; }
+    public required decimal InitialCost { get; init; }
 }
 
 public record StoreItemCreateResponse : StoreItemDetailModel;
 
-public record StoreItemUpdateRequest(
+public record StoreItemUpdateRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromBody]
-    StoreItemUpdateModel Model
-);
+    public required StoreItemUpdateModel Model { get; init; }
+}
 
 public record StoreItemUpdateResponse : StoreItemDetailModel;
 

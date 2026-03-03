@@ -5,18 +5,12 @@ namespace KisV4.Common.Models;
 // Base models
 public record ModificationModel {
     public required int Amount { get; init; }
-    public required ModifierListModel Modifier { get; init; }
-    public required int SaleTransactionItemId { get; init; }
+    public required string ModifierName { get; init; }
+    public required decimal PriceChange { get; init; }
 }
 
 // Requests and responses
-public record ModificationReadAllRequest {
-    public int SaleTransactionItemId { get; init; }
-}
-
-public record ModificationReadAllResponse : CollectionResponse<ModificationModel>;
-
 public record ModificationCreateRequest {
-    public int Amount { get; init; }
-    public int ModifierId { get; init; }
+    public required int Amount { get; init; }
+    public required int ModifierId { get; init; }
 }

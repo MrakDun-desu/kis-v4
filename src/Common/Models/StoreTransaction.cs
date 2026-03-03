@@ -43,7 +43,7 @@ public record StoreTransactionCreateRequest {
     public StoreTransactionItemCreateRequest[] StoreTransactionItems { get; init; } = [];
     [DefaultValue(TransactionReason.AddingToStore)]
     public TransactionReason Reason { get; init; }
-    public int StoreId { get; init; }
+    public required int StoreId { get; init; }
     public int? SourceStoreId { get; init; }
     [DefaultValue(true)]
     public bool UpdateCosts { get; init; }
@@ -54,9 +54,9 @@ public record StoreTransactionCreateResponse : StoreTransactionDetailModel;
 public record StoreTransactionReadResponse : StoreTransactionDetailModel;
 
 // Commands
-public record StoreTransactionDeleteRequest(
+public record StoreTransactionDeleteRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromQuery]
-    bool? UpdateCosts
-);
+    public bool? UpdateCosts { get; init; }
+}

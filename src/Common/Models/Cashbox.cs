@@ -21,10 +21,10 @@ public record CashBoxDetailModel {
 // Requests and responses
 public record CashBoxReadAllResponse : CollectionResponse<CashBoxListModel>;
 
-public record CashBoxReadRequest(
+public record CashBoxReadRequest {
     [FromRoute]
-    int Id
-);
+    public required int Id { get; init; }
+};
 
 public record CashBoxCreateRequest {
     [DefaultValue("Kasa Kachna")]
@@ -38,18 +38,18 @@ public record CashBoxUpdateRequestModel {
     public required string Name { get; init; }
 }
 
-public record CashBoxUpdateRequest(
+public record CashBoxUpdateRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromBody]
-    CashBoxUpdateRequestModel Model
-);
+    public required CashBoxUpdateRequestModel Model { get; init; }
+};
 
 public record CashBoxUpdateResponse : CashBoxListModel;
 
 public record CashBoxReadResponse : CashBoxDetailModel;
 
-public record CashBoxDeleteRequest(
+public record CashBoxDeleteRequest {
     [FromRoute]
-    int Id
-);
+    public required int Id { get; init; }
+};

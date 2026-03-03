@@ -215,16 +215,27 @@ public class StoreTransactionService(
             StoreTransactionItems = storeTransactionItems
         };
 
-        dbContext.StoreTransactions.Add(entity);
+        return await CreateInternalAsync(entity, userId, dbContext, reqTime, token, req.UpdateCosts);
+    }
+
+    internal static async Task<StoreTransaction> CreateInternalAsync(
+        StoreTransaction storeTransaction,
+        int userId,
+        KisDbContext dbContext,
+        DateTimeOffset reqTime,
+        CancellationToken token = default,
+        bool updateCosts = false
+    ) {
+        dbContext.StoreTransactions.Add(storeTransaction);
         await dbContext.SaveChangesAsync(token);
 
-        await UpdateItemAmountsAsync(entity.Id, false, dbContext, token);
+        await UpdateItemAmountsAsync(storeTransaction.Id, false, dbContext, token);
 
-        if (req.UpdateCosts) {
-            await UpdateCostsAsync(entity.Id, userId, reqTime, dbContext, token);
+        if (updateCosts) {
+            await UpdateCostsAsync(storeTransaction.Id, userId, reqTime, dbContext, token);
         }
 
-        return entity;
+        return storeTransaction;
     }
 
     private static async Task UpdateItemAmountsAsync(

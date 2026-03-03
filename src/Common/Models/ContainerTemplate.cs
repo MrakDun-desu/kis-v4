@@ -22,27 +22,27 @@ public record ContainerTemplateReadAllResponse : PagedResponse<ContainerTemplate
 
 public record ContainerTemplateCreateRequest {
     [DefaultValue("Kofola 50l")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; }
     [DefaultValue(typeof(decimal), "50")]
-    public decimal Amount { get; init; }
-    public int StoreItemId { get; init; }
+    public required decimal Amount { get; init; }
+    public required int StoreItemId { get; init; }
 }
 
 public record ContainerTemplateCreateResponse : ContainerTemplateModel;
 
 public record ContainerTemplateUpdateRequestModel {
     [DefaultValue("Kofola 50l")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; }
     [DefaultValue(typeof(decimal), "50")]
-    public decimal Amount { get; init; }
-    public int StoreItemId { get; init; }
+    public required decimal Amount { get; init; }
+    public required int StoreItemId { get; init; }
 }
 
 public record ContainerTemplateUpdateRequest {
     [FromRoute]
-    public int Id { get; init; }
+    public required int Id { get; init; }
     [FromBody]
-    public ContainerTemplateUpdateRequestModel Model { get; init; } = default!;
+    public required ContainerTemplateUpdateRequestModel Model { get; init; }
 }
 
 public record ContainerTemplateUpdateResponse : ContainerTemplateModel;

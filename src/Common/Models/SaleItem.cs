@@ -41,7 +41,7 @@ public record SaleItemDetailModel {
 
 public record SaleItemUpdateModel {
     [DefaultValue("Kofola")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
     [DefaultValue(typeof(decimal), "5")]
     public decimal MarginPercent { get; init; }
@@ -67,7 +67,7 @@ public record SaleItemReadAllResponse : PagedResponse<SaleItemListModel>;
 
 public record SaleItemCreateRequest {
     [DefaultValue("Kofola")]
-    public string Name { get; init; } = string.Empty;
+    public required string Name { get; init; } = string.Empty;
     public string? Image { get; init; }
     [DefaultValue(typeof(decimal), "5")]
     public decimal MarginPercent { get; init; }
@@ -85,12 +85,12 @@ public record SaleItemCreateRequest {
 
 public record SaleItemCreateResponse : SaleItemDetailModel;
 
-public record SaleItemUpdateRequest(
+public record SaleItemUpdateRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromBody]
-    SaleItemUpdateModel Model
-);
+    public required SaleItemUpdateModel Model { get; init; }
+}
 
 public record SaleItemUpdateResponse : SaleItemDetailModel;
 

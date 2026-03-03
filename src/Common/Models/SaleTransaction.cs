@@ -13,7 +13,6 @@ public record SaleTransactionListModel {
     public required UserListModel StartedBy { get; init; }
     public required UserListModel? CancelledBy { get; init; }
     public required UserListModel? OpenedBy { get; init; }
-    public required TransactionReason Reason { get; init; }
 }
 
 public record SaleTransactionDetailModel {
@@ -43,7 +42,7 @@ public record SaleTransactionReadAllResponse : PagedResponse<SaleTransactionList
 }
 
 public record SaleTransactionCheckPriceRequest {
-    public SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
+    public required SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
 }
 
 public record SaleTransactionCheckPriceResponse {
@@ -52,57 +51,47 @@ public record SaleTransactionCheckPriceResponse {
 
 public record SaleTransactionCreateRequest {
     public string? Note { get; init; }
-    public int StoreId { get; init; }
-    public int CashBoxId { get; init; }
-    public int CustomerId { get; init; }
-    public decimal PaidAmount { get; init; }
+    public required int StoreId { get; init; }
+    public required int CashBoxId { get; init; }
+    public required int CustomerId { get; init; }
+    public required decimal PaidAmount { get; init; }
     public SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
 }
-
-public record SaleTransactionCreateResponse : SaleTransactionDetailModel;
 
 public record SaleTransactionOpenRequest {
     public string? Note { get; init; }
-    public int StoreId { get; init; }
+    public required int StoreId { get; init; }
     public SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
 }
-
-public record SaleTransactionOpenResponse : SaleTransactionDetailModel;
 
 public record SaleTransactionUpdateRequestModel {
     public string? Note { get; init; }
-    public int StoreId { get; init; }
+    public required int StoreId { get; init; }
     public SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
 }
 
-public record SaleTransactionUpdateRequest(
+public record SaleTransactionUpdateRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromBody]
-    SaleTransactionUpdateRequestModel Model
-);
-
-public record SaleTransactionUpdateResponse : SaleTransactionDetailModel;
+    public required SaleTransactionUpdateRequestModel Model { get; init; }
+}
 
 public record SaleTransactionCloseRequestModel {
     public string? Note { get; init; }
-    public int CashBoxId { get; init; }
-    public int CustomerId { get; init; }
-    public decimal PaidAmount { get; init; }
+    public required int CashBoxId { get; init; }
+    public required int CustomerId { get; init; }
+    public required decimal PaidAmount { get; init; }
 }
 
-public record SaleTransactionCloseRequest(
+public record SaleTransactionCloseRequest {
     [FromRoute]
-    int Id,
+    public required int Id { get; init; }
     [FromBody]
-    SaleTransactionCloseRequestModel Model
-);
+    public required SaleTransactionCloseRequestModel Model { get; init; }
+}
 
-public record SaleTransactionCloseResponse : SaleTransactionDetailModel;
-
-public record SaleTransactionReadResponse : SaleTransactionDetailModel;
-
-public record SaleTransactionDeleteRequest(
+public record SaleTransactionDeleteRequest {
     [FromRoute]
-    int Id
-);
+    public required int Id { get; init; }
+}
