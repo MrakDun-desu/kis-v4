@@ -12,11 +12,13 @@ namespace KisV4.BL.EF.Services;
 public class SaleTransactionService(
     KisDbContext dbContext,
     TimeProvider timeProvider,
-    UserService userService
+    UserService userService,
+    SaleTransactionRequestState state
 ) : IScopedService {
     private readonly KisDbContext _dbContext = dbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
     private readonly UserService _userService = userService;
+    private readonly SaleTransactionRequestState _state = state;
 
     public async Task<SaleTransactionReadAllResponse> ReadAllAsync(
         SaleTransactionReadAllRequest req,
@@ -84,10 +86,10 @@ public class SaleTransactionService(
             .Include(st => st.SaleTransactionItems)
             .ThenInclude(sti => sti.Modifications)
             .ThenInclude(sti => sti.Modifier)
-            .AsSplitQuery()
             .Include(st => st.StartedBy)
             .Include(st => st.CancelledBy)
             .Include(st => st.OpenedBy)
+            .AsSplitQuery()
             .Select(st => new SaleTransactionDetailModel {
                 Id = st.Id,
                 Note = st.Note,
@@ -280,10 +282,10 @@ public class SaleTransactionService(
             .Include(st => st.SaleTransactionItems)
             .ThenInclude(sti => sti.Modifications)
             .ThenInclude(sti => sti.Modifier)
-            .AsSplitQuery()
             .Include(st => st.StartedBy)
             .Include(st => st.CancelledBy)
             .Include(st => st.OpenedBy)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(st => st.Id == req.Id, token);
 
         if (entity is null) {
@@ -291,19 +293,19 @@ public class SaleTransactionService(
         }
         await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
         try {
-            var composites = await GetCompositesAsync(req.Model.SaleTransactionItems, token);
+            var composites = await TryGetCompositesAsync(req.Model.SaleTransactionItems, _dbContext, _state, token);
             var newSaleTransactionItems = AddSaleTransactionItems(
                 entity,
                 req.Model.SaleTransactionItems,
-                composites,
+                composites!,
                 entity.SaleTransactionItems.Max(sti => sti.LineNumber)
             );
             _dbContext.SaleTransactionItems.AddRange(newSaleTransactionItems);
 
             var storeTransaction = AddStoreTransaction(
                 entity,
-                newSaleTransactionItems,
-                composites,
+                req.Model.SaleTransactionItems,
+                composites!,
                 req.Model.StoreId,
                 reqTime,
                 userId
@@ -354,14 +356,19 @@ public class SaleTransactionService(
             .ThenInclude(st => st.CancelledBy)
             .Include(st => st.SaleTransactionItems)
             .ThenInclude(sti => sti.SaleItem)
-            .Include(st => st.SaleTransactionItems)
-            .ThenInclude(sti => sti.Modifications)
-            .ThenInclude(sti => sti.Modifier)
-            .AsSplitQuery()
             .Include(st => st.StartedBy)
             .Include(st => st.CancelledBy)
             .Include(st => st.OpenedBy)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(st => st.Id == req.Id, token);
+
+        _state.SaleTransactionItems ??= await _dbContext.SaleTransactionItems
+                    .Where(sti => sti.SaleTransactionId == req.Id)
+                    .Include(sti => sti.Modifications)
+                    .ThenInclude(m => m.Modifier)
+                    .ToArrayAsync(token);
+
+        var saleTransactionItems = _state.SaleTransactionItems;
 
         if (entity is null) {
             return null;
@@ -375,22 +382,25 @@ public class SaleTransactionService(
                 customer = newCustomerEntry.Entity;
             }
 
-            var composites = await GetCompositesAsync(
-                entity.SaleTransactionItems.Select(sti => new SaleTransactionItemCreateRequest {
+            var composites = await TryGetCompositesAsync(
+                saleTransactionItems.Select(sti => new SaleTransactionItemCreateRequest {
                     Amount = sti.Amount,
                     SaleItemId = sti.SaleItemId,
                     Modifications = sti.Modifications.Select(m => new ModificationCreateRequest {
                         Amount = m.Amount,
                         ModifierId = m.ModifierId
                     }).ToArray()
-                }).ToArray()
+                }).ToArray(),
+                _dbContext,
+                _state,
+                token
             );
 
             var cashBox = await _dbContext.Cashboxes.FindAsync(req.Model.CashBoxId, token);
             var accountTransactions = AddAccountTransactions(
                 entity,
-                entity.SaleTransactionItems.ToArray(),
-                composites,
+                saleTransactionItems.ToArray(),
+                composites!,
                 customer,
                 cashBox!,
                 req.Model.PaidAmount
@@ -418,7 +428,7 @@ public class SaleTransactionService(
                     Timestamp = entity.StartedAt,
                     Type = at.Type
                 }),
-                SaleTransactionItems = entity.SaleTransactionItems.Select(sti => sti.ToModel())
+                SaleTransactionItems = saleTransactionItems.Select(sti => sti.ToModel())
             };
         } catch {
             await dbTransaction.RollbackAsync(token);
@@ -496,7 +506,7 @@ public class SaleTransactionService(
         DateTimeOffset reqTime,
         CancellationToken token
     ) {
-        var composites = await GetCompositesAsync(itemsToCreate, token);
+        var composites = await TryGetCompositesAsync(itemsToCreate, _dbContext, _state, token);
         var entity = new SaleTransaction {
             Note = note,
             StartedAt = reqTime,
@@ -504,27 +514,36 @@ public class SaleTransactionService(
             OpenedById = open ? userId : null,
             Reason = TransactionReason.Sale,
         };
-        var saleTransactionItems = AddSaleTransactionItems(entity, itemsToCreate, composites);
+        var saleTransactionItems = AddSaleTransactionItems(entity, itemsToCreate, composites!);
         _dbContext.SaleTransactionItems.AddRange(saleTransactionItems);
         _dbContext.SaleTransactions.Add(entity);
         await _dbContext.SaveChangesAsync(token);
 
         var storeTransaction = AddStoreTransaction(
             entity,
-            saleTransactionItems,
-            composites,
+            itemsToCreate,
+            composites!,
             storeId,
             reqTime,
             userId
         );
         await StoreTransactionService.CreateInternalAsync(storeTransaction, userId, _dbContext, reqTime, token);
-        return (entity, composites, saleTransactionItems, storeTransaction);
+        return (entity, composites!, saleTransactionItems, storeTransaction);
     }
 
-    private async Task<Dictionary<int, (Composite Item, decimal Price)>> GetCompositesAsync(
+    /// <summary>
+    /// Returns composites relevant to this transaction or transaction update.
+    /// If one or more of the specified composites doesn't exist, returns null.
+    /// </summary>
+    internal static async Task<Dictionary<int, (Composite Item, decimal Price)>?> TryGetCompositesAsync(
         SaleTransactionItemCreateRequest[] saleTransactionItems,
+        KisDbContext dbContext,
+        SaleTransactionRequestState state,
         CancellationToken token = default
     ) {
+        if (state.Composites is { } composites) {
+            return composites;
+        }
         var compositeIds = saleTransactionItems.Aggregate(
             new HashSet<int>(saleTransactionItems.Length),
             (acc, curr) => {
@@ -535,7 +554,7 @@ public class SaleTransactionService(
                 return acc;
             });
 
-        return await _dbContext.Composites
+        composites = await dbContext.Composites
             .Where(c => compositeIds.Contains(c.Id))
             .Include(c => c.Compositions)
             .ThenInclude(c => c.StoreItem)
@@ -547,6 +566,13 @@ public class SaleTransactionService(
                 c.Name
             })
             .ToDictionaryAsync(c => c.Id, c => (Item: c.Composite, c.Price), token);
+
+        if (composites.Count != compositeIds.Count) {
+            return null;
+        }
+
+        state.Composites = composites;
+        return composites;
     }
 
     private SaleTransactionItem[] AddSaleTransactionItems(
@@ -619,13 +645,10 @@ public class SaleTransactionService(
         return accountTransactions;
     }
 
-    private StoreTransaction AddStoreTransaction(
-        SaleTransaction saleTransaction,
-        SaleTransactionItem[] saleTransactionItems,
+    public static Dictionary<int, StoreTransactionItem> GetStoreTransactionItems(
         Dictionary<int, (Composite Item, decimal Price)> composites,
-        int storeId,
-        DateTimeOffset reqTime,
-        int userId
+        SaleTransactionItemCreateRequest[] saleTransactionItems,
+        int storeId
     ) {
         var storeTransactionItems = new Dictionary<int, StoreTransactionItem>();
         foreach (var saleTransactionItem in saleTransactionItems) {
@@ -657,12 +680,26 @@ public class SaleTransactionService(
             }
         }
 
+        return storeTransactionItems;
+    }
+
+    private StoreTransaction AddStoreTransaction(
+        SaleTransaction saleTransaction,
+        SaleTransactionItemCreateRequest[] saleTransactionItems,
+        Dictionary<int, (Composite Item, decimal Price)> composites,
+        int storeId,
+        DateTimeOffset reqTime,
+        int userId
+    ) {
+        var storeTransactionItems = GetStoreTransactionItems(composites, saleTransactionItems, storeId);
+
         var storeTransaction = new StoreTransaction {
             Note = null,
             Reason = TransactionReason.Sale,
             StartedAt = reqTime,
             StartedById = userId,
-            StoreTransactionItems = storeTransactionItems.Values,
+            StoreTransactionItems = storeTransactionItems.Values
+                .Where(sti => sti.ItemAmount != 0).ToArray(),
             SaleTransaction = saleTransaction
         };
 

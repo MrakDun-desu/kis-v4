@@ -1,17 +1,19 @@
+using KisV4.BL.EF.Services;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
+using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.BL.EF.Validation;
 
 public class ValidationHelper(
         KisDbContext dbContext,
-        TimeProvider timeProvider
+        SaleTransactionRequestState state
         ) : IScopedService {
     private readonly KisDbContext _dbContext = dbContext;
-    private readonly TimeProvider _timeProvider = timeProvider;
+    private readonly SaleTransactionRequestState _state = state;
 
     internal async Task<bool> IdentifyExistingAccount(int accountId, CancellationToken token = default) =>
         await _dbContext.Accounts.FindAsync(accountId, token) is not null;
@@ -182,5 +184,140 @@ public class ValidationHelper(
             await _dbContext.Layouts
                 .Where(l => layoutIds.Contains(l.Id))
                 .CountAsync(token) == layoutIds.Length;
+    }
+
+    internal async Task<bool> AllContainValidComposites(
+        SaleTransactionItemCreateRequest[] saleTransactionItems,
+        CancellationToken token
+    ) {
+        var composites = await SaleTransactionService.TryGetCompositesAsync(
+            saleTransactionItems,
+            _dbContext,
+            _state,
+            token
+        );
+
+        if (composites is null) {
+            return false;
+        }
+
+        foreach (var item in saleTransactionItems) {
+            if (composites.TryGetValue(item.SaleItemId, out var saleItem)) {
+                if (saleItem.Item is not SaleItem) {
+                    return false;
+                }
+            }
+            foreach (var modification in item.Modifications) {
+                if (composites.TryGetValue(modification.ModifierId, out var modifier)) {
+                    if (modifier.Item is not Modifier) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    internal async Task<bool> ItemAmountsArentNegative(
+        SaleTransactionItemCreateRequest[] saleTransactionItems,
+        CancellationToken token
+    ) {
+        var composites = await SaleTransactionService.TryGetCompositesAsync(
+            saleTransactionItems,
+            _dbContext,
+            _state,
+            token
+        );
+
+        if (composites is null) {
+            return true;
+        }
+
+        var storeTransactionItems = SaleTransactionService.GetStoreTransactionItems(
+            composites,
+            saleTransactionItems,
+            0 // store is irrelevent, these items aren't going to be created either way
+        );
+
+        return storeTransactionItems.Values.All(sti => sti.ItemAmount <= 0);
+    }
+
+    internal async Task<bool> PaidAmountIsEnough(
+        SaleTransactionItemCreateRequest[] saleTransactionItems,
+        decimal paidAmount,
+        CancellationToken token
+    ) {
+        var composites = await SaleTransactionService.TryGetCompositesAsync(
+            saleTransactionItems,
+            _dbContext,
+            _state,
+            token
+        );
+
+        if (composites is null) {
+            return true;
+        }
+
+        var totalPrice = saleTransactionItems.Aggregate(0m, (acc, curr) =>
+            acc + (composites[curr.SaleItemId].Price +
+                curr.Modifications.Sum(m => composites[m.ModifierId].Price * m.Amount)
+            ) * curr.Amount
+        );
+
+        return paidAmount >= totalPrice;
+    }
+
+    internal async Task<bool> PaidAmountIsEnough(
+        int openTransactionId,
+        decimal paidAmount,
+        CancellationToken token
+    ) {
+        _state.SaleTransactionItems ??= await _dbContext.SaleTransactionItems
+                    .Where(sti => sti.SaleTransactionId == openTransactionId)
+                    .Include(sti => sti.Modifications)
+                    .ThenInclude(m => m.Modifier)
+                    .ToArrayAsync(token);
+
+        var saleTransactionItems = _state.SaleTransactionItems;
+
+        var totalPrice = saleTransactionItems.Aggregate(0m, (acc, curr) =>
+            acc + (curr.BasePrice + curr.Modifications.Sum(m => m.PriceChange * m.Amount)) * curr.Amount
+        );
+
+        return paidAmount >= totalPrice;
+    }
+
+    internal async Task<bool> IdentifyExistingCashBox(int cashBoxId, CancellationToken token)
+        => await _dbContext.Cashboxes.FindAsync(cashBoxId, token) is not null;
+
+    internal async Task<bool> AllModifiersAreCorrect(
+        SaleTransactionItemCreateRequest[] saleTransactionItems,
+        CancellationToken token
+    ) {
+        var modifierIds = saleTransactionItems
+            .SelectMany(sti => sti.Modifications.Select(m => m.ModifierId))
+            .ToHashSet();
+        var modifierTargets = await _dbContext.Modifiers
+            .Where(m => modifierIds.Contains(m.Id))
+            .Include(m => m.Targets)
+            .Select(m => new {
+                m.Id,
+                TargetIds = m.Targets.Select(si => si.Id).ToArray()
+            })
+            .ToDictionaryAsync(m => m.Id, m => m.TargetIds, token);
+
+        // this means that some of the modifiers don't exist, handled by different validator
+        if (modifierTargets.Count != modifierIds.Count) {
+            return true;
+        }
+
+        foreach (var item in saleTransactionItems) {
+            foreach (var modification in item.Modifications) {
+                if (!modifierTargets[modification.ModifierId].Contains(item.SaleItemId)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
