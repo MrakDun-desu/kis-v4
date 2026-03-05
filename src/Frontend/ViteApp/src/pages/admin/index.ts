@@ -1,2 +1,2 @@
-export * from "./StoreItems"
-export * from "./AdminPage"
+export * from "./pages";
+export * from "./AdminPage";

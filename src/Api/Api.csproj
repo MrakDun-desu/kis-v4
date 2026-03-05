@@ -8,42 +8,25 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <UserSecretsId>b8e97e0c-8e8d-4960-b54f-6756128c4667</UserSecretsId>
         <OpenApiDocumentsDirectory>../..</OpenApiDocumentsDirectory>
-        <OpenApiGenerateDocumentsOptions
-        >--file-name kisv4-openapi-doc</OpenApiGenerateDocumentsOptions>
+        <OpenApiGenerateDocumentsOptions>--file-name kisv4-openapi-doc</OpenApiGenerateDocumentsOptions>
     </PropertyGroup>
 
     <ItemGroup>
         <!-- Normal dependencies -->
         <PackageReference Include="File.TypeChecker" Version="4.3.0" />
         <PackageReference Include="FluentValidation" Version="12.1.1" />
-        <PackageReference
-            Include="Microsoft.AspNetCore.Authentication.JwtBearer"
-            Version="10.0.2"
-        />
-        <PackageReference
-            Include="Microsoft.AspNetCore.OpenApi"
-            Version="10.0.2"
-        />
-        <PackageReference Include="Scalar.AspNetCore" Version="2.12.11" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.13.1" />
 
         <!-- Dependencies for migrating the database with EFCore tools -->
-        <PackageReference
-            PrivateAssets="all"
-            Include="Microsoft.EntityFrameworkCore.Design"
-            Version="10.0.2"
-        >
-            <IncludeAssets
-            >runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PackageReference PrivateAssets="all" Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
         <!-- OpenAPI file generation -->
-        <PackageReference
-            PrivateAssets="all"
-            Include="Microsoft.Extensions.ApiDescription.Server"
-            Version="10.0.2"
-        >
-          <IncludeAssets
-            >runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PackageReference PrivateAssets="all" Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.3">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 

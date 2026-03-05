@@ -7,20 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Duende.BFF" Version="4.0.2" />
-    <PackageReference Include="Duende.BFF.Yarp" Version="4.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.2" />
+    <PackageReference Include="Duende.BFF" Version="4.1.1" />
+    <PackageReference Include="Duende.BFF.Yarp" Version="4.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.3" />
   </ItemGroup>
 
   <Target Name="ViteBuild" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' == 'Release'">
-    <Message Importance="high" Text="Starting Vite build..."/>
+    <Message Importance="high" Text="Starting Vite build..." />
 
-    <Exec Command="node --version" ContinueOnError="false"/>
+    <Exec Command="node --version" ContinueOnError="false" />
 
     <Exec WorkingDirectory="$(ProjectDir)/ViteApp" Command="npm install" />
     <Exec WorkingDirectory="$(ProjectDir)/ViteApp" Command="npm run build" />
 
-    <Message Importance="high" Text="Vite build completed."/>
+    <Message Importance="high" Text="Vite build completed." />
   </Target>
 
 </Project>

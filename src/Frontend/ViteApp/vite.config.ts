@@ -1,24 +1,41 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 // https://vite.dev/config/
 export default defineConfig({
   server: {
+    port: 7003,
     proxy: {
-      "/bff": "https::/localhost:5001",
-      "/signin-oidc": "https::/localhost:5001",
-      "/signout": "https::/localhost:5001",
-      "/api": "https::/localhost:5001",
-    }
+      "/bff": {
+        target: "https://localhost:7002",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/signin-oidc": {
+        target: "https://localhost:7002",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/signout": {
+        target: "https://localhost:7002",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/api": {
+        target: "https://localhost:7002",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   build: {
-    outDir: "../wwwroot"
+    outDir: "../wwwroot",
   },
   plugins: [
     react({
       babel: {
-        plugins: [['babel-plugin-react-compiler']],
+        plugins: [["babel-plugin-react-compiler"]],
       },
     }),
   ],
-})
+});

@@ -1,31 +1,59 @@
-import { AppBar, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
-import { AccountCircle, Build, Discount, GridView, Inventory, MoveDown, OilBarrel, PointOfSale, Receipt, ShoppingBag, SportsBar, Store, WaterDrop } from '@mui/icons-material';
+import {
+  AppBar,
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import {
+  AccountCircle,
+  Build,
+  Discount,
+  GridView,
+  Inventory,
+  MoveDown,
+  OilBarrel,
+  PointOfSale,
+  Receipt,
+  ShoppingBag,
+  SportsBar,
+  Store,
+  WaterDrop,
+} from "@mui/icons-material";
 import { type ReactElement } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 
 const drawerWidth = 240;
 
 interface Link {
   label: string;
   url: string;
-  icon?: ReactElement<any, any>
+  icon?: ReactElement<any, any>;
 }
 const links: Link[][] = [
   [
     {
       label: "Skladové položky",
       url: "store-items",
-      icon: <Inventory />
+      icon: <Inventory />,
     },
     {
       label: "Skladové transakce",
       url: "store-transactions",
-      icon: <MoveDown />
+      icon: <MoveDown />,
     },
     {
       label: "Sklady",
       url: "stores",
-      icon: <Store />
+      icon: <Store />,
     },
   ],
 
@@ -33,27 +61,27 @@ const links: Link[][] = [
     {
       label: "Prodejní položky",
       url: "sale-items",
-      icon: <ShoppingBag />
+      icon: <ShoppingBag />,
     },
     {
       label: "Prodejní transakce",
       url: "sale-transactions",
-      icon: <Receipt />
+      icon: <Receipt />,
     },
     {
       label: "Modifikátory",
       url: "modifiers",
-      icon: <Build />
+      icon: <Build />,
     },
     {
       label: "Layouty",
       url: "layouts",
-      icon: <GridView />
+      icon: <GridView />,
     },
     {
       label: "Slevy",
       url: "discounts",
-      icon: <Discount />
+      icon: <Discount />,
     },
   ],
 
@@ -61,17 +89,17 @@ const links: Link[][] = [
     {
       label: "Typy kegů",
       url: "container-templates",
-      icon: <OilBarrel />
+      icon: <OilBarrel />,
     },
     {
       label: "Kegy",
       url: "containers",
-      icon: <SportsBar />
+      icon: <SportsBar />,
     },
     {
       label: "Pípy",
       url: "taps",
-      icon: <WaterDrop />
+      icon: <WaterDrop />,
     },
   ],
 
@@ -79,21 +107,20 @@ const links: Link[][] = [
     {
       label: "Kasy",
       url: "cashboxes",
-      icon: <PointOfSale />
+      icon: <PointOfSale />,
     },
     {
       label: "Uživatelé",
       url: "users",
-      icon: <AccountCircle />
+      icon: <AccountCircle />,
     },
   ],
 ];
 
-
 export const AdminPage = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  // const [drawerOpen, setDrawerOpen] = useState(false);
+  const auth = useAuth();
 
   const path_parts = pathname.split("/");
   const path_end = path_parts[path_parts.length - 1];
@@ -105,23 +132,21 @@ export const AdminPage = () => {
         position="fixed"
         sx={{
           width: `calc(100% - ${drawerWidth}px)`,
-          marginLeft: drawerWidth
+          marginLeft: drawerWidth,
         }}
       >
         <Toolbar>
-          {/* <IconButton */}
-          {/*   aria-label="open drawer" */}
-          {/*   onClick={() => setDrawerOpen(true)} */}
-          {/*   edge="start" */}
-          {/*   sx={{ */}
-          {/*     marginRight: 2 */}
-          {/*   }} */}
-          {/* > */}
-          {/*   <Menu /> */}
-          {/* </IconButton> */}
-          <Typography variant="h6" noWrap component="h1">
+          <Typography variant="h6" noWrap component="h1" flexGrow={1}>
             Kachní informační systém
           </Typography>
+          {auth.userClaims && (
+            <span>
+              uživatel:{" "}
+              {auth.userClaims.find((claim: any) => claim["type"] === "name")
+                ?.value ?? "Neznámý"}
+            </span>
+          )}
+          <Button onClick={auth.signOut}>Odhlásit se</Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -130,47 +155,36 @@ export const AdminPage = () => {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
-            boxSizing: 'border-box'
-          }
+            boxSizing: "border-box",
+          },
         }}
       >
         <List>
-          {/* <ListItem disablePadding key="drawer-close"> */}
-          {/*   <ListItemButton onClick={() => setDrawerOpen(false)}> */}
-          {/*     <ListItemText primary="Zavřít" /> */}
-          {/*     <ListItemIcon> */}
-          {/*       <ChevronLeft /> */}
-          {/*     </ListItemIcon> */}
-          {/*   </ListItemButton> */}
-          {/* </ListItem> */}
-          {/* <Divider /> */}
           {links.map((arr, id1) => {
             var elements = arr.map((val, id2) => {
               const disabled = path_end == val.url;
               return (
-                <ListItem
-                  disablePadding
-                  key={`${id1}${id2}`}
-                >
-                  <ListItemButton disabled={disabled} onClick={() => open_link(val.url)}>
-                    <ListItemIcon>
-                      {val.icon}
-                    </ListItemIcon>
+                <ListItem disablePadding key={`${id1}${id2}`}>
+                  <ListItemButton
+                    disabled={disabled}
+                    onClick={() => open_link(val.url)}
+                  >
+                    <ListItemIcon>{val.icon}</ListItemIcon>
                     <ListItemText primary={val.label} />
                   </ListItemButton>
                 </ListItem>
               );
             });
 
-            return [...elements, <Divider />]
+            return [...elements, <Divider />];
           })}
         </List>
       </Drawer>
       <Box marginTop={10} marginLeft={`${drawerWidth + 20}px`} marginRight={2}>
         <Outlet />
       </Box>
-    </ >
+    </>
   );
 };
