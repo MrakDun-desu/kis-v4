@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
-
 /**
  * 
  * @export
@@ -36,16 +21,16 @@ import {
 export interface CostCreateRequest {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof CostCreateRequest
      */
-    storeItemId: CashBoxesReadIdParameter;
+    storeItemId: number;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof CostCreateRequest
      */
-    amount: AccountTransactionModelAmount;
+    amount: string;
     /**
      * 
      * @type {string}
@@ -74,8 +59,8 @@ export function CostCreateRequestFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'storeItemId': CashBoxesReadIdParameterFromJSON(json['storeItemId']),
-        'amount': AccountTransactionModelAmountFromJSON(json['amount']),
+        'storeItemId': json['storeItemId'],
+        'amount': json['amount'],
         'description': json['description'],
     };
 }
@@ -91,8 +76,8 @@ export function CostCreateRequestToJSONTyped(value?: CostCreateRequest | null, i
 
     return {
         
-        'storeItemId': CashBoxesReadIdParameterToJSON(value['storeItemId']),
-        'amount': AccountTransactionModelAmountToJSON(value['amount']),
+        'storeItemId': value['storeItemId'],
+        'amount': value['amount'],
         'description': value['description'],
     };
 }

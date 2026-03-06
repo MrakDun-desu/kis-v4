@@ -20,20 +20,6 @@ import {
     StoreItemListModelToJSON,
     StoreItemListModelToJSONTyped,
 } from './StoreItemListModel';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 
 /**
  * 
@@ -43,10 +29,10 @@ import {
 export interface ContainerTemplateModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ContainerTemplateModel
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -55,10 +41,10 @@ export interface ContainerTemplateModel {
     name: string;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ContainerTemplateModel
      */
-    amount: AccountTransactionModelAmount;
+    amount: string;
     /**
      * 
      * @type {StoreItemListModel}
@@ -88,9 +74,9 @@ export function ContainerTemplateModelFromJSONTyped(json: any, ignoreDiscriminat
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
-        'amount': AccountTransactionModelAmountFromJSON(json['amount']),
+        'amount': json['amount'],
         'storeItem': StoreItemListModelFromJSON(json['storeItem']),
     };
 }
@@ -106,9 +92,9 @@ export function ContainerTemplateModelToJSONTyped(value?: ContainerTemplateModel
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
-        'amount': AccountTransactionModelAmountToJSON(value['amount']),
+        'amount': value['amount'],
         'storeItem': StoreItemListModelToJSON(value['storeItem']),
     };
 }

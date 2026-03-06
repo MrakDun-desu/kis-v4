@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-
 /**
  * 
  * @export
@@ -29,10 +21,10 @@ import {
 export interface StoreCreateResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreCreateResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -60,7 +52,7 @@ export function StoreCreateResponseFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
     };
 }
@@ -76,7 +68,7 @@ export function StoreCreateResponseToJSONTyped(value?: StoreCreateResponse | nul
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
     };
 }

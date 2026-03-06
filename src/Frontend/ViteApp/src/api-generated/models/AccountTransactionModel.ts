@@ -20,20 +20,6 @@ import {
     AccountTransactionTypeToJSON,
     AccountTransactionTypeToJSONTyped,
 } from './AccountTransactionType';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 
 /**
  * 
@@ -43,16 +29,16 @@ import {
 export interface AccountTransactionModel {
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof AccountTransactionModel
      */
-    amount: AccountTransactionModelAmount;
+    amount: string;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof AccountTransactionModel
      */
-    saleTransactionId: CashBoxesReadIdParameter;
+    saleTransactionId: number;
     /**
      * 
      * @type {Date}
@@ -90,8 +76,8 @@ export function AccountTransactionModelFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'amount': AccountTransactionModelAmountFromJSON(json['amount']),
-        'saleTransactionId': CashBoxesReadIdParameterFromJSON(json['saleTransactionId']),
+        'amount': json['amount'],
+        'saleTransactionId': json['saleTransactionId'],
         'timestamp': (new Date(json['timestamp'])),
         'type': AccountTransactionTypeFromJSON(json['type']),
     };
@@ -108,9 +94,9 @@ export function AccountTransactionModelToJSONTyped(value?: AccountTransactionMod
 
     return {
         
-        'amount': AccountTransactionModelAmountToJSON(value['amount']),
-        'saleTransactionId': CashBoxesReadIdParameterToJSON(value['saleTransactionId']),
-        'timestamp': ((value['timestamp']).toISOString()),
+        'amount': value['amount'],
+        'saleTransactionId': value['saleTransactionId'],
+        'timestamp': value['timestamp'].toISOString(),
         'type': AccountTransactionTypeToJSON(value['type']),
     };
 }

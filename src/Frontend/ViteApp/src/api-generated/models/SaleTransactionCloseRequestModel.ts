@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
-
 /**
  * 
  * @export
@@ -42,22 +27,22 @@ export interface SaleTransactionCloseRequestModel {
     note?: string | null;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionCloseRequestModel
      */
-    cashBoxId: CashBoxesReadIdParameter;
+    cashBoxId: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionCloseRequestModel
      */
-    customerId: CashBoxesReadIdParameter;
+    customerId: number;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof SaleTransactionCloseRequestModel
      */
-    paidAmount: AccountTransactionModelAmount;
+    paidAmount: string;
 }
 
 /**
@@ -81,9 +66,9 @@ export function SaleTransactionCloseRequestModelFromJSONTyped(json: any, ignoreD
     return {
         
         'note': json['note'] == null ? undefined : json['note'],
-        'cashBoxId': CashBoxesReadIdParameterFromJSON(json['cashBoxId']),
-        'customerId': CashBoxesReadIdParameterFromJSON(json['customerId']),
-        'paidAmount': AccountTransactionModelAmountFromJSON(json['paidAmount']),
+        'cashBoxId': json['cashBoxId'],
+        'customerId': json['customerId'],
+        'paidAmount': json['paidAmount'],
     };
 }
 
@@ -99,9 +84,9 @@ export function SaleTransactionCloseRequestModelToJSONTyped(value?: SaleTransact
     return {
         
         'note': value['note'],
-        'cashBoxId': CashBoxesReadIdParameterToJSON(value['cashBoxId']),
-        'customerId': CashBoxesReadIdParameterToJSON(value['customerId']),
-        'paidAmount': AccountTransactionModelAmountToJSON(value['paidAmount']),
+        'cashBoxId': value['cashBoxId'],
+        'customerId': value['customerId'],
+        'paidAmount': value['paidAmount'],
     };
 }
 

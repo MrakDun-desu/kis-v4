@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-
 /**
  * 
  * @export
@@ -29,22 +21,22 @@ import {
 export interface PageMeta {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof PageMeta
      */
-    page: CashBoxesReadIdParameter;
+    page: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof PageMeta
      */
-    pageSize: CashBoxesReadIdParameter;
+    pageSize: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof PageMeta
      */
-    total: CashBoxesReadIdParameter;
+    total: number;
 }
 
 /**
@@ -67,9 +59,9 @@ export function PageMetaFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
-        'page': CashBoxesReadIdParameterFromJSON(json['page']),
-        'pageSize': CashBoxesReadIdParameterFromJSON(json['pageSize']),
-        'total': CashBoxesReadIdParameterFromJSON(json['total']),
+        'page': json['page'],
+        'pageSize': json['pageSize'],
+        'total': json['total'],
     };
 }
 
@@ -84,9 +76,9 @@ export function PageMetaToJSONTyped(value?: PageMeta | null, ignoreDiscriminator
 
     return {
         
-        'page': CashBoxesReadIdParameterToJSON(value['page']),
-        'pageSize': CashBoxesReadIdParameterToJSON(value['pageSize']),
-        'total': CashBoxesReadIdParameterToJSON(value['total']),
+        'page': value['page'],
+        'pageSize': value['pageSize'],
+        'total': value['total'],
     };
 }
 

@@ -18,12 +18,13 @@ import {
   Discount,
   GridView,
   Inventory,
+  Liquor,
   MoveDown,
   OilBarrel,
   PointOfSale,
   Receipt,
   ShoppingBag,
-  SportsBar,
+  Storefront,
   Store,
   WaterDrop,
 } from "@mui/icons-material";
@@ -89,12 +90,12 @@ const links: Link[][] = [
     {
       label: "Typy kegů",
       url: "container-templates",
-      icon: <OilBarrel />,
+      icon: <Liquor />,
     },
     {
       label: "Kegy",
       url: "containers",
-      icon: <SportsBar />,
+      icon: <OilBarrel />,
     },
     {
       label: "Pípy",
@@ -114,6 +115,11 @@ const links: Link[][] = [
       url: "users",
       icon: <AccountCircle />,
     },
+    {
+      label: "Operátor",
+      url: "/pos",
+      icon: <Storefront />,
+    },
   ],
 ];
 
@@ -125,7 +131,6 @@ export const AdminPage = () => {
   const path_parts = pathname.split("/");
   const path_end = path_parts[path_parts.length - 1];
 
-  const open_link = (path: string) => navigate(`/admin/${path}`);
   return (
     <>
       <AppBar
@@ -169,7 +174,7 @@ export const AdminPage = () => {
                 <ListItem disablePadding key={`${id1}${id2}`}>
                   <ListItemButton
                     disabled={disabled}
-                    onClick={() => open_link(val.url)}
+                    onClick={() => navigate(val.url)}
                   >
                     <ListItemIcon>{val.icon}</ListItemIcon>
                     <ListItemText primary={val.label} />
@@ -178,7 +183,7 @@ export const AdminPage = () => {
               );
             });
 
-            return [...elements, <Divider />];
+            return [...elements, <Divider key="divider" />];
           })}
         </List>
       </Drawer>

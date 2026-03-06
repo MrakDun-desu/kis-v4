@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { LayoutItemModel } from './LayoutItemModel';
 import {
     LayoutItemModelFromJSON,
@@ -36,10 +29,10 @@ import {
 export interface LayoutUpdateResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof LayoutUpdateResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -88,7 +81,7 @@ export function LayoutUpdateResponseFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'image': json['image'],
         'topLevel': json['topLevel'],
@@ -107,7 +100,7 @@ export function LayoutUpdateResponseToJSONTyped(value?: LayoutUpdateResponse | n
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'image': value['image'],
         'topLevel': value['topLevel'],

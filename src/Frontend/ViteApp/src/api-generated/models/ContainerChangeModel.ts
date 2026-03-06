@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { UserListModel } from './UserListModel';
 import {
     UserListModelFromJSON,
@@ -55,10 +48,10 @@ export interface ContainerChangeModel {
     timestamp: Date;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ContainerChangeModel
      */
-    containerId: CashBoxesReadIdParameter;
+    containerId: number;
     /**
      * 
      * @type {UserListModel}
@@ -92,7 +85,7 @@ export function ContainerChangeModelFromJSONTyped(json: any, ignoreDiscriminator
         
         'newState': ContainerStateFromJSON(json['newState']),
         'timestamp': (new Date(json['timestamp'])),
-        'containerId': CashBoxesReadIdParameterFromJSON(json['containerId']),
+        'containerId': json['containerId'],
         'user': UserListModelFromJSON(json['user']),
     };
 }
@@ -109,8 +102,8 @@ export function ContainerChangeModelToJSONTyped(value?: ContainerChangeModel | n
     return {
         
         'newState': ContainerStateToJSON(value['newState']),
-        'timestamp': ((value['timestamp']).toISOString()),
-        'containerId': CashBoxesReadIdParameterToJSON(value['containerId']),
+        'timestamp': value['timestamp'].toISOString(),
+        'containerId': value['containerId'],
         'user': UserListModelToJSON(value['user']),
     };
 }

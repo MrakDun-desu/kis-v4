@@ -15,15 +15,12 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   ContainerChangeCreateRequest,
   ContainerChangeCreateResponse,
   ContainerChangeReadAllResponse,
   HttpValidationProblemDetails,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     ContainerChangeCreateRequestFromJSON,
     ContainerChangeCreateRequestToJSON,
     ContainerChangeCreateResponseFromJSON,
@@ -35,7 +32,7 @@ import {
 } from '../models/index';
 
 export interface ContainerChangesGetRequest {
-    containerId: CashBoxesReadIdParameter;
+    containerId: number;
 }
 
 export interface ContainerChangesPostRequest {

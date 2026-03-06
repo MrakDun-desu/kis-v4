@@ -15,14 +15,11 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   CompositionPutRequest,
   CompositionReadAllResponse,
   HttpValidationProblemDetails,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     CompositionPutRequestFromJSON,
     CompositionPutRequestToJSON,
     CompositionReadAllResponseFromJSON,
@@ -32,7 +29,7 @@ import {
 } from '../models/index';
 
 export interface CompositionsGetRequest {
-    compositeId: CashBoxesReadIdParameter;
+    compositeId: number;
 }
 
 export interface CompositionsPutRequest {

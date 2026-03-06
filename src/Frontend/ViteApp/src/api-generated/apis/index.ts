@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './ApiApi';
 export * from './CashBoxesApi';
 export * from './CategoriesApi';
 export * from './CompositeAmountsApi';

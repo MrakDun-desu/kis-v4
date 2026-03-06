@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
-
 /**
  * 
  * @export
@@ -36,22 +21,22 @@ import {
 export interface StoreTransactionItemCreateRequest {
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof StoreTransactionItemCreateRequest
      */
-    itemAmount: AccountTransactionModelAmount;
+    itemAmount: string;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof StoreTransactionItemCreateRequest
      */
-    cost: AccountTransactionModelAmount;
+    cost: string;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreTransactionItemCreateRequest
      */
-    storeItemId: CashBoxesReadIdParameter;
+    storeItemId: number;
 }
 
 /**
@@ -74,9 +59,9 @@ export function StoreTransactionItemCreateRequestFromJSONTyped(json: any, ignore
     }
     return {
         
-        'itemAmount': AccountTransactionModelAmountFromJSON(json['itemAmount']),
-        'cost': AccountTransactionModelAmountFromJSON(json['cost']),
-        'storeItemId': CashBoxesReadIdParameterFromJSON(json['storeItemId']),
+        'itemAmount': json['itemAmount'],
+        'cost': json['cost'],
+        'storeItemId': json['storeItemId'],
     };
 }
 
@@ -91,9 +76,9 @@ export function StoreTransactionItemCreateRequestToJSONTyped(value?: StoreTransa
 
     return {
         
-        'itemAmount': AccountTransactionModelAmountToJSON(value['itemAmount']),
-        'cost': AccountTransactionModelAmountToJSON(value['cost']),
-        'storeItemId': CashBoxesReadIdParameterToJSON(value['storeItemId']),
+        'itemAmount': value['itemAmount'],
+        'cost': value['cost'],
+        'storeItemId': value['storeItemId'],
     };
 }
 

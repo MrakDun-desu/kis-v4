@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-
 /**
  * 
  * @export
@@ -41,10 +33,10 @@ export interface StoreItemUpdateModel {
     unitName: string;
     /**
      * 
-     * @type {Array<CashBoxesReadIdParameter>}
+     * @type {Array<number>}
      * @memberof StoreItemUpdateModel
      */
-    categoryIds?: Array<CashBoxesReadIdParameter>;
+    categoryIds?: Array<number>;
 }
 
 /**
@@ -68,7 +60,7 @@ export function StoreItemUpdateModelFromJSONTyped(json: any, ignoreDiscriminator
         
         'name': json['name'],
         'unitName': json['unitName'],
-        'categoryIds': json['categoryIds'] == null ? undefined : ((json['categoryIds'] as Array<any>).map(CashBoxesReadIdParameterFromJSON)),
+        'categoryIds': json['categoryIds'] == null ? undefined : json['categoryIds'],
     };
 }
 
@@ -85,7 +77,7 @@ export function StoreItemUpdateModelToJSONTyped(value?: StoreItemUpdateModel | n
         
         'name': value['name'],
         'unitName': value['unitName'],
-        'categoryIds': value['categoryIds'] == null ? undefined : ((value['categoryIds'] as Array<any>).map(CashBoxesReadIdParameterToJSON)),
+        'categoryIds': value['categoryIds'],
     };
 }
 

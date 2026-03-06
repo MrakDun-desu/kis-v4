@@ -97,8 +97,8 @@ export function SaleTransactionReadAllResponseToJSONTyped(value?: SaleTransactio
 
     return {
         
-        'from': value['from'] === null ? null : ((value['from'] as any)?.toISOString()),
-        'to': value['to'] === null ? null : ((value['to'] as any)?.toISOString()),
+        'from': value['from'] == null ? value['from'] : value['from'].toISOString(),
+        'to': value['to'] == null ? value['to'] : value['to'].toISOString(),
         'data': ((value['data'] as Array<any>).map(SaleTransactionListModelToJSON)),
         'meta': PageMetaToJSON(value['meta']),
     };

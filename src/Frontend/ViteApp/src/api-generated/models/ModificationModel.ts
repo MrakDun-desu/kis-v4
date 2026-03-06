@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
-
 /**
  * 
  * @export
@@ -36,10 +21,10 @@ import {
 export interface ModificationModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ModificationModel
      */
-    amount: CashBoxesReadIdParameter;
+    amount: number;
     /**
      * 
      * @type {string}
@@ -48,10 +33,10 @@ export interface ModificationModel {
     modifierName: string;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ModificationModel
      */
-    priceChange: AccountTransactionModelAmount;
+    priceChange: string;
 }
 
 /**
@@ -74,9 +59,9 @@ export function ModificationModelFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'amount': CashBoxesReadIdParameterFromJSON(json['amount']),
+        'amount': json['amount'],
         'modifierName': json['modifierName'],
-        'priceChange': AccountTransactionModelAmountFromJSON(json['priceChange']),
+        'priceChange': json['priceChange'],
     };
 }
 
@@ -91,9 +76,9 @@ export function ModificationModelToJSONTyped(value?: ModificationModel | null, i
 
     return {
         
-        'amount': CashBoxesReadIdParameterToJSON(value['amount']),
+        'amount': value['amount'],
         'modifierName': value['modifierName'],
-        'priceChange': AccountTransactionModelAmountToJSON(value['priceChange']),
+        'priceChange': value['priceChange'],
     };
 }
 

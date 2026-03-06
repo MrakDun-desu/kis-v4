@@ -20,27 +20,6 @@ import {
     PrintTypeToJSON,
     PrintTypeToJSONTyped,
 } from './PrintType';
-import type { ModifierCreateRequestMarginPercent } from './ModifierCreateRequestMarginPercent';
-import {
-    ModifierCreateRequestMarginPercentFromJSON,
-    ModifierCreateRequestMarginPercentFromJSONTyped,
-    ModifierCreateRequestMarginPercentToJSON,
-    ModifierCreateRequestMarginPercentToJSONTyped,
-} from './ModifierCreateRequestMarginPercent';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { ModifierCreateRequestMarginStatic } from './ModifierCreateRequestMarginStatic';
-import {
-    ModifierCreateRequestMarginStaticFromJSON,
-    ModifierCreateRequestMarginStaticFromJSONTyped,
-    ModifierCreateRequestMarginStaticToJSON,
-    ModifierCreateRequestMarginStaticToJSONTyped,
-} from './ModifierCreateRequestMarginStatic';
 
 /**
  * 
@@ -62,22 +41,22 @@ export interface SaleItemCreateRequest {
     image?: string | null;
     /**
      * 
-     * @type {ModifierCreateRequestMarginPercent}
+     * @type {string}
      * @memberof SaleItemCreateRequest
      */
-    marginPercent?: ModifierCreateRequestMarginPercent;
+    marginPercent?: string;
     /**
      * 
-     * @type {ModifierCreateRequestMarginStatic}
+     * @type {string}
      * @memberof SaleItemCreateRequest
      */
-    marginStatic?: ModifierCreateRequestMarginStatic;
+    marginStatic?: string;
     /**
      * 
-     * @type {ModifierCreateRequestMarginStatic}
+     * @type {string}
      * @memberof SaleItemCreateRequest
      */
-    prestigeAmount?: ModifierCreateRequestMarginStatic;
+    prestigeAmount?: string;
     /**
      * 
      * @type {PrintType}
@@ -86,16 +65,16 @@ export interface SaleItemCreateRequest {
     printType?: PrintType;
     /**
      * 
-     * @type {Array<CashBoxesReadIdParameter>}
+     * @type {Array<number>}
      * @memberof SaleItemCreateRequest
      */
-    categoryIds?: Array<CashBoxesReadIdParameter>;
+    categoryIds?: Array<number>;
     /**
      * 
-     * @type {Array<CashBoxesReadIdParameter>}
+     * @type {Array<number>}
      * @memberof SaleItemCreateRequest
      */
-    modifierIds?: Array<CashBoxesReadIdParameter>;
+    modifierIds?: Array<number>;
 }
 
 
@@ -120,12 +99,12 @@ export function SaleItemCreateRequestFromJSONTyped(json: any, ignoreDiscriminato
         
         'name': json['name'],
         'image': json['image'] == null ? undefined : json['image'],
-        'marginPercent': json['marginPercent'] == null ? undefined : ModifierCreateRequestMarginPercentFromJSON(json['marginPercent']),
-        'marginStatic': json['marginStatic'] == null ? undefined : ModifierCreateRequestMarginStaticFromJSON(json['marginStatic']),
-        'prestigeAmount': json['prestigeAmount'] == null ? undefined : ModifierCreateRequestMarginStaticFromJSON(json['prestigeAmount']),
+        'marginPercent': json['marginPercent'] == null ? undefined : json['marginPercent'],
+        'marginStatic': json['marginStatic'] == null ? undefined : json['marginStatic'],
+        'prestigeAmount': json['prestigeAmount'] == null ? undefined : json['prestigeAmount'],
         'printType': json['printType'] == null ? undefined : PrintTypeFromJSON(json['printType']),
-        'categoryIds': json['categoryIds'] == null ? undefined : ((json['categoryIds'] as Array<any>).map(CashBoxesReadIdParameterFromJSON)),
-        'modifierIds': json['modifierIds'] == null ? undefined : ((json['modifierIds'] as Array<any>).map(CashBoxesReadIdParameterFromJSON)),
+        'categoryIds': json['categoryIds'] == null ? undefined : json['categoryIds'],
+        'modifierIds': json['modifierIds'] == null ? undefined : json['modifierIds'],
     };
 }
 
@@ -142,12 +121,12 @@ export function SaleItemCreateRequestToJSONTyped(value?: SaleItemCreateRequest |
         
         'name': value['name'],
         'image': value['image'],
-        'marginPercent': ModifierCreateRequestMarginPercentToJSON(value['marginPercent']),
-        'marginStatic': ModifierCreateRequestMarginStaticToJSON(value['marginStatic']),
-        'prestigeAmount': ModifierCreateRequestMarginStaticToJSON(value['prestigeAmount']),
+        'marginPercent': value['marginPercent'],
+        'marginStatic': value['marginStatic'],
+        'prestigeAmount': value['prestigeAmount'],
         'printType': PrintTypeToJSON(value['printType']),
-        'categoryIds': value['categoryIds'] == null ? undefined : ((value['categoryIds'] as Array<any>).map(CashBoxesReadIdParameterToJSON)),
-        'modifierIds': value['modifierIds'] == null ? undefined : ((value['modifierIds'] as Array<any>).map(CashBoxesReadIdParameterToJSON)),
+        'categoryIds': value['categoryIds'],
+        'modifierIds': value['modifierIds'],
     };
 }
 

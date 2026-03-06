@@ -13,20 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 import type { ModificationModel } from './ModificationModel';
 import {
     ModificationModelFromJSON,
@@ -43,16 +29,16 @@ import {
 export interface SaleTransactionItemModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionItemModel
      */
-    lineNumber: CashBoxesReadIdParameter;
+    lineNumber: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionItemModel
      */
-    amount: CashBoxesReadIdParameter;
+    amount: number;
     /**
      * 
      * @type {string}
@@ -67,10 +53,10 @@ export interface SaleTransactionItemModel {
     modifications: Array<ModificationModel>;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof SaleTransactionItemModel
      */
-    basePrice: AccountTransactionModelAmount;
+    basePrice: string;
 }
 
 /**
@@ -95,11 +81,11 @@ export function SaleTransactionItemModelFromJSONTyped(json: any, ignoreDiscrimin
     }
     return {
         
-        'lineNumber': CashBoxesReadIdParameterFromJSON(json['lineNumber']),
-        'amount': CashBoxesReadIdParameterFromJSON(json['amount']),
+        'lineNumber': json['lineNumber'],
+        'amount': json['amount'],
         'saleItemName': json['saleItemName'],
         'modifications': ((json['modifications'] as Array<any>).map(ModificationModelFromJSON)),
-        'basePrice': AccountTransactionModelAmountFromJSON(json['basePrice']),
+        'basePrice': json['basePrice'],
     };
 }
 
@@ -114,11 +100,11 @@ export function SaleTransactionItemModelToJSONTyped(value?: SaleTransactionItemM
 
     return {
         
-        'lineNumber': CashBoxesReadIdParameterToJSON(value['lineNumber']),
-        'amount': CashBoxesReadIdParameterToJSON(value['amount']),
+        'lineNumber': value['lineNumber'],
+        'amount': value['amount'],
         'saleItemName': value['saleItemName'],
         'modifications': ((value['modifications'] as Array<any>).map(ModificationModelToJSON)),
-        'basePrice': AccountTransactionModelAmountToJSON(value['basePrice']),
+        'basePrice': value['basePrice'],
     };
 }
 

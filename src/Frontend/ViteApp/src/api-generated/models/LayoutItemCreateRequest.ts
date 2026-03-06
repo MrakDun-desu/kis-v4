@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { LayoutItemType } from './LayoutItemType';
 import {
     LayoutItemTypeFromJSON,
@@ -36,22 +29,22 @@ import {
 export interface LayoutItemCreateRequest {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof LayoutItemCreateRequest
      */
-    x: CashBoxesReadIdParameter;
+    x: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof LayoutItemCreateRequest
      */
-    y: CashBoxesReadIdParameter;
+    y: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof LayoutItemCreateRequest
      */
-    targetId: CashBoxesReadIdParameter;
+    targetId: number;
     /**
      * 
      * @type {LayoutItemType}
@@ -83,9 +76,9 @@ export function LayoutItemCreateRequestFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'x': CashBoxesReadIdParameterFromJSON(json['x']),
-        'y': CashBoxesReadIdParameterFromJSON(json['y']),
-        'targetId': CashBoxesReadIdParameterFromJSON(json['targetId']),
+        'x': json['x'],
+        'y': json['y'],
+        'targetId': json['targetId'],
         'type': LayoutItemTypeFromJSON(json['type']),
     };
 }
@@ -101,9 +94,9 @@ export function LayoutItemCreateRequestToJSONTyped(value?: LayoutItemCreateReque
 
     return {
         
-        'x': CashBoxesReadIdParameterToJSON(value['x']),
-        'y': CashBoxesReadIdParameterToJSON(value['y']),
-        'targetId': CashBoxesReadIdParameterToJSON(value['targetId']),
+        'x': value['x'],
+        'y': value['y'],
+        'targetId': value['targetId'],
         'type': LayoutItemTypeToJSON(value['type']),
     };
 }

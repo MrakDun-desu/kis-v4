@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { ContainerUpdateModelPipeId } from './ContainerUpdateModelPipeId';
-import {
-    ContainerUpdateModelPipeIdFromJSON,
-    ContainerUpdateModelPipeIdFromJSONTyped,
-    ContainerUpdateModelPipeIdToJSON,
-    ContainerUpdateModelPipeIdToJSONTyped,
-} from './ContainerUpdateModelPipeId';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-
 /**
  * 
  * @export
@@ -36,16 +21,16 @@ import {
 export interface ContainerUpdateModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ContainerUpdateModel
      */
-    storeId: CashBoxesReadIdParameter;
+    storeId: number;
     /**
      * 
-     * @type {ContainerUpdateModelPipeId}
+     * @type {number}
      * @memberof ContainerUpdateModel
      */
-    pipeId?: ContainerUpdateModelPipeId | null;
+    pipeId?: number;
 }
 
 /**
@@ -66,8 +51,8 @@ export function ContainerUpdateModelFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'storeId': CashBoxesReadIdParameterFromJSON(json['storeId']),
-        'pipeId': json['pipeId'] == null ? undefined : ContainerUpdateModelPipeIdFromJSON(json['pipeId']),
+        'storeId': json['storeId'],
+        'pipeId': json['pipeId'] == null ? undefined : json['pipeId'],
     };
 }
 
@@ -82,8 +67,8 @@ export function ContainerUpdateModelToJSONTyped(value?: ContainerUpdateModel | n
 
     return {
         
-        'storeId': CashBoxesReadIdParameterToJSON(value['storeId']),
-        'pipeId': ContainerUpdateModelPipeIdToJSON(value['pipeId']),
+        'storeId': value['storeId'],
+        'pipeId': value['pipeId'],
     };
 }
 

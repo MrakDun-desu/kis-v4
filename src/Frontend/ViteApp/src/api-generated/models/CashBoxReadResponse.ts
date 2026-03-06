@@ -20,13 +20,6 @@ import {
     AccountTransactionReadAllResponseToJSON,
     AccountTransactionReadAllResponseToJSONTyped,
 } from './AccountTransactionReadAllResponse';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 
 /**
  * 
@@ -36,10 +29,10 @@ import {
 export interface CashBoxReadResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof CashBoxReadResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -88,7 +81,7 @@ export function CashBoxReadResponseFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'salesTransactions': AccountTransactionReadAllResponseFromJSON(json['salesTransactions']),
         'donationsTransactions': AccountTransactionReadAllResponseFromJSON(json['donationsTransactions']),
@@ -107,7 +100,7 @@ export function CashBoxReadResponseToJSONTyped(value?: CashBoxReadResponse | nul
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'salesTransactions': AccountTransactionReadAllResponseToJSON(value['salesTransactions']),
         'donationsTransactions': AccountTransactionReadAllResponseToJSON(value['donationsTransactions']),

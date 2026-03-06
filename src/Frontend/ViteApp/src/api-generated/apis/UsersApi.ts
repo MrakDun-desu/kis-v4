@@ -15,13 +15,10 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   HttpValidationProblemDetails,
   UserReadAllResponse,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     HttpValidationProblemDetailsFromJSON,
     HttpValidationProblemDetailsToJSON,
     UserReadAllResponseFromJSON,
@@ -29,8 +26,8 @@ import {
 } from '../models/index';
 
 export interface UsersGetRequest {
-    page?: CashBoxesReadIdParameter;
-    pageSize?: CashBoxesReadIdParameter;
+    page?: number;
+    pageSize?: number;
 }
 
 /**

@@ -34,20 +34,6 @@ import {
     ContainerTemplateModelToJSON,
     ContainerTemplateModelToJSONTyped,
 } from './ContainerTemplateModel';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 import type { ContainerState } from './ContainerState';
 import {
     ContainerStateFromJSON,
@@ -71,16 +57,16 @@ import {
 export interface ContainerReadResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ContainerReadResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ContainerReadResponse
      */
-    amount: AccountTransactionModelAmount;
+    amount: string;
     /**
      * 
      * @type {ContainerState}
@@ -139,8 +125,8 @@ export function ContainerReadResponseFromJSONTyped(json: any, ignoreDiscriminato
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
-        'amount': AccountTransactionModelAmountFromJSON(json['amount']),
+        'id': json['id'],
+        'amount': json['amount'],
         'state': ContainerStateFromJSON(json['state']),
         'template': ContainerTemplateModelFromJSON(json['template']),
         'pipe': PipeListModelFromJSON(json['pipe']),
@@ -160,8 +146,8 @@ export function ContainerReadResponseToJSONTyped(value?: ContainerReadResponse |
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
-        'amount': AccountTransactionModelAmountToJSON(value['amount']),
+        'id': value['id'],
+        'amount': value['amount'],
         'state': ContainerStateToJSON(value['state']),
         'template': ContainerTemplateModelToJSON(value['template']),
         'pipe': PipeListModelToJSON(value['pipe']),

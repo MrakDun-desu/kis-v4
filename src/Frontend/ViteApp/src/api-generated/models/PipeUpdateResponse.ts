@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-
 /**
  * 
  * @export
@@ -29,10 +21,10 @@ import {
 export interface PipeUpdateResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof PipeUpdateResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -60,7 +52,7 @@ export function PipeUpdateResponseFromJSONTyped(json: any, ignoreDiscriminator: 
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
     };
 }
@@ -76,7 +68,7 @@ export function PipeUpdateResponseToJSONTyped(value?: PipeUpdateResponse | null,
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
     };
 }

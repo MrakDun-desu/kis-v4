@@ -5,8 +5,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthorization();
 
+var developmentHandler = new HttpClientHandler {
+    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+};
+
 builder.Services
-    .AddBff()
+    .AddBff(opts => {
+        if (builder.Environment.IsDevelopment()) {
+            opts.BackchannelHttpHandler = developmentHandler;
+        }
+    })
     .AddRemoteApis();
 
 builder.Services
@@ -21,6 +29,8 @@ builder.Services
         options.ClientId = "kis-sales";
         options.ClientSecret = "secret";
         options.ResponseType = "code";
+        options.SaveTokens = true;
+        options.GetClaimsFromUserInfoEndpoint = true;
         options.Scope.Remove("profile"); // normal profile not supported by KIS Auth
         string[] requiredScopes = [
             "offline_access",
@@ -32,11 +42,8 @@ builder.Services
         foreach (var scope in requiredScopes) {
             options.Scope.Add(scope);
         }
-        options.SaveTokens = true;
         if (builder.Environment.IsDevelopment()) {
-            options.BackchannelHttpHandler = new HttpClientHandler {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
+            options.BackchannelHttpHandler = developmentHandler;
         }
     });
 
@@ -53,7 +60,7 @@ app.UseAuthentication();
 app.UseBff();
 app.UseAuthorization();
 
-app.MapRemoteBffApiEndpoint("/sales-api", new Uri("https://localhost:7001"))
+app.MapRemoteBffApiEndpoint("/api", new Uri("https://localhost:7001"))
     .WithAccessToken();
 
 app.Run();

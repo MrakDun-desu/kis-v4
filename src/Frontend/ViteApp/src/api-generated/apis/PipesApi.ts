@@ -15,7 +15,6 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   HttpValidationProblemDetails,
   PipeCreateRequest,
   PipeCreateResponse,
@@ -25,8 +24,6 @@ import type {
   PipeUpdateResponse,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     HttpValidationProblemDetailsFromJSON,
     HttpValidationProblemDetailsToJSON,
     PipeCreateRequestFromJSON,
@@ -48,7 +45,7 @@ export interface PipesIdDeleteRequest {
 }
 
 export interface PipesIdPutRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     pipeUpdateModel: PipeUpdateModel;
 }
 

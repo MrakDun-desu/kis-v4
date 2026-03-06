@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { UserListModel } from './UserListModel';
 import {
     UserListModelFromJSON,
@@ -36,10 +29,10 @@ import {
 export interface SaleTransactionListModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionListModel
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -102,7 +95,7 @@ export function SaleTransactionListModelFromJSONTyped(json: any, ignoreDiscrimin
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'note': json['note'],
         'startedAt': (new Date(json['startedAt'])),
         'cancelledAt': (json['cancelledAt'] == null ? null : new Date(json['cancelledAt'])),
@@ -123,10 +116,10 @@ export function SaleTransactionListModelToJSONTyped(value?: SaleTransactionListM
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'note': value['note'],
-        'startedAt': ((value['startedAt']).toISOString()),
-        'cancelledAt': ((value['cancelledAt'] as any).toISOString()),
+        'startedAt': value['startedAt'].toISOString(),
+        'cancelledAt': value['cancelledAt'] == null ? value['cancelledAt'] : value['cancelledAt'].toISOString(),
         'startedBy': UserListModelToJSON(value['startedBy']),
         'cancelledBy': UserListModelToJSON(value['cancelledBy']),
         'openedBy': UserListModelToJSON(value['openedBy']),

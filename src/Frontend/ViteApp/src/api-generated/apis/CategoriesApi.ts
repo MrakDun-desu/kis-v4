@@ -15,7 +15,6 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   CategoryCreateRequest,
   CategoryCreateResponse,
   CategoryReadAllResponse,
@@ -23,8 +22,6 @@ import type {
   HttpValidationProblemDetails,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     CategoryCreateRequestFromJSON,
     CategoryCreateRequestToJSON,
     CategoryCreateResponseFromJSON,
@@ -42,7 +39,7 @@ export interface CategoriesIdDeleteRequest {
 }
 
 export interface CategoriesIdPutRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     categoryUpdateRequestModel: CategoryUpdateRequestModel;
 }
 

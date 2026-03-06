@@ -15,7 +15,6 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   HttpValidationProblemDetails,
   LayoutCreateRequestModel,
   LayoutCreateResponse,
@@ -25,8 +24,6 @@ import type {
   LayoutUpdateResponse,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     HttpValidationProblemDetailsFromJSON,
     HttpValidationProblemDetailsToJSON,
     LayoutCreateRequestModelFromJSON,
@@ -52,23 +49,23 @@ export interface LayoutsIdDeleteRequest {
 }
 
 export interface LayoutsIdPutRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     layoutUpdateRequestModel: LayoutUpdateRequestModel;
-    storeId?: CashBoxesReadIdParameter;
+    storeId?: number;
 }
 
 export interface LayoutsPostRequest {
     layoutCreateRequestModel: LayoutCreateRequestModel;
-    storeId?: CashBoxesReadIdParameter;
+    storeId?: number;
 }
 
 export interface LayoutsReadRequest {
-    id: CashBoxesReadIdParameter;
-    storeId?: CashBoxesReadIdParameter;
+    id: number;
+    storeId?: number;
 }
 
 export interface LayoutsTopLevelGetRequest {
-    storeId?: CashBoxesReadIdParameter;
+    storeId?: number;
 }
 
 /**

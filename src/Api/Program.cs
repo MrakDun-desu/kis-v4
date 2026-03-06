@@ -84,6 +84,25 @@ builder.Services.AddOpenApi(opts => {
         });
         return Task.CompletedTask;
     });
+    opts.AddSchemaTransformer((schema, context, cancellationToken) => {
+        // transform decimals into strings because that's the most
+        // accurate and safe way to represent them in JS
+        if (context.JsonTypeInfo.Type == typeof(decimal) ||
+            context.JsonTypeInfo.Type == typeof(decimal?)) {
+            schema.Type = JsonSchemaType.String;
+            schema.Format = "string";
+            schema.AnyOf = null;
+        }
+        // remove options from integers and just pass them down as numbers so JS generator isn't confused
+        if (context.JsonTypeInfo.Type == typeof(int) ||
+            context.JsonTypeInfo.Type == typeof(int?)) {
+            schema.Type = JsonSchemaType.Number;
+            schema.Format = "int32";
+            schema.AnyOf = null;
+        }
+
+        return Task.CompletedTask;
+    });
 });
 
 // Database
@@ -187,5 +206,9 @@ Users.MapEndpoints(app);
 // OpenAPI
 app.MapOpenApi().AllowAnonymous();
 app.MapScalarApiReference().AllowAnonymous();
+
+app.MapGet("/auth-test", (HttpContext context) => {
+    return "Hello world!";
+}).AllowAnonymous();
 
 app.Run();

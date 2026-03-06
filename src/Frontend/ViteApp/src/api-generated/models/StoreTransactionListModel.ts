@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { ContainerUpdateModelPipeId } from './ContainerUpdateModelPipeId';
-import {
-    ContainerUpdateModelPipeIdFromJSON,
-    ContainerUpdateModelPipeIdFromJSONTyped,
-    ContainerUpdateModelPipeIdToJSON,
-    ContainerUpdateModelPipeIdToJSONTyped,
-} from './ContainerUpdateModelPipeId';
 import type { TransactionReason } from './TransactionReason';
 import {
     TransactionReasonFromJSON,
@@ -27,13 +20,6 @@ import {
     TransactionReasonToJSON,
     TransactionReasonToJSONTyped,
 } from './TransactionReason';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { UserListModel } from './UserListModel';
 import {
     UserListModelFromJSON,
@@ -50,10 +36,10 @@ import {
 export interface StoreTransactionListModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreTransactionListModel
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -92,10 +78,10 @@ export interface StoreTransactionListModel {
     reason: TransactionReason;
     /**
      * 
-     * @type {ContainerUpdateModelPipeId}
+     * @type {number}
      * @memberof StoreTransactionListModel
      */
-    saleTransactionId: ContainerUpdateModelPipeId | null;
+    saleTransactionId: number;
 }
 
 
@@ -125,14 +111,14 @@ export function StoreTransactionListModelFromJSONTyped(json: any, ignoreDiscrimi
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'note': json['note'],
         'startedAt': (new Date(json['startedAt'])),
         'cancelledAt': (json['cancelledAt'] == null ? null : new Date(json['cancelledAt'])),
         'startedBy': UserListModelFromJSON(json['startedBy']),
         'cancelledBy': UserListModelFromJSON(json['cancelledBy']),
         'reason': TransactionReasonFromJSON(json['reason']),
-        'saleTransactionId': ContainerUpdateModelPipeIdFromJSON(json['saleTransactionId']),
+        'saleTransactionId': json['saleTransactionId'],
     };
 }
 
@@ -147,14 +133,14 @@ export function StoreTransactionListModelToJSONTyped(value?: StoreTransactionLis
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'note': value['note'],
-        'startedAt': ((value['startedAt']).toISOString()),
-        'cancelledAt': ((value['cancelledAt'] as any).toISOString()),
+        'startedAt': value['startedAt'].toISOString(),
+        'cancelledAt': value['cancelledAt'] == null ? value['cancelledAt'] : value['cancelledAt'].toISOString(),
         'startedBy': UserListModelToJSON(value['startedBy']),
         'cancelledBy': UserListModelToJSON(value['cancelledBy']),
         'reason': TransactionReasonToJSON(value['reason']),
-        'saleTransactionId': ContainerUpdateModelPipeIdToJSON(value['saleTransactionId']),
+        'saleTransactionId': value['saleTransactionId'],
     };
 }
 

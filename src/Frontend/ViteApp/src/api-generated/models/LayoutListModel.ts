@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-
 /**
  * 
  * @export
@@ -29,10 +21,10 @@ import {
 export interface LayoutListModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof LayoutListModel
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -74,7 +66,7 @@ export function LayoutListModelFromJSONTyped(json: any, ignoreDiscriminator: boo
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'image': json['image'],
         'topLevel': json['topLevel'],
@@ -92,7 +84,7 @@ export function LayoutListModelToJSONTyped(value?: LayoutListModel | null, ignor
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'image': value['image'],
         'topLevel': value['topLevel'],

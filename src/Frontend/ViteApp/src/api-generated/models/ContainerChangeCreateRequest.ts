@@ -13,20 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 import type { ContainerState } from './ContainerState';
 import {
     ContainerStateFromJSON,
@@ -43,10 +29,10 @@ import {
 export interface ContainerChangeCreateRequest {
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ContainerChangeCreateRequest
      */
-    newAmount: AccountTransactionModelAmount;
+    newAmount: string;
     /**
      * 
      * @type {ContainerState}
@@ -55,10 +41,10 @@ export interface ContainerChangeCreateRequest {
     newState: ContainerState;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ContainerChangeCreateRequest
      */
-    containerId: CashBoxesReadIdParameter;
+    containerId: number;
 }
 
 
@@ -83,9 +69,9 @@ export function ContainerChangeCreateRequestFromJSONTyped(json: any, ignoreDiscr
     }
     return {
         
-        'newAmount': AccountTransactionModelAmountFromJSON(json['newAmount']),
+        'newAmount': json['newAmount'],
         'newState': ContainerStateFromJSON(json['newState']),
-        'containerId': CashBoxesReadIdParameterFromJSON(json['containerId']),
+        'containerId': json['containerId'],
     };
 }
 
@@ -100,9 +86,9 @@ export function ContainerChangeCreateRequestToJSONTyped(value?: ContainerChangeC
 
     return {
         
-        'newAmount': AccountTransactionModelAmountToJSON(value['newAmount']),
+        'newAmount': value['newAmount'],
         'newState': ContainerStateToJSON(value['newState']),
-        'containerId': CashBoxesReadIdParameterToJSON(value['containerId']),
+        'containerId': value['containerId'],
     };
 }
 

@@ -16,6 +16,7 @@ import {
 } from "./pages";
 import { RequireAuth } from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthContext";
+import { StoreItemDetail } from "./pages/admin/pages/StoreItemDetail";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -60,6 +61,7 @@ function App() {
               }
             >
               <Route path="store-items" element={<StoreItems />} />
+              <Route path="store-items/:id" element={<StoreItemDetail />} />
               <Route path="stores" element={<StoreItems />} />
               <Route path="store-transactions" element={<StoreItems />} />
               <Route path="sale-items" element={<StoreItems />} />

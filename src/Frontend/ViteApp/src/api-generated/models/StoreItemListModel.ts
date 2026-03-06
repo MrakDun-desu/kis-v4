@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
-
 /**
  * 
  * @export
@@ -36,10 +21,10 @@ import {
 export interface StoreItemListModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreItemListModel
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -60,10 +45,10 @@ export interface StoreItemListModel {
     isContainerItem: boolean;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof StoreItemListModel
      */
-    currentCost: AccountTransactionModelAmount;
+    currentCost: string;
 }
 
 /**
@@ -88,11 +73,11 @@ export function StoreItemListModelFromJSONTyped(json: any, ignoreDiscriminator: 
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'unitName': json['unitName'],
         'isContainerItem': json['isContainerItem'],
-        'currentCost': AccountTransactionModelAmountFromJSON(json['currentCost']),
+        'currentCost': json['currentCost'],
     };
 }
 
@@ -107,11 +92,11 @@ export function StoreItemListModelToJSONTyped(value?: StoreItemListModel | null,
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'unitName': value['unitName'],
         'isContainerItem': value['isContainerItem'],
-        'currentCost': AccountTransactionModelAmountToJSON(value['currentCost']),
+        'currentCost': value['currentCost'],
     };
 }
 

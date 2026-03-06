@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
-
 /**
  * 
  * @export
@@ -36,10 +21,10 @@ import {
 export interface ModifierListModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ModifierListModel
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -54,22 +39,22 @@ export interface ModifierListModel {
     image: string | null;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ModifierListModel
      */
-    marginPercent: AccountTransactionModelAmount;
+    marginPercent: string;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ModifierListModel
      */
-    marginStatic: AccountTransactionModelAmount;
+    marginStatic: string;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ModifierListModel
      */
-    prestigeAmount: AccountTransactionModelAmount;
+    prestigeAmount: string;
 }
 
 /**
@@ -95,12 +80,12 @@ export function ModifierListModelFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'image': json['image'],
-        'marginPercent': AccountTransactionModelAmountFromJSON(json['marginPercent']),
-        'marginStatic': AccountTransactionModelAmountFromJSON(json['marginStatic']),
-        'prestigeAmount': AccountTransactionModelAmountFromJSON(json['prestigeAmount']),
+        'marginPercent': json['marginPercent'],
+        'marginStatic': json['marginStatic'],
+        'prestigeAmount': json['prestigeAmount'],
     };
 }
 
@@ -115,12 +100,12 @@ export function ModifierListModelToJSONTyped(value?: ModifierListModel | null, i
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'image': value['image'],
-        'marginPercent': AccountTransactionModelAmountToJSON(value['marginPercent']),
-        'marginStatic': AccountTransactionModelAmountToJSON(value['marginStatic']),
-        'prestigeAmount': AccountTransactionModelAmountToJSON(value['prestigeAmount']),
+        'marginPercent': value['marginPercent'],
+        'marginStatic': value['marginStatic'],
+        'prestigeAmount': value['prestigeAmount'],
     };
 }
 

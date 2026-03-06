@@ -20,13 +20,6 @@ import {
     ContainerPipeModelToJSON,
     ContainerPipeModelToJSONTyped,
 } from './ContainerPipeModel';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 
 /**
  * 
@@ -36,10 +29,10 @@ import {
 export interface PipeReadResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof PipeReadResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -74,7 +67,7 @@ export function PipeReadResponseFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'containers': ((json['containers'] as Array<any>).map(ContainerPipeModelFromJSON)),
     };
@@ -91,7 +84,7 @@ export function PipeReadResponseToJSONTyped(value?: PipeReadResponse | null, ign
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'containers': ((value['containers'] as Array<any>).map(ContainerPipeModelToJSON)),
     };

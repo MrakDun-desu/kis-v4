@@ -20,13 +20,6 @@ import {
     CostModelToJSON,
     CostModelToJSONTyped,
 } from './CostModel';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { CategoryModel } from './CategoryModel';
 import {
     CategoryModelFromJSON,
@@ -34,13 +27,6 @@ import {
     CategoryModelToJSON,
     CategoryModelToJSONTyped,
 } from './CategoryModel';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 
 /**
  * 
@@ -50,10 +36,10 @@ import {
 export interface StoreItemCreateResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreItemCreateResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -74,10 +60,10 @@ export interface StoreItemCreateResponse {
     isContainerItem: boolean;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof StoreItemCreateResponse
      */
-    currentCost: AccountTransactionModelAmount;
+    currentCost: string;
     /**
      * 
      * @type {Array<CategoryModel>}
@@ -116,11 +102,11 @@ export function StoreItemCreateResponseFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'unitName': json['unitName'],
         'isContainerItem': json['isContainerItem'],
-        'currentCost': AccountTransactionModelAmountFromJSON(json['currentCost']),
+        'currentCost': json['currentCost'],
         'categories': ((json['categories'] as Array<any>).map(CategoryModelFromJSON)),
         'costs': ((json['costs'] as Array<any>).map(CostModelFromJSON)),
     };
@@ -137,11 +123,11 @@ export function StoreItemCreateResponseToJSONTyped(value?: StoreItemCreateRespon
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'unitName': value['unitName'],
         'isContainerItem': value['isContainerItem'],
-        'currentCost': AccountTransactionModelAmountToJSON(value['currentCost']),
+        'currentCost': value['currentCost'],
         'categories': ((value['categories'] as Array<any>).map(CategoryModelToJSON)),
         'costs': ((value['costs'] as Array<any>).map(CostModelToJSON)),
     };

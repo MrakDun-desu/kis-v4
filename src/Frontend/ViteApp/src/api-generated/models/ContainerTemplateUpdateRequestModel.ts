@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { ContainerCreateRequestCost } from './ContainerCreateRequestCost';
-import {
-    ContainerCreateRequestCostFromJSON,
-    ContainerCreateRequestCostFromJSONTyped,
-    ContainerCreateRequestCostToJSON,
-    ContainerCreateRequestCostToJSONTyped,
-} from './ContainerCreateRequestCost';
-
 /**
  * 
  * @export
@@ -42,16 +27,16 @@ export interface ContainerTemplateUpdateRequestModel {
     name: string;
     /**
      * 
-     * @type {ContainerCreateRequestCost}
+     * @type {string}
      * @memberof ContainerTemplateUpdateRequestModel
      */
-    amount: ContainerCreateRequestCost;
+    amount: string;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ContainerTemplateUpdateRequestModel
      */
-    storeItemId: CashBoxesReadIdParameter;
+    storeItemId: number;
 }
 
 /**
@@ -75,8 +60,8 @@ export function ContainerTemplateUpdateRequestModelFromJSONTyped(json: any, igno
     return {
         
         'name': json['name'],
-        'amount': ContainerCreateRequestCostFromJSON(json['amount']),
-        'storeItemId': CashBoxesReadIdParameterFromJSON(json['storeItemId']),
+        'amount': json['amount'],
+        'storeItemId': json['storeItemId'],
     };
 }
 
@@ -92,8 +77,8 @@ export function ContainerTemplateUpdateRequestModelToJSONTyped(value?: Container
     return {
         
         'name': value['name'],
-        'amount': ContainerCreateRequestCostToJSON(value['amount']),
-        'storeItemId': CashBoxesReadIdParameterToJSON(value['storeItemId']),
+        'amount': value['amount'],
+        'storeItemId': value['storeItemId'],
     };
 }
 

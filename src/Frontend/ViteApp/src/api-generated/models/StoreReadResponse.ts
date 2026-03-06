@@ -27,13 +27,6 @@ import {
     ContainerReadAllResponseToJSON,
     ContainerReadAllResponseToJSONTyped,
 } from './ContainerReadAllResponse';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 
 /**
  * 
@@ -43,10 +36,10 @@ import {
 export interface StoreReadResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreReadResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -88,7 +81,7 @@ export function StoreReadResponseFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'storeItemAmounts': StoreItemAmountReadAllResponseFromJSON(json['storeItemAmounts']),
         'containers': ContainerReadAllResponseFromJSON(json['containers']),
@@ -106,7 +99,7 @@ export function StoreReadResponseToJSONTyped(value?: StoreReadResponse | null, i
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'storeItemAmounts': StoreItemAmountReadAllResponseToJSON(value['storeItemAmounts']),
         'containers': ContainerReadAllResponseToJSON(value['containers']),

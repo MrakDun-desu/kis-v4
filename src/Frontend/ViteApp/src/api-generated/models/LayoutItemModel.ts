@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { PipeListModel } from './PipeListModel';
 import {
     PipeListModelFromJSON,
@@ -51,16 +44,16 @@ export interface LayoutItemModel {
     target: PipeListModel;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof LayoutItemModel
      */
-    x: CashBoxesReadIdParameter;
+    x: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof LayoutItemModel
      */
-    y: CashBoxesReadIdParameter;
+    y: number;
 }
 
 
@@ -104,13 +97,14 @@ export function LayoutItemModelFromJSONTyped(json: any, ignoreDiscriminator: boo
         if (json['type'] === 'SaleItem') {
             return LayoutItemModelLayoutSaleItemModelFromJSONTyped(json, ignoreDiscriminator);
         }
+
     }
     return {
         
         'type': json['type'],
         'target': PipeListModelFromJSON(json['target']),
-        'x': CashBoxesReadIdParameterFromJSON(json['x']),
-        'y': CashBoxesReadIdParameterFromJSON(json['y']),
+        'x': json['x'],
+        'y': json['y'],
     };
 }
 
@@ -140,8 +134,8 @@ export function LayoutItemModelToJSONTyped(value?: LayoutItemModel | null, ignor
         
         'type': value['type'],
         'target': PipeListModelToJSON(value['target']),
-        'x': CashBoxesReadIdParameterToJSON(value['x']),
-        'y': CashBoxesReadIdParameterToJSON(value['y']),
+        'x': value['x'],
+        'y': value['y'],
     };
 }
 

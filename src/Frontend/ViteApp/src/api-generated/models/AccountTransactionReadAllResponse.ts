@@ -20,13 +20,6 @@ import {
     PageMetaToJSON,
     PageMetaToJSONTyped,
 } from './PageMeta';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { AccountTransactionModel } from './AccountTransactionModel';
 import {
     AccountTransactionModelFromJSON,
@@ -34,13 +27,6 @@ import {
     AccountTransactionModelToJSON,
     AccountTransactionModelToJSONTyped,
 } from './AccountTransactionModel';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 
 /**
  * 
@@ -50,10 +36,10 @@ import {
 export interface AccountTransactionReadAllResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof AccountTransactionReadAllResponse
      */
-    accountId: CashBoxesReadIdParameter;
+    accountId: number;
     /**
      * 
      * @type {Date}
@@ -68,10 +54,10 @@ export interface AccountTransactionReadAllResponse {
     to: Date;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof AccountTransactionReadAllResponse
      */
-    total: AccountTransactionModelAmount;
+    total: string;
     /**
      * 
      * @type {Array<AccountTransactionModel>}
@@ -109,10 +95,10 @@ export function AccountTransactionReadAllResponseFromJSONTyped(json: any, ignore
     }
     return {
         
-        'accountId': CashBoxesReadIdParameterFromJSON(json['accountId']),
+        'accountId': json['accountId'],
         'from': (new Date(json['from'])),
         'to': (new Date(json['to'])),
-        'total': AccountTransactionModelAmountFromJSON(json['total']),
+        'total': json['total'],
         'data': ((json['data'] as Array<any>).map(AccountTransactionModelFromJSON)),
         'meta': PageMetaFromJSON(json['meta']),
     };
@@ -129,10 +115,10 @@ export function AccountTransactionReadAllResponseToJSONTyped(value?: AccountTran
 
     return {
         
-        'accountId': CashBoxesReadIdParameterToJSON(value['accountId']),
-        'from': ((value['from']).toISOString()),
-        'to': ((value['to']).toISOString()),
-        'total': AccountTransactionModelAmountToJSON(value['total']),
+        'accountId': value['accountId'],
+        'from': value['from'].toISOString(),
+        'to': value['to'].toISOString(),
+        'total': value['total'],
         'data': ((value['data'] as Array<any>).map(AccountTransactionModelToJSON)),
         'meta': PageMetaToJSON(value['meta']),
     };

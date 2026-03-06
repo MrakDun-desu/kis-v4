@@ -15,7 +15,6 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   ContainerCreateRequest,
   ContainerCreateResponse,
   ContainerOperatorReadResponse,
@@ -26,8 +25,6 @@ import type {
   HttpValidationProblemDetails,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     ContainerCreateRequestFromJSON,
     ContainerCreateRequestToJSON,
     ContainerCreateResponseFromJSON,
@@ -47,12 +44,12 @@ import {
 } from '../models/index';
 
 export interface ContainersGetRequest {
-    storeId?: CashBoxesReadIdParameter;
-    templateId?: CashBoxesReadIdParameter;
-    pipeId?: CashBoxesReadIdParameter;
+    storeId?: number;
+    templateId?: number;
+    pipeId?: number;
     includeUnusable?: boolean;
-    page?: CashBoxesReadIdParameter;
-    pageSize?: CashBoxesReadIdParameter;
+    page?: number;
+    pageSize?: number;
 }
 
 export interface ContainersIdGetRequest {
@@ -64,7 +61,7 @@ export interface ContainersIdOperatorGetRequest {
 }
 
 export interface ContainersIdPutRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     containerUpdateModel: ContainerUpdateModel;
 }
 

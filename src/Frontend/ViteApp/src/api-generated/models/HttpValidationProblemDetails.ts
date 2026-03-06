@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { ContainerUpdateModelPipeId } from './ContainerUpdateModelPipeId';
-import {
-    ContainerUpdateModelPipeIdFromJSON,
-    ContainerUpdateModelPipeIdFromJSONTyped,
-    ContainerUpdateModelPipeIdToJSON,
-    ContainerUpdateModelPipeIdToJSONTyped,
-} from './ContainerUpdateModelPipeId';
-
 /**
  * 
  * @export
@@ -41,10 +33,10 @@ export interface HttpValidationProblemDetails {
     title?: string | null;
     /**
      * 
-     * @type {ContainerUpdateModelPipeId}
+     * @type {number}
      * @memberof HttpValidationProblemDetails
      */
-    status?: ContainerUpdateModelPipeId | null;
+    status?: number;
     /**
      * 
      * @type {string}
@@ -84,7 +76,7 @@ export function HttpValidationProblemDetailsFromJSONTyped(json: any, ignoreDiscr
         
         'type': json['type'] == null ? undefined : json['type'],
         'title': json['title'] == null ? undefined : json['title'],
-        'status': json['status'] == null ? undefined : ContainerUpdateModelPipeIdFromJSON(json['status']),
+        'status': json['status'] == null ? undefined : json['status'],
         'detail': json['detail'] == null ? undefined : json['detail'],
         'instance': json['instance'] == null ? undefined : json['instance'],
         'errors': json['errors'] == null ? undefined : json['errors'],
@@ -104,7 +96,7 @@ export function HttpValidationProblemDetailsToJSONTyped(value?: HttpValidationPr
         
         'type': value['type'],
         'title': value['title'],
-        'status': ContainerUpdateModelPipeIdToJSON(value['status']),
+        'status': value['status'],
         'detail': value['detail'],
         'instance': value['instance'],
         'errors': value['errors'],

@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
-
 /**
  * 
  * @export
@@ -36,22 +21,22 @@ import {
 export interface StoreItemAmountModel {
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof StoreItemAmountModel
      */
-    amount: AccountTransactionModelAmount;
+    amount: string;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreItemAmountModel
      */
-    storeItemId: CashBoxesReadIdParameter;
+    storeItemId: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreItemAmountModel
      */
-    storeId: CashBoxesReadIdParameter;
+    storeId: number;
 }
 
 /**
@@ -74,9 +59,9 @@ export function StoreItemAmountModelFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'amount': AccountTransactionModelAmountFromJSON(json['amount']),
-        'storeItemId': CashBoxesReadIdParameterFromJSON(json['storeItemId']),
-        'storeId': CashBoxesReadIdParameterFromJSON(json['storeId']),
+        'amount': json['amount'],
+        'storeItemId': json['storeItemId'],
+        'storeId': json['storeId'],
     };
 }
 
@@ -91,9 +76,9 @@ export function StoreItemAmountModelToJSONTyped(value?: StoreItemAmountModel | n
 
     return {
         
-        'amount': AccountTransactionModelAmountToJSON(value['amount']),
-        'storeItemId': CashBoxesReadIdParameterToJSON(value['storeItemId']),
-        'storeId': CashBoxesReadIdParameterToJSON(value['storeId']),
+        'amount': value['amount'],
+        'storeItemId': value['storeItemId'],
+        'storeId': value['storeId'],
     };
 }
 

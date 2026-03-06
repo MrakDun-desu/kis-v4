@@ -15,7 +15,6 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   HttpValidationProblemDetails,
   ModifierCreateRequest,
   ModifierCreateResponse,
@@ -25,8 +24,6 @@ import type {
   ModifierUpdateResponse,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     HttpValidationProblemDetailsFromJSON,
     HttpValidationProblemDetailsToJSON,
     ModifierCreateRequestFromJSON,
@@ -45,10 +42,10 @@ import {
 
 export interface ModifiersGetRequest {
     name?: string;
-    categoryId?: CashBoxesReadIdParameter;
-    targetId?: CashBoxesReadIdParameter;
-    page?: CashBoxesReadIdParameter;
-    pageSize?: CashBoxesReadIdParameter;
+    categoryId?: number;
+    targetId?: number;
+    page?: number;
+    pageSize?: number;
 }
 
 export interface ModifiersIdDeleteRequest {
@@ -56,7 +53,7 @@ export interface ModifiersIdDeleteRequest {
 }
 
 export interface ModifiersIdPutRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     modifierUpdateModel: ModifierUpdateModel;
 }
 

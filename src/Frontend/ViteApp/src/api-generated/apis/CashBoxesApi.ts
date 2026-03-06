@@ -20,7 +20,6 @@ import type {
   CashBoxReadResponse,
   CashBoxUpdateRequestModel,
   CashBoxUpdateResponse,
-  CashBoxesReadIdParameter,
   HttpValidationProblemDetails,
 } from '../models/index';
 import {
@@ -34,22 +33,20 @@ import {
     CashBoxUpdateRequestModelToJSON,
     CashBoxUpdateResponseFromJSON,
     CashBoxUpdateResponseToJSON,
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     HttpValidationProblemDetailsFromJSON,
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
 export interface CashBoxesReadRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
 }
 
 export interface CashboxesIdDeleteRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
 }
 
 export interface CashboxesIdPutRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     cashBoxUpdateRequestModel: CashBoxUpdateRequestModel;
 }
 

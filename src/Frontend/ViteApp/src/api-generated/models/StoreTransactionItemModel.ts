@@ -27,20 +27,6 @@ import {
     StoreItemListModelToJSON,
     StoreItemListModelToJSONTyped,
 } from './StoreItemListModel';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 
 /**
  * 
@@ -50,16 +36,16 @@ import {
 export interface StoreTransactionItemModel {
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof StoreTransactionItemModel
      */
-    itemAmount: AccountTransactionModelAmount;
+    itemAmount: string;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof StoreTransactionItemModel
      */
-    cost: AccountTransactionModelAmount;
+    cost: string;
     /**
      * 
      * @type {StoreItemListModel}
@@ -74,10 +60,10 @@ export interface StoreTransactionItemModel {
     store: StoreListModel;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreTransactionItemModel
      */
-    storeTransactionId: CashBoxesReadIdParameter;
+    storeTransactionId: number;
 }
 
 /**
@@ -102,11 +88,11 @@ export function StoreTransactionItemModelFromJSONTyped(json: any, ignoreDiscrimi
     }
     return {
         
-        'itemAmount': AccountTransactionModelAmountFromJSON(json['itemAmount']),
-        'cost': AccountTransactionModelAmountFromJSON(json['cost']),
+        'itemAmount': json['itemAmount'],
+        'cost': json['cost'],
         'storeItem': StoreItemListModelFromJSON(json['storeItem']),
         'store': StoreListModelFromJSON(json['store']),
-        'storeTransactionId': CashBoxesReadIdParameterFromJSON(json['storeTransactionId']),
+        'storeTransactionId': json['storeTransactionId'],
     };
 }
 
@@ -121,11 +107,11 @@ export function StoreTransactionItemModelToJSONTyped(value?: StoreTransactionIte
 
     return {
         
-        'itemAmount': AccountTransactionModelAmountToJSON(value['itemAmount']),
-        'cost': AccountTransactionModelAmountToJSON(value['cost']),
+        'itemAmount': value['itemAmount'],
+        'cost': value['cost'],
         'storeItem': StoreItemListModelToJSON(value['storeItem']),
         'store': StoreListModelToJSON(value['store']),
-        'storeTransactionId': CashBoxesReadIdParameterToJSON(value['storeTransactionId']),
+        'storeTransactionId': value['storeTransactionId'],
     };
 }
 

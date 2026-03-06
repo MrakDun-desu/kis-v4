@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-
 /**
  * 
  * @export
@@ -29,16 +21,16 @@ import {
 export interface ModificationCreateRequest {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ModificationCreateRequest
      */
-    amount: CashBoxesReadIdParameter;
+    amount: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ModificationCreateRequest
      */
-    modifierId: CashBoxesReadIdParameter;
+    modifierId: number;
 }
 
 /**
@@ -60,8 +52,8 @@ export function ModificationCreateRequestFromJSONTyped(json: any, ignoreDiscrimi
     }
     return {
         
-        'amount': CashBoxesReadIdParameterFromJSON(json['amount']),
-        'modifierId': CashBoxesReadIdParameterFromJSON(json['modifierId']),
+        'amount': json['amount'],
+        'modifierId': json['modifierId'],
     };
 }
 
@@ -76,8 +68,8 @@ export function ModificationCreateRequestToJSONTyped(value?: ModificationCreateR
 
     return {
         
-        'amount': CashBoxesReadIdParameterToJSON(value['amount']),
-        'modifierId': CashBoxesReadIdParameterToJSON(value['modifierId']),
+        'amount': value['amount'],
+        'modifierId': value['modifierId'],
     };
 }
 

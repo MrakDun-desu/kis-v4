@@ -13,28 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { ModifierCreateRequestMarginPercent } from './ModifierCreateRequestMarginPercent';
-import {
-    ModifierCreateRequestMarginPercentFromJSON,
-    ModifierCreateRequestMarginPercentFromJSONTyped,
-    ModifierCreateRequestMarginPercentToJSON,
-    ModifierCreateRequestMarginPercentToJSONTyped,
-} from './ModifierCreateRequestMarginPercent';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { ModifierCreateRequestMarginStatic } from './ModifierCreateRequestMarginStatic';
-import {
-    ModifierCreateRequestMarginStaticFromJSON,
-    ModifierCreateRequestMarginStaticFromJSONTyped,
-    ModifierCreateRequestMarginStaticToJSON,
-    ModifierCreateRequestMarginStaticToJSONTyped,
-} from './ModifierCreateRequestMarginStatic';
-
 /**
  * 
  * @export
@@ -55,34 +33,34 @@ export interface ModifierCreateRequest {
     image: string | null;
     /**
      * 
-     * @type {ModifierCreateRequestMarginPercent}
+     * @type {string}
      * @memberof ModifierCreateRequest
      */
-    marginPercent: ModifierCreateRequestMarginPercent;
+    marginPercent: string;
     /**
      * 
-     * @type {ModifierCreateRequestMarginStatic}
+     * @type {string}
      * @memberof ModifierCreateRequest
      */
-    marginStatic: ModifierCreateRequestMarginStatic;
+    marginStatic: string;
     /**
      * 
-     * @type {ModifierCreateRequestMarginStatic}
+     * @type {string}
      * @memberof ModifierCreateRequest
      */
-    prestigeAmount: ModifierCreateRequestMarginStatic;
+    prestigeAmount: string;
     /**
      * 
-     * @type {Array<CashBoxesReadIdParameter>}
+     * @type {Array<number>}
      * @memberof ModifierCreateRequest
      */
-    categoryIds: Array<CashBoxesReadIdParameter>;
+    categoryIds: Array<number>;
     /**
      * 
-     * @type {Array<CashBoxesReadIdParameter>}
+     * @type {Array<number>}
      * @memberof ModifierCreateRequest
      */
-    targetIds: Array<CashBoxesReadIdParameter>;
+    targetIds: Array<number>;
 }
 
 /**
@@ -111,11 +89,11 @@ export function ModifierCreateRequestFromJSONTyped(json: any, ignoreDiscriminato
         
         'name': json['name'],
         'image': json['image'],
-        'marginPercent': ModifierCreateRequestMarginPercentFromJSON(json['marginPercent']),
-        'marginStatic': ModifierCreateRequestMarginStaticFromJSON(json['marginStatic']),
-        'prestigeAmount': ModifierCreateRequestMarginStaticFromJSON(json['prestigeAmount']),
-        'categoryIds': ((json['categoryIds'] as Array<any>).map(CashBoxesReadIdParameterFromJSON)),
-        'targetIds': ((json['targetIds'] as Array<any>).map(CashBoxesReadIdParameterFromJSON)),
+        'marginPercent': json['marginPercent'],
+        'marginStatic': json['marginStatic'],
+        'prestigeAmount': json['prestigeAmount'],
+        'categoryIds': json['categoryIds'],
+        'targetIds': json['targetIds'],
     };
 }
 
@@ -132,11 +110,11 @@ export function ModifierCreateRequestToJSONTyped(value?: ModifierCreateRequest |
         
         'name': value['name'],
         'image': value['image'],
-        'marginPercent': ModifierCreateRequestMarginPercentToJSON(value['marginPercent']),
-        'marginStatic': ModifierCreateRequestMarginStaticToJSON(value['marginStatic']),
-        'prestigeAmount': ModifierCreateRequestMarginStaticToJSON(value['prestigeAmount']),
-        'categoryIds': ((value['categoryIds'] as Array<any>).map(CashBoxesReadIdParameterToJSON)),
-        'targetIds': ((value['targetIds'] as Array<any>).map(CashBoxesReadIdParameterToJSON)),
+        'marginPercent': value['marginPercent'],
+        'marginStatic': value['marginStatic'],
+        'prestigeAmount': value['prestigeAmount'],
+        'categoryIds': value['categoryIds'],
+        'targetIds': value['targetIds'],
     };
 }
 

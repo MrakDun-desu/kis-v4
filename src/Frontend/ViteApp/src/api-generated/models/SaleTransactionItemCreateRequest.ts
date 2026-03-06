@@ -13,20 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { SaleTransactionItemCreateRequestAmount } from './SaleTransactionItemCreateRequestAmount';
-import {
-    SaleTransactionItemCreateRequestAmountFromJSON,
-    SaleTransactionItemCreateRequestAmountFromJSONTyped,
-    SaleTransactionItemCreateRequestAmountToJSON,
-    SaleTransactionItemCreateRequestAmountToJSONTyped,
-} from './SaleTransactionItemCreateRequestAmount';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { ModificationCreateRequest } from './ModificationCreateRequest';
 import {
     ModificationCreateRequestFromJSON,
@@ -43,16 +29,16 @@ import {
 export interface SaleTransactionItemCreateRequest {
     /**
      * 
-     * @type {SaleTransactionItemCreateRequestAmount}
+     * @type {number}
      * @memberof SaleTransactionItemCreateRequest
      */
-    amount: SaleTransactionItemCreateRequestAmount;
+    amount: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionItemCreateRequest
      */
-    saleItemId: CashBoxesReadIdParameter;
+    saleItemId: number;
     /**
      * 
      * @type {Array<ModificationCreateRequest>}
@@ -80,8 +66,8 @@ export function SaleTransactionItemCreateRequestFromJSONTyped(json: any, ignoreD
     }
     return {
         
-        'amount': SaleTransactionItemCreateRequestAmountFromJSON(json['amount']),
-        'saleItemId': CashBoxesReadIdParameterFromJSON(json['saleItemId']),
+        'amount': json['amount'],
+        'saleItemId': json['saleItemId'],
         'modifications': json['modifications'] == null ? undefined : ((json['modifications'] as Array<any>).map(ModificationCreateRequestFromJSON)),
     };
 }
@@ -97,8 +83,8 @@ export function SaleTransactionItemCreateRequestToJSONTyped(value?: SaleTransact
 
     return {
         
-        'amount': SaleTransactionItemCreateRequestAmountToJSON(value['amount']),
-        'saleItemId': CashBoxesReadIdParameterToJSON(value['saleItemId']),
+        'amount': value['amount'],
+        'saleItemId': value['saleItemId'],
         'modifications': value['modifications'] == null ? undefined : ((value['modifications'] as Array<any>).map(ModificationCreateRequestToJSON)),
     };
 }

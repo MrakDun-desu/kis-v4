@@ -30,10 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (authResponse.ok) {
           var respValue = await authResponse.json();
           setUserClaims(respValue);
-
-          console.log("User logged in", userClaims);
         } else if (authResponse.status === 401) {
-          console.log("User not logged in");
         }
       } catch (e) {
         alert("Nepovedlo se zjistit status přihlášení");
@@ -44,8 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signIn = () => {
-    const currentOrigin = encodeURIComponent(window.location.origin);
-    window.location.href = `/bff/login?returnUrl=${currentOrigin}`;
+    window.location.href = `/bff/login`;
   };
 
   const signOut = () => {
@@ -55,11 +51,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         (claim) => claim["type"] === "bff:logout_url",
       );
       if (logoutUrlClaim) {
-        window.location.href = `${logoutUrlClaim.value}?returnUrl=${currentOrigin}`;
+        window.location.href = logoutUrlClaim.value;
       }
       return;
     }
-    window.location.href = `/bff/logout?returnUrl=${currentOrigin}`;
+    window.location.href = `/bff/logout`;
   };
 
   const value = { userClaims, signIn, signOut };

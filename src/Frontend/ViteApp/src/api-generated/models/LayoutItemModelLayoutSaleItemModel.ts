@@ -20,13 +20,6 @@ import {
     SaleItemOperatorModelToJSON,
     SaleItemOperatorModelToJSONTyped,
 } from './SaleItemOperatorModel';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 
 /**
  * 
@@ -48,16 +41,16 @@ export interface LayoutItemModelLayoutSaleItemModel {
     target: SaleItemOperatorModel;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof LayoutItemModelLayoutSaleItemModel
      */
-    x: CashBoxesReadIdParameter;
+    x: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof LayoutItemModelLayoutSaleItemModel
      */
-    y: CashBoxesReadIdParameter;
+    y: number;
 }
 
 
@@ -92,8 +85,8 @@ export function LayoutItemModelLayoutSaleItemModelFromJSONTyped(json: any, ignor
         
         'type': json['type'] == null ? undefined : json['type'],
         'target': SaleItemOperatorModelFromJSON(json['target']),
-        'x': CashBoxesReadIdParameterFromJSON(json['x']),
-        'y': CashBoxesReadIdParameterFromJSON(json['y']),
+        'x': json['x'],
+        'y': json['y'],
     };
 }
 
@@ -110,8 +103,8 @@ export function LayoutItemModelLayoutSaleItemModelToJSONTyped(value?: LayoutItem
         
         'type': value['type'],
         'target': SaleItemOperatorModelToJSON(value['target']),
-        'x': CashBoxesReadIdParameterToJSON(value['x']),
-        'y': CashBoxesReadIdParameterToJSON(value['y']),
+        'x': value['x'],
+        'y': value['y'],
     };
 }
 

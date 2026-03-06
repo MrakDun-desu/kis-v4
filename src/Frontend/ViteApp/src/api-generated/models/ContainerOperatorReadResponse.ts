@@ -27,20 +27,6 @@ import {
     ContainerTemplateModelToJSON,
     ContainerTemplateModelToJSONTyped,
 } from './ContainerTemplateModel';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 import type { ContainerState } from './ContainerState';
 import {
     ContainerStateFromJSON,
@@ -57,16 +43,16 @@ import {
 export interface ContainerOperatorReadResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ContainerOperatorReadResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ContainerOperatorReadResponse
      */
-    amount: AccountTransactionModelAmount;
+    amount: string;
     /**
      * 
      * @type {ContainerState}
@@ -111,8 +97,8 @@ export function ContainerOperatorReadResponseFromJSONTyped(json: any, ignoreDisc
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
-        'amount': AccountTransactionModelAmountFromJSON(json['amount']),
+        'id': json['id'],
+        'amount': json['amount'],
         'state': ContainerStateFromJSON(json['state']),
         'template': ContainerTemplateModelFromJSON(json['template']),
         'saleItems': ((json['saleItems'] as Array<any>).map(SaleItemOperatorModelFromJSON)),
@@ -130,8 +116,8 @@ export function ContainerOperatorReadResponseToJSONTyped(value?: ContainerOperat
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
-        'amount': AccountTransactionModelAmountToJSON(value['amount']),
+        'id': value['id'],
+        'amount': value['amount'],
         'state': ContainerStateToJSON(value['state']),
         'template': ContainerTemplateModelToJSON(value['template']),
         'saleItems': ((value['saleItems'] as Array<any>).map(SaleItemOperatorModelToJSON)),

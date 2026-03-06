@@ -13,28 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { SaleItemOperatorModelAmountInStore } from './SaleItemOperatorModelAmountInStore';
-import {
-    SaleItemOperatorModelAmountInStoreFromJSON,
-    SaleItemOperatorModelAmountInStoreFromJSONTyped,
-    SaleItemOperatorModelAmountInStoreToJSON,
-    SaleItemOperatorModelAmountInStoreToJSONTyped,
-} from './SaleItemOperatorModelAmountInStore';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
-
 /**
  * 
  * @export
@@ -43,10 +21,10 @@ import {
 export interface SaleItemOperatorModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleItemOperatorModel
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -61,16 +39,16 @@ export interface SaleItemOperatorModel {
     image: string | null;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof SaleItemOperatorModel
      */
-    currentCost: AccountTransactionModelAmount;
+    currentCost: string;
     /**
      * 
-     * @type {SaleItemOperatorModelAmountInStore}
+     * @type {string}
      * @memberof SaleItemOperatorModel
      */
-    amountInStore: SaleItemOperatorModelAmountInStore | null;
+    amountInStore: string;
 }
 
 /**
@@ -95,11 +73,11 @@ export function SaleItemOperatorModelFromJSONTyped(json: any, ignoreDiscriminato
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'image': json['image'],
-        'currentCost': AccountTransactionModelAmountFromJSON(json['currentCost']),
-        'amountInStore': SaleItemOperatorModelAmountInStoreFromJSON(json['amountInStore']),
+        'currentCost': json['currentCost'],
+        'amountInStore': json['amountInStore'],
     };
 }
 
@@ -114,11 +92,11 @@ export function SaleItemOperatorModelToJSONTyped(value?: SaleItemOperatorModel |
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'image': value['image'],
-        'currentCost': AccountTransactionModelAmountToJSON(value['currentCost']),
-        'amountInStore': SaleItemOperatorModelAmountInStoreToJSON(value['amountInStore']),
+        'currentCost': value['currentCost'],
+        'amountInStore': value['amountInStore'],
     };
 }
 

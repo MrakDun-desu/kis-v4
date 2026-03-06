@@ -15,7 +15,6 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   HttpValidationProblemDetails,
   SaleTransactionCheckPriceRequest,
   SaleTransactionCheckPriceResponse,
@@ -27,8 +26,6 @@ import type {
   SaleTransactionUpdateRequestModel,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     HttpValidationProblemDetailsFromJSON,
     HttpValidationProblemDetailsToJSON,
     SaleTransactionCheckPriceRequestFromJSON,
@@ -57,21 +54,21 @@ export interface SaleTransactionsGetRequest {
     from?: Date;
     to?: Date;
     onlySelfCancellable?: boolean;
-    page?: CashBoxesReadIdParameter;
-    pageSize?: CashBoxesReadIdParameter;
+    page?: number;
+    pageSize?: number;
 }
 
 export interface SaleTransactionsIdClosePostRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     saleTransactionCloseRequestModel: SaleTransactionCloseRequestModel;
 }
 
 export interface SaleTransactionsIdDeleteRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
 }
 
 export interface SaleTransactionsIdPatchRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     saleTransactionUpdateRequestModel: SaleTransactionUpdateRequestModel;
 }
 

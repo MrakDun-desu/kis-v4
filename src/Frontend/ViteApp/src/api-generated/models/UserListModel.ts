@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-
 /**
  * 
  * @export
@@ -29,10 +21,10 @@ import {
 export interface UserListModel {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof UserListModel
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
 }
 
 /**
@@ -53,7 +45,7 @@ export function UserListModelFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
     };
 }
 
@@ -68,7 +60,7 @@ export function UserListModelToJSONTyped(value?: UserListModel | null, ignoreDis
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
     };
 }
 

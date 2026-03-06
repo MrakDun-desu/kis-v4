@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { UserListModel } from './UserListModel';
 import {
     UserListModelFromJSON,
@@ -27,13 +20,6 @@ import {
     UserListModelToJSON,
     UserListModelToJSONTyped,
 } from './UserListModel';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 
 /**
  * 
@@ -43,10 +29,10 @@ import {
 export interface CostCreateResponse {
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof CostCreateResponse
      */
-    amount: AccountTransactionModelAmount;
+    amount: string;
     /**
      * 
      * @type {Date}
@@ -61,10 +47,10 @@ export interface CostCreateResponse {
     description: string;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof CostCreateResponse
      */
-    storeItemId: CashBoxesReadIdParameter;
+    storeItemId: number;
     /**
      * 
      * @type {UserListModel}
@@ -95,10 +81,10 @@ export function CostCreateResponseFromJSONTyped(json: any, ignoreDiscriminator: 
     }
     return {
         
-        'amount': AccountTransactionModelAmountFromJSON(json['amount']),
+        'amount': json['amount'],
         'timestamp': (new Date(json['timestamp'])),
         'description': json['description'],
-        'storeItemId': CashBoxesReadIdParameterFromJSON(json['storeItemId']),
+        'storeItemId': json['storeItemId'],
         'user': UserListModelFromJSON(json['user']),
     };
 }
@@ -114,10 +100,10 @@ export function CostCreateResponseToJSONTyped(value?: CostCreateResponse | null,
 
     return {
         
-        'amount': AccountTransactionModelAmountToJSON(value['amount']),
-        'timestamp': ((value['timestamp']).toISOString()),
+        'amount': value['amount'],
+        'timestamp': value['timestamp'].toISOString(),
         'description': value['description'],
-        'storeItemId': CashBoxesReadIdParameterToJSON(value['storeItemId']),
+        'storeItemId': value['storeItemId'],
         'user': UserListModelToJSON(value['user']),
     };
 }

@@ -15,7 +15,6 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   HttpValidationProblemDetails,
   SaleItemCreateRequest,
   SaleItemCreateResponse,
@@ -25,8 +24,6 @@ import type {
   SaleItemUpdateResponse,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     HttpValidationProblemDetailsFromJSON,
     HttpValidationProblemDetailsToJSON,
     SaleItemCreateRequestFromJSON,
@@ -45,9 +42,9 @@ import {
 
 export interface SaleItemsGetRequest {
     name?: string;
-    categoryId?: CashBoxesReadIdParameter;
-    page?: CashBoxesReadIdParameter;
-    pageSize?: CashBoxesReadIdParameter;
+    categoryId?: number;
+    page?: number;
+    pageSize?: number;
 }
 
 export interface SaleItemsIdDeleteRequest {
@@ -55,7 +52,7 @@ export interface SaleItemsIdDeleteRequest {
 }
 
 export interface SaleItemsIdPutRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     saleItemUpdateModel: SaleItemUpdateModel;
 }
 

@@ -15,7 +15,6 @@
 
 import * as runtime from '../runtime';
 import type {
-  CashBoxesReadIdParameter,
   ContainerTemplateCreateRequest,
   ContainerTemplateCreateResponse,
   ContainerTemplateReadAllResponse,
@@ -24,8 +23,6 @@ import type {
   HttpValidationProblemDetails,
 } from '../models/index';
 import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterToJSON,
     ContainerTemplateCreateRequestFromJSON,
     ContainerTemplateCreateRequestToJSON,
     ContainerTemplateCreateResponseFromJSON,
@@ -42,9 +39,9 @@ import {
 
 export interface ContainerTemplatesGetRequest {
     name?: string;
-    storeItemId?: CashBoxesReadIdParameter;
-    page?: CashBoxesReadIdParameter;
-    pageSize?: CashBoxesReadIdParameter;
+    storeItemId?: number;
+    page?: number;
+    pageSize?: number;
 }
 
 export interface ContainerTemplatesIdDeleteRequest {
@@ -52,7 +49,7 @@ export interface ContainerTemplatesIdDeleteRequest {
 }
 
 export interface ContainerTemplatesIdPutRequest {
-    id: CashBoxesReadIdParameter;
+    id: number;
     containerTemplateUpdateRequestModel: ContainerTemplateUpdateRequestModel;
 }
 

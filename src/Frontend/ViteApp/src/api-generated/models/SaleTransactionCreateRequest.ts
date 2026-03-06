@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { SaleTransactionItemCreateRequest } from './SaleTransactionItemCreateRequest';
 import {
     SaleTransactionItemCreateRequestFromJSON,
@@ -27,13 +20,6 @@ import {
     SaleTransactionItemCreateRequestToJSON,
     SaleTransactionItemCreateRequestToJSONTyped,
 } from './SaleTransactionItemCreateRequest';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 
 /**
  * 
@@ -49,28 +35,28 @@ export interface SaleTransactionCreateRequest {
     note?: string | null;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionCreateRequest
      */
-    storeId: CashBoxesReadIdParameter;
+    storeId: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionCreateRequest
      */
-    cashBoxId: CashBoxesReadIdParameter;
+    cashBoxId: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionCreateRequest
      */
-    customerId: CashBoxesReadIdParameter;
+    customerId: number;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof SaleTransactionCreateRequest
      */
-    paidAmount: AccountTransactionModelAmount;
+    paidAmount: string;
     /**
      * 
      * @type {Array<SaleTransactionItemCreateRequest>}
@@ -101,10 +87,10 @@ export function SaleTransactionCreateRequestFromJSONTyped(json: any, ignoreDiscr
     return {
         
         'note': json['note'] == null ? undefined : json['note'],
-        'storeId': CashBoxesReadIdParameterFromJSON(json['storeId']),
-        'cashBoxId': CashBoxesReadIdParameterFromJSON(json['cashBoxId']),
-        'customerId': CashBoxesReadIdParameterFromJSON(json['customerId']),
-        'paidAmount': AccountTransactionModelAmountFromJSON(json['paidAmount']),
+        'storeId': json['storeId'],
+        'cashBoxId': json['cashBoxId'],
+        'customerId': json['customerId'],
+        'paidAmount': json['paidAmount'],
         'saleTransactionItems': json['saleTransactionItems'] == null ? undefined : ((json['saleTransactionItems'] as Array<any>).map(SaleTransactionItemCreateRequestFromJSON)),
     };
 }
@@ -121,10 +107,10 @@ export function SaleTransactionCreateRequestToJSONTyped(value?: SaleTransactionC
     return {
         
         'note': value['note'],
-        'storeId': CashBoxesReadIdParameterToJSON(value['storeId']),
-        'cashBoxId': CashBoxesReadIdParameterToJSON(value['cashBoxId']),
-        'customerId': CashBoxesReadIdParameterToJSON(value['customerId']),
-        'paidAmount': AccountTransactionModelAmountToJSON(value['paidAmount']),
+        'storeId': value['storeId'],
+        'cashBoxId': value['cashBoxId'],
+        'customerId': value['customerId'],
+        'paidAmount': value['paidAmount'],
         'saleTransactionItems': value['saleTransactionItems'] == null ? undefined : ((value['saleTransactionItems'] as Array<any>).map(SaleTransactionItemCreateRequestToJSON)),
     };
 }

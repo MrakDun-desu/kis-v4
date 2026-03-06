@@ -20,20 +20,6 @@ import {
     StoreItemListModelToJSON,
     StoreItemListModelToJSONTyped,
 } from './StoreItemListModel';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 
 /**
  * 
@@ -43,10 +29,10 @@ import {
 export interface CompositionModel {
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof CompositionModel
      */
-    amount: AccountTransactionModelAmount;
+    amount: string;
     /**
      * 
      * @type {StoreItemListModel}
@@ -55,10 +41,10 @@ export interface CompositionModel {
     storeItem: StoreItemListModel;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof CompositionModel
      */
-    compositeId: CashBoxesReadIdParameter;
+    compositeId: number;
 }
 
 /**
@@ -81,9 +67,9 @@ export function CompositionModelFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
-        'amount': AccountTransactionModelAmountFromJSON(json['amount']),
+        'amount': json['amount'],
         'storeItem': StoreItemListModelFromJSON(json['storeItem']),
-        'compositeId': CashBoxesReadIdParameterFromJSON(json['compositeId']),
+        'compositeId': json['compositeId'],
     };
 }
 
@@ -98,9 +84,9 @@ export function CompositionModelToJSONTyped(value?: CompositionModel | null, ign
 
     return {
         
-        'amount': AccountTransactionModelAmountToJSON(value['amount']),
+        'amount': value['amount'],
         'storeItem': StoreItemListModelToJSON(value['storeItem']),
-        'compositeId': CashBoxesReadIdParameterToJSON(value['compositeId']),
+        'compositeId': value['compositeId'],
     };
 }
 

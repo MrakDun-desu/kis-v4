@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
-
 /**
  * 
  * @export
@@ -36,22 +21,22 @@ import {
 export interface CompositionPutRequest {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof CompositionPutRequest
      */
-    compositeId: CashBoxesReadIdParameter;
+    compositeId: number;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof CompositionPutRequest
      */
-    storeItemId: CashBoxesReadIdParameter;
+    storeItemId: number;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof CompositionPutRequest
      */
-    amount?: AccountTransactionModelAmount;
+    amount?: string;
 }
 
 /**
@@ -73,9 +58,9 @@ export function CompositionPutRequestFromJSONTyped(json: any, ignoreDiscriminato
     }
     return {
         
-        'compositeId': CashBoxesReadIdParameterFromJSON(json['compositeId']),
-        'storeItemId': CashBoxesReadIdParameterFromJSON(json['storeItemId']),
-        'amount': json['amount'] == null ? undefined : AccountTransactionModelAmountFromJSON(json['amount']),
+        'compositeId': json['compositeId'],
+        'storeItemId': json['storeItemId'],
+        'amount': json['amount'] == null ? undefined : json['amount'],
     };
 }
 
@@ -90,9 +75,9 @@ export function CompositionPutRequestToJSONTyped(value?: CompositionPutRequest |
 
     return {
         
-        'compositeId': CashBoxesReadIdParameterToJSON(value['compositeId']),
-        'storeItemId': CashBoxesReadIdParameterToJSON(value['storeItemId']),
-        'amount': AccountTransactionModelAmountToJSON(value['amount']),
+        'compositeId': value['compositeId'],
+        'storeItemId': value['storeItemId'],
+        'amount': value['amount'],
     };
 }
 

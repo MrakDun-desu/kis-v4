@@ -20,13 +20,6 @@ import {
     SaleItemListModelToJSON,
     SaleItemListModelToJSONTyped,
 } from './SaleItemListModel';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { CategoryModel } from './CategoryModel';
 import {
     CategoryModelFromJSON,
@@ -34,13 +27,6 @@ import {
     CategoryModelToJSON,
     CategoryModelToJSONTyped,
 } from './CategoryModel';
-import type { AccountTransactionModelAmount } from './AccountTransactionModelAmount';
-import {
-    AccountTransactionModelAmountFromJSON,
-    AccountTransactionModelAmountFromJSONTyped,
-    AccountTransactionModelAmountToJSON,
-    AccountTransactionModelAmountToJSONTyped,
-} from './AccountTransactionModelAmount';
 
 /**
  * 
@@ -50,10 +36,10 @@ import {
 export interface ModifierUpdateResponse {
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof ModifierUpdateResponse
      */
-    id: CashBoxesReadIdParameter;
+    id: number;
     /**
      * 
      * @type {string}
@@ -68,22 +54,22 @@ export interface ModifierUpdateResponse {
     image: string | null;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ModifierUpdateResponse
      */
-    marginPercent: AccountTransactionModelAmount;
+    marginPercent: string;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ModifierUpdateResponse
      */
-    marginStatic: AccountTransactionModelAmount;
+    marginStatic: string;
     /**
      * 
-     * @type {AccountTransactionModelAmount}
+     * @type {string}
      * @memberof ModifierUpdateResponse
      */
-    prestigeAmount: AccountTransactionModelAmount;
+    prestigeAmount: string;
     /**
      * 
      * @type {Array<CategoryModel>}
@@ -123,12 +109,12 @@ export function ModifierUpdateResponseFromJSONTyped(json: any, ignoreDiscriminat
     }
     return {
         
-        'id': CashBoxesReadIdParameterFromJSON(json['id']),
+        'id': json['id'],
         'name': json['name'],
         'image': json['image'],
-        'marginPercent': AccountTransactionModelAmountFromJSON(json['marginPercent']),
-        'marginStatic': AccountTransactionModelAmountFromJSON(json['marginStatic']),
-        'prestigeAmount': AccountTransactionModelAmountFromJSON(json['prestigeAmount']),
+        'marginPercent': json['marginPercent'],
+        'marginStatic': json['marginStatic'],
+        'prestigeAmount': json['prestigeAmount'],
         'categories': ((json['categories'] as Array<any>).map(CategoryModelFromJSON)),
         'targets': ((json['targets'] as Array<any>).map(SaleItemListModelFromJSON)),
     };
@@ -145,12 +131,12 @@ export function ModifierUpdateResponseToJSONTyped(value?: ModifierUpdateResponse
 
     return {
         
-        'id': CashBoxesReadIdParameterToJSON(value['id']),
+        'id': value['id'],
         'name': value['name'],
         'image': value['image'],
-        'marginPercent': AccountTransactionModelAmountToJSON(value['marginPercent']),
-        'marginStatic': AccountTransactionModelAmountToJSON(value['marginStatic']),
-        'prestigeAmount': AccountTransactionModelAmountToJSON(value['prestigeAmount']),
+        'marginPercent': value['marginPercent'],
+        'marginStatic': value['marginStatic'],
+        'prestigeAmount': value['prestigeAmount'],
         'categories': ((value['categories'] as Array<any>).map(CategoryModelToJSON)),
         'targets': ((value['targets'] as Array<any>).map(SaleItemListModelToJSON)),
     };

@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
-import type { StoreItemCreateRequestInitialCost } from './StoreItemCreateRequestInitialCost';
-import {
-    StoreItemCreateRequestInitialCostFromJSON,
-    StoreItemCreateRequestInitialCostFromJSONTyped,
-    StoreItemCreateRequestInitialCostToJSON,
-    StoreItemCreateRequestInitialCostToJSONTyped,
-} from './StoreItemCreateRequestInitialCost';
-
 /**
  * 
  * @export
@@ -54,16 +39,16 @@ export interface StoreItemCreateRequest {
     isContainerItem?: boolean;
     /**
      * 
-     * @type {Array<CashBoxesReadIdParameter>}
+     * @type {Array<number>}
      * @memberof StoreItemCreateRequest
      */
-    categoryIds?: Array<CashBoxesReadIdParameter>;
+    categoryIds?: Array<number>;
     /**
      * 
-     * @type {StoreItemCreateRequestInitialCost}
+     * @type {string}
      * @memberof StoreItemCreateRequest
      */
-    initialCost: StoreItemCreateRequestInitialCost;
+    initialCost: string;
 }
 
 /**
@@ -89,8 +74,8 @@ export function StoreItemCreateRequestFromJSONTyped(json: any, ignoreDiscriminat
         'name': json['name'],
         'unitName': json['unitName'],
         'isContainerItem': json['isContainerItem'] == null ? undefined : json['isContainerItem'],
-        'categoryIds': json['categoryIds'] == null ? undefined : ((json['categoryIds'] as Array<any>).map(CashBoxesReadIdParameterFromJSON)),
-        'initialCost': StoreItemCreateRequestInitialCostFromJSON(json['initialCost']),
+        'categoryIds': json['categoryIds'] == null ? undefined : json['categoryIds'],
+        'initialCost': json['initialCost'],
     };
 }
 
@@ -108,8 +93,8 @@ export function StoreItemCreateRequestToJSONTyped(value?: StoreItemCreateRequest
         'name': value['name'],
         'unitName': value['unitName'],
         'isContainerItem': value['isContainerItem'],
-        'categoryIds': value['categoryIds'] == null ? undefined : ((value['categoryIds'] as Array<any>).map(CashBoxesReadIdParameterToJSON)),
-        'initialCost': StoreItemCreateRequestInitialCostToJSON(value['initialCost']),
+        'categoryIds': value['categoryIds'],
+        'initialCost': value['initialCost'],
     };
 }
 

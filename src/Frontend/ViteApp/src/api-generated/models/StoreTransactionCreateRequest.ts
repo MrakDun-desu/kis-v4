@@ -20,13 +20,6 @@ import {
     StoreTransactionItemCreateRequestToJSON,
     StoreTransactionItemCreateRequestToJSONTyped,
 } from './StoreTransactionItemCreateRequest';
-import type { ContainerUpdateModelPipeId } from './ContainerUpdateModelPipeId';
-import {
-    ContainerUpdateModelPipeIdFromJSON,
-    ContainerUpdateModelPipeIdFromJSONTyped,
-    ContainerUpdateModelPipeIdToJSON,
-    ContainerUpdateModelPipeIdToJSONTyped,
-} from './ContainerUpdateModelPipeId';
 import type { TransactionReason } from './TransactionReason';
 import {
     TransactionReasonFromJSON,
@@ -34,13 +27,6 @@ import {
     TransactionReasonToJSON,
     TransactionReasonToJSONTyped,
 } from './TransactionReason';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 
 /**
  * 
@@ -68,16 +54,16 @@ export interface StoreTransactionCreateRequest {
     reason?: TransactionReason;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof StoreTransactionCreateRequest
      */
-    storeId: CashBoxesReadIdParameter;
+    storeId: number;
     /**
      * 
-     * @type {ContainerUpdateModelPipeId}
+     * @type {number}
      * @memberof StoreTransactionCreateRequest
      */
-    sourceStoreId?: ContainerUpdateModelPipeId | null;
+    sourceStoreId?: number;
     /**
      * 
      * @type {boolean}
@@ -109,8 +95,8 @@ export function StoreTransactionCreateRequestFromJSONTyped(json: any, ignoreDisc
         'note': json['note'] == null ? undefined : json['note'],
         'storeTransactionItems': json['storeTransactionItems'] == null ? undefined : ((json['storeTransactionItems'] as Array<any>).map(StoreTransactionItemCreateRequestFromJSON)),
         'reason': json['reason'] == null ? undefined : TransactionReasonFromJSON(json['reason']),
-        'storeId': CashBoxesReadIdParameterFromJSON(json['storeId']),
-        'sourceStoreId': json['sourceStoreId'] == null ? undefined : ContainerUpdateModelPipeIdFromJSON(json['sourceStoreId']),
+        'storeId': json['storeId'],
+        'sourceStoreId': json['sourceStoreId'] == null ? undefined : json['sourceStoreId'],
         'updateCosts': json['updateCosts'] == null ? undefined : json['updateCosts'],
     };
 }
@@ -129,8 +115,8 @@ export function StoreTransactionCreateRequestToJSONTyped(value?: StoreTransactio
         'note': value['note'],
         'storeTransactionItems': value['storeTransactionItems'] == null ? undefined : ((value['storeTransactionItems'] as Array<any>).map(StoreTransactionItemCreateRequestToJSON)),
         'reason': TransactionReasonToJSON(value['reason']),
-        'storeId': CashBoxesReadIdParameterToJSON(value['storeId']),
-        'sourceStoreId': ContainerUpdateModelPipeIdToJSON(value['sourceStoreId']),
+        'storeId': value['storeId'],
+        'sourceStoreId': value['sourceStoreId'],
         'updateCosts': value['updateCosts'],
     };
 }

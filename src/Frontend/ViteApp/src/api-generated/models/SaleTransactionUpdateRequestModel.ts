@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CashBoxesReadIdParameter } from './CashBoxesReadIdParameter';
-import {
-    CashBoxesReadIdParameterFromJSON,
-    CashBoxesReadIdParameterFromJSONTyped,
-    CashBoxesReadIdParameterToJSON,
-    CashBoxesReadIdParameterToJSONTyped,
-} from './CashBoxesReadIdParameter';
 import type { SaleTransactionItemCreateRequest } from './SaleTransactionItemCreateRequest';
 import {
     SaleTransactionItemCreateRequestFromJSON,
@@ -42,10 +35,10 @@ export interface SaleTransactionUpdateRequestModel {
     note?: string | null;
     /**
      * 
-     * @type {CashBoxesReadIdParameter}
+     * @type {number}
      * @memberof SaleTransactionUpdateRequestModel
      */
-    storeId: CashBoxesReadIdParameter;
+    storeId: number;
     /**
      * 
      * @type {Array<SaleTransactionItemCreateRequest>}
@@ -73,7 +66,7 @@ export function SaleTransactionUpdateRequestModelFromJSONTyped(json: any, ignore
     return {
         
         'note': json['note'] == null ? undefined : json['note'],
-        'storeId': CashBoxesReadIdParameterFromJSON(json['storeId']),
+        'storeId': json['storeId'],
         'saleTransactionItems': json['saleTransactionItems'] == null ? undefined : ((json['saleTransactionItems'] as Array<any>).map(SaleTransactionItemCreateRequestFromJSON)),
     };
 }
@@ -90,7 +83,7 @@ export function SaleTransactionUpdateRequestModelToJSONTyped(value?: SaleTransac
     return {
         
         'note': value['note'],
-        'storeId': CashBoxesReadIdParameterToJSON(value['storeId']),
+        'storeId': value['storeId'],
         'saleTransactionItems': value['saleTransactionItems'] == null ? undefined : ((value['saleTransactionItems'] as Array<any>).map(SaleTransactionItemCreateRequestToJSON)),
     };
 }
