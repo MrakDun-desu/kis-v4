@@ -27,6 +27,7 @@ public class StoreTransactionService(
     ) {
         var reqTime = _timeProvider.GetUtcNow();
         var query = _dbContext.StoreTransactions
+            .IgnoreQueryFilters()
             .Include(st => st.StartedBy)
             .Include(st => st.CancelledBy)
             .AsQueryable();
@@ -69,6 +70,7 @@ public class StoreTransactionService(
         CancellationToken token = default
     ) {
         return await _dbContext.StoreTransactions
+            .IgnoreQueryFilters()
             .Include(st => st.StartedBy)
             .Include(st => st.CancelledBy)
             .Include(st => st.StoreTransactionItems)

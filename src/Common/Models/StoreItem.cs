@@ -20,7 +20,6 @@ public record StoreItemDetailModel {
     public required bool IsContainerItem { get; init; }
     public required decimal CurrentCost { get; init; }
     public required IEnumerable<CategoryModel> Categories { get; init; }
-    public required IEnumerable<CostModel> Costs { get; init; }
 }
 
 public record StoreItemUpdateModel {
@@ -66,3 +65,8 @@ public record StoreItemUpdateRequest {
 public record StoreItemUpdateResponse : StoreItemDetailModel;
 
 public record StoreItemReadResponse : StoreItemDetailModel;
+
+public record StoreItemDeleteRequest {
+    [FromRoute]
+    public required int Id { get; init; }
+}

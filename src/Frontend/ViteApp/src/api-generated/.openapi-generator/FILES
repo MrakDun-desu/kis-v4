@@ -66,7 +66,6 @@ docs/ContainerUpdateResponse.md
 docs/ContainersApi.md
 docs/CostCreateRequest.md
 docs/CostCreateResponse.md
-docs/CostModel.md
 docs/CostsApi.md
 docs/HttpValidationProblemDetails.md
 docs/ImagesApi.md
@@ -198,7 +197,6 @@ models/ContainerUpdateModel.ts
 models/ContainerUpdateResponse.ts
 models/CostCreateRequest.ts
 models/CostCreateResponse.ts
-models/CostModel.ts
 models/HttpValidationProblemDetails.ts
 models/LayoutCreateRequestModel.ts
 models/LayoutCreateResponse.ts

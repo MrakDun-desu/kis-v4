@@ -11,8 +11,8 @@ public class StoreItemsReadAllValidator : AbstractValidator<StoreItemReadAllRequ
     }
 }
 
-public class StoreItemCreateRequestValidator : AbstractValidator<StoreItemCreateRequest> {
-    public StoreItemCreateRequestValidator(ValidationHelper helper) {
+public class StoreItemCreateValidator : AbstractValidator<StoreItemCreateRequest> {
+    public StoreItemCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.Name)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxNameLength);
@@ -28,8 +28,8 @@ public class StoreItemCreateRequestValidator : AbstractValidator<StoreItemCreate
     }
 }
 
-public class StoreItemUpdateRequestValidator : AbstractValidator<StoreItemUpdateRequest> {
-    public StoreItemUpdateRequestValidator(ValidationHelper helper) {
+public class StoreItemUpdateValidator : AbstractValidator<StoreItemUpdateRequest> {
+    public StoreItemUpdateValidator(ValidationHelper helper) {
         RuleFor(x => x.Model.Name)
             .NotEmpty()
             .MaximumLength(ValidationConstants.MaxNameLength);
@@ -39,5 +39,13 @@ public class StoreItemUpdateRequestValidator : AbstractValidator<StoreItemUpdate
         RuleFor(x => x.Model.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
             .WithMessage("All category IDs must identify existing categories");
+    }
+}
+
+public class StoreItemDeleteValidator : AbstractValidator<StoreItemDeleteRequest> {
+    public StoreItemDeleteValidator(ValidationHelper helper) {
+        RuleFor(x => x)
+            .MustAsync(helper.NotHaveAnyAssociatedContainerTemplates)
+            .WithMessage("Can't delete store items with active container templates");
     }
 }

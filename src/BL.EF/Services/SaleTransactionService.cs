@@ -27,6 +27,7 @@ public class SaleTransactionService(
     ) {
         var reqTime = _timeProvider.GetUtcNow();
         var query = _dbContext.SaleTransactions
+            .IgnoreQueryFilters()
             .Include(st => st.StartedBy)
             .Include(st => st.CancelledBy)
             .Include(st => st.OpenedBy)
@@ -76,6 +77,7 @@ public class SaleTransactionService(
         CancellationToken token = default
     ) {
         return await _dbContext.SaleTransactions
+            .IgnoreQueryFilters()
             .Include(st => st.AccountTransactions)
             .Include(st => st.StoreTransactions)
             .ThenInclude(st => st.StartedBy)
@@ -272,6 +274,7 @@ public class SaleTransactionService(
     ) {
         var reqTime = _timeProvider.GetUtcNow();
         var entity = await _dbContext.SaleTransactions
+            .IgnoreQueryFilters()
             .Include(st => st.AccountTransactions)
             .Include(st => st.StoreTransactions)
             .ThenInclude(st => st.StartedBy)
@@ -349,6 +352,7 @@ public class SaleTransactionService(
     ) {
         var reqTime = _timeProvider.GetUtcNow();
         var entity = await _dbContext.SaleTransactions
+            .IgnoreQueryFilters()
             .Include(st => st.AccountTransactions)
             .Include(st => st.StoreTransactions)
             .ThenInclude(st => st.StartedBy)

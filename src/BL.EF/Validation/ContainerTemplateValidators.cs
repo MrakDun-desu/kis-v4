@@ -44,3 +44,11 @@ public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTempl
             .WithMessage("Container templates that have existing containers can't be updated");
     }
 }
+
+public class ContainerTemplateDeleteValidator : AbstractValidator<ContainerTemplateDeleteRequest> {
+    public ContainerTemplateDeleteValidator(ValidationHelper helper) {
+        RuleFor(x => x)
+            .MustAsync(helper.NotHaveAnyAssociatedContainers)
+            .WithMessage("Can't delete container templates with active containers");
+    }
+}

@@ -45,16 +45,13 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<AccountTransaction>().HasQueryFilter(e => !e.Cancelled);
         modelBuilder.Entity<Cashbox>().HasQueryFilter(e => !e.Deleted);
         modelBuilder.Entity<Composite>().HasQueryFilter(e => !e.Hidden);
         modelBuilder.Entity<ContainerTemplate>().HasQueryFilter(e => !e.Deleted);
         modelBuilder.Entity<Discount>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<SaleTransactionItem>().HasQueryFilter(e => !e.Cancelled);
         modelBuilder.Entity<Store>().HasQueryFilter(e => !e.Deleted);
         modelBuilder.Entity<StoreItem>().HasQueryFilter(e => !e.Hidden);
         modelBuilder.Entity<StoreTransactionItem>().HasQueryFilter(e => !e.Cancelled);
-        modelBuilder.Entity<Transaction>().HasQueryFilter(e => e.CancelledAt == null);
 
         // Maybe use this to auto-include some properties that are used even in
         // list models in the future

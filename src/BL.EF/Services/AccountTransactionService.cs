@@ -33,7 +33,9 @@ public class AccountTransactionService(
             );
         }
 
-        var total = await query.SumAsync(at => at.Amount, token);
+        var total = await query
+            .Where(at => !at.Cancelled)
+            .SumAsync(at => at.Amount, token);
 
         return await query.PaginateAsync(
                 req,

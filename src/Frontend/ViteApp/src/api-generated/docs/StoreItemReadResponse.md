@@ -12,7 +12,6 @@ Name | Type
 `isContainerItem` | boolean
 `currentCost` | string
 `categories` | [Array&lt;CategoryModel&gt;](CategoryModel.md)
-`costs` | [Array&lt;CostModel&gt;](CostModel.md)
 
 ## Example
 
@@ -27,7 +26,6 @@ const example = {
   "isContainerItem": null,
   "currentCost": null,
   "categories": null,
-  "costs": null,
 } satisfies StoreItemReadResponse
 
 console.log(example)

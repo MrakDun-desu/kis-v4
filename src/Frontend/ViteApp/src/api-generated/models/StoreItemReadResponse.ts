@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { CostModel } from './CostModel';
-import {
-    CostModelFromJSON,
-    CostModelFromJSONTyped,
-    CostModelToJSON,
-    CostModelToJSONTyped,
-} from './CostModel';
 import type { CategoryModel } from './CategoryModel';
 import {
     CategoryModelFromJSON,
@@ -70,12 +63,6 @@ export interface StoreItemReadResponse {
      * @memberof StoreItemReadResponse
      */
     categories: Array<CategoryModel>;
-    /**
-     * 
-     * @type {Array<CostModel>}
-     * @memberof StoreItemReadResponse
-     */
-    costs: Array<CostModel>;
 }
 
 /**
@@ -88,7 +75,6 @@ export function instanceOfStoreItemReadResponse(value: object): value is StoreIt
     if (!('isContainerItem' in value) || value['isContainerItem'] === undefined) return false;
     if (!('currentCost' in value) || value['currentCost'] === undefined) return false;
     if (!('categories' in value) || value['categories'] === undefined) return false;
-    if (!('costs' in value) || value['costs'] === undefined) return false;
     return true;
 }
 
@@ -108,7 +94,6 @@ export function StoreItemReadResponseFromJSONTyped(json: any, ignoreDiscriminato
         'isContainerItem': json['isContainerItem'],
         'currentCost': json['currentCost'],
         'categories': ((json['categories'] as Array<any>).map(CategoryModelFromJSON)),
-        'costs': ((json['costs'] as Array<any>).map(CostModelFromJSON)),
     };
 }
 
@@ -129,7 +114,6 @@ export function StoreItemReadResponseToJSONTyped(value?: StoreItemReadResponse |
         'isContainerItem': value['isContainerItem'],
         'currentCost': value['currentCost'],
         'categories': ((value['categories'] as Array<any>).map(CategoryModelToJSON)),
-        'costs': ((value['costs'] as Array<any>).map(CostModelToJSON)),
     };
 }
 

@@ -18,6 +18,7 @@ public static class ContainerTemplates {
             .WithName("ContainerTemplatesUpdate")
             .AddValidation<ContainerTemplateUpdateRequest>();
         routeBuilder.MapDelete("container-templates/{id:int}", Delete)
+            .AddValidation<ContainerTemplateDeleteRequest>()
             .WithName("ContainerTemplatesDelete");
     }
 
@@ -50,9 +51,10 @@ public static class ContainerTemplates {
     }
 
     public static async Task<Results<NoContent, NotFound>> Delete(
-            int id,
+            [AsParameters]
+            ContainerTemplateDeleteRequest req,
             ContainerTemplateService service,
             CancellationToken token = default) {
-        return await service.DeleteAsync(id) ? TypedResults.NoContent() : TypedResults.NotFound();
+        return await service.DeleteAsync(req, token) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 }

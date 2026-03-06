@@ -320,4 +320,18 @@ public class ValidationHelper(
         }
         return true;
     }
+
+    internal async Task<bool> NotHaveAnyAssociatedContainerTemplates(
+        StoreItemDeleteRequest request,
+        CancellationToken token
+    ) {
+        return await _dbContext.ContainerTemplates.AnyAsync(ct => ct.StoreItemId == request.Id);
+    }
+
+    internal async Task<bool> NotHaveAnyAssociatedContainers(
+        ContainerTemplateDeleteRequest request,
+        CancellationToken token
+    ) {
+        return await _dbContext.Containers.AnyAsync(c => c.TemplateId == request.Id, token);
+    }
 }

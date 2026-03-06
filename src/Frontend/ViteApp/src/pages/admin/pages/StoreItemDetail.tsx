@@ -35,7 +35,6 @@ export const StoreItemDetail = () => {
     null,
   );
   const [categories, setCategories] = useState<CategoryModel[] | null>(null);
-  const [currentCost, setCurrentCost] = useState<CostCreateRequest>();
   const {
     register: registerCost,
     handleSubmit: handleCostSubmit,

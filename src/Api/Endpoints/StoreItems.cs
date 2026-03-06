@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using FluentValidation;
-using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
 using KisV4.Common;
 using KisV4.Common.Models;
@@ -25,6 +24,7 @@ public static class StoreItems {
             .WithName("StoreItemsUpdate")
             .AddValidation<StoreItemUpdateRequest>();
         routeBuilder.MapDelete("store-items/{id:int}", Delete)
+            .AddValidation<StoreItemDeleteRequest>()
             .WithName("StoreItemsDelete");
     }
 
@@ -86,16 +86,17 @@ public static class StoreItems {
         var output = await service.UpdateAsync(req, token);
         return output switch {
             null => TypedResults.NotFound(),
-            var val => TypedResults.Ok(output),
+            var val => TypedResults.Ok(val),
         };
     }
 
     public static async Task<Results<NoContent, NotFound>> Delete(
-            int id,
-            StoreItemService service,
-            CancellationToken token = default
-            ) {
-        return (await service.DeleteAsync(id, token))
+        [AsParameters]
+        StoreItemDeleteRequest req,
+        StoreItemService service,
+        CancellationToken token = default
+    ) {
+        return (await service.DeleteAsync(req, token))
             ? TypedResults.NoContent()
             : TypedResults.NotFound();
     }

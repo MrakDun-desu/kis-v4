@@ -96,9 +96,10 @@ public class ContainerTemplateService(
     }
 
     public async Task<bool> DeleteAsync(
-            int id,
-            CancellationToken token = default
-            ) {
+        ContainerTemplateDeleteRequest req,
+        CancellationToken token = default
+    ) {
+        var id = req.Id;
         var deletedCount = await _dbContext.ContainerTemplates
             .Where(ct => ct.Id == id)
             .ExecuteUpdateAsync(props => props.SetProperty(ct => ct.Deleted, true), token);

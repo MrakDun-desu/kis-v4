@@ -46,3 +46,8 @@ public record ContainerTemplateUpdateRequest {
 }
 
 public record ContainerTemplateUpdateResponse : ContainerTemplateModel;
+
+public record ContainerTemplateDeleteRequest {
+    [FromRoute]
+    public required int Id { get; init; }
+}

@@ -65,7 +65,6 @@ public class StoreItemService(
                 IsContainerItem = si.IsContainerItem,
                 CurrentCost = si.CurrentCost,
                 Categories = si.Categories.Select(c => c.ToModel()),
-                Costs = si.Costs.OrderBy(c => c.Timestamp).Select(c => c.ToModel())
             })
             .FirstOrDefaultAsync(si => si.Id == id, token);
     }
@@ -114,7 +113,6 @@ public class StoreItemService(
             UnitName = entity.UnitName,
             IsContainerItem = entity.IsContainerItem,
             CurrentCost = entity.CurrentCost,
-            Costs = entity.Costs.Select(c => c.ToModel()),
             Categories = entity.Categories.Select(c => c.ToModel())
         };
     }
@@ -155,19 +153,35 @@ public class StoreItemService(
             UnitName = entity.UnitName,
             IsContainerItem = entity.IsContainerItem,
             CurrentCost = entity.CurrentCost,
-            Costs = entity.Costs.Select(c => c.ToModel()),
             Categories = entity.Categories.Select(c => c.ToModel())
         };
     }
 
     public async Task<bool> DeleteAsync(
-            int id,
-            CancellationToken token = default
-            ) {
-        var changedAmount = await _dbContext.StoreItems
-            .Where(si => si.Id == id)
-            .ExecuteUpdateAsync(props => props.SetProperty(si => si.Hidden, true), token);
+        StoreItemDeleteRequest req,
+        CancellationToken token = default
+    ) {
+        var id = req.Id;
+        await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
+        try {
+            var changedAmount = await _dbContext.StoreItems
+                .Where(si => si.Id == id)
+                .ExecuteUpdateAsync(props => props.SetProperty(si => si.Hidden, true), token);
 
-        return changedAmount > 0;
+            if (changedAmount == 0) {
+                return false;
+            }
+
+            await _dbContext.Compositions
+                .IgnoreQueryFilters()
+                .Where(c => c.StoreItemId == id)
+                .ExecuteDeleteAsync(token);
+
+            await dbTransaction.CommitAsync(token);
+            return true;
+        } catch {
+            await dbTransaction.RollbackAsync(token);
+            throw;
+        }
     }
 }

@@ -41,7 +41,6 @@ export * from './ContainerUpdateModel';
 export * from './ContainerUpdateResponse';
 export * from './CostCreateRequest';
 export * from './CostCreateResponse';
-export * from './CostModel';
 export * from './HttpValidationProblemDetails';
 export * from './LayoutCreateRequestModel';
 export * from './LayoutCreateResponse';

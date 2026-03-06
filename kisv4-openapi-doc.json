@@ -3917,38 +3917,6 @@
           }
         }
       },
-      "CostModel": {
-        "required": [
-          "amount",
-          "timestamp",
-          "description",
-          "storeItemId",
-          "user"
-        ],
-        "type": "object",
-        "properties": {
-          "amount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": "string",
-            "format": "string"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "description": {
-            "type": "string"
-          },
-          "storeItemId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "int32"
-          },
-          "user": {
-            "$ref": "#/components/schemas/UserListModel"
-          }
-        }
-      },
       "HttpValidationProblemDetails": {
         "type": "object",
         "properties": {
@@ -5774,8 +5742,7 @@
           "unitName",
           "isContainerItem",
           "currentCost",
-          "categories",
-          "costs"
+          "categories"
         ],
         "type": "object",
         "properties": {
@@ -5802,12 +5769,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CategoryModel"
-            }
-          },
-          "costs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CostModel"
             }
           }
         }
@@ -5868,8 +5829,7 @@
           "unitName",
           "isContainerItem",
           "currentCost",
-          "categories",
-          "costs"
+          "categories"
         ],
         "type": "object",
         "properties": {
@@ -5896,12 +5856,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CategoryModel"
-            }
-          },
-          "costs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CostModel"
             }
           }
         }
@@ -5938,8 +5892,7 @@
           "unitName",
           "isContainerItem",
           "currentCost",
-          "categories",
-          "costs"
+          "categories"
         ],
         "type": "object",
         "properties": {
@@ -5966,12 +5919,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CategoryModel"
-            }
-          },
-          "costs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CostModel"
             }
           }
         }
