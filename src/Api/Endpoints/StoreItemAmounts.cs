@@ -10,6 +10,7 @@ public static class StoreItemAmounts {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("store-item-amounts", ReadAll)
+            .WithName("StoreItemAmountsReadAll")
             .AddValidation<StoreItemAmountReadAllRequest>();
     }
 

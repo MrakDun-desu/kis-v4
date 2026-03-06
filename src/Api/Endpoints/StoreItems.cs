@@ -13,14 +13,19 @@ public static class StoreItems {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("store-items", ReadAll)
+            .WithName("StoreItemsReadAll")
             .AddValidation<StoreItemReadAllRequest>();
         routeBuilder.MapPost("store-items", Create)
+            .WithName("StoreItemsCreate")
             .AddValidation<StoreItemCreateRequest>();
         routeBuilder.MapGet("store-items/{id:int}", Read)
+            .WithName("StoreItemsRead")
             .WithName(ReadRouteName);
         routeBuilder.MapPut("store-items/{id:int}", Update)
+            .WithName("StoreItemsUpdate")
             .AddValidation<StoreItemUpdateRequest>();
-        routeBuilder.MapDelete("store-items/{id:int}", Delete);
+        routeBuilder.MapDelete("store-items/{id:int}", Delete)
+            .WithName("StoreItemsDelete");
     }
 
     public static async Task<Results<Ok<StoreItemReadAllResponse>, ValidationProblem>> ReadAll(

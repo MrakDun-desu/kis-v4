@@ -10,14 +10,18 @@ public static class CashBoxes {
     private const string ReadRouteName = "CashBoxesRead";
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("cashboxes", ReadAll);
+        routeBuilder.MapGet("cashboxes", ReadAll)
+            .WithName("CashBoxesReadAll");
         routeBuilder.MapPost("cashboxes", Create)
+            .WithName("CashBoxesCreate")
             .AddValidation<CashBoxCreateRequest>();
         routeBuilder.MapGet("cashboxes/{id:int}", Read)
             .WithName(ReadRouteName);
         routeBuilder.MapPut("cashboxes/{id:int}", Update)
+            .WithName("CashBoxesUpdate")
             .AddValidation<CashBoxUpdateRequest>();
-        routeBuilder.MapDelete("cashboxes/{id:int}", Delete);
+        routeBuilder.MapDelete("cashboxes/{id:int}", Delete)
+            .WithName("CashBoxesDelete");
     }
 
     public static async Task<CashBoxReadAllResponse> ReadAll(

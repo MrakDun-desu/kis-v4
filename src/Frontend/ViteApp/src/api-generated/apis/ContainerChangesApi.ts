@@ -31,12 +31,12 @@ import {
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
-export interface ContainerChangesGetRequest {
-    containerId: number;
+export interface ContainerChangesCreateRequest {
+    containerChangeCreateRequest: ContainerChangeCreateRequest;
 }
 
-export interface ContainerChangesPostRequest {
-    containerChangeCreateRequest: ContainerChangeCreateRequest;
+export interface ContainerChangesReadAllRequest {
+    containerId: number;
 }
 
 /**
@@ -46,11 +46,48 @@ export class ContainerChangesApi extends runtime.BaseAPI {
 
     /**
      */
-    async containerChangesGetRaw(requestParameters: ContainerChangesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerChangeReadAllResponse>> {
+    async containerChangesCreateRaw(requestParameters: ContainerChangesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerChangeCreateResponse>> {
+        if (requestParameters['containerChangeCreateRequest'] == null) {
+            throw new runtime.RequiredError(
+                'containerChangeCreateRequest',
+                'Required parameter "containerChangeCreateRequest" was null or undefined when calling containerChangesCreate().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/container-changes`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ContainerChangeCreateRequestToJSON(requestParameters['containerChangeCreateRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerChangeCreateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async containerChangesCreate(requestParameters: ContainerChangesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerChangeCreateResponse> {
+        const response = await this.containerChangesCreateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async containerChangesReadAllRaw(requestParameters: ContainerChangesReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerChangeReadAllResponse>> {
         if (requestParameters['containerId'] == null) {
             throw new runtime.RequiredError(
                 'containerId',
-                'Required parameter "containerId" was null or undefined when calling containerChangesGet().'
+                'Required parameter "containerId" was null or undefined when calling containerChangesReadAll().'
             );
         }
 
@@ -77,45 +114,8 @@ export class ContainerChangesApi extends runtime.BaseAPI {
 
     /**
      */
-    async containerChangesGet(requestParameters: ContainerChangesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerChangeReadAllResponse> {
-        const response = await this.containerChangesGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async containerChangesPostRaw(requestParameters: ContainerChangesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerChangeCreateResponse>> {
-        if (requestParameters['containerChangeCreateRequest'] == null) {
-            throw new runtime.RequiredError(
-                'containerChangeCreateRequest',
-                'Required parameter "containerChangeCreateRequest" was null or undefined when calling containerChangesPost().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/container-changes`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ContainerChangeCreateRequestToJSON(requestParameters['containerChangeCreateRequest']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerChangeCreateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async containerChangesPost(requestParameters: ContainerChangesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerChangeCreateResponse> {
-        const response = await this.containerChangesPostRaw(requestParameters, initOverrides);
+    async containerChangesReadAll(requestParameters: ContainerChangesReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerChangeReadAllResponse> {
+        const response = await this.containerChangesReadAllRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

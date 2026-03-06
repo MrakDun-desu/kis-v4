@@ -14,12 +14,15 @@ public static class StoreTransactions {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("store-transactions", ReadAll)
+            .WithName("StoreTransactionsReadAll")
             .AddValidation<StoreTransactionReadAllRequest>();
         routeBuilder.MapGet("store-transactions/{id:int}", Read)
             .WithName(ReadRouteName);
         routeBuilder.MapPost("store-transactions", Create)
+            .WithName("StoreTransactionsCreate")
             .AddValidation<StoreTransactionCreateRequest>();
         routeBuilder.MapDelete("store-transactions/{id:int}", Delete)
+            .WithName("StoreTransactionsDelete")
             .RequireAuthorization<StoreTransactionDeleteRequest>()
             .WithAdminOverride();
     }

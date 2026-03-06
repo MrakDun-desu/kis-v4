@@ -5,7 +5,9 @@ namespace KisV4.Api.Endpoints;
 
 public static class Images {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapPost("images", Upload).DisableAntiforgery();
+        routeBuilder.MapPost("images", Upload)
+            .WithName("ImagesUpload")
+            .DisableAntiforgery();
     }
 
     private static Results<Created, ValidationProblem> Upload(

@@ -12,22 +12,29 @@ public static class SaleTransactions {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("sale-transactions", ReadAll)
+            .WithName("SaleTransactionsReadAll")
             .AddValidation<SaleTransactionReadAllRequest>();
         routeBuilder.MapGet("sale-transactions/{id:int}", Read)
             .WithName(ReadRouteName);
         routeBuilder.MapPost("sale-transactions", Create)
+            .WithName("SaleTransactionsCreate")
             .AddValidation<SaleTransactionCreateRequest>();
         routeBuilder.MapPost("sale-transactions/check-price", CheckPrice)
+            .WithName("SaleTransactionsCheckPrice")
             .AddValidation<SaleTransactionCheckPriceRequest>();
         routeBuilder.MapPost("sale-transactions/open", Open)
+            .WithName("SaleTransactionsOpen")
             .AddValidation<SaleTransactionOpenRequest>();
         routeBuilder.MapPatch("sale-transactions/{id:int}", Update)
+            .WithName("SaleTransactionsUpdate")
             .RequireAuthorization<SaleTransactionUpdateRequest>()
             .AddValidation<SaleTransactionUpdateRequest>();
         routeBuilder.MapPost("sale-transactions/{id:int}/close", Close)
+            .WithName("SaleTransactionsClose")
             .RequireAuthorization<SaleTransactionCloseRequest>()
             .AddValidation<SaleTransactionCloseRequest>();
         routeBuilder.MapDelete("sale-transactions/{id:int}", Delete)
+            .WithName("SaleTransactionsDelete")
             .RequireAuthorization<SaleTransactionDeleteRequest>()
             .WithAdminOverride();
     }

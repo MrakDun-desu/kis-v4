@@ -40,23 +40,13 @@ import {
     LayoutUpdateResponseToJSON,
 } from '../models/index';
 
-export interface LayoutsGetRequest {
-    name?: string;
-}
-
-export interface LayoutsIdDeleteRequest {
-    id: number;
-}
-
-export interface LayoutsIdPutRequest {
-    id: number;
-    layoutUpdateRequestModel: LayoutUpdateRequestModel;
-    storeId?: number;
-}
-
-export interface LayoutsPostRequest {
+export interface LayoutsCreateRequest {
     layoutCreateRequestModel: LayoutCreateRequestModel;
     storeId?: number;
+}
+
+export interface LayoutsDeleteRequest {
+    id: number;
 }
 
 export interface LayoutsReadRequest {
@@ -64,7 +54,17 @@ export interface LayoutsReadRequest {
     storeId?: number;
 }
 
-export interface LayoutsTopLevelGetRequest {
+export interface LayoutsReadAllRequest {
+    name?: string;
+}
+
+export interface LayoutsReadTopLevelRequest {
+    storeId?: number;
+}
+
+export interface LayoutsUpdateRequest {
+    id: number;
+    layoutUpdateRequestModel: LayoutUpdateRequestModel;
     storeId?: number;
 }
 
@@ -75,125 +75,11 @@ export class LayoutsApi extends runtime.BaseAPI {
 
     /**
      */
-    async layoutsGetRaw(requestParameters: LayoutsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LayoutReadAllResponse>> {
-        const queryParameters: any = {};
-
-        if (requestParameters['name'] != null) {
-            queryParameters['Name'] = requestParameters['name'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/layouts`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => LayoutReadAllResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async layoutsGet(requestParameters: LayoutsGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LayoutReadAllResponse> {
-        const response = await this.layoutsGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async layoutsIdDeleteRaw(requestParameters: LayoutsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling layoutsIdDelete().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/layouts/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async layoutsIdDelete(requestParameters: LayoutsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.layoutsIdDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async layoutsIdPutRaw(requestParameters: LayoutsIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LayoutUpdateResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling layoutsIdPut().'
-            );
-        }
-
-        if (requestParameters['layoutUpdateRequestModel'] == null) {
-            throw new runtime.RequiredError(
-                'layoutUpdateRequestModel',
-                'Required parameter "layoutUpdateRequestModel" was null or undefined when calling layoutsIdPut().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters['storeId'] != null) {
-            queryParameters['StoreId'] = requestParameters['storeId'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/layouts/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: LayoutUpdateRequestModelToJSON(requestParameters['layoutUpdateRequestModel']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => LayoutUpdateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async layoutsIdPut(requestParameters: LayoutsIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LayoutUpdateResponse> {
-        const response = await this.layoutsIdPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async layoutsPostRaw(requestParameters: LayoutsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LayoutCreateResponse>> {
+    async layoutsCreateRaw(requestParameters: LayoutsCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LayoutCreateResponse>> {
         if (requestParameters['layoutCreateRequestModel'] == null) {
             throw new runtime.RequiredError(
                 'layoutCreateRequestModel',
-                'Required parameter "layoutCreateRequestModel" was null or undefined when calling layoutsPost().'
+                'Required parameter "layoutCreateRequestModel" was null or undefined when calling layoutsCreate().'
             );
         }
 
@@ -223,9 +109,43 @@ export class LayoutsApi extends runtime.BaseAPI {
 
     /**
      */
-    async layoutsPost(requestParameters: LayoutsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LayoutCreateResponse> {
-        const response = await this.layoutsPostRaw(requestParameters, initOverrides);
+    async layoutsCreate(requestParameters: LayoutsCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LayoutCreateResponse> {
+        const response = await this.layoutsCreateRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     */
+    async layoutsDeleteRaw(requestParameters: LayoutsDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling layoutsDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/layouts/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async layoutsDelete(requestParameters: LayoutsDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.layoutsDeleteRaw(requestParameters, initOverrides);
     }
 
     /**
@@ -269,7 +189,38 @@ export class LayoutsApi extends runtime.BaseAPI {
 
     /**
      */
-    async layoutsTopLevelGetRaw(requestParameters: LayoutsTopLevelGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LayoutReadResponse>> {
+    async layoutsReadAllRaw(requestParameters: LayoutsReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LayoutReadAllResponse>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['name'] != null) {
+            queryParameters['Name'] = requestParameters['name'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/layouts`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LayoutReadAllResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async layoutsReadAll(requestParameters: LayoutsReadAllRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LayoutReadAllResponse> {
+        const response = await this.layoutsReadAllRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async layoutsReadTopLevelRaw(requestParameters: LayoutsReadTopLevelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LayoutReadResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['storeId'] != null) {
@@ -293,8 +244,57 @@ export class LayoutsApi extends runtime.BaseAPI {
 
     /**
      */
-    async layoutsTopLevelGet(requestParameters: LayoutsTopLevelGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LayoutReadResponse> {
-        const response = await this.layoutsTopLevelGetRaw(requestParameters, initOverrides);
+    async layoutsReadTopLevel(requestParameters: LayoutsReadTopLevelRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LayoutReadResponse> {
+        const response = await this.layoutsReadTopLevelRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async layoutsUpdateRaw(requestParameters: LayoutsUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LayoutUpdateResponse>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling layoutsUpdate().'
+            );
+        }
+
+        if (requestParameters['layoutUpdateRequestModel'] == null) {
+            throw new runtime.RequiredError(
+                'layoutUpdateRequestModel',
+                'Required parameter "layoutUpdateRequestModel" was null or undefined when calling layoutsUpdate().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['storeId'] != null) {
+            queryParameters['StoreId'] = requestParameters['storeId'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/layouts/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: LayoutUpdateRequestModelToJSON(requestParameters['layoutUpdateRequestModel']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LayoutUpdateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async layoutsUpdate(requestParameters: LayoutsUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LayoutUpdateResponse> {
+        const response = await this.layoutsUpdateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

@@ -10,8 +10,10 @@ public static class Compositions {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("compositions", ReadAll)
+            .WithName("CompositionsReadAll")
             .AddValidation<CompositionReadAllRequest>();
         routeBuilder.MapPut("compositions", Put)
+            .WithName("CompositionsPut")
             .AddValidation<CompositionPutRequest>();
     }
 

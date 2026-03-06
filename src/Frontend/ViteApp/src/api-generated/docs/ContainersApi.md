@@ -4,17 +4,17 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**containersGet**](ContainersApi.md#containersget) | **GET** /containers |  |
-| [**containersIdGet**](ContainersApi.md#containersidget) | **GET** /containers/{id} |  |
-| [**containersIdOperatorGet**](ContainersApi.md#containersidoperatorget) | **GET** /containers/{id}/operator |  |
-| [**containersIdPut**](ContainersApi.md#containersidput) | **PUT** /containers/{id} |  |
-| [**containersPost**](ContainersApi.md#containerspost) | **POST** /containers |  |
+| [**containersCreate**](ContainersApi.md#containerscreate) | **POST** /containers |  |
+| [**containersOperatorRead**](ContainersApi.md#containersoperatorread) | **GET** /containers/{id}/operator |  |
+| [**containersRead**](ContainersApi.md#containersread) | **GET** /containers/{id} |  |
+| [**containersReadAll**](ContainersApi.md#containersreadall) | **GET** /containers |  |
+| [**containersUpdate**](ContainersApi.md#containersupdate) | **PUT** /containers/{id} |  |
 
 
 
-## containersGet
+## containersCreate
 
-> ContainerReadAllResponse containersGet(storeId, templateId, pipeId, includeUnusable, page, pageSize)
+> ContainerCreateResponse containersCreate(containerCreateRequest)
 
 
 
@@ -25,7 +25,211 @@ import {
   Configuration,
   ContainersApi,
 } from '';
-import type { ContainersGetRequest } from '';
+import type { ContainersCreateRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new ContainersApi(config);
+
+  const body = {
+    // ContainerCreateRequest
+    containerCreateRequest: ...,
+  } satisfies ContainersCreateRequest;
+
+  try {
+    const data = await api.containersCreate(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **containerCreateRequest** | [ContainerCreateRequest](ContainerCreateRequest.md) |  | |
+
+### Return type
+
+[**ContainerCreateResponse**](ContainerCreateResponse.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`, `application/problem+json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
+| **400** | Bad Request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## containersOperatorRead
+
+> ContainerOperatorReadResponse containersOperatorRead(id)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ContainersApi,
+} from '';
+import type { ContainersOperatorReadRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new ContainersApi(config);
+
+  const body = {
+    // number
+    id: 8.14,
+  } satisfies ContainersOperatorReadRequest;
+
+  try {
+    const data = await api.containersOperatorRead(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `number` |  | [Defaults to `undefined`] |
+
+### Return type
+
+[**ContainerOperatorReadResponse**](ContainerOperatorReadResponse.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
+| **404** | Not Found |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## containersRead
+
+> ContainerReadResponse containersRead(id)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ContainersApi,
+} from '';
+import type { ContainersReadRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new ContainersApi(config);
+
+  const body = {
+    // number
+    id: 8.14,
+  } satisfies ContainersReadRequest;
+
+  try {
+    const data = await api.containersRead(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `number` |  | [Defaults to `undefined`] |
+
+### Return type
+
+[**ContainerReadResponse**](ContainerReadResponse.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
+| **404** | Not Found |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## containersReadAll
+
+> ContainerReadAllResponse containersReadAll(storeId, templateId, pipeId, includeUnusable, page, pageSize)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ContainersApi,
+} from '';
+import type { ContainersReadAllRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -46,10 +250,10 @@ async function example() {
     page: 8.14,
     // number (optional)
     pageSize: 8.14,
-  } satisfies ContainersGetRequest;
+  } satisfies ContainersReadAllRequest;
 
   try {
-    const data = await api.containersGet(body);
+    const data = await api.containersReadAll(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -95,77 +299,9 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## containersIdGet
+## containersUpdate
 
-> ContainerReadResponse containersIdGet(id)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  ContainersApi,
-} from '';
-import type { ContainersIdGetRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new ContainersApi(config);
-
-  const body = {
-    // number
-    id: 8.14,
-  } satisfies ContainersIdGetRequest;
-
-  try {
-    const data = await api.containersIdGet(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **id** | `number` |  | [Defaults to `undefined`] |
-
-### Return type
-
-[**ContainerReadResponse**](ContainerReadResponse.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Not Found |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## containersIdOperatorGet
-
-> ContainerOperatorReadResponse containersIdOperatorGet(id)
+> ContainerUpdateResponse containersUpdate(id, containerUpdateModel)
 
 
 
@@ -176,75 +312,7 @@ import {
   Configuration,
   ContainersApi,
 } from '';
-import type { ContainersIdOperatorGetRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new ContainersApi(config);
-
-  const body = {
-    // number
-    id: 8.14,
-  } satisfies ContainersIdOperatorGetRequest;
-
-  try {
-    const data = await api.containersIdOperatorGet(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **id** | `number` |  | [Defaults to `undefined`] |
-
-### Return type
-
-[**ContainerOperatorReadResponse**](ContainerOperatorReadResponse.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Not Found |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## containersIdPut
-
-> ContainerUpdateResponse containersIdPut(id, containerUpdateModel)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  ContainersApi,
-} from '';
-import type { ContainersIdPutRequest } from '';
+import type { ContainersUpdateRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -257,10 +325,10 @@ async function example() {
     id: 8.14,
     // ContainerUpdateModel
     containerUpdateModel: ...,
-  } satisfies ContainersIdPutRequest;
+  } satisfies ContainersUpdateRequest;
 
   try {
-    const data = await api.containersIdPut(body);
+    const data = await api.containersUpdate(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -298,74 +366,6 @@ example().catch(console.error);
 |-------------|-------------|------------------|
 | **200** | OK |  -  |
 | **404** | Not Found |  -  |
-| **400** | Bad Request |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## containersPost
-
-> ContainerCreateResponse containersPost(containerCreateRequest)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  ContainersApi,
-} from '';
-import type { ContainersPostRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new ContainersApi(config);
-
-  const body = {
-    // ContainerCreateRequest
-    containerCreateRequest: ...,
-  } satisfies ContainersPostRequest;
-
-  try {
-    const data = await api.containersPost(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **containerCreateRequest** | [ContainerCreateRequest](ContainerCreateRequest.md) |  | |
-
-### Return type
-
-[**ContainerCreateResponse**](ContainerCreateResponse.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: `application/json`
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
 | **400** | Bad Request |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)

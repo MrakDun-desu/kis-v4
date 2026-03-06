@@ -40,28 +40,28 @@ import {
     SaleItemUpdateResponseToJSON,
 } from '../models/index';
 
-export interface SaleItemsGetRequest {
+export interface SaleItemsCreateRequest {
+    saleItemCreateRequest: SaleItemCreateRequest;
+}
+
+export interface SaleItemsDeleteRequest {
+    id: number;
+}
+
+export interface SaleItemsReadRequest {
+    id: number;
+}
+
+export interface SaleItemsReadAllRequest {
     name?: string;
     categoryId?: number;
     page?: number;
     pageSize?: number;
 }
 
-export interface SaleItemsIdDeleteRequest {
-    id: number;
-}
-
-export interface SaleItemsIdPutRequest {
+export interface SaleItemsUpdateRequest {
     id: number;
     saleItemUpdateModel: SaleItemUpdateModel;
-}
-
-export interface SaleItemsPostRequest {
-    saleItemCreateRequest: SaleItemCreateRequest;
-}
-
-export interface SaleItemsReadRequest {
-    id: number;
 }
 
 /**
@@ -71,7 +71,113 @@ export class SaleItemsApi extends runtime.BaseAPI {
 
     /**
      */
-    async saleItemsGetRaw(requestParameters: SaleItemsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SaleItemReadAllResponse>> {
+    async saleItemsCreateRaw(requestParameters: SaleItemsCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SaleItemCreateResponse>> {
+        if (requestParameters['saleItemCreateRequest'] == null) {
+            throw new runtime.RequiredError(
+                'saleItemCreateRequest',
+                'Required parameter "saleItemCreateRequest" was null or undefined when calling saleItemsCreate().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/sale-items`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SaleItemCreateRequestToJSON(requestParameters['saleItemCreateRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SaleItemCreateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async saleItemsCreate(requestParameters: SaleItemsCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SaleItemCreateResponse> {
+        const response = await this.saleItemsCreateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async saleItemsDeleteRaw(requestParameters: SaleItemsDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling saleItemsDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/sale-items/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async saleItemsDelete(requestParameters: SaleItemsDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.saleItemsDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async saleItemsReadRaw(requestParameters: SaleItemsReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SaleItemReadResponse>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling saleItemsRead().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/sale-items/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SaleItemReadResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async saleItemsRead(requestParameters: SaleItemsReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SaleItemReadResponse> {
+        const response = await this.saleItemsReadRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async saleItemsReadAllRaw(requestParameters: SaleItemsReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SaleItemReadAllResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['name'] != null) {
@@ -107,59 +213,25 @@ export class SaleItemsApi extends runtime.BaseAPI {
 
     /**
      */
-    async saleItemsGet(requestParameters: SaleItemsGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SaleItemReadAllResponse> {
-        const response = await this.saleItemsGetRaw(requestParameters, initOverrides);
+    async saleItemsReadAll(requestParameters: SaleItemsReadAllRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SaleItemReadAllResponse> {
+        const response = await this.saleItemsReadAllRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async saleItemsIdDeleteRaw(requestParameters: SaleItemsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async saleItemsUpdateRaw(requestParameters: SaleItemsUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SaleItemUpdateResponse>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling saleItemsIdDelete().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/sale-items/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async saleItemsIdDelete(requestParameters: SaleItemsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.saleItemsIdDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async saleItemsIdPutRaw(requestParameters: SaleItemsIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SaleItemUpdateResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling saleItemsIdPut().'
+                'Required parameter "id" was null or undefined when calling saleItemsUpdate().'
             );
         }
 
         if (requestParameters['saleItemUpdateModel'] == null) {
             throw new runtime.RequiredError(
                 'saleItemUpdateModel',
-                'Required parameter "saleItemUpdateModel" was null or undefined when calling saleItemsIdPut().'
+                'Required parameter "saleItemUpdateModel" was null or undefined when calling saleItemsUpdate().'
             );
         }
 
@@ -186,80 +258,8 @@ export class SaleItemsApi extends runtime.BaseAPI {
 
     /**
      */
-    async saleItemsIdPut(requestParameters: SaleItemsIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SaleItemUpdateResponse> {
-        const response = await this.saleItemsIdPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async saleItemsPostRaw(requestParameters: SaleItemsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SaleItemCreateResponse>> {
-        if (requestParameters['saleItemCreateRequest'] == null) {
-            throw new runtime.RequiredError(
-                'saleItemCreateRequest',
-                'Required parameter "saleItemCreateRequest" was null or undefined when calling saleItemsPost().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/sale-items`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: SaleItemCreateRequestToJSON(requestParameters['saleItemCreateRequest']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => SaleItemCreateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async saleItemsPost(requestParameters: SaleItemsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SaleItemCreateResponse> {
-        const response = await this.saleItemsPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async saleItemsReadRaw(requestParameters: SaleItemsReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SaleItemReadResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling saleItemsRead().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/sale-items/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => SaleItemReadResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async saleItemsRead(requestParameters: SaleItemsReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SaleItemReadResponse> {
-        const response = await this.saleItemsReadRaw(requestParameters, initOverrides);
+    async saleItemsUpdate(requestParameters: SaleItemsUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SaleItemUpdateResponse> {
+        const response = await this.saleItemsUpdateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

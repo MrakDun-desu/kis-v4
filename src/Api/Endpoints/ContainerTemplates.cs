@@ -9,12 +9,16 @@ public static class ContainerTemplates {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("container-templates", ReadAll)
+            .WithName("ContainerTemplatesReadAll")
             .AddValidation<ContainerTemplateReadAllRequest>();
         routeBuilder.MapPost("container-templates", Create)
+            .WithName("ContainerTemplatesCreate")
             .AddValidation<ContainerTemplateCreateRequest>();
         routeBuilder.MapPut("container-templates/{id:int}", Update)
+            .WithName("ContainerTemplatesUpdate")
             .AddValidation<ContainerTemplateUpdateRequest>();
-        routeBuilder.MapDelete("container-templates/{id:int}", Delete);
+        routeBuilder.MapDelete("container-templates/{id:int}", Delete)
+            .WithName("ContainerTemplatesDelete");
     }
 
     public static async Task<Results<Ok<ContainerTemplateReadAllResponse>, ValidationProblem>> ReadAll(

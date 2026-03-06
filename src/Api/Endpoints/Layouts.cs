@@ -10,17 +10,22 @@ public static class Layouts {
     private const string ReadRouteName = "LayoutsRead";
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("layouts", ReadAll);
+        routeBuilder.MapGet("layouts", ReadAll)
+            .WithName("LayoutsReadAll");
         routeBuilder.MapGet("layouts/{id:int}", Read)
             .AddValidation<LayoutReadRequest>()
             .WithName(ReadRouteName);
         routeBuilder.MapGet("layouts/top-level", ReadTopLevel)
+            .WithName("LayoutsReadTopLevel")
             .AddValidation<LayoutReadTopLevelRequest>();
         routeBuilder.MapPost("layouts", Create)
+            .WithName("LayoutsCreate")
             .AddValidation<LayoutCreateRequest>();
         routeBuilder.MapPut("layouts/{id:int}", Update)
+            .WithName("LayoutsUpdate")
             .AddValidation<LayoutUpdateRequest>();
-        routeBuilder.MapDelete("layouts/{id:int}", Delete);
+        routeBuilder.MapDelete("layouts/{id:int}", Delete)
+            .WithName("LayoutsDelete");
     }
 
     private static async Task<LayoutReadAllResponse> ReadAll(

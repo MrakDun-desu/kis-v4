@@ -1,15 +1,11 @@
 import type { GridColDef } from "@mui/x-data-grid";
-import {
-  DataGrid,
-  GridActionsCellItem,
-  GridDeleteIcon,
-} from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import {
   CategoriesApi,
   StoreItemsApi,
   type CategoryModel,
   type StoreItemListModel,
-  type StoreItemsGetRequest,
+  type StoreItemsReadAllRequest,
 } from "../../../api-generated";
 import { useEffect, useState } from "react";
 import { defaultConfiguration } from "../../../configuration";
@@ -20,13 +16,10 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography,
 } from "@mui/material";
 import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import { GridActionsCell } from "@mui/x-data-grid";
-import { Delete } from "@mui/icons-material";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
@@ -35,7 +28,7 @@ export const StoreItems = () => {
   const [storeItems, setStoreItems] = useState<StoreItemListModel[] | null>(
     null,
   );
-  const [request, setRequest] = useState<StoreItemsGetRequest>({ page: 1 });
+  const [request, setRequest] = useState<StoreItemsReadAllRequest>({ page: 1 });
   const [isLoading, setLoading] = useState<boolean>(true);
   const [rowCount, setRowCount] = useState<number>(0);
   const [categories, setCategories] = useState<CategoryModel[] | null>(null);
@@ -44,7 +37,7 @@ export const StoreItems = () => {
   useEffect(() => {
     const handler = setTimeout(async () => {
       setLoading(true);
-      const response = await api.storeItemsGet(request);
+      const response = await api.storeItemsReadAll(request);
       setStoreItems(response.data);
       setRowCount(response.meta.total ?? 0);
       setLoading(false);
@@ -53,7 +46,7 @@ export const StoreItems = () => {
   }, [request]);
   useEffect(() => {
     const getCategories = async () => {
-      const response = await categoryApi.categoriesGet();
+      const response = await categoryApi.categoriesReadAll();
       setCategories(response.data);
     };
     getCategories();

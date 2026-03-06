@@ -10,14 +10,18 @@ public static class Stores {
     private const string ReadRouteName = "StoresRead";
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("stores", ReadAll);
+        routeBuilder.MapGet("stores", ReadAll)
+            .WithName("StoresReadAll");
         routeBuilder.MapGet("stores/{id:int}", Read)
             .WithName(ReadRouteName);
         routeBuilder.MapPost("stores", Create)
+            .WithName("StoresCreate")
             .AddValidation<StoreCreateRequest>();
         routeBuilder.MapPut("stores/{id:int}", Update)
+            .WithName("StoresUpdate")
             .AddValidation<StoreUpdateRequest>();
-        routeBuilder.MapDelete("stores/{id:int}", Delete);
+        routeBuilder.MapDelete("stores/{id:int}", Delete)
+            .WithName("StoresDelete");
     }
 
     public static async Task<StoreReadAllResponse> ReadAll(

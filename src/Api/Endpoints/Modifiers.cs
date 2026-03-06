@@ -11,14 +11,18 @@ public static class Modifiers {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("modifiers", ReadAll)
+            .WithName("ModifiersReadAll")
             .AddValidation<ModifierReadAllRequest>();
         routeBuilder.MapGet("modifers/{id:int}", Read)
             .WithName(ReadRouteName);
         routeBuilder.MapPost("modifiers", Create)
+            .WithName("ModifiersCreate")
             .AddValidation<ModifierCreateRequest>();
         routeBuilder.MapPut("modifiers/{id:int}", Update)
+            .WithName("ModifiersUpdate")
             .AddValidation<ModifierUpdateRequest>();
-        routeBuilder.MapDelete("modifiers/{id:int}", Delete);
+        routeBuilder.MapDelete("modifiers/{id:int}", Delete)
+            .WithName("ModifiersDelete");
     }
 
     public static async Task<Results<Ok<ModifierReadAllResponse>, ValidationProblem>> ReadAll(

@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**compositeAmountsGet**](CompositeAmountsApi.md#compositeamountsget) | **GET** /composite-amounts |  |
+| [**compositeAmountsReadAll**](CompositeAmountsApi.md#compositeamountsreadall) | **GET** /composite-amounts |  |
 
 
 
-## compositeAmountsGet
+## compositeAmountsReadAll
 
-> CompositeAmountReadAllResponse compositeAmountsGet(storeId, page, pageSize)
+> CompositeAmountReadAllResponse compositeAmountsReadAll(storeId, page, pageSize)
 
 
 
@@ -21,7 +21,7 @@ import {
   Configuration,
   CompositeAmountsApi,
 } from '';
-import type { CompositeAmountsGetRequest } from '';
+import type { CompositeAmountsReadAllRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -36,10 +36,10 @@ async function example() {
     page: 8.14,
     // number (optional)
     pageSize: 8.14,
-  } satisfies CompositeAmountsGetRequest;
+  } satisfies CompositeAmountsReadAllRequest;
 
   try {
-    const data = await api.compositeAmountsGet(body);
+    const data = await api.compositeAmountsReadAll(body);
     console.log(data);
   } catch (error) {
     console.error(error);

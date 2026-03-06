@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**storeItemAmountsGet**](StoreItemAmountsApi.md#storeitemamountsget) | **GET** /store-item-amounts |  |
+| [**storeItemAmountsReadAll**](StoreItemAmountsApi.md#storeitemamountsreadall) | **GET** /store-item-amounts |  |
 
 
 
-## storeItemAmountsGet
+## storeItemAmountsReadAll
 
-> StoreItemAmountReadAllResponse storeItemAmountsGet(storeId, page, pageSize)
+> StoreItemAmountReadAllResponse storeItemAmountsReadAll(storeId, page, pageSize)
 
 
 
@@ -21,7 +21,7 @@ import {
   Configuration,
   StoreItemAmountsApi,
 } from '';
-import type { StoreItemAmountsGetRequest } from '';
+import type { StoreItemAmountsReadAllRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -36,10 +36,10 @@ async function example() {
     page: 8.14,
     // number (optional)
     pageSize: 8.14,
-  } satisfies StoreItemAmountsGetRequest;
+  } satisfies StoreItemAmountsReadAllRequest;
 
   try {
-    const data = await api.storeItemAmountsGet(body);
+    const data = await api.storeItemAmountsReadAll(body);
     console.log(data);
   } catch (error) {
     console.error(error);

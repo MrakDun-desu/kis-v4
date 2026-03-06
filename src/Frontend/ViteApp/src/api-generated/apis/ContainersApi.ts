@@ -43,7 +43,19 @@ import {
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
-export interface ContainersGetRequest {
+export interface ContainersCreateRequest {
+    containerCreateRequest: ContainerCreateRequest;
+}
+
+export interface ContainersOperatorReadRequest {
+    id: number;
+}
+
+export interface ContainersReadRequest {
+    id: number;
+}
+
+export interface ContainersReadAllRequest {
     storeId?: number;
     templateId?: number;
     pipeId?: number;
@@ -52,21 +64,9 @@ export interface ContainersGetRequest {
     pageSize?: number;
 }
 
-export interface ContainersIdGetRequest {
-    id: number;
-}
-
-export interface ContainersIdOperatorGetRequest {
-    id: number;
-}
-
-export interface ContainersIdPutRequest {
+export interface ContainersUpdateRequest {
     id: number;
     containerUpdateModel: ContainerUpdateModel;
-}
-
-export interface ContainersPostRequest {
-    containerCreateRequest: ContainerCreateRequest;
 }
 
 /**
@@ -76,7 +76,114 @@ export class ContainersApi extends runtime.BaseAPI {
 
     /**
      */
-    async containersGetRaw(requestParameters: ContainersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerReadAllResponse>> {
+    async containersCreateRaw(requestParameters: ContainersCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerCreateResponse>> {
+        if (requestParameters['containerCreateRequest'] == null) {
+            throw new runtime.RequiredError(
+                'containerCreateRequest',
+                'Required parameter "containerCreateRequest" was null or undefined when calling containersCreate().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/containers`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ContainerCreateRequestToJSON(requestParameters['containerCreateRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerCreateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async containersCreate(requestParameters: ContainersCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerCreateResponse> {
+        const response = await this.containersCreateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async containersOperatorReadRaw(requestParameters: ContainersOperatorReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerOperatorReadResponse>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling containersOperatorRead().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/containers/{id}/operator`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerOperatorReadResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async containersOperatorRead(requestParameters: ContainersOperatorReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerOperatorReadResponse> {
+        const response = await this.containersOperatorReadRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async containersReadRaw(requestParameters: ContainersReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerReadResponse>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling containersRead().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/containers/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerReadResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async containersRead(requestParameters: ContainersReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerReadResponse> {
+        const response = await this.containersReadRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async containersReadAllRaw(requestParameters: ContainersReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerReadAllResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['storeId'] != null) {
@@ -120,95 +227,25 @@ export class ContainersApi extends runtime.BaseAPI {
 
     /**
      */
-    async containersGet(requestParameters: ContainersGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerReadAllResponse> {
-        const response = await this.containersGetRaw(requestParameters, initOverrides);
+    async containersReadAll(requestParameters: ContainersReadAllRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerReadAllResponse> {
+        const response = await this.containersReadAllRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async containersIdGetRaw(requestParameters: ContainersIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerReadResponse>> {
+    async containersUpdateRaw(requestParameters: ContainersUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerUpdateResponse>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling containersIdGet().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/containers/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerReadResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async containersIdGet(requestParameters: ContainersIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerReadResponse> {
-        const response = await this.containersIdGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async containersIdOperatorGetRaw(requestParameters: ContainersIdOperatorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerOperatorReadResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling containersIdOperatorGet().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/containers/{id}/operator`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerOperatorReadResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async containersIdOperatorGet(requestParameters: ContainersIdOperatorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerOperatorReadResponse> {
-        const response = await this.containersIdOperatorGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async containersIdPutRaw(requestParameters: ContainersIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerUpdateResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling containersIdPut().'
+                'Required parameter "id" was null or undefined when calling containersUpdate().'
             );
         }
 
         if (requestParameters['containerUpdateModel'] == null) {
             throw new runtime.RequiredError(
                 'containerUpdateModel',
-                'Required parameter "containerUpdateModel" was null or undefined when calling containersIdPut().'
+                'Required parameter "containerUpdateModel" was null or undefined when calling containersUpdate().'
             );
         }
 
@@ -235,45 +272,8 @@ export class ContainersApi extends runtime.BaseAPI {
 
     /**
      */
-    async containersIdPut(requestParameters: ContainersIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerUpdateResponse> {
-        const response = await this.containersIdPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async containersPostRaw(requestParameters: ContainersPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerCreateResponse>> {
-        if (requestParameters['containerCreateRequest'] == null) {
-            throw new runtime.RequiredError(
-                'containerCreateRequest',
-                'Required parameter "containerCreateRequest" was null or undefined when calling containersPost().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/containers`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ContainerCreateRequestToJSON(requestParameters['containerCreateRequest']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerCreateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async containersPost(requestParameters: ContainersPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerCreateResponse> {
-        const response = await this.containersPostRaw(requestParameters, initOverrides);
+    async containersUpdate(requestParameters: ContainersUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerUpdateResponse> {
+        const response = await this.containersUpdateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

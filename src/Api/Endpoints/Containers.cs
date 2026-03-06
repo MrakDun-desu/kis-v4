@@ -11,12 +11,17 @@ namespace KisV4.Api.Endpoints;
 public static class Containers {
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("containers", ReadAll)
+            .WithName("ContainersReadAll")
             .AddValidation<ContainerReadAllRequest>();
         routeBuilder.MapPost("containers", Create)
+            .WithName("ContainersCreate")
             .AddValidation<ContainerCreateRequest>();
-        routeBuilder.MapGet("containers/{id:int}", Read);
-        routeBuilder.MapGet("containers/{id:int}/operator", OperatorRead);
+        routeBuilder.MapGet("containers/{id:int}", Read)
+            .WithName("ContainersRead");
+        routeBuilder.MapGet("containers/{id:int}/operator", OperatorRead)
+            .WithName("ContainersOperatorRead");
         routeBuilder.MapPut("containers/{id:int}", Update)
+            .WithName("ContainersUpdate")
             .AddValidation<ContainerUpdateRequest>();
     }
 

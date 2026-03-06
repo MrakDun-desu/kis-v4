@@ -11,14 +11,18 @@ public static class Pipes {
     private const string ReadRouteName = "PipesRead";
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("pipes", ReadAll);
+        routeBuilder.MapGet("pipes", ReadAll)
+            .WithName("PipesReadAll");
         routeBuilder.MapGet("pipes/{id:int}", Read)
             .WithName(ReadRouteName);
         routeBuilder.MapPost("pipes", Create)
+            .WithName("PipesCreate")
             .AddValidation<PipeCreateRequest>();
         routeBuilder.MapPut("pipes/{id:int}", Update)
+            .WithName("PipesUpdate")
             .AddValidation<PipeUpdateRequest>();
-        routeBuilder.MapDelete("pipes/{id:int}", Delete);
+        routeBuilder.MapDelete("pipes/{id:int}", Delete)
+            .WithName("PipesDelete");
     }
 
     public static async Task<PipeReadAllResponse> ReadAll(

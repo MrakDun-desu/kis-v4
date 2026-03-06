@@ -34,25 +34,25 @@ import {
     StoreTransactionReadResponseToJSON,
 } from '../models/index';
 
-export interface StoreTransactionsGetRequest {
+export interface StoreTransactionsCreateRequest {
+    storeTransactionCreateRequest: StoreTransactionCreateRequest;
+}
+
+export interface StoreTransactionsDeleteRequest {
+    id: number;
+    updateCosts?: boolean;
+}
+
+export interface StoreTransactionsReadRequest {
+    id: number;
+}
+
+export interface StoreTransactionsReadAllRequest {
     from?: Date;
     to?: Date;
     onlySelfCancellable?: boolean;
     page?: number;
     pageSize?: number;
-}
-
-export interface StoreTransactionsIdDeleteRequest {
-    id: number;
-    updateCosts?: boolean;
-}
-
-export interface StoreTransactionsPostRequest {
-    storeTransactionCreateRequest: StoreTransactionCreateRequest;
-}
-
-export interface StoreTransactionsReadRequest {
-    id: number;
 }
 
 /**
@@ -62,7 +62,117 @@ export class StoreTransactionsApi extends runtime.BaseAPI {
 
     /**
      */
-    async storeTransactionsGetRaw(requestParameters: StoreTransactionsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StoreTransactionReadAllResponse>> {
+    async storeTransactionsCreateRaw(requestParameters: StoreTransactionsCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StoreTransactionCreateResponse>> {
+        if (requestParameters['storeTransactionCreateRequest'] == null) {
+            throw new runtime.RequiredError(
+                'storeTransactionCreateRequest',
+                'Required parameter "storeTransactionCreateRequest" was null or undefined when calling storeTransactionsCreate().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/store-transactions`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: StoreTransactionCreateRequestToJSON(requestParameters['storeTransactionCreateRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StoreTransactionCreateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async storeTransactionsCreate(requestParameters: StoreTransactionsCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StoreTransactionCreateResponse> {
+        const response = await this.storeTransactionsCreateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async storeTransactionsDeleteRaw(requestParameters: StoreTransactionsDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling storeTransactionsDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['updateCosts'] != null) {
+            queryParameters['UpdateCosts'] = requestParameters['updateCosts'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/store-transactions/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async storeTransactionsDelete(requestParameters: StoreTransactionsDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.storeTransactionsDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async storeTransactionsReadRaw(requestParameters: StoreTransactionsReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StoreTransactionReadResponse>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling storeTransactionsRead().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/store-transactions/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StoreTransactionReadResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async storeTransactionsRead(requestParameters: StoreTransactionsReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StoreTransactionReadResponse> {
+        const response = await this.storeTransactionsReadRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async storeTransactionsReadAllRaw(requestParameters: StoreTransactionsReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StoreTransactionReadAllResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['from'] != null) {
@@ -102,118 +212,8 @@ export class StoreTransactionsApi extends runtime.BaseAPI {
 
     /**
      */
-    async storeTransactionsGet(requestParameters: StoreTransactionsGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StoreTransactionReadAllResponse> {
-        const response = await this.storeTransactionsGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async storeTransactionsIdDeleteRaw(requestParameters: StoreTransactionsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling storeTransactionsIdDelete().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters['updateCosts'] != null) {
-            queryParameters['UpdateCosts'] = requestParameters['updateCosts'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/store-transactions/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async storeTransactionsIdDelete(requestParameters: StoreTransactionsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.storeTransactionsIdDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async storeTransactionsPostRaw(requestParameters: StoreTransactionsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StoreTransactionCreateResponse>> {
-        if (requestParameters['storeTransactionCreateRequest'] == null) {
-            throw new runtime.RequiredError(
-                'storeTransactionCreateRequest',
-                'Required parameter "storeTransactionCreateRequest" was null or undefined when calling storeTransactionsPost().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/store-transactions`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: StoreTransactionCreateRequestToJSON(requestParameters['storeTransactionCreateRequest']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => StoreTransactionCreateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async storeTransactionsPost(requestParameters: StoreTransactionsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StoreTransactionCreateResponse> {
-        const response = await this.storeTransactionsPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async storeTransactionsReadRaw(requestParameters: StoreTransactionsReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StoreTransactionReadResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling storeTransactionsRead().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/store-transactions/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => StoreTransactionReadResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async storeTransactionsRead(requestParameters: StoreTransactionsReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StoreTransactionReadResponse> {
-        const response = await this.storeTransactionsReadRaw(requestParameters, initOverrides);
+    async storeTransactionsReadAll(requestParameters: StoreTransactionsReadAllRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StoreTransactionReadAllResponse> {
+        const response = await this.storeTransactionsReadAllRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

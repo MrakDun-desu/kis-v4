@@ -32,7 +32,7 @@ export interface LayoutItemModelLayoutPipeModel {
      * @type {string}
      * @memberof LayoutItemModelLayoutPipeModel
      */
-    type?: LayoutItemModelLayoutPipeModelTypeEnum;
+    type: LayoutItemModelLayoutPipeModelTypeEnum;
     /**
      * 
      * @type {PipeListModel}
@@ -67,6 +67,7 @@ export type LayoutItemModelLayoutPipeModelTypeEnum = typeof LayoutItemModelLayou
  * Check if a given object implements the LayoutItemModelLayoutPipeModel interface.
  */
 export function instanceOfLayoutItemModelLayoutPipeModel(value: object): value is LayoutItemModelLayoutPipeModel {
+    if (!('type' in value) || value['type'] === undefined) return false;
     if (!('target' in value) || value['target'] === undefined) return false;
     if (!('x' in value) || value['x'] === undefined) return false;
     if (!('y' in value) || value['y'] === undefined) return false;
@@ -83,7 +84,7 @@ export function LayoutItemModelLayoutPipeModelFromJSONTyped(json: any, ignoreDis
     }
     return {
         
-        'type': json['type'] == null ? undefined : json['type'],
+        'type': json['type'],
         'target': PipeListModelFromJSON(json['target']),
         'x': json['x'],
         'y': json['y'],

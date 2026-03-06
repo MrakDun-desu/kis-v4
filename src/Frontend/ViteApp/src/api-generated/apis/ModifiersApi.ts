@@ -40,7 +40,19 @@ import {
     ModifierUpdateResponseToJSON,
 } from '../models/index';
 
-export interface ModifiersGetRequest {
+export interface ModifiersCreateRequest {
+    modifierCreateRequest: ModifierCreateRequest;
+}
+
+export interface ModifiersDeleteRequest {
+    id: number;
+}
+
+export interface ModifiersReadRequest {
+    id: number;
+}
+
+export interface ModifiersReadAllRequest {
     name?: string;
     categoryId?: number;
     targetId?: number;
@@ -48,21 +60,9 @@ export interface ModifiersGetRequest {
     pageSize?: number;
 }
 
-export interface ModifiersIdDeleteRequest {
-    id: number;
-}
-
-export interface ModifiersIdPutRequest {
+export interface ModifiersUpdateRequest {
     id: number;
     modifierUpdateModel: ModifierUpdateModel;
-}
-
-export interface ModifiersPostRequest {
-    modifierCreateRequest: ModifierCreateRequest;
-}
-
-export interface ModifiersReadRequest {
-    id: number;
 }
 
 /**
@@ -72,7 +72,113 @@ export class ModifiersApi extends runtime.BaseAPI {
 
     /**
      */
-    async modifiersGetRaw(requestParameters: ModifiersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ModifierReadAllResponse>> {
+    async modifiersCreateRaw(requestParameters: ModifiersCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ModifierCreateResponse>> {
+        if (requestParameters['modifierCreateRequest'] == null) {
+            throw new runtime.RequiredError(
+                'modifierCreateRequest',
+                'Required parameter "modifierCreateRequest" was null or undefined when calling modifiersCreate().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/modifiers`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ModifierCreateRequestToJSON(requestParameters['modifierCreateRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ModifierCreateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async modifiersCreate(requestParameters: ModifiersCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ModifierCreateResponse> {
+        const response = await this.modifiersCreateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async modifiersDeleteRaw(requestParameters: ModifiersDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling modifiersDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/modifiers/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async modifiersDelete(requestParameters: ModifiersDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.modifiersDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async modifiersReadRaw(requestParameters: ModifiersReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ModifierReadResponse>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling modifiersRead().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/modifers/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ModifierReadResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async modifiersRead(requestParameters: ModifiersReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ModifierReadResponse> {
+        const response = await this.modifiersReadRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async modifiersReadAllRaw(requestParameters: ModifiersReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ModifierReadAllResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['name'] != null) {
@@ -112,59 +218,25 @@ export class ModifiersApi extends runtime.BaseAPI {
 
     /**
      */
-    async modifiersGet(requestParameters: ModifiersGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ModifierReadAllResponse> {
-        const response = await this.modifiersGetRaw(requestParameters, initOverrides);
+    async modifiersReadAll(requestParameters: ModifiersReadAllRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ModifierReadAllResponse> {
+        const response = await this.modifiersReadAllRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async modifiersIdDeleteRaw(requestParameters: ModifiersIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async modifiersUpdateRaw(requestParameters: ModifiersUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ModifierUpdateResponse>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling modifiersIdDelete().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/modifiers/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async modifiersIdDelete(requestParameters: ModifiersIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.modifiersIdDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async modifiersIdPutRaw(requestParameters: ModifiersIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ModifierUpdateResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling modifiersIdPut().'
+                'Required parameter "id" was null or undefined when calling modifiersUpdate().'
             );
         }
 
         if (requestParameters['modifierUpdateModel'] == null) {
             throw new runtime.RequiredError(
                 'modifierUpdateModel',
-                'Required parameter "modifierUpdateModel" was null or undefined when calling modifiersIdPut().'
+                'Required parameter "modifierUpdateModel" was null or undefined when calling modifiersUpdate().'
             );
         }
 
@@ -191,80 +263,8 @@ export class ModifiersApi extends runtime.BaseAPI {
 
     /**
      */
-    async modifiersIdPut(requestParameters: ModifiersIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ModifierUpdateResponse> {
-        const response = await this.modifiersIdPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async modifiersPostRaw(requestParameters: ModifiersPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ModifierCreateResponse>> {
-        if (requestParameters['modifierCreateRequest'] == null) {
-            throw new runtime.RequiredError(
-                'modifierCreateRequest',
-                'Required parameter "modifierCreateRequest" was null or undefined when calling modifiersPost().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/modifiers`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ModifierCreateRequestToJSON(requestParameters['modifierCreateRequest']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ModifierCreateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async modifiersPost(requestParameters: ModifiersPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ModifierCreateResponse> {
-        const response = await this.modifiersPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async modifiersReadRaw(requestParameters: ModifiersReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ModifierReadResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling modifiersRead().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/modifers/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ModifierReadResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async modifiersRead(requestParameters: ModifiersReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ModifierReadResponse> {
-        const response = await this.modifiersReadRaw(requestParameters, initOverrides);
+    async modifiersUpdate(requestParameters: ModifiersUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ModifierUpdateResponse> {
+        const response = await this.modifiersUpdateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

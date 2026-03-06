@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**usersGet**](UsersApi.md#usersget) | **GET** /users |  |
+| [**usersReadAll**](UsersApi.md#usersreadall) | **GET** /users |  |
 
 
 
-## usersGet
+## usersReadAll
 
-> UserReadAllResponse usersGet(page, pageSize)
+> UserReadAllResponse usersReadAll(page, pageSize)
 
 
 
@@ -21,7 +21,7 @@ import {
   Configuration,
   UsersApi,
 } from '';
-import type { UsersGetRequest } from '';
+import type { UsersReadAllRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -34,10 +34,10 @@ async function example() {
     page: 8.14,
     // number (optional)
     pageSize: 8.14,
-  } satisfies UsersGetRequest;
+  } satisfies UsersReadAllRequest;
 
   try {
-    const data = await api.usersGet(body);
+    const data = await api.usersReadAll(body);
     console.log(data);
   } catch (error) {
     console.error(error);

@@ -37,24 +37,24 @@ import {
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
-export interface ContainerTemplatesGetRequest {
+export interface ContainerTemplatesCreateRequest {
+    containerTemplateCreateRequest: ContainerTemplateCreateRequest;
+}
+
+export interface ContainerTemplatesDeleteRequest {
+    id: number;
+}
+
+export interface ContainerTemplatesReadAllRequest {
     name?: string;
     storeItemId?: number;
     page?: number;
     pageSize?: number;
 }
 
-export interface ContainerTemplatesIdDeleteRequest {
-    id: number;
-}
-
-export interface ContainerTemplatesIdPutRequest {
+export interface ContainerTemplatesUpdateRequest {
     id: number;
     containerTemplateUpdateRequestModel: ContainerTemplateUpdateRequestModel;
-}
-
-export interface ContainerTemplatesPostRequest {
-    containerTemplateCreateRequest: ContainerTemplateCreateRequest;
 }
 
 /**
@@ -64,7 +64,78 @@ export class ContainerTemplatesApi extends runtime.BaseAPI {
 
     /**
      */
-    async containerTemplatesGetRaw(requestParameters: ContainerTemplatesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerTemplateReadAllResponse>> {
+    async containerTemplatesCreateRaw(requestParameters: ContainerTemplatesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerTemplateCreateResponse>> {
+        if (requestParameters['containerTemplateCreateRequest'] == null) {
+            throw new runtime.RequiredError(
+                'containerTemplateCreateRequest',
+                'Required parameter "containerTemplateCreateRequest" was null or undefined when calling containerTemplatesCreate().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/container-templates`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ContainerTemplateCreateRequestToJSON(requestParameters['containerTemplateCreateRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerTemplateCreateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async containerTemplatesCreate(requestParameters: ContainerTemplatesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerTemplateCreateResponse> {
+        const response = await this.containerTemplatesCreateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async containerTemplatesDeleteRaw(requestParameters: ContainerTemplatesDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling containerTemplatesDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/container-templates/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async containerTemplatesDelete(requestParameters: ContainerTemplatesDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.containerTemplatesDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async containerTemplatesReadAllRaw(requestParameters: ContainerTemplatesReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerTemplateReadAllResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['name'] != null) {
@@ -100,59 +171,25 @@ export class ContainerTemplatesApi extends runtime.BaseAPI {
 
     /**
      */
-    async containerTemplatesGet(requestParameters: ContainerTemplatesGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerTemplateReadAllResponse> {
-        const response = await this.containerTemplatesGetRaw(requestParameters, initOverrides);
+    async containerTemplatesReadAll(requestParameters: ContainerTemplatesReadAllRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerTemplateReadAllResponse> {
+        const response = await this.containerTemplatesReadAllRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async containerTemplatesIdDeleteRaw(requestParameters: ContainerTemplatesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async containerTemplatesUpdateRaw(requestParameters: ContainerTemplatesUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerTemplateUpdateResponse>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling containerTemplatesIdDelete().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/container-templates/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async containerTemplatesIdDelete(requestParameters: ContainerTemplatesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.containerTemplatesIdDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async containerTemplatesIdPutRaw(requestParameters: ContainerTemplatesIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerTemplateUpdateResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling containerTemplatesIdPut().'
+                'Required parameter "id" was null or undefined when calling containerTemplatesUpdate().'
             );
         }
 
         if (requestParameters['containerTemplateUpdateRequestModel'] == null) {
             throw new runtime.RequiredError(
                 'containerTemplateUpdateRequestModel',
-                'Required parameter "containerTemplateUpdateRequestModel" was null or undefined when calling containerTemplatesIdPut().'
+                'Required parameter "containerTemplateUpdateRequestModel" was null or undefined when calling containerTemplatesUpdate().'
             );
         }
 
@@ -179,45 +216,8 @@ export class ContainerTemplatesApi extends runtime.BaseAPI {
 
     /**
      */
-    async containerTemplatesIdPut(requestParameters: ContainerTemplatesIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerTemplateUpdateResponse> {
-        const response = await this.containerTemplatesIdPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async containerTemplatesPostRaw(requestParameters: ContainerTemplatesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ContainerTemplateCreateResponse>> {
-        if (requestParameters['containerTemplateCreateRequest'] == null) {
-            throw new runtime.RequiredError(
-                'containerTemplateCreateRequest',
-                'Required parameter "containerTemplateCreateRequest" was null or undefined when calling containerTemplatesPost().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/container-templates`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ContainerTemplateCreateRequestToJSON(requestParameters['containerTemplateCreateRequest']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ContainerTemplateCreateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async containerTemplatesPost(requestParameters: ContainerTemplatesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerTemplateCreateResponse> {
-        const response = await this.containerTemplatesPostRaw(requestParameters, initOverrides);
+    async containerTemplatesUpdate(requestParameters: ContainerTemplatesUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ContainerTemplateUpdateResponse> {
+        const response = await this.containerTemplatesUpdateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

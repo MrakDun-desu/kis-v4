@@ -10,6 +10,7 @@ public static class CompositeAmounts {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("composite-amounts", ReadAll)
+            .WithName("CompositeAmountsReadAll")
             .AddValidation<CompositeAmountReadAllRequest>();
     }
 

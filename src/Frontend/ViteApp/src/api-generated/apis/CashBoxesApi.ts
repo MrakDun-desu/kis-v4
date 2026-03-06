@@ -37,27 +37,99 @@ import {
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
+export interface CashBoxesCreateRequest {
+    name: string;
+}
+
+export interface CashBoxesDeleteRequest {
+    id: number;
+}
+
 export interface CashBoxesReadRequest {
     id: number;
 }
 
-export interface CashboxesIdDeleteRequest {
-    id: number;
-}
-
-export interface CashboxesIdPutRequest {
+export interface CashBoxesUpdateRequest {
     id: number;
     cashBoxUpdateRequestModel: CashBoxUpdateRequestModel;
-}
-
-export interface CashboxesPostRequest {
-    name: string;
 }
 
 /**
  * 
  */
 export class CashBoxesApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async cashBoxesCreateRaw(requestParameters: CashBoxesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CashBoxCreateResponse>> {
+        if (requestParameters['name'] == null) {
+            throw new runtime.RequiredError(
+                'name',
+                'Required parameter "name" was null or undefined when calling cashBoxesCreate().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['name'] != null) {
+            queryParameters['Name'] = requestParameters['name'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/cashboxes`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CashBoxCreateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async cashBoxesCreate(requestParameters: CashBoxesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CashBoxCreateResponse> {
+        const response = await this.cashBoxesCreateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async cashBoxesDeleteRaw(requestParameters: CashBoxesDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling cashBoxesDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/cashboxes/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async cashBoxesDelete(requestParameters: CashBoxesDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.cashBoxesDeleteRaw(requestParameters, initOverrides);
+    }
 
     /**
      */
@@ -96,7 +168,7 @@ export class CashBoxesApi extends runtime.BaseAPI {
 
     /**
      */
-    async cashboxesGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CashBoxReadAllResponse>> {
+    async cashBoxesReadAllRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CashBoxReadAllResponse>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -116,59 +188,25 @@ export class CashBoxesApi extends runtime.BaseAPI {
 
     /**
      */
-    async cashboxesGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CashBoxReadAllResponse> {
-        const response = await this.cashboxesGetRaw(initOverrides);
+    async cashBoxesReadAll(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CashBoxReadAllResponse> {
+        const response = await this.cashBoxesReadAllRaw(initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async cashboxesIdDeleteRaw(requestParameters: CashboxesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async cashBoxesUpdateRaw(requestParameters: CashBoxesUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CashBoxUpdateResponse>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling cashboxesIdDelete().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/cashboxes/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async cashboxesIdDelete(requestParameters: CashboxesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.cashboxesIdDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async cashboxesIdPutRaw(requestParameters: CashboxesIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CashBoxUpdateResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling cashboxesIdPut().'
+                'Required parameter "id" was null or undefined when calling cashBoxesUpdate().'
             );
         }
 
         if (requestParameters['cashBoxUpdateRequestModel'] == null) {
             throw new runtime.RequiredError(
                 'cashBoxUpdateRequestModel',
-                'Required parameter "cashBoxUpdateRequestModel" was null or undefined when calling cashboxesIdPut().'
+                'Required parameter "cashBoxUpdateRequestModel" was null or undefined when calling cashBoxesUpdate().'
             );
         }
 
@@ -195,46 +233,8 @@ export class CashBoxesApi extends runtime.BaseAPI {
 
     /**
      */
-    async cashboxesIdPut(requestParameters: CashboxesIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CashBoxUpdateResponse> {
-        const response = await this.cashboxesIdPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async cashboxesPostRaw(requestParameters: CashboxesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CashBoxCreateResponse>> {
-        if (requestParameters['name'] == null) {
-            throw new runtime.RequiredError(
-                'name',
-                'Required parameter "name" was null or undefined when calling cashboxesPost().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters['name'] != null) {
-            queryParameters['Name'] = requestParameters['name'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/cashboxes`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => CashBoxCreateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async cashboxesPost(requestParameters: CashboxesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CashBoxCreateResponse> {
-        const response = await this.cashboxesPostRaw(requestParameters, initOverrides);
+    async cashBoxesUpdate(requestParameters: CashBoxesUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CashBoxUpdateResponse> {
+        const response = await this.cashBoxesUpdateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

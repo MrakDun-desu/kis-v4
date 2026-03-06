@@ -25,7 +25,7 @@ import {
     StoreItemAmountReadAllResponseToJSON,
 } from '../models/index';
 
-export interface StoreItemAmountsGetRequest {
+export interface StoreItemAmountsReadAllRequest {
     storeId: number;
     page?: number;
     pageSize?: number;
@@ -38,11 +38,11 @@ export class StoreItemAmountsApi extends runtime.BaseAPI {
 
     /**
      */
-    async storeItemAmountsGetRaw(requestParameters: StoreItemAmountsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StoreItemAmountReadAllResponse>> {
+    async storeItemAmountsReadAllRaw(requestParameters: StoreItemAmountsReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StoreItemAmountReadAllResponse>> {
         if (requestParameters['storeId'] == null) {
             throw new runtime.RequiredError(
                 'storeId',
-                'Required parameter "storeId" was null or undefined when calling storeItemAmountsGet().'
+                'Required parameter "storeId" was null or undefined when calling storeItemAmountsReadAll().'
             );
         }
 
@@ -77,8 +77,8 @@ export class StoreItemAmountsApi extends runtime.BaseAPI {
 
     /**
      */
-    async storeItemAmountsGet(requestParameters: StoreItemAmountsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StoreItemAmountReadAllResponse> {
-        const response = await this.storeItemAmountsGetRaw(requestParameters, initOverrides);
+    async storeItemAmountsReadAll(requestParameters: StoreItemAmountsReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StoreItemAmountReadAllResponse> {
+        const response = await this.storeItemAmountsReadAllRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

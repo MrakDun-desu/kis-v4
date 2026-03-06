@@ -12,6 +12,7 @@ public static class Costs {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapPost("costs", Create)
+            .WithName("CostsCreate")
             .AddValidation<CostCreateRequest>();
     }
 

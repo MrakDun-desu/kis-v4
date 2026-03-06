@@ -32,7 +32,7 @@ export interface LayoutItemModelLayoutSaleItemModel {
      * @type {string}
      * @memberof LayoutItemModelLayoutSaleItemModel
      */
-    type?: LayoutItemModelLayoutSaleItemModelTypeEnum;
+    type: LayoutItemModelLayoutSaleItemModelTypeEnum;
     /**
      * 
      * @type {SaleItemOperatorModel}
@@ -67,6 +67,7 @@ export type LayoutItemModelLayoutSaleItemModelTypeEnum = typeof LayoutItemModelL
  * Check if a given object implements the LayoutItemModelLayoutSaleItemModel interface.
  */
 export function instanceOfLayoutItemModelLayoutSaleItemModel(value: object): value is LayoutItemModelLayoutSaleItemModel {
+    if (!('type' in value) || value['type'] === undefined) return false;
     if (!('target' in value) || value['target'] === undefined) return false;
     if (!('x' in value) || value['x'] === undefined) return false;
     if (!('y' in value) || value['y'] === undefined) return false;
@@ -83,7 +84,7 @@ export function LayoutItemModelLayoutSaleItemModelFromJSONTyped(json: any, ignor
     }
     return {
         
-        'type': json['type'] == null ? undefined : json['type'],
+        'type': json['type'],
         'target': SaleItemOperatorModelFromJSON(json['target']),
         'x': json['x'],
         'y': json['y'],

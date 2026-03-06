@@ -25,7 +25,7 @@ import {
     UserReadAllResponseToJSON,
 } from '../models/index';
 
-export interface UsersGetRequest {
+export interface UsersReadAllRequest {
     page?: number;
     pageSize?: number;
 }
@@ -37,7 +37,7 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async usersGetRaw(requestParameters: UsersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserReadAllResponse>> {
+    async usersReadAllRaw(requestParameters: UsersReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserReadAllResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['page'] != null) {
@@ -65,8 +65,8 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async usersGet(requestParameters: UsersGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserReadAllResponse> {
-        const response = await this.usersGetRaw(requestParameters, initOverrides);
+    async usersReadAll(requestParameters: UsersReadAllRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserReadAllResponse> {
+        const response = await this.usersReadAllRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

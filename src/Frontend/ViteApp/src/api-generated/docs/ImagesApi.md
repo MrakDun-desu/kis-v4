@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**imagesPost**](ImagesApi.md#imagespost) | **POST** /images |  |
+| [**imagesUpload**](ImagesApi.md#imagesupload) | **POST** /images |  |
 
 
 
-## imagesPost
+## imagesUpload
 
-> imagesPost(image)
+> imagesUpload(image)
 
 
 
@@ -21,7 +21,7 @@ import {
   Configuration,
   ImagesApi,
 } from '';
-import type { ImagesPostRequest } from '';
+import type { ImagesUploadRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -32,10 +32,10 @@ async function example() {
   const body = {
     // Blob
     image: BINARY_DATA_HERE,
-  } satisfies ImagesPostRequest;
+  } satisfies ImagesUploadRequest;
 
   try {
-    const data = await api.imagesPost(body);
+    const data = await api.imagesUpload(body);
     console.log(data);
   } catch (error) {
     console.error(error);

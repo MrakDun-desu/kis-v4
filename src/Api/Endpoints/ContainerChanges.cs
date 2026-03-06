@@ -12,8 +12,10 @@ public static class ContainerChanges {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("container-changes", ReadAll)
+            .WithName("ContainerChangesReadAll")
             .AddValidation<ContainerChangeReadAllRequest>();
         routeBuilder.MapPost("container-changes", Create)
+            .WithName("ContainerChangesCreate")
             .AddValidation<ContainerChangeCreateRequest>();
     }
 

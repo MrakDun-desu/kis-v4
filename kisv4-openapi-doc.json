@@ -10,6 +10,7 @@
         "tags": [
           "CashBoxes"
         ],
+        "operationId": "CashBoxesReadAll",
         "responses": {
           "200": {
             "description": "OK",
@@ -27,6 +28,7 @@
         "tags": [
           "CashBoxes"
         ],
+        "operationId": "CashBoxesCreate",
         "parameters": [
           {
             "name": "Name",
@@ -100,6 +102,7 @@
         "tags": [
           "CashBoxes"
         ],
+        "operationId": "CashBoxesUpdate",
         "parameters": [
           {
             "name": "id",
@@ -152,6 +155,7 @@
         "tags": [
           "CashBoxes"
         ],
+        "operationId": "CashBoxesDelete",
         "parameters": [
           {
             "name": "id",
@@ -179,6 +183,7 @@
         "tags": [
           "Categories"
         ],
+        "operationId": "CategoriesReadAll",
         "responses": {
           "200": {
             "description": "OK",
@@ -196,6 +201,7 @@
         "tags": [
           "Categories"
         ],
+        "operationId": "CategoriesCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -235,6 +241,7 @@
         "tags": [
           "Categories"
         ],
+        "operationId": "CategoriesUpdate",
         "parameters": [
           {
             "name": "id",
@@ -280,6 +287,7 @@
         "tags": [
           "Categories"
         ],
+        "operationId": "CategoriesDelete",
         "parameters": [
           {
             "name": "id",
@@ -307,6 +315,7 @@
         "tags": [
           "CompositeAmounts"
         ],
+        "operationId": "CompositeAmountsReadAll",
         "parameters": [
           {
             "name": "StoreId",
@@ -366,6 +375,7 @@
         "tags": [
           "Compositions"
         ],
+        "operationId": "CompositionsReadAll",
         "parameters": [
           {
             "name": "CompositeId",
@@ -405,6 +415,7 @@
         "tags": [
           "Compositions"
         ],
+        "operationId": "CompositionsPut",
         "requestBody": {
           "content": {
             "application/json": {
@@ -437,6 +448,7 @@
         "tags": [
           "ContainerChanges"
         ],
+        "operationId": "ContainerChangesReadAll",
         "parameters": [
           {
             "name": "ContainerId",
@@ -476,6 +488,7 @@
         "tags": [
           "ContainerChanges"
         ],
+        "operationId": "ContainerChangesCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -515,6 +528,7 @@
         "tags": [
           "Containers"
         ],
+        "operationId": "ContainersReadAll",
         "parameters": [
           {
             "name": "StoreId",
@@ -596,6 +610,7 @@
         "tags": [
           "Containers"
         ],
+        "operationId": "ContainersCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -635,6 +650,7 @@
         "tags": [
           "Containers"
         ],
+        "operationId": "ContainersRead",
         "parameters": [
           {
             "name": "id",
@@ -667,6 +683,7 @@
         "tags": [
           "Containers"
         ],
+        "operationId": "ContainersUpdate",
         "parameters": [
           {
             "name": "id",
@@ -721,6 +738,7 @@
         "tags": [
           "Containers"
         ],
+        "operationId": "ContainersOperatorRead",
         "parameters": [
           {
             "name": "id",
@@ -755,6 +773,7 @@
         "tags": [
           "ContainerTemplates"
         ],
+        "operationId": "ContainerTemplatesReadAll",
         "parameters": [
           {
             "name": "Name",
@@ -818,6 +837,7 @@
         "tags": [
           "ContainerTemplates"
         ],
+        "operationId": "ContainerTemplatesCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -857,6 +877,7 @@
         "tags": [
           "ContainerTemplates"
         ],
+        "operationId": "ContainerTemplatesUpdate",
         "parameters": [
           {
             "name": "id",
@@ -909,6 +930,7 @@
         "tags": [
           "ContainerTemplates"
         ],
+        "operationId": "ContainerTemplatesDelete",
         "parameters": [
           {
             "name": "id",
@@ -936,6 +958,7 @@
         "tags": [
           "Costs"
         ],
+        "operationId": "CostsCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -975,6 +998,7 @@
         "tags": [
           "Images"
         ],
+        "operationId": "ImagesUpload",
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -1015,6 +1039,7 @@
         "tags": [
           "Layouts"
         ],
+        "operationId": "LayoutsReadAll",
         "parameters": [
           {
             "name": "Name",
@@ -1041,6 +1066,7 @@
         "tags": [
           "Layouts"
         ],
+        "operationId": "LayoutsCreate",
         "parameters": [
           {
             "name": "StoreId",
@@ -1140,6 +1166,7 @@
         "tags": [
           "Layouts"
         ],
+        "operationId": "LayoutsUpdate",
         "parameters": [
           {
             "name": "id",
@@ -1201,6 +1228,7 @@
         "tags": [
           "Layouts"
         ],
+        "operationId": "LayoutsDelete",
         "parameters": [
           {
             "name": "id",
@@ -1228,6 +1256,7 @@
         "tags": [
           "Layouts"
         ],
+        "operationId": "LayoutsReadTopLevel",
         "parameters": [
           {
             "name": "StoreId",
@@ -1271,6 +1300,7 @@
         "tags": [
           "Modifiers"
         ],
+        "operationId": "ModifiersReadAll",
         "parameters": [
           {
             "name": "Name",
@@ -1343,6 +1373,7 @@
         "tags": [
           "Modifiers"
         ],
+        "operationId": "ModifiersCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1417,6 +1448,7 @@
         "tags": [
           "Modifiers"
         ],
+        "operationId": "ModifiersUpdate",
         "parameters": [
           {
             "name": "id",
@@ -1469,6 +1501,7 @@
         "tags": [
           "Modifiers"
         ],
+        "operationId": "ModifiersDelete",
         "parameters": [
           {
             "name": "id",
@@ -1496,6 +1529,7 @@
         "tags": [
           "Pipes"
         ],
+        "operationId": "PipesReadAll",
         "responses": {
           "200": {
             "description": "OK",
@@ -1513,6 +1547,7 @@
         "tags": [
           "Pipes"
         ],
+        "operationId": "PipesCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1585,6 +1620,7 @@
         "tags": [
           "Pipes"
         ],
+        "operationId": "PipesUpdate",
         "parameters": [
           {
             "name": "id",
@@ -1637,6 +1673,7 @@
         "tags": [
           "Pipes"
         ],
+        "operationId": "PipesDelete",
         "parameters": [
           {
             "name": "id",
@@ -1664,6 +1701,7 @@
         "tags": [
           "SaleItems"
         ],
+        "operationId": "SaleItemsReadAll",
         "parameters": [
           {
             "name": "Name",
@@ -1727,6 +1765,7 @@
         "tags": [
           "SaleItems"
         ],
+        "operationId": "SaleItemsCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1799,6 +1838,7 @@
         "tags": [
           "SaleItems"
         ],
+        "operationId": "SaleItemsUpdate",
         "parameters": [
           {
             "name": "id",
@@ -1851,6 +1891,7 @@
         "tags": [
           "SaleItems"
         ],
+        "operationId": "SaleItemsDelete",
         "parameters": [
           {
             "name": "id",
@@ -1878,6 +1919,7 @@
         "tags": [
           "SaleTransactions"
         ],
+        "operationId": "SaleTransactionsReadAll",
         "parameters": [
           {
             "name": "From",
@@ -1948,6 +1990,7 @@
         "tags": [
           "SaleTransactions"
         ],
+        "operationId": "SaleTransactionsCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2020,6 +2063,7 @@
         "tags": [
           "SaleTransactions"
         ],
+        "operationId": "SaleTransactionsUpdate",
         "parameters": [
           {
             "name": "id",
@@ -2072,6 +2116,7 @@
         "tags": [
           "SaleTransactions"
         ],
+        "operationId": "SaleTransactionsDelete",
         "parameters": [
           {
             "name": "id",
@@ -2099,6 +2144,7 @@
         "tags": [
           "SaleTransactions"
         ],
+        "operationId": "SaleTransactionsCheckPrice",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2138,6 +2184,7 @@
         "tags": [
           "SaleTransactions"
         ],
+        "operationId": "SaleTransactionsOpen",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2177,6 +2224,7 @@
         "tags": [
           "SaleTransactions"
         ],
+        "operationId": "SaleTransactionsClose",
         "parameters": [
           {
             "name": "id",
@@ -2231,6 +2279,7 @@
         "tags": [
           "StoreItemAmounts"
         ],
+        "operationId": "StoreItemAmountsReadAll",
         "parameters": [
           {
             "name": "StoreId",
@@ -2290,6 +2339,7 @@
         "tags": [
           "StoreItems"
         ],
+        "operationId": "StoreItemsReadAll",
         "parameters": [
           {
             "name": "Name",
@@ -2360,6 +2410,7 @@
         "tags": [
           "StoreItems"
         ],
+        "operationId": "StoreItemsCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2432,6 +2483,7 @@
         "tags": [
           "StoreItems"
         ],
+        "operationId": "StoreItemsUpdate",
         "parameters": [
           {
             "name": "id",
@@ -2484,6 +2536,7 @@
         "tags": [
           "StoreItems"
         ],
+        "operationId": "StoreItemsDelete",
         "parameters": [
           {
             "name": "id",
@@ -2511,6 +2564,7 @@
         "tags": [
           "Stores"
         ],
+        "operationId": "StoresReadAll",
         "responses": {
           "200": {
             "description": "OK",
@@ -2528,6 +2582,7 @@
         "tags": [
           "Stores"
         ],
+        "operationId": "StoresCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2600,6 +2655,7 @@
         "tags": [
           "Stores"
         ],
+        "operationId": "StoresUpdate",
         "parameters": [
           {
             "name": "id",
@@ -2652,6 +2708,7 @@
         "tags": [
           "Stores"
         ],
+        "operationId": "StoresDelete",
         "parameters": [
           {
             "name": "id",
@@ -2679,6 +2736,7 @@
         "tags": [
           "StoreTransactions"
         ],
+        "operationId": "StoreTransactionsReadAll",
         "parameters": [
           {
             "name": "From",
@@ -2749,6 +2807,7 @@
         "tags": [
           "StoreTransactions"
         ],
+        "operationId": "StoreTransactionsCreate",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2821,6 +2880,7 @@
         "tags": [
           "StoreTransactions"
         ],
+        "operationId": "StoreTransactionsDelete",
         "parameters": [
           {
             "name": "id",
@@ -2865,6 +2925,7 @@
         "tags": [
           "Users"
         ],
+        "operationId": "UsersReadAll",
         "parameters": [
           {
             "name": "Page",
@@ -2902,25 +2963,6 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/HttpValidationProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth-test": {
-      "get": {
-        "tags": [
-          "Api"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
                 }
               }
             }
@@ -4077,7 +4119,8 @@
         "required": [
           "target",
           "x",
-          "y"
+          "y",
+          "type"
         ],
         "properties": {
           "type": {
@@ -4105,7 +4148,8 @@
         "required": [
           "target",
           "x",
-          "y"
+          "y",
+          "type"
         ],
         "properties": {
           "type": {
@@ -4133,7 +4177,8 @@
         "required": [
           "target",
           "x",
-          "y"
+          "y",
+          "type"
         ],
         "properties": {
           "type": {
@@ -6429,9 +6474,6 @@
     },
     {
       "name": "Users"
-    },
-    {
-      "name": "Api"
     }
   ]
 }

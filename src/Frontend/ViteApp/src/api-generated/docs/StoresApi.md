@@ -4,76 +4,17 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**storesGet**](StoresApi.md#storesget) | **GET** /stores |  |
-| [**storesIdDelete**](StoresApi.md#storesiddelete) | **DELETE** /stores/{id} |  |
-| [**storesIdPut**](StoresApi.md#storesidput) | **PUT** /stores/{id} |  |
-| [**storesPost**](StoresApi.md#storespost) | **POST** /stores |  |
+| [**storesCreate**](StoresApi.md#storescreate) | **POST** /stores |  |
+| [**storesDelete**](StoresApi.md#storesdelete) | **DELETE** /stores/{id} |  |
 | [**storesRead**](StoresApi.md#storesread) | **GET** /stores/{id} |  |
+| [**storesReadAll**](StoresApi.md#storesreadall) | **GET** /stores |  |
+| [**storesUpdate**](StoresApi.md#storesupdate) | **PUT** /stores/{id} |  |
 
 
 
-## storesGet
+## storesCreate
 
-> StoreReadAllResponse storesGet()
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  StoresApi,
-} from '';
-import type { StoresGetRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new StoresApi(config);
-
-  try {
-    const data = await api.storesGet();
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-[**StoreReadAllResponse**](StoreReadAllResponse.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## storesIdDelete
-
-> storesIdDelete(id)
+> StoreCreateResponse storesCreate(storeCreateRequest)
 
 
 
@@ -84,147 +25,7 @@ import {
   Configuration,
   StoresApi,
 } from '';
-import type { StoresIdDeleteRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new StoresApi(config);
-
-  const body = {
-    // number
-    id: 8.14,
-  } satisfies StoresIdDeleteRequest;
-
-  try {
-    const data = await api.storesIdDelete(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **id** | `number` |  | [Defaults to `undefined`] |
-
-### Return type
-
-`void` (Empty response body)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **204** | No Content |  -  |
-| **404** | Not Found |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## storesIdPut
-
-> StoreUpdateResponse storesIdPut(id, storeUpdateRequest)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  StoresApi,
-} from '';
-import type { StoresIdPutRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new StoresApi(config);
-
-  const body = {
-    // number
-    id: 8.14,
-    // StoreUpdateRequest
-    storeUpdateRequest: ...,
-  } satisfies StoresIdPutRequest;
-
-  try {
-    const data = await api.storesIdPut(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **id** | `number` |  | [Defaults to `undefined`] |
-| **storeUpdateRequest** | [StoreUpdateRequest](StoreUpdateRequest.md) |  | |
-
-### Return type
-
-[**StoreUpdateResponse**](StoreUpdateResponse.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: `application/json`
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Not Found |  -  |
-| **400** | Bad Request |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## storesPost
-
-> StoreCreateResponse storesPost(storeCreateRequest)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  StoresApi,
-} from '';
-import type { StoresPostRequest } from '';
+import type { StoresCreateRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -235,10 +36,10 @@ async function example() {
   const body = {
     // StoreCreateRequest
     storeCreateRequest: ...,
-  } satisfies StoresPostRequest;
+  } satisfies StoresCreateRequest;
 
   try {
-    const data = await api.storesPost(body);
+    const data = await api.storesCreate(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -275,6 +76,74 @@ example().catch(console.error);
 |-------------|-------------|------------------|
 | **201** | Created |  -  |
 | **400** | Bad Request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## storesDelete
+
+> storesDelete(id)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  StoresApi,
+} from '';
+import type { StoresDeleteRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new StoresApi(config);
+
+  const body = {
+    // number
+    id: 8.14,
+  } satisfies StoresDeleteRequest;
+
+  try {
+    const data = await api.storesDelete(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `number` |  | [Defaults to `undefined`] |
+
+### Return type
+
+`void` (Empty response body)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **204** | No Content |  -  |
+| **404** | Not Found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -343,6 +212,137 @@ example().catch(console.error);
 |-------------|-------------|------------------|
 | **200** | OK |  -  |
 | **404** | Not Found |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## storesReadAll
+
+> StoreReadAllResponse storesReadAll()
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  StoresApi,
+} from '';
+import type { StoresReadAllRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new StoresApi(config);
+
+  try {
+    const data = await api.storesReadAll();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**StoreReadAllResponse**](StoreReadAllResponse.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## storesUpdate
+
+> StoreUpdateResponse storesUpdate(id, storeUpdateRequest)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  StoresApi,
+} from '';
+import type { StoresUpdateRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new StoresApi(config);
+
+  const body = {
+    // number
+    id: 8.14,
+    // StoreUpdateRequest
+    storeUpdateRequest: ...,
+  } satisfies StoresUpdateRequest;
+
+  try {
+    const data = await api.storesUpdate(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `number` |  | [Defaults to `undefined`] |
+| **storeUpdateRequest** | [StoreUpdateRequest](StoreUpdateRequest.md) |  | |
+
+### Return type
+
+[**StoreUpdateResponse**](StoreUpdateResponse.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`, `application/problem+json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
+| **404** | Not Found |  -  |
+| **400** | Bad Request |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

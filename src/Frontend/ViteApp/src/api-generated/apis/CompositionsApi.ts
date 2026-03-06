@@ -28,56 +28,18 @@ import {
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
-export interface CompositionsGetRequest {
-    compositeId: number;
-}
-
 export interface CompositionsPutRequest {
     compositionPutRequest: CompositionPutRequest;
+}
+
+export interface CompositionsReadAllRequest {
+    compositeId: number;
 }
 
 /**
  * 
  */
 export class CompositionsApi extends runtime.BaseAPI {
-
-    /**
-     */
-    async compositionsGetRaw(requestParameters: CompositionsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CompositionReadAllResponse>> {
-        if (requestParameters['compositeId'] == null) {
-            throw new runtime.RequiredError(
-                'compositeId',
-                'Required parameter "compositeId" was null or undefined when calling compositionsGet().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters['compositeId'] != null) {
-            queryParameters['CompositeId'] = requestParameters['compositeId'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/compositions`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => CompositionReadAllResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async compositionsGet(requestParameters: CompositionsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CompositionReadAllResponse> {
-        const response = await this.compositionsGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
 
     /**
      */
@@ -113,6 +75,44 @@ export class CompositionsApi extends runtime.BaseAPI {
      */
     async compositionsPut(requestParameters: CompositionsPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.compositionsPutRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async compositionsReadAllRaw(requestParameters: CompositionsReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CompositionReadAllResponse>> {
+        if (requestParameters['compositeId'] == null) {
+            throw new runtime.RequiredError(
+                'compositeId',
+                'Required parameter "compositeId" was null or undefined when calling compositionsReadAll().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['compositeId'] != null) {
+            queryParameters['CompositeId'] = requestParameters['compositeId'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/compositions`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CompositionReadAllResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async compositionsReadAll(requestParameters: CompositionsReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CompositionReadAllResponse> {
+        const response = await this.compositionsReadAllRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
 }

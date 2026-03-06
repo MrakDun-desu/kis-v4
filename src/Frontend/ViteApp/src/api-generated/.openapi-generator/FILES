@@ -1,4 +1,3 @@
-apis/ApiApi.ts
 apis/CashBoxesApi.ts
 apis/CategoriesApi.ts
 apis/CompositeAmountsApi.ts
@@ -22,7 +21,6 @@ apis/index.ts
 docs/AccountTransactionModel.md
 docs/AccountTransactionReadAllResponse.md
 docs/AccountTransactionType.md
-docs/ApiApi.md
 docs/CashBoxCreateResponse.md
 docs/CashBoxListModel.md
 docs/CashBoxReadAllResponse.md

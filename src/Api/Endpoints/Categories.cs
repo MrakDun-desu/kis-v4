@@ -8,10 +8,14 @@ namespace KisV4.Api.Endpoints;
 public static class Categories {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
-        routeBuilder.MapGet("categories", ReadAll);
-        routeBuilder.MapPost("categories", Create);
-        routeBuilder.MapPut("categories/{id:int}", Update);
-        routeBuilder.MapDelete("categories/{id:int}", Delete);
+        routeBuilder.MapGet("categories", ReadAll)
+            .WithName("CategoriesReadAll");
+        routeBuilder.MapPost("categories", Create)
+            .WithName("CategoriesCreate");
+        routeBuilder.MapPut("categories/{id:int}", Update)
+            .WithName("CategoriesUpdate");
+        routeBuilder.MapDelete("categories/{id:int}", Delete)
+            .WithName("CategoriesDelete");
     }
 
     public static async Task<CategoryReadAllResponse> ReadAll(

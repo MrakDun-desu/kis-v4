@@ -11,14 +11,18 @@ public static class SaleItems {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("sale-items", ReadAll)
+            .WithName("SaleItemsReadAll")
             .AddValidation<SaleItemReadAllRequest>();
         routeBuilder.MapPost("sale-items", Create)
+            .WithName("SaleItemsCreate")
             .AddValidation<SaleItemCreateRequest>();
         routeBuilder.MapGet("sale-items/{id:int}", Read)
             .WithName(ReadRouteName);
         routeBuilder.MapPut("sale-items/{id:int}", Update)
+            .WithName("SaleItemsUpdate")
             .AddValidation<SaleItemUpdateRequest>();
-        routeBuilder.MapDelete("sale-items/{id:int}", Delete);
+        routeBuilder.MapDelete("sale-items/{id:int}", Delete)
+            .WithName("SaleItemsDelete");
     }
 
     public static async Task<Results<Ok<SaleItemReadAllResponse>, ValidationProblem>> ReadAll(

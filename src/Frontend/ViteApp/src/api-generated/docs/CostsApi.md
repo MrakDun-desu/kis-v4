@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**costsPost**](CostsApi.md#costspost) | **POST** /costs |  |
+| [**costsCreate**](CostsApi.md#costscreate) | **POST** /costs |  |
 
 
 
-## costsPost
+## costsCreate
 
-> CostCreateResponse costsPost(costCreateRequest)
+> CostCreateResponse costsCreate(costCreateRequest)
 
 
 
@@ -21,7 +21,7 @@ import {
   Configuration,
   CostsApi,
 } from '';
-import type { CostsPostRequest } from '';
+import type { CostsCreateRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -32,10 +32,10 @@ async function example() {
   const body = {
     // CostCreateRequest
     costCreateRequest: ...,
-  } satisfies CostsPostRequest;
+  } satisfies CostsCreateRequest;
 
   try {
-    const data = await api.costsPost(body);
+    const data = await api.costsCreate(body);
     console.log(data);
   } catch (error) {
     console.error(error);

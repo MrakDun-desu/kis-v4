@@ -22,7 +22,7 @@ import {
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
-export interface ImagesPostRequest {
+export interface ImagesUploadRequest {
     image: Blob;
 }
 
@@ -33,11 +33,11 @@ export class ImagesApi extends runtime.BaseAPI {
 
     /**
      */
-    async imagesPostRaw(requestParameters: ImagesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async imagesUploadRaw(requestParameters: ImagesUploadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['image'] == null) {
             throw new runtime.RequiredError(
                 'image',
-                'Required parameter "image" was null or undefined when calling imagesPost().'
+                'Required parameter "image" was null or undefined when calling imagesUpload().'
             );
         }
 
@@ -81,8 +81,8 @@ export class ImagesApi extends runtime.BaseAPI {
 
     /**
      */
-    async imagesPost(requestParameters: ImagesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.imagesPostRaw(requestParameters, initOverrides);
+    async imagesUpload(requestParameters: ImagesUploadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.imagesUploadRaw(requestParameters, initOverrides);
     }
 
 }

@@ -34,17 +34,17 @@ import {
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
-export interface CategoriesIdDeleteRequest {
+export interface CategoriesCreateRequest {
+    categoryCreateRequest: CategoryCreateRequest;
+}
+
+export interface CategoriesDeleteRequest {
     id: number;
 }
 
-export interface CategoriesIdPutRequest {
+export interface CategoriesUpdateRequest {
     id: number;
     categoryUpdateRequestModel: CategoryUpdateRequestModel;
-}
-
-export interface CategoriesPostRequest {
-    categoryCreateRequest: CategoryCreateRequest;
 }
 
 /**
@@ -54,38 +54,48 @@ export class CategoriesApi extends runtime.BaseAPI {
 
     /**
      */
-    async categoriesGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CategoryReadAllResponse>> {
+    async categoriesCreateRaw(requestParameters: CategoriesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CategoryCreateResponse>> {
+        if (requestParameters['categoryCreateRequest'] == null) {
+            throw new runtime.RequiredError(
+                'categoryCreateRequest',
+                'Required parameter "categoryCreateRequest" was null or undefined when calling categoriesCreate().'
+            );
+        }
+
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
 
 
         let urlPath = `/categories`;
 
         const response = await this.request({
             path: urlPath,
-            method: 'GET',
+            method: 'POST',
             headers: headerParameters,
             query: queryParameters,
+            body: CategoryCreateRequestToJSON(requestParameters['categoryCreateRequest']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CategoryReadAllResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => CategoryCreateResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async categoriesGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CategoryReadAllResponse> {
-        const response = await this.categoriesGetRaw(initOverrides);
+    async categoriesCreate(requestParameters: CategoriesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CategoryCreateResponse> {
+        const response = await this.categoriesCreateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async categoriesIdDeleteRaw(requestParameters: CategoriesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async categoriesDeleteRaw(requestParameters: CategoriesDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling categoriesIdDelete().'
+                'Required parameter "id" was null or undefined when calling categoriesDelete().'
             );
         }
 
@@ -109,24 +119,51 @@ export class CategoriesApi extends runtime.BaseAPI {
 
     /**
      */
-    async categoriesIdDelete(requestParameters: CategoriesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.categoriesIdDeleteRaw(requestParameters, initOverrides);
+    async categoriesDelete(requestParameters: CategoriesDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.categoriesDeleteRaw(requestParameters, initOverrides);
     }
 
     /**
      */
-    async categoriesIdPutRaw(requestParameters: CategoriesIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async categoriesReadAllRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CategoryReadAllResponse>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/categories`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CategoryReadAllResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async categoriesReadAll(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CategoryReadAllResponse> {
+        const response = await this.categoriesReadAllRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async categoriesUpdateRaw(requestParameters: CategoriesUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling categoriesIdPut().'
+                'Required parameter "id" was null or undefined when calling categoriesUpdate().'
             );
         }
 
         if (requestParameters['categoryUpdateRequestModel'] == null) {
             throw new runtime.RequiredError(
                 'categoryUpdateRequestModel',
-                'Required parameter "categoryUpdateRequestModel" was null or undefined when calling categoriesIdPut().'
+                'Required parameter "categoryUpdateRequestModel" was null or undefined when calling categoriesUpdate().'
             );
         }
 
@@ -153,45 +190,8 @@ export class CategoriesApi extends runtime.BaseAPI {
 
     /**
      */
-    async categoriesIdPut(requestParameters: CategoriesIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.categoriesIdPutRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async categoriesPostRaw(requestParameters: CategoriesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CategoryCreateResponse>> {
-        if (requestParameters['categoryCreateRequest'] == null) {
-            throw new runtime.RequiredError(
-                'categoryCreateRequest',
-                'Required parameter "categoryCreateRequest" was null or undefined when calling categoriesPost().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/categories`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: CategoryCreateRequestToJSON(requestParameters['categoryCreateRequest']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => CategoryCreateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async categoriesPost(requestParameters: CategoriesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CategoryCreateResponse> {
-        const response = await this.categoriesPostRaw(requestParameters, initOverrides);
-        return await response.value();
+    async categoriesUpdate(requestParameters: CategoriesUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.categoriesUpdateRaw(requestParameters, initOverrides);
     }
 
 }

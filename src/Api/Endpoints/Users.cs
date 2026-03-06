@@ -9,6 +9,7 @@ public static class Users {
 
     public static void MapEndpoints(IEndpointRouteBuilder routeBuilder) {
         routeBuilder.MapGet("users", ReadAll)
+            .WithName("UsersReadAll")
             .AddValidation<UserReadAllRequest>();
     }
 

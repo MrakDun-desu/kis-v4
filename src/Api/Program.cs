@@ -9,6 +9,7 @@ using KisV4.Api.Endpoints;
 using KisV4.Api.Middlewares;
 using KisV4.BL.EF;
 using KisV4.Common;
+using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -50,6 +51,7 @@ builder.Services.AddAuthorizationBuilder()
 
 // OpenAPI
 builder.Services.AddOpenApi(opts => {
+    // document transformer to make authorization work correctly in scalar
     opts.AddDocumentTransformer((doc, _, _) => {
         doc.Info.Title = "KISv4 API";
         doc.Info.Version = "1.0.0";
@@ -84,9 +86,9 @@ builder.Services.AddOpenApi(opts => {
         });
         return Task.CompletedTask;
     });
+
+    // schema transformer to make numbers work correctly in JS
     opts.AddSchemaTransformer((schema, context, cancellationToken) => {
-        // transform decimals into strings because that's the most
-        // accurate and safe way to represent them in JS
         if (context.JsonTypeInfo.Type == typeof(decimal) ||
             context.JsonTypeInfo.Type == typeof(decimal?)) {
             schema.Type = JsonSchemaType.String;
@@ -99,6 +101,27 @@ builder.Services.AddOpenApi(opts => {
             schema.Type = JsonSchemaType.Number;
             schema.Format = "int32";
             schema.AnyOf = null;
+        }
+
+        return Task.CompletedTask;
+    });
+
+    // schema transformer to make the polymorphic types work in JS
+    opts.AddSchemaTransformer((schema, context, cancellationToken) => {
+        if (context.JsonTypeInfo.Type == typeof(LayoutItemModel)) {
+            schema.Required ??= new HashSet<string>();
+            schema.Required.Add("type");
+        }
+
+        Type[] derivedTypes = [
+            typeof(LayoutSaleItemModel),
+            typeof(LayoutLinkModel),
+            typeof(LayoutPipeModel)
+        ];
+
+        if (derivedTypes.Contains(context.JsonTypeInfo.Type)) {
+            schema.Required ??= new HashSet<string>();
+            schema.Required.Add("type");
         }
 
         return Task.CompletedTask;
@@ -206,9 +229,5 @@ Users.MapEndpoints(app);
 // OpenAPI
 app.MapOpenApi().AllowAnonymous();
 app.MapScalarApiReference().AllowAnonymous();
-
-app.MapGet("/auth-test", (HttpContext context) => {
-    return "Hello world!";
-}).AllowAnonymous();
 
 app.Run();

@@ -40,21 +40,21 @@ import {
     PipeUpdateResponseToJSON,
 } from '../models/index';
 
-export interface PipesIdDeleteRequest {
-    id: number;
-}
-
-export interface PipesIdPutRequest {
-    id: number;
-    pipeUpdateModel: PipeUpdateModel;
-}
-
-export interface PipesPostRequest {
+export interface PipesCreateRequest {
     pipeCreateRequest: PipeCreateRequest;
+}
+
+export interface PipesDeleteRequest {
+    id: number;
 }
 
 export interface PipesReadRequest {
     id: number;
+}
+
+export interface PipesUpdateRequest {
+    id: number;
+    pipeUpdateModel: PipeUpdateModel;
 }
 
 /**
@@ -64,117 +64,11 @@ export class PipesApi extends runtime.BaseAPI {
 
     /**
      */
-    async pipesGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PipeReadAllResponse>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/pipes`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => PipeReadAllResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async pipesGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PipeReadAllResponse> {
-        const response = await this.pipesGetRaw(initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async pipesIdDeleteRaw(requestParameters: PipesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling pipesIdDelete().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/pipes/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async pipesIdDelete(requestParameters: PipesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.pipesIdDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async pipesIdPutRaw(requestParameters: PipesIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PipeUpdateResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling pipesIdPut().'
-            );
-        }
-
-        if (requestParameters['pipeUpdateModel'] == null) {
-            throw new runtime.RequiredError(
-                'pipeUpdateModel',
-                'Required parameter "pipeUpdateModel" was null or undefined when calling pipesIdPut().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/pipes/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: PipeUpdateModelToJSON(requestParameters['pipeUpdateModel']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => PipeUpdateResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async pipesIdPut(requestParameters: PipesIdPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PipeUpdateResponse> {
-        const response = await this.pipesIdPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async pipesPostRaw(requestParameters: PipesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PipeCreateResponse>> {
+    async pipesCreateRaw(requestParameters: PipesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PipeCreateResponse>> {
         if (requestParameters['pipeCreateRequest'] == null) {
             throw new runtime.RequiredError(
                 'pipeCreateRequest',
-                'Required parameter "pipeCreateRequest" was null or undefined when calling pipesPost().'
+                'Required parameter "pipeCreateRequest" was null or undefined when calling pipesCreate().'
             );
         }
 
@@ -200,9 +94,43 @@ export class PipesApi extends runtime.BaseAPI {
 
     /**
      */
-    async pipesPost(requestParameters: PipesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PipeCreateResponse> {
-        const response = await this.pipesPostRaw(requestParameters, initOverrides);
+    async pipesCreate(requestParameters: PipesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PipeCreateResponse> {
+        const response = await this.pipesCreateRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     */
+    async pipesDeleteRaw(requestParameters: PipesDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling pipesDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/pipes/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async pipesDelete(requestParameters: PipesDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.pipesDeleteRaw(requestParameters, initOverrides);
     }
 
     /**
@@ -237,6 +165,78 @@ export class PipesApi extends runtime.BaseAPI {
      */
     async pipesRead(requestParameters: PipesReadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PipeReadResponse> {
         const response = await this.pipesReadRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async pipesReadAllRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PipeReadAllResponse>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/pipes`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PipeReadAllResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async pipesReadAll(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PipeReadAllResponse> {
+        const response = await this.pipesReadAllRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async pipesUpdateRaw(requestParameters: PipesUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PipeUpdateResponse>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling pipesUpdate().'
+            );
+        }
+
+        if (requestParameters['pipeUpdateModel'] == null) {
+            throw new runtime.RequiredError(
+                'pipeUpdateModel',
+                'Required parameter "pipeUpdateModel" was null or undefined when calling pipesUpdate().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/pipes/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PipeUpdateModelToJSON(requestParameters['pipeUpdateModel']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PipeUpdateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async pipesUpdate(requestParameters: PipesUpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PipeUpdateResponse> {
+        const response = await this.pipesUpdateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

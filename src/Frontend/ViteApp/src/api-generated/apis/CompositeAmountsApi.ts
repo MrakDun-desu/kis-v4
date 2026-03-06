@@ -25,7 +25,7 @@ import {
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
-export interface CompositeAmountsGetRequest {
+export interface CompositeAmountsReadAllRequest {
     storeId: number;
     page?: number;
     pageSize?: number;
@@ -38,11 +38,11 @@ export class CompositeAmountsApi extends runtime.BaseAPI {
 
     /**
      */
-    async compositeAmountsGetRaw(requestParameters: CompositeAmountsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CompositeAmountReadAllResponse>> {
+    async compositeAmountsReadAllRaw(requestParameters: CompositeAmountsReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CompositeAmountReadAllResponse>> {
         if (requestParameters['storeId'] == null) {
             throw new runtime.RequiredError(
                 'storeId',
-                'Required parameter "storeId" was null or undefined when calling compositeAmountsGet().'
+                'Required parameter "storeId" was null or undefined when calling compositeAmountsReadAll().'
             );
         }
 
@@ -77,8 +77,8 @@ export class CompositeAmountsApi extends runtime.BaseAPI {
 
     /**
      */
-    async compositeAmountsGet(requestParameters: CompositeAmountsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CompositeAmountReadAllResponse> {
-        const response = await this.compositeAmountsGetRaw(requestParameters, initOverrides);
+    async compositeAmountsReadAll(requestParameters: CompositeAmountsReadAllRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CompositeAmountReadAllResponse> {
+        const response = await this.compositeAmountsReadAllRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

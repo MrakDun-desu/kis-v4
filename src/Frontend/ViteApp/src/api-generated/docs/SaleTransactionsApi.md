@@ -4,20 +4,20 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**saleTransactionsCheckPricePost**](SaleTransactionsApi.md#saletransactionscheckpricepost) | **POST** /sale-transactions/check-price |  |
-| [**saleTransactionsGet**](SaleTransactionsApi.md#saletransactionsget) | **GET** /sale-transactions |  |
-| [**saleTransactionsIdClosePost**](SaleTransactionsApi.md#saletransactionsidclosepost) | **POST** /sale-transactions/{id}/close |  |
-| [**saleTransactionsIdDelete**](SaleTransactionsApi.md#saletransactionsiddelete) | **DELETE** /sale-transactions/{id} |  |
-| [**saleTransactionsIdPatch**](SaleTransactionsApi.md#saletransactionsidpatch) | **PATCH** /sale-transactions/{id} |  |
-| [**saleTransactionsOpenPost**](SaleTransactionsApi.md#saletransactionsopenpost) | **POST** /sale-transactions/open |  |
-| [**saleTransactionsPost**](SaleTransactionsApi.md#saletransactionspost) | **POST** /sale-transactions |  |
+| [**saleTransactionsCheckPrice**](SaleTransactionsApi.md#saletransactionscheckprice) | **POST** /sale-transactions/check-price |  |
+| [**saleTransactionsClose**](SaleTransactionsApi.md#saletransactionsclose) | **POST** /sale-transactions/{id}/close |  |
+| [**saleTransactionsCreate**](SaleTransactionsApi.md#saletransactionscreate) | **POST** /sale-transactions |  |
+| [**saleTransactionsDelete**](SaleTransactionsApi.md#saletransactionsdelete) | **DELETE** /sale-transactions/{id} |  |
+| [**saleTransactionsOpen**](SaleTransactionsApi.md#saletransactionsopen) | **POST** /sale-transactions/open |  |
 | [**saleTransactionsRead**](SaleTransactionsApi.md#saletransactionsread) | **GET** /sale-transactions/{id} |  |
+| [**saleTransactionsReadAll**](SaleTransactionsApi.md#saletransactionsreadall) | **GET** /sale-transactions |  |
+| [**saleTransactionsUpdate**](SaleTransactionsApi.md#saletransactionsupdate) | **PATCH** /sale-transactions/{id} |  |
 
 
 
-## saleTransactionsCheckPricePost
+## saleTransactionsCheckPrice
 
-> SaleTransactionCheckPriceResponse saleTransactionsCheckPricePost(saleTransactionCheckPriceRequest)
+> SaleTransactionCheckPriceResponse saleTransactionsCheckPrice(saleTransactionCheckPriceRequest)
 
 
 
@@ -28,7 +28,7 @@ import {
   Configuration,
   SaleTransactionsApi,
 } from '';
-import type { SaleTransactionsCheckPricePostRequest } from '';
+import type { SaleTransactionsCheckPriceRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -39,10 +39,10 @@ async function example() {
   const body = {
     // SaleTransactionCheckPriceRequest
     saleTransactionCheckPriceRequest: ...,
-  } satisfies SaleTransactionsCheckPricePostRequest;
+  } satisfies SaleTransactionsCheckPriceRequest;
 
   try {
-    const data = await api.saleTransactionsCheckPricePost(body);
+    const data = await api.saleTransactionsCheckPrice(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -83,89 +83,9 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## saleTransactionsGet
+## saleTransactionsClose
 
-> SaleTransactionReadAllResponse saleTransactionsGet(from, to, onlySelfCancellable, page, pageSize)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  SaleTransactionsApi,
-} from '';
-import type { SaleTransactionsGetRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new SaleTransactionsApi(config);
-
-  const body = {
-    // Date (optional)
-    from: 2013-10-20T19:20:30+01:00,
-    // Date (optional)
-    to: 2013-10-20T19:20:30+01:00,
-    // boolean (optional)
-    onlySelfCancellable: true,
-    // number (optional)
-    page: 8.14,
-    // number (optional)
-    pageSize: 8.14,
-  } satisfies SaleTransactionsGetRequest;
-
-  try {
-    const data = await api.saleTransactionsGet(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **from** | `Date` |  | [Optional] [Defaults to `undefined`] |
-| **to** | `Date` |  | [Optional] [Defaults to `undefined`] |
-| **onlySelfCancellable** | `boolean` |  | [Optional] [Defaults to `undefined`] |
-| **page** | `number` |  | [Optional] [Defaults to `undefined`] |
-| **pageSize** | `number` |  | [Optional] [Defaults to `undefined`] |
-
-### Return type
-
-[**SaleTransactionReadAllResponse**](SaleTransactionReadAllResponse.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **400** | Bad Request |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## saleTransactionsIdClosePost
-
-> SaleTransactionDetailModel saleTransactionsIdClosePost(id, saleTransactionCloseRequestModel)
+> SaleTransactionDetailModel saleTransactionsClose(id, saleTransactionCloseRequestModel)
 
 
 
@@ -176,7 +96,7 @@ import {
   Configuration,
   SaleTransactionsApi,
 } from '';
-import type { SaleTransactionsIdClosePostRequest } from '';
+import type { SaleTransactionsCloseRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -189,10 +109,10 @@ async function example() {
     id: 8.14,
     // SaleTransactionCloseRequestModel
     saleTransactionCloseRequestModel: ...,
-  } satisfies SaleTransactionsIdClosePostRequest;
+  } satisfies SaleTransactionsCloseRequest;
 
   try {
-    const data = await api.saleTransactionsIdClosePost(body);
+    const data = await api.saleTransactionsClose(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -235,9 +155,9 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## saleTransactionsIdDelete
+## saleTransactionsCreate
 
-> saleTransactionsIdDelete(id)
+> SaleTransactionDetailModel saleTransactionsCreate(saleTransactionCreateRequest)
 
 
 
@@ -248,7 +168,75 @@ import {
   Configuration,
   SaleTransactionsApi,
 } from '';
-import type { SaleTransactionsIdDeleteRequest } from '';
+import type { SaleTransactionsCreateRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new SaleTransactionsApi(config);
+
+  const body = {
+    // SaleTransactionCreateRequest
+    saleTransactionCreateRequest: ...,
+  } satisfies SaleTransactionsCreateRequest;
+
+  try {
+    const data = await api.saleTransactionsCreate(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **saleTransactionCreateRequest** | [SaleTransactionCreateRequest](SaleTransactionCreateRequest.md) |  | |
+
+### Return type
+
+[**SaleTransactionDetailModel**](SaleTransactionDetailModel.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`, `application/problem+json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **201** | Created |  -  |
+| **400** | Bad Request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## saleTransactionsDelete
+
+> saleTransactionsDelete(id)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  SaleTransactionsApi,
+} from '';
+import type { SaleTransactionsDeleteRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -259,10 +247,10 @@ async function example() {
   const body = {
     // number
     id: 8.14,
-  } satisfies SaleTransactionsIdDeleteRequest;
+  } satisfies SaleTransactionsDeleteRequest;
 
   try {
-    const data = await api.saleTransactionsIdDelete(body);
+    const data = await api.saleTransactionsDelete(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -303,81 +291,9 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## saleTransactionsIdPatch
+## saleTransactionsOpen
 
-> SaleTransactionDetailModel saleTransactionsIdPatch(id, saleTransactionUpdateRequestModel)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  SaleTransactionsApi,
-} from '';
-import type { SaleTransactionsIdPatchRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new SaleTransactionsApi(config);
-
-  const body = {
-    // number
-    id: 8.14,
-    // SaleTransactionUpdateRequestModel
-    saleTransactionUpdateRequestModel: ...,
-  } satisfies SaleTransactionsIdPatchRequest;
-
-  try {
-    const data = await api.saleTransactionsIdPatch(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **id** | `number` |  | [Defaults to `undefined`] |
-| **saleTransactionUpdateRequestModel** | [SaleTransactionUpdateRequestModel](SaleTransactionUpdateRequestModel.md) |  | |
-
-### Return type
-
-[**SaleTransactionDetailModel**](SaleTransactionDetailModel.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: `application/json`
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Not Found |  -  |
-| **400** | Bad Request |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## saleTransactionsOpenPost
-
-> SaleTransactionDetailModel saleTransactionsOpenPost(saleTransactionOpenRequest)
+> SaleTransactionDetailModel saleTransactionsOpen(saleTransactionOpenRequest)
 
 
 
@@ -388,7 +304,7 @@ import {
   Configuration,
   SaleTransactionsApi,
 } from '';
-import type { SaleTransactionsOpenPostRequest } from '';
+import type { SaleTransactionsOpenRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -399,10 +315,10 @@ async function example() {
   const body = {
     // SaleTransactionOpenRequest
     saleTransactionOpenRequest: ...,
-  } satisfies SaleTransactionsOpenPostRequest;
+  } satisfies SaleTransactionsOpenRequest;
 
   try {
-    const data = await api.saleTransactionsOpenPost(body);
+    const data = await api.saleTransactionsOpen(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -419,74 +335,6 @@ example().catch(console.error);
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **saleTransactionOpenRequest** | [SaleTransactionOpenRequest](SaleTransactionOpenRequest.md) |  | |
-
-### Return type
-
-[**SaleTransactionDetailModel**](SaleTransactionDetailModel.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: `application/json`
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **201** | Created |  -  |
-| **400** | Bad Request |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## saleTransactionsPost
-
-> SaleTransactionDetailModel saleTransactionsPost(saleTransactionCreateRequest)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  SaleTransactionsApi,
-} from '';
-import type { SaleTransactionsPostRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new SaleTransactionsApi(config);
-
-  const body = {
-    // SaleTransactionCreateRequest
-    saleTransactionCreateRequest: ...,
-  } satisfies SaleTransactionsPostRequest;
-
-  try {
-    const data = await api.saleTransactionsPost(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **saleTransactionCreateRequest** | [SaleTransactionCreateRequest](SaleTransactionCreateRequest.md) |  | |
 
 ### Return type
 
@@ -575,6 +423,158 @@ example().catch(console.error);
 |-------------|-------------|------------------|
 | **200** | OK |  -  |
 | **404** | Not Found |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## saleTransactionsReadAll
+
+> SaleTransactionReadAllResponse saleTransactionsReadAll(from, to, onlySelfCancellable, page, pageSize)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  SaleTransactionsApi,
+} from '';
+import type { SaleTransactionsReadAllRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new SaleTransactionsApi(config);
+
+  const body = {
+    // Date (optional)
+    from: 2013-10-20T19:20:30+01:00,
+    // Date (optional)
+    to: 2013-10-20T19:20:30+01:00,
+    // boolean (optional)
+    onlySelfCancellable: true,
+    // number (optional)
+    page: 8.14,
+    // number (optional)
+    pageSize: 8.14,
+  } satisfies SaleTransactionsReadAllRequest;
+
+  try {
+    const data = await api.saleTransactionsReadAll(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **from** | `Date` |  | [Optional] [Defaults to `undefined`] |
+| **to** | `Date` |  | [Optional] [Defaults to `undefined`] |
+| **onlySelfCancellable** | `boolean` |  | [Optional] [Defaults to `undefined`] |
+| **page** | `number` |  | [Optional] [Defaults to `undefined`] |
+| **pageSize** | `number` |  | [Optional] [Defaults to `undefined`] |
+
+### Return type
+
+[**SaleTransactionReadAllResponse**](SaleTransactionReadAllResponse.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`, `application/problem+json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
+| **400** | Bad Request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## saleTransactionsUpdate
+
+> SaleTransactionDetailModel saleTransactionsUpdate(id, saleTransactionUpdateRequestModel)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  SaleTransactionsApi,
+} from '';
+import type { SaleTransactionsUpdateRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new SaleTransactionsApi(config);
+
+  const body = {
+    // number
+    id: 8.14,
+    // SaleTransactionUpdateRequestModel
+    saleTransactionUpdateRequestModel: ...,
+  } satisfies SaleTransactionsUpdateRequest;
+
+  try {
+    const data = await api.saleTransactionsUpdate(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `number` |  | [Defaults to `undefined`] |
+| **saleTransactionUpdateRequestModel** | [SaleTransactionUpdateRequestModel](SaleTransactionUpdateRequestModel.md) |  | |
+
+### Return type
+
+[**SaleTransactionDetailModel**](SaleTransactionDetailModel.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`, `application/problem+json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
+| **404** | Not Found |  -  |
+| **400** | Bad Request |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

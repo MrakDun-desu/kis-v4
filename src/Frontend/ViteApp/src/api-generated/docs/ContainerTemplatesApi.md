@@ -4,16 +4,16 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**containerTemplatesGet**](ContainerTemplatesApi.md#containertemplatesget) | **GET** /container-templates |  |
-| [**containerTemplatesIdDelete**](ContainerTemplatesApi.md#containertemplatesiddelete) | **DELETE** /container-templates/{id} |  |
-| [**containerTemplatesIdPut**](ContainerTemplatesApi.md#containertemplatesidput) | **PUT** /container-templates/{id} |  |
-| [**containerTemplatesPost**](ContainerTemplatesApi.md#containertemplatespost) | **POST** /container-templates |  |
+| [**containerTemplatesCreate**](ContainerTemplatesApi.md#containertemplatescreate) | **POST** /container-templates |  |
+| [**containerTemplatesDelete**](ContainerTemplatesApi.md#containertemplatesdelete) | **DELETE** /container-templates/{id} |  |
+| [**containerTemplatesReadAll**](ContainerTemplatesApi.md#containertemplatesreadall) | **GET** /container-templates |  |
+| [**containerTemplatesUpdate**](ContainerTemplatesApi.md#containertemplatesupdate) | **PUT** /container-templates/{id} |  |
 
 
 
-## containerTemplatesGet
+## containerTemplatesCreate
 
-> ContainerTemplateReadAllResponse containerTemplatesGet(name, storeItemId, page, pageSize)
+> ContainerTemplateCreateResponse containerTemplatesCreate(containerTemplateCreateRequest)
 
 
 
@@ -24,7 +24,143 @@ import {
   Configuration,
   ContainerTemplatesApi,
 } from '';
-import type { ContainerTemplatesGetRequest } from '';
+import type { ContainerTemplatesCreateRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new ContainerTemplatesApi(config);
+
+  const body = {
+    // ContainerTemplateCreateRequest
+    containerTemplateCreateRequest: ...,
+  } satisfies ContainerTemplatesCreateRequest;
+
+  try {
+    const data = await api.containerTemplatesCreate(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **containerTemplateCreateRequest** | [ContainerTemplateCreateRequest](ContainerTemplateCreateRequest.md) |  | |
+
+### Return type
+
+[**ContainerTemplateCreateResponse**](ContainerTemplateCreateResponse.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`, `application/problem+json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
+| **400** | Bad Request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## containerTemplatesDelete
+
+> containerTemplatesDelete(id)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ContainerTemplatesApi,
+} from '';
+import type { ContainerTemplatesDeleteRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new ContainerTemplatesApi(config);
+
+  const body = {
+    // number
+    id: 8.14,
+  } satisfies ContainerTemplatesDeleteRequest;
+
+  try {
+    const data = await api.containerTemplatesDelete(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `number` |  | [Defaults to `undefined`] |
+
+### Return type
+
+`void` (Empty response body)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **204** | No Content |  -  |
+| **404** | Not Found |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## containerTemplatesReadAll
+
+> ContainerTemplateReadAllResponse containerTemplatesReadAll(name, storeItemId, page, pageSize)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ContainerTemplatesApi,
+} from '';
+import type { ContainerTemplatesReadAllRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -41,10 +177,10 @@ async function example() {
     page: 8.14,
     // number (optional)
     pageSize: 8.14,
-  } satisfies ContainerTemplatesGetRequest;
+  } satisfies ContainerTemplatesReadAllRequest;
 
   try {
-    const data = await api.containerTemplatesGet(body);
+    const data = await api.containerTemplatesReadAll(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -88,77 +224,9 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## containerTemplatesIdDelete
+## containerTemplatesUpdate
 
-> containerTemplatesIdDelete(id)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  ContainerTemplatesApi,
-} from '';
-import type { ContainerTemplatesIdDeleteRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new ContainerTemplatesApi(config);
-
-  const body = {
-    // number
-    id: 8.14,
-  } satisfies ContainerTemplatesIdDeleteRequest;
-
-  try {
-    const data = await api.containerTemplatesIdDelete(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **id** | `number` |  | [Defaults to `undefined`] |
-
-### Return type
-
-`void` (Empty response body)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **204** | No Content |  -  |
-| **404** | Not Found |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## containerTemplatesIdPut
-
-> ContainerTemplateUpdateResponse containerTemplatesIdPut(id, containerTemplateUpdateRequestModel)
+> ContainerTemplateUpdateResponse containerTemplatesUpdate(id, containerTemplateUpdateRequestModel)
 
 
 
@@ -169,7 +237,7 @@ import {
   Configuration,
   ContainerTemplatesApi,
 } from '';
-import type { ContainerTemplatesIdPutRequest } from '';
+import type { ContainerTemplatesUpdateRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -182,10 +250,10 @@ async function example() {
     id: 8.14,
     // ContainerTemplateUpdateRequestModel
     containerTemplateUpdateRequestModel: ...,
-  } satisfies ContainerTemplatesIdPutRequest;
+  } satisfies ContainerTemplatesUpdateRequest;
 
   try {
-    const data = await api.containerTemplatesIdPut(body);
+    const data = await api.containerTemplatesUpdate(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -223,74 +291,6 @@ example().catch(console.error);
 |-------------|-------------|------------------|
 | **200** | OK |  -  |
 | **404** | Not Found |  -  |
-| **400** | Bad Request |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## containerTemplatesPost
-
-> ContainerTemplateCreateResponse containerTemplatesPost(containerTemplateCreateRequest)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  ContainerTemplatesApi,
-} from '';
-import type { ContainerTemplatesPostRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new ContainerTemplatesApi(config);
-
-  const body = {
-    // ContainerTemplateCreateRequest
-    containerTemplateCreateRequest: ...,
-  } satisfies ContainerTemplatesPostRequest;
-
-  try {
-    const data = await api.containerTemplatesPost(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **containerTemplateCreateRequest** | [ContainerTemplateCreateRequest](ContainerTemplateCreateRequest.md) |  | |
-
-### Return type
-
-[**ContainerTemplateCreateResponse**](ContainerTemplateCreateResponse.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: `application/json`
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
 | **400** | Bad Request |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)

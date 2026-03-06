@@ -5,7 +5,6 @@ import {
   StoreItemsApi,
   type CategoryModel,
   type CostCreateRequest,
-  type CostsPostRequest,
   type StoreItemReadResponse,
   type StoreItemUpdateModel,
 } from "../../../api-generated";
@@ -15,11 +14,8 @@ import {
   Backdrop,
   Box,
   Button,
-  Checkbox,
   CircularProgress,
   FormControl,
-  FormControlLabel,
-  Icon,
   InputLabel,
   MenuItem,
   Select,
@@ -27,8 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import NumberField from "../../../components/NumberField";
-import { Check, CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
@@ -40,7 +35,7 @@ export const StoreItemDetail = () => {
     null,
   );
   const [categories, setCategories] = useState<CategoryModel[] | null>(null);
-  const [currentCost, setCurrentCost] = useState<CostsPostRequest>();
+  const [currentCost, setCurrentCost] = useState<CostCreateRequest>();
   const {
     register: registerCost,
     handleSubmit: handleCostSubmit,
@@ -76,7 +71,7 @@ export const StoreItemDetail = () => {
   }, []);
   useEffect(() => {
     const getCategories = async () => {
-      const response = await categoryApi.categoriesGet();
+      const response = await categoryApi.categoriesReadAll();
       setCategories(response.data);
     };
     getCategories();
@@ -87,7 +82,7 @@ export const StoreItemDetail = () => {
       return;
     }
     setStoreItem(null);
-    const response = await api.storeItemsIdPut({
+    const response = await api.storeItemsUpdate({
       id: id as unknown as number,
       storeItemUpdateModel: data,
     });
@@ -96,7 +91,7 @@ export const StoreItemDetail = () => {
 
   const updateCost: SubmitHandler<CostCreateRequest> = async (data) => {
     data.storeItemId = id as unknown as number;
-    const response = await costApi.costsPost({
+    const response = await costApi.costsCreate({
       costCreateRequest: data,
     });
     setStoreItem((prev) => {

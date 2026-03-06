@@ -32,7 +32,7 @@ export interface LayoutItemModelLayoutLinkModel {
      * @type {string}
      * @memberof LayoutItemModelLayoutLinkModel
      */
-    type?: LayoutItemModelLayoutLinkModelTypeEnum;
+    type: LayoutItemModelLayoutLinkModelTypeEnum;
     /**
      * 
      * @type {LayoutListModel}
@@ -67,6 +67,7 @@ export type LayoutItemModelLayoutLinkModelTypeEnum = typeof LayoutItemModelLayou
  * Check if a given object implements the LayoutItemModelLayoutLinkModel interface.
  */
 export function instanceOfLayoutItemModelLayoutLinkModel(value: object): value is LayoutItemModelLayoutLinkModel {
+    if (!('type' in value) || value['type'] === undefined) return false;
     if (!('target' in value) || value['target'] === undefined) return false;
     if (!('x' in value) || value['x'] === undefined) return false;
     if (!('y' in value) || value['y'] === undefined) return false;
@@ -83,7 +84,7 @@ export function LayoutItemModelLayoutLinkModelFromJSONTyped(json: any, ignoreDis
     }
     return {
         
-        'type': json['type'] == null ? undefined : json['type'],
+        'type': json['type'],
         'target': LayoutListModelFromJSON(json['target']),
         'x': json['x'],
         'y': json['y'],

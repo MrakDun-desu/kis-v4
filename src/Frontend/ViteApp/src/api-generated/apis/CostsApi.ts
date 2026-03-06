@@ -28,7 +28,7 @@ import {
     HttpValidationProblemDetailsToJSON,
 } from '../models/index';
 
-export interface CostsPostRequest {
+export interface CostsCreateRequest {
     costCreateRequest: CostCreateRequest;
 }
 
@@ -39,11 +39,11 @@ export class CostsApi extends runtime.BaseAPI {
 
     /**
      */
-    async costsPostRaw(requestParameters: CostsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CostCreateResponse>> {
+    async costsCreateRaw(requestParameters: CostsCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CostCreateResponse>> {
         if (requestParameters['costCreateRequest'] == null) {
             throw new runtime.RequiredError(
                 'costCreateRequest',
-                'Required parameter "costCreateRequest" was null or undefined when calling costsPost().'
+                'Required parameter "costCreateRequest" was null or undefined when calling costsCreate().'
             );
         }
 
@@ -69,8 +69,8 @@ export class CostsApi extends runtime.BaseAPI {
 
     /**
      */
-    async costsPost(requestParameters: CostsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CostCreateResponse> {
-        const response = await this.costsPostRaw(requestParameters, initOverrides);
+    async costsCreate(requestParameters: CostsCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CostCreateResponse> {
+        const response = await this.costsCreateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

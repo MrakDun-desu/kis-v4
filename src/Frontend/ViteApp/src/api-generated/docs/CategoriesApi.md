@@ -4,16 +4,16 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**categoriesGet**](CategoriesApi.md#categoriesget) | **GET** /categories |  |
-| [**categoriesIdDelete**](CategoriesApi.md#categoriesiddelete) | **DELETE** /categories/{id} |  |
-| [**categoriesIdPut**](CategoriesApi.md#categoriesidput) | **PUT** /categories/{id} |  |
-| [**categoriesPost**](CategoriesApi.md#categoriespost) | **POST** /categories |  |
+| [**categoriesCreate**](CategoriesApi.md#categoriescreate) | **POST** /categories |  |
+| [**categoriesDelete**](CategoriesApi.md#categoriesdelete) | **DELETE** /categories/{id} |  |
+| [**categoriesReadAll**](CategoriesApi.md#categoriesreadall) | **GET** /categories |  |
+| [**categoriesUpdate**](CategoriesApi.md#categoriesupdate) | **PUT** /categories/{id} |  |
 
 
 
-## categoriesGet
+## categoriesCreate
 
-> CategoryReadAllResponse categoriesGet()
+> CategoryCreateResponse categoriesCreate(categoryCreateRequest)
 
 
 
@@ -24,7 +24,7 @@ import {
   Configuration,
   CategoriesApi,
 } from '';
-import type { CategoriesGetRequest } from '';
+import type { CategoriesCreateRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -32,8 +32,13 @@ async function example() {
   });
   const api = new CategoriesApi(config);
 
+  const body = {
+    // CategoryCreateRequest
+    categoryCreateRequest: ...,
+  } satisfies CategoriesCreateRequest;
+
   try {
-    const data = await api.categoriesGet();
+    const data = await api.categoriesCreate(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -46,11 +51,14 @@ example().catch(console.error);
 
 ### Parameters
 
-This endpoint does not need any parameter.
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **categoryCreateRequest** | [CategoryCreateRequest](CategoryCreateRequest.md) |  | |
 
 ### Return type
 
-[**CategoryReadAllResponse**](CategoryReadAllResponse.md)
+[**CategoryCreateResponse**](CategoryCreateResponse.md)
 
 ### Authorization
 
@@ -58,21 +66,22 @@ This endpoint does not need any parameter.
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`, `application/problem+json`
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | OK |  -  |
+| **400** | Bad Request |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## categoriesIdDelete
+## categoriesDelete
 
-> categoriesIdDelete(id)
+> categoriesDelete(id)
 
 
 
@@ -83,7 +92,7 @@ import {
   Configuration,
   CategoriesApi,
 } from '';
-import type { CategoriesIdDeleteRequest } from '';
+import type { CategoriesDeleteRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -94,10 +103,10 @@ async function example() {
   const body = {
     // number
     id: 8.14,
-  } satisfies CategoriesIdDeleteRequest;
+  } satisfies CategoriesDeleteRequest;
 
   try {
-    const data = await api.categoriesIdDelete(body);
+    const data = await api.categoriesDelete(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -138,9 +147,9 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## categoriesIdPut
+## categoriesReadAll
 
-> categoriesIdPut(id, categoryUpdateRequestModel)
+> CategoryReadAllResponse categoriesReadAll()
 
 
 
@@ -151,7 +160,66 @@ import {
   Configuration,
   CategoriesApi,
 } from '';
-import type { CategoriesIdPutRequest } from '';
+import type { CategoriesReadAllRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+  });
+  const api = new CategoriesApi(config);
+
+  try {
+    const data = await api.categoriesReadAll();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**CategoryReadAllResponse**](CategoryReadAllResponse.md)
+
+### Authorization
+
+[oidc](../README.md#oidc)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## categoriesUpdate
+
+> categoriesUpdate(id, categoryUpdateRequestModel)
+
+
+
+### Example
+
+```ts
+import {
+  Configuration,
+  CategoriesApi,
+} from '';
+import type { CategoriesUpdateRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -164,10 +232,10 @@ async function example() {
     id: 8.14,
     // CategoryUpdateRequestModel
     categoryUpdateRequestModel: ...,
-  } satisfies CategoriesIdPutRequest;
+  } satisfies CategoriesUpdateRequest;
 
   try {
-    const data = await api.categoriesIdPut(body);
+    const data = await api.categoriesUpdate(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -205,74 +273,6 @@ example().catch(console.error);
 |-------------|-------------|------------------|
 | **204** | No Content |  -  |
 | **404** | Not Found |  -  |
-| **400** | Bad Request |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## categoriesPost
-
-> CategoryCreateResponse categoriesPost(categoryCreateRequest)
-
-
-
-### Example
-
-```ts
-import {
-  Configuration,
-  CategoriesApi,
-} from '';
-import type { CategoriesPostRequest } from '';
-
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const config = new Configuration({ 
-  });
-  const api = new CategoriesApi(config);
-
-  const body = {
-    // CategoryCreateRequest
-    categoryCreateRequest: ...,
-  } satisfies CategoriesPostRequest;
-
-  try {
-    const data = await api.categoriesPost(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **categoryCreateRequest** | [CategoryCreateRequest](CategoryCreateRequest.md) |  | |
-
-### Return type
-
-[**CategoryCreateResponse**](CategoryCreateResponse.md)
-
-### Authorization
-
-[oidc](../README.md#oidc)
-
-### HTTP request headers
-
-- **Content-Type**: `application/json`
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
 | **400** | Bad Request |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
