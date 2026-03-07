@@ -9,6 +9,7 @@ public class StoreItemAmountReadAllValidator : AbstractValidator<StoreItemAmount
 
         RuleFor(x => x.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
-            .WithMessage("Specified store must exist");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
     }
 }

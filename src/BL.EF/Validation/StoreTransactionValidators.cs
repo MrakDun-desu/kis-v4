@@ -12,41 +12,50 @@ public class StoreTransactionReadAllValidator : AbstractValidator<StoreTransacti
                 // if either of them is null, no need to check
                 return x.From is null || x.To is null || x.From < x.To;
             })
-            .WithMessage("The datetime From must be earlier than the datetime To if both of them are set");
+            .OverridePropertyName(ValidationMessages.DateRangePropName)
+            .WithMessage(ValidationMessages.BadDateRangeMessage);
     }
 }
 
 public class StoreTransactionCreateValidator : AbstractValidator<StoreTransactionCreateRequest> {
     public StoreTransactionCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.Note)
-            .MaximumLength(ValidationConstants.MaxNoteLength);
+            .MaximumLength(ValidationConstants.MaxNoteLength)
+            .OverridePropertyName(ValidationMessages.NotePropName)
+            .WithMessage(ValidationMessages.NoteTooLongMessage);
         RuleFor(x => x.Reason)
             .NotEqual(TransactionReason.Sale)
-            .WithMessage("Can't create a store transaction as a sale individually. Use sale transaction endpoints instead");
+            .OverridePropertyName(ValidationMessages.TransactionReasonPropName)
+            .WithMessage(ValidationMessages.CantCreateStoreTransactionAsSaleMessage);
         RuleFor(x => x.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
-            .WithMessage("Store ID must identify existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
         RuleFor(x => x.SourceStoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
-            .WithMessage("Source store ID must be null or identify existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
         RuleFor(x => x)
             .Must(x => x.StoreId != x.SourceStoreId)
-            .WithMessage("Source store ID needs to be different from target store ID");
+            .WithMessage(ValidationMessages.SourceStoreSameAsTargetStoreMessage);
         RuleFor(x => x)
             .Must(x => x.Reason == TransactionReason.ChangingStores && x.SourceStoreId is not null ||
                         x.Reason != TransactionReason.ChangingStores && x.SourceStoreId is null)
-            .WithMessage("Source store ID should be set exactly when transaction reason is changing stores");
+            .WithMessage(ValidationMessages.StoreTransactionReasonAndSourceStoreInvalidMessage);
 
         RuleForEach(x => x.StoreTransactionItems)
             .SetValidator(new StoreTransactionItemCreateValidator());
         RuleFor(x => x.StoreTransactionItems)
             .Must(x => x.Select(sti => sti.StoreItemId).Distinct().Count() == x.Count())
-            .WithMessage("Store item IDs are not unique");
+            .OverridePropertyName(ValidationMessages.StoreTransactionItemsPropName)
+            .WithMessage(ValidationMessages.StoreTransactionItemsNotUniqueMessage);
         RuleFor(x => x.StoreTransactionItems)
             .MustAsync(helper.AllHaveNonContainerStoreItems)
-            .WithMessage("Can't create a store transaction for container items. Use container endpoints instead");
+            .OverridePropertyName(ValidationMessages.StoreTransactionItemsPropName)
+            .WithMessage(ValidationMessages.StoreTransactionItemsContainContainerItemsMessage);
         RuleFor(x => x.StoreTransactionItems)
             .MustAsync(helper.AllHaveExistingStoreItems)
-            .WithMessage("All the store item IDs must identify existing store items");
+            .OverridePropertyName(ValidationMessages.StoreTransactionItemsPropName)
+            .WithMessage(ValidationMessages.StoreItemIdsNotValidMessage);
     }
 }

@@ -129,7 +129,7 @@ public class ContainerService(
                         StoreTransactionItems = [
                             new StoreTransactionItemCreateRequest {
                                 Cost = req.Cost,
-                                ItemAmount = req.Amount * template.Amount,
+                                Amount = req.Amount * template.Amount,
                                 StoreItemId = template.StoreItemId
                             }
                         ]
@@ -204,7 +204,7 @@ public class ContainerService(
                             StoreTransactionItems = [
                                 new StoreTransactionItemCreateRequest {
                                 Cost = 0,
-                                ItemAmount = entity.Amount,
+                                Amount = entity.Amount,
                                 StoreItemId = entity.Template!.StoreItemId
                             }
                             ]

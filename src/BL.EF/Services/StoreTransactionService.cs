@@ -192,7 +192,7 @@ public class StoreTransactionService(
                 output.Add(new StoreTransactionItem {
                     StoreId = req.StoreId,
                     Cost = sti.Cost,
-                    ItemAmount = sti.ItemAmount,
+                    ItemAmount = sti.Amount,
                     StoreItemId = sti.StoreItemId
                 });
 
@@ -200,7 +200,7 @@ public class StoreTransactionService(
                     output.Add(new StoreTransactionItem {
                         StoreId = sourceStoreId,
                         Cost = sti.Cost,
-                        ItemAmount = -sti.ItemAmount,
+                        ItemAmount = -sti.Amount,
                         StoreItemId = sti.StoreItemId
                     });
                 }

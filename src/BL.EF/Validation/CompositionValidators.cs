@@ -7,7 +7,8 @@ public class CompositionReadAllValidator : AbstractValidator<CompositionReadAllR
     public CompositionReadAllValidator(ValidationHelper helper) {
         RuleFor(x => x.CompositeId)
             .MustAsync(helper.IdentifyExistingComposite)
-            .WithMessage("Specified composite must exist");
+            .OverridePropertyName(ValidationMessages.CompositeIdPropName)
+            .WithMessage(ValidationMessages.CompositeIdNotValidMessage);
     }
 }
 
@@ -15,15 +16,22 @@ public class CompositionPutValidator : AbstractValidator<CompositionPutRequest> 
     public CompositionPutValidator(ValidationHelper helper) {
         RuleFor(x => x.CompositeId)
             .MustAsync(helper.IdentifyExistingComposite)
-            .WithMessage("Specified composite must exist");
+            .OverridePropertyName(ValidationMessages.CompositeIdPropName)
+            .WithMessage(ValidationMessages.CompositeIdNotValidMessage);
 
         RuleFor(x => x.StoreItemId)
             .MustAsync(helper.IdentifyExistingStoreItem)
-            .WithMessage("Specified store item must exist");
+            .OverridePropertyName(ValidationMessages.StoreItemIdPropName)
+            .WithMessage(ValidationMessages.StoreItemIdNotValidMessage);
 
         RuleFor(x => x.Amount)
-            .LessThan(ValidationConstants.MaxCompositionAmount)
-            .GreaterThan(-ValidationConstants.MaxCompositionAmount);
+            .InclusiveBetween(
+                -ValidationConstants.MaxCompositionAmount,
+                ValidationConstants.MaxCompositionAmount
+            )
+            .OverridePropertyName(ValidationMessages.AmountPropName)
+            .WithMessage(ValidationMessages.AmountOutOfRangeMessage);
+
 
     }
 }

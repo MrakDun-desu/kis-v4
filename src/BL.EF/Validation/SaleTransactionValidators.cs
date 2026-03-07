@@ -11,40 +11,47 @@ public class SaleTransactionReadAllValidator : AbstractValidator<SaleTransaction
                 // if either of them is null, no need to check
                 x.From is null || x.To is null || x.From < x.To
             )
-            .WithMessage("The datetime From must be earlier than the datetime To if both of them are set");
+            .OverridePropertyName(ValidationMessages.DateRangePropName)
+            .WithMessage(ValidationMessages.BadDateRangeMessage);
     }
 }
 
 public class SaleTransactionCreateValidator : AbstractValidator<SaleTransactionCreateRequest> {
     public SaleTransactionCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.Note)
-            .MaximumLength(ValidationConstants.MaxNoteLength);
+            .MaximumLength(ValidationConstants.MaxNoteLength)
+            .OverridePropertyName(ValidationMessages.NotePropName)
+            .WithMessage(ValidationMessages.NoteTooLongMessage);
         RuleFor(x => x.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
-            .WithMessage("Store ID must identify an existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
         RuleFor(x => x.CashBoxId)
             .MustAsync(helper.IdentifyExistingCashBox)
-            .WithMessage("Cash-box ID must identify an existing cash-box");
+            .OverridePropertyName(ValidationMessages.CashBoxIdPropName)
+            .WithMessage(ValidationMessages.CashBoxIdNotValidMessage);
         RuleFor(x => x.PaidAmount)
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(0)
+            .OverridePropertyName(ValidationMessages.PaidAmountPropName)
+            .WithMessage(ValidationMessages.PaidAmountLessThan0Message);
         RuleForEach(x => x.SaleTransactionItems)
             .SetValidator(new SaleTransactionItemCreateValidator());
         RuleFor(x => x)
             .MustAsync((x, token) => helper.PaidAmountIsEnough(x.SaleTransactionItems, x.PaidAmount, token))
-            .WithMessage("The paid amount is not enough to pay for this transaction");
+            .OverridePropertyName(ValidationMessages.PaidAmountPropName)
+            .WithMessage(ValidationMessages.PaidAmountTooLowMessage);
         RuleFor(x => x.SaleTransactionItems)
             .MustAsync(helper.AllContainValidComposites)
-            .WithMessage("""
-                All sale item IDs and modifier IDs must identify correct entities
-                """);
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.SaleTransactionItemsNotValidCompositesMessage);
         RuleFor(x => x.SaleTransactionItems)
             .MustAsync(helper.AllModifiersAreCorrect)
-            .WithMessage("""
-                All modifiers must have their modified sale item specified as a valid target
-                """);
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.SaleTransactionItemModifiersNotValidMessage);
         RuleFor(x => x.SaleTransactionItems)
             .MustAsync(helper.ItemAmountsArentNegative)
-            .WithMessage("Attempting to sell a negative amount of a store item");
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.StoreTransactionItemAmountsNegativeMessage);
     }
 }
 
@@ -54,78 +61,86 @@ public class SaleTransactionCheckPriceValidator : AbstractValidator<SaleTransact
             .SetValidator(new SaleTransactionItemCreateValidator());
         RuleFor(x => x.SaleTransactionItems)
             .MustAsync(helper.AllModifiersAreCorrect)
-            .WithMessage("""
-                All modifiers must have their modified sale item specified as a valid target
-                """);
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.SaleTransactionItemModifiersNotValidMessage);
         RuleFor(x => x.SaleTransactionItems)
             .MustAsync(helper.AllContainValidComposites)
-            .WithMessage("""
-                All sale item IDs and modifier IDs must identify correct entities
-                """);
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.SaleTransactionItemsNotValidCompositesMessage);
     }
 }
 
 public class SaleTransactionOpenValidator : AbstractValidator<SaleTransactionOpenRequest> {
     public SaleTransactionOpenValidator(ValidationHelper helper) {
         RuleFor(x => x.Note)
-            .MaximumLength(ValidationConstants.MaxNoteLength);
+            .MaximumLength(ValidationConstants.MaxNoteLength)
+            .OverridePropertyName(ValidationMessages.NotePropName)
+            .WithMessage(ValidationMessages.NoteTooLongMessage);
         RuleFor(x => x.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
-            .WithMessage("Store ID must identify an existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
         RuleForEach(x => x.SaleTransactionItems)
             .SetValidator(new SaleTransactionItemCreateValidator());
         RuleFor(x => x.SaleTransactionItems)
             .MustAsync(helper.AllContainValidComposites)
-            .WithMessage("""
-                All sale item IDs and modifier IDs must identify correct entities
-                """);
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.SaleTransactionItemsNotValidCompositesMessage);
         RuleFor(x => x.SaleTransactionItems)
             .MustAsync(helper.ItemAmountsArentNegative)
-            .WithMessage("Attempting to sell a negative amount of a store item");
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.StoreTransactionItemAmountsNegativeMessage);
         RuleFor(x => x.SaleTransactionItems)
             .MustAsync(helper.AllModifiersAreCorrect)
-            .WithMessage("""
-                All modifiers must have their modified sale item specified as a valid target
-                """);
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.SaleTransactionItemModifiersNotValidMessage);
     }
 }
 
 public class SaleTransactionUpdateValidator : AbstractValidator<SaleTransactionUpdateRequest> {
     public SaleTransactionUpdateValidator(ValidationHelper helper) {
         RuleFor(x => x.Model.Note)
-                .MaximumLength(ValidationConstants.MaxNoteLength);
+            .MaximumLength(ValidationConstants.MaxNoteLength)
+            .OverridePropertyName(ValidationMessages.NotePropName)
+            .WithMessage(ValidationMessages.NoteTooLongMessage);
         RuleFor(x => x.Model.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
-            .WithMessage("Store ID must identify an existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
         RuleForEach(x => x.Model.SaleTransactionItems)
             .SetValidator(new SaleTransactionItemCreateValidator());
         RuleFor(x => x.Model.SaleTransactionItems)
             .MustAsync(helper.AllContainValidComposites)
-            .WithMessage("""
-                        All sale item IDs and modifier IDs must identify correct entities
-                        """);
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.SaleTransactionItemsNotValidCompositesMessage);
         RuleFor(x => x.Model.SaleTransactionItems)
             .MustAsync(helper.ItemAmountsArentNegative)
-            .WithMessage("Attempting to sell a negative amount of a store item");
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.StoreTransactionItemAmountsNegativeMessage);
         RuleFor(x => x.Model.SaleTransactionItems)
             .MustAsync(helper.AllModifiersAreCorrect)
-            .WithMessage("""
-                All modifiers must have their modified sale item specified as a valid target
-                """);
+            .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
+            .WithMessage(ValidationMessages.SaleTransactionItemModifiersNotValidMessage);
     }
 }
 
 public class SaleTransactionCloseValidator : AbstractValidator<SaleTransactionCloseRequest> {
     public SaleTransactionCloseValidator(ValidationHelper helper) {
         RuleFor(x => x.Model.Note)
-                .MaximumLength(ValidationConstants.MaxNoteLength);
+            .MaximumLength(ValidationConstants.MaxNoteLength)
+            .OverridePropertyName(ValidationMessages.NotePropName)
+            .WithMessage(ValidationMessages.NoteTooLongMessage);
         RuleFor(x => x.Model.CashBoxId)
             .MustAsync(helper.IdentifyExistingCashBox)
-            .WithMessage("Cash-box ID must identify an existing cash-box");
+            .OverridePropertyName(ValidationMessages.CashBoxIdPropName)
+            .WithMessage(ValidationMessages.CashBoxIdNotValidMessage);
         RuleFor(x => x.Model.PaidAmount)
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(0)
+            .OverridePropertyName(ValidationMessages.PaidAmountPropName)
+            .WithMessage(ValidationMessages.PaidAmountLessThan0Message);
         RuleFor(x => x)
             .MustAsync((x, token) => helper.PaidAmountIsEnough(x.Id, x.Model.PaidAmount, token))
-            .WithMessage("The paid amount is not enough to pay for this transaction");
+            .OverridePropertyName(ValidationMessages.PaidAmountPropName)
+            .WithMessage(ValidationMessages.PaidAmountTooLowMessage);
     }
 }

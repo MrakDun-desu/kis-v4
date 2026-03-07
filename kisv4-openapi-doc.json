@@ -29,17 +29,16 @@
           "CashBoxes"
         ],
         "operationId": "CashBoxesCreate",
-        "parameters": [
-          {
-            "name": "Name",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Kasa Kachna"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CashBoxCreateRequest"
+              }
             }
-          }
-        ],
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "description": "Created",
@@ -3047,6 +3046,18 @@
           "DonationMoney",
           "Prestige"
         ]
+      },
+      "CashBoxCreateRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "default": "Kasa Kachna"
+          }
+        }
       },
       "CashBoxCreateResponse": {
         "required": [
@@ -6084,13 +6095,13 @@
       },
       "StoreTransactionItemCreateRequest": {
         "required": [
-          "itemAmount",
+          "amount",
           "cost",
           "storeItemId"
         ],
         "type": "object",
         "properties": {
-          "itemAmount": {
+          "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": "string",
             "format": "string"

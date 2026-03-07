@@ -8,21 +8,28 @@ public class LayoutReadValidator : AbstractValidator<LayoutReadRequest> {
     public LayoutReadValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
-            .WithMessage("Store ID must be null or identify existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
     }
 }
 
 public class LayoutCreateRequestValidator : AbstractValidator<LayoutCreateRequestModel> {
     public LayoutCreateRequestValidator(ValidationHelper helper) {
         RuleFor(x => x.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxNameLength);
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameEmptyMessage);
         RuleFor(x => x.LayoutItems)
             .Must(x => x.Select(li => (li.X, li.Y)).Distinct().Count() == x.Count())
-            .WithMessage("Layout items must all have unique positions");
+            .OverridePropertyName(ValidationMessages.LayoutItemsPropName)
+            .WithMessage(ValidationMessages.LayoutItemsNotUniqueMessage);
         RuleFor(x => x.LayoutItems)
             .MustAsync(helper.HaveValidTargets)
-            .WithMessage("Layout items must all have valid target IDs");
+            .OverridePropertyName(ValidationMessages.LayoutItemsPropName)
+            .WithMessage(ValidationMessages.LayoutItemTargetsNotValidMessage);
         RuleForEach(x => x.LayoutItems)
             .SetValidator(new LayoutItemValidator());
     }
@@ -32,7 +39,8 @@ public class LayoutCreateValidator : AbstractValidator<LayoutCreateRequest> {
     public LayoutCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
-            .WithMessage("Store ID must be null or identify existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
         RuleFor(x => x.Model)
             .SetValidator(new LayoutCreateRequestValidator(helper));
     }
@@ -40,30 +48,32 @@ public class LayoutCreateValidator : AbstractValidator<LayoutCreateRequest> {
 
 public class LayoutItemValidator : AbstractValidator<LayoutItemCreateRequest> {
     public LayoutItemValidator() {
-        RuleFor(x => x.Type)
-            .Must(x => x is LayoutItemType.Layout or
-                LayoutItemType.Pipe or
-                LayoutItemType.SaleItem);
         RuleFor(x => x.X)
-            .GreaterThanOrEqualTo(0)
-            .LessThan(ValidationConstants.LayoutWidth);
+            .InclusiveBetween(0, ValidationConstants.LayoutWidth)
+            .WithMessage(ValidationMessages.LayoutItemPositionOutOfRangeMessage);
         RuleFor(x => x.Y)
-            .GreaterThanOrEqualTo(0)
-            .LessThan(ValidationConstants.LayoutHeight);
+            .InclusiveBetween(0, ValidationConstants.LayoutHeight)
+            .WithMessage(ValidationMessages.LayoutItemPositionOutOfRangeMessage);
     }
 }
 
 public class LayoutUpdateRequestValidator : AbstractValidator<LayoutUpdateRequestModel> {
     public LayoutUpdateRequestValidator(ValidationHelper helper) {
         RuleFor(x => x.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxNameLength);
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameEmptyMessage);
         RuleFor(x => x.LayoutItems)
             .Must(x => x.Select(li => (li.X, li.Y)).Distinct().Count() == x.Count())
-            .WithMessage("Layout items must all have unique positions");
+            .OverridePropertyName(ValidationMessages.LayoutItemsPropName)
+            .WithMessage(ValidationMessages.LayoutItemsNotUniqueMessage);
         RuleFor(x => x.LayoutItems)
             .MustAsync(helper.HaveValidTargets)
-            .WithMessage("Layout items must all have valid target identifiers");
+            .OverridePropertyName(ValidationMessages.LayoutItemsPropName)
+            .WithMessage(ValidationMessages.LayoutItemTargetsNotValidMessage);
         RuleForEach(x => x.LayoutItems)
             .SetValidator(new LayoutItemValidator());
     }
@@ -73,7 +83,8 @@ public class LayoutUpdateValidator : AbstractValidator<LayoutUpdateRequest> {
     public LayoutUpdateValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
-            .WithMessage("Store ID must be null or identify existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
         RuleFor(x => x.Model)
             .SetValidator(new LayoutUpdateRequestValidator(helper));
     }
@@ -83,6 +94,7 @@ public class LayoutReadTopLevelValidator : AbstractValidator<LayoutReadTopLevelR
     public LayoutReadTopLevelValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
-            .WithMessage("Store ID must be null or identify existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
     }
 }

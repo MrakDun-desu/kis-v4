@@ -7,15 +7,20 @@ public class ModifiersReadAllValidator : AbstractValidator<ModifierReadAllReques
     public ModifiersReadAllValidator(ValidationHelper helper) {
         RuleFor(x => x.CategoryId)
             .MustAsync(helper.BeNullOrIdentifyExistingCategory)
-            .WithMessage("CategoryId must either be null or identify an existing category");
+            .OverridePropertyName(ValidationMessages.CategoryIdPropName)
+            .WithMessage(ValidationMessages.CategoryIdNotValidMessage);
     }
 }
 
 public class ModifierCreateRequestValidator : AbstractValidator<ModifierCreateRequest> {
     public ModifierCreateRequestValidator(ValidationHelper helper) {
         RuleFor(x => x.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxNameLength);
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameEmptyMessage);
         RuleFor(x => x.MarginStatic)
             .GreaterThan(-ValidationConstants.MaxAllowedCost)
             .LessThan(ValidationConstants.MaxAllowedCost);
@@ -27,18 +32,24 @@ public class ModifierCreateRequestValidator : AbstractValidator<ModifierCreateRe
             .LessThan(ValidationConstants.MaxAllowedCost);
         RuleFor(x => x.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
-            .WithMessage("All category IDs must identify existing categories");
+            .OverridePropertyName(ValidationMessages.CategoryIdsPropName)
+            .WithMessage(ValidationMessages.CategoryIdsNotValidMessage);
         RuleFor(x => x.TargetIds)
             .MustAsync(helper.AllIdentifyExistingSaleItems)
-            .WithMessage("All modification target IDs must identify existing sale items");
+            .OverridePropertyName(ValidationMessages.TargetIdsPropName)
+            .WithMessage(ValidationMessages.TargetIdsNotValidMessage);
     }
 }
 
 public class ModifierUpdateRequestValidator : AbstractValidator<ModifierUpdateRequest> {
     public ModifierUpdateRequestValidator(ValidationHelper helper) {
         RuleFor(x => x.Model.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxNameLength);
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameEmptyMessage);
         RuleFor(x => x.Model.MarginStatic)
             .GreaterThan(-ValidationConstants.MaxAllowedCost)
             .LessThan(ValidationConstants.MaxAllowedCost);
@@ -50,9 +61,11 @@ public class ModifierUpdateRequestValidator : AbstractValidator<ModifierUpdateRe
             .LessThan(ValidationConstants.MaxAllowedCost);
         RuleFor(x => x.Model.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
-            .WithMessage("All category IDs must identify existing categories");
+            .OverridePropertyName(ValidationMessages.CategoryIdsPropName)
+            .WithMessage(ValidationMessages.CategoryIdsNotValidMessage);
         RuleFor(x => x.Model.TargetIds)
             .MustAsync(helper.AllIdentifyExistingSaleItems)
-            .WithMessage("All modification target IDs must identify existing sale items");
+            .OverridePropertyName(ValidationMessages.TargetIdsPropName)
+            .WithMessage(ValidationMessages.TargetIdsNotValidMessage);
     }
 }

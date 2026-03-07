@@ -9,13 +9,16 @@ public class ContainerReadAllValidator : AbstractValidator<ContainerReadAllReque
 
         RuleFor(x => x.StoreId)
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
-            .WithMessage("StoreId must either be null or identify an existing store");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
         RuleFor(x => x.TemplateId)
             .MustAsync(helper.BeNullOrIdentifyExistingTemplate)
-            .WithMessage("TemplateId must either be null or identify an existing template");
+            .OverridePropertyName(ValidationMessages.ContainerTemplateIdPropName)
+            .WithMessage(ValidationMessages.ContainerTemplateIdNotValidMessage);
         RuleFor(x => x.PipeId)
             .MustAsync(helper.BeNullOrIdentifyExistingPipe)
-            .WithMessage("PipeId must either be null or identify an existing pipe");
+            .OverridePropertyName(ValidationMessages.PipeIdPropName)
+            .WithMessage(ValidationMessages.PipeIdNotValidMessage);
     }
 
 }
@@ -24,11 +27,13 @@ public class ContainerCreateValidator : AbstractValidator<ContainerCreateRequest
     public ContainerCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
-            .WithMessage("Specified store must exist");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
 
         RuleFor(x => x.TemplateId)
             .MustAsync(helper.IdentifyExistingTemplate)
-            .WithMessage("Specified container template must exist");
+            .OverridePropertyName(ValidationMessages.ContainerTemplateIdPropName)
+            .WithMessage(ValidationMessages.ContainerTemplateIdNotValidMessage);
     }
 
 }
@@ -37,10 +42,12 @@ public class ContainerUpdateValidator : AbstractValidator<ContainerUpdateRequest
     public ContainerUpdateValidator(ValidationHelper helper) {
         RuleFor(x => x.Model.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
-            .WithMessage("Specified store must exist");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
         RuleFor(x => x.Model.PipeId)
             .MustAsync(helper.BeNullOrIdentifyExistingPipe)
-            .WithMessage("PipeId must either be null or identify an existing pipe");
+            .OverridePropertyName(ValidationMessages.PipeIdPropName)
+            .WithMessage(ValidationMessages.PipeIdNotValidMessage);
     }
 
 }

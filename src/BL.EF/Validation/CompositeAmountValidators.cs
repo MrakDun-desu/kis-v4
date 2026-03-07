@@ -9,6 +9,7 @@ public class CompositeAmountReadAllValidator : AbstractValidator<CompositeAmount
 
         RuleFor(x => x.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
-            .WithMessage("Specified store must exist");
+            .OverridePropertyName(ValidationMessages.StoreIdPropName)
+            .WithMessage(ValidationMessages.StoreIdNotValidMessage);
     }
 }

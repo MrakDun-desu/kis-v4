@@ -9,7 +9,8 @@ public class ContainerTemplateReadAllValidator : AbstractValidator<ContainerTemp
 
         RuleFor(x => x.StoreItemId)
             .MustAsync(helper.BeNullOrIdentifyExistingContainerItem)
-            .WithMessage("The queried store item must be null or container item");
+            .OverridePropertyName(ValidationMessages.StoreItemIdPropName)
+            .WithMessage(ValidationMessages.ContainerItemIdNotValidMessage);
     }
 }
 
@@ -17,15 +18,21 @@ public class ContainerTemplateCreateValidator : AbstractValidator<ContainerTempl
     public ContainerTemplateCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreItemId)
             .MustAsync(helper.IdentifyExistingContainerItem)
-            .WithMessage("Specified store item must be an existing container item");
+            .OverridePropertyName(ValidationMessages.StoreItemIdPropName)
+            .WithMessage(ValidationMessages.ContainerItemIdNotValidMessage);
 
         RuleFor(x => x.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxNameLength);
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameEmptyMessage);
 
         RuleFor(x => x.Amount)
-            .GreaterThan(0)
-            .LessThan(ValidationConstants.MaxTransactionAmount);
+            .InclusiveBetween(0, ValidationConstants.MaxTransactionAmount)
+            .OverridePropertyName(ValidationMessages.AmountPropName)
+            .WithMessage(ValidationMessages.AmountOutOfRangeMessage);
     }
 }
 
@@ -33,15 +40,20 @@ public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTempl
     public ContainerTemplateUpdateValidator(ValidationHelper helper) {
         RuleFor(x => x.Model.StoreItemId)
             .MustAsync(helper.IdentifyExistingContainerItem)
-            .WithMessage("Specified store item must be an existing container item");
+            .OverridePropertyName(ValidationMessages.StoreItemIdPropName)
+            .WithMessage(ValidationMessages.ContainerItemIdNotValidMessage);
 
         RuleFor(x => x.Model.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxNameLength);
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameEmptyMessage);
 
         RuleFor(x => x)
             .MustAsync(helper.NotHaveExistingContainers)
-            .WithMessage("Container templates that have existing containers can't be updated");
+            .WithMessage(ValidationMessages.ContainerTemplateUsedMessage);
     }
 }
 
@@ -49,6 +61,6 @@ public class ContainerTemplateDeleteValidator : AbstractValidator<ContainerTempl
     public ContainerTemplateDeleteValidator(ValidationHelper helper) {
         RuleFor(x => x)
             .MustAsync(helper.NotHaveAnyAssociatedContainers)
-            .WithMessage("Can't delete container templates with active containers");
+            .WithMessage(ValidationMessages.ContainerTemplateUsedMessage);
     }
 }

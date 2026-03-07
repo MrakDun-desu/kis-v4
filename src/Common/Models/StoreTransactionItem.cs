@@ -11,7 +11,7 @@ public record StoreTransactionItemModel {
 
 // Requests and responses
 public record StoreTransactionItemCreateRequest {
-    public required decimal ItemAmount { get; init; }
+    public required decimal Amount { get; init; }
     public required decimal Cost { get; init; }
     public required int StoreItemId { get; init; }
 }

@@ -7,11 +7,15 @@ public class CostsCreateValidator : AbstractValidator<CostCreateRequest> {
     public CostsCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.StoreItemId)
             .MustAsync(helper.IdentifyExistingStoreItem)
-            .WithMessage("Specified store item must exist");
+            .OverridePropertyName(ValidationMessages.StoreItemIdPropName)
+            .WithMessage(ValidationMessages.StoreItemIdNotValidMessage);
         RuleFor(x => x.Description)
-            .MaximumLength(ValidationConstants.MaxDescriptionLength);
+            .MaximumLength(ValidationConstants.MaxDescriptionLength)
+            .OverridePropertyName(ValidationMessages.DescriptionPropName)
+            .WithMessage(ValidationMessages.DescriptionTooLongMessage);
         RuleFor(x => x.Amount)
-            .LessThan(ValidationConstants.MaxAllowedCost)
-            .GreaterThan(0);
+            .InclusiveBetween(0, ValidationConstants.MaxAllowedCost)
+            .OverridePropertyName(ValidationMessages.CostPropName)
+            .OverridePropertyName(ValidationMessages.AmountOutOfRangeMessage);
     }
 }

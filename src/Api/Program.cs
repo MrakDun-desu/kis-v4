@@ -152,17 +152,17 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.ConfigureHttpJsonOptions(opts => {
     opts.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-ValidatorOptions.Global.PropertyNameResolver = (type, memberInfo, expression) => {
-    if (expression is null) {
-        return memberInfo?.Name;
-    }
-    var chain = FluentValidation.Internal.PropertyChain.FromExpression(expression);
-    // For requests that nest models inside, remove the model so the errors are easier to read
-    if (chain.Count > 0) {
-        return chain.ToString().Replace("Model.", string.Empty);
-    }
-    return memberInfo?.Name;
-};
+// ValidatorOptions.Global.PropertyNameResolver = (type, memberInfo, expression) => {
+//     if (expression is null) {
+//         return memberInfo?.Name;
+//     }
+//     var chain = FluentValidation.Internal.PropertyChain.FromExpression(expression);
+//     // For requests that nest models inside, remove the model so the errors are easier to read
+//     if (chain.Count > 0) {
+//         return chain.ToString().Replace("Model.", string.Empty);
+//     }
+//     return memberInfo?.Name;
+// };
 
 // Production exception handling
 if (!builder.Environment.IsDevelopment()) {

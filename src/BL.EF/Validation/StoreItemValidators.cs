@@ -7,21 +7,31 @@ public class StoreItemsReadAllValidator : AbstractValidator<StoreItemReadAllRequ
     public StoreItemsReadAllValidator(ValidationHelper helper) {
         RuleFor(x => x.CategoryId)
             .MustAsync(helper.BeNullOrIdentifyExistingCategory)
-            .WithMessage("CategoryId must either be null or identify an existing category");
+            .OverridePropertyName(ValidationMessages.CategoryIdPropName)
+            .WithMessage(ValidationMessages.CategoryIdNotValidMessage);
     }
 }
 
 public class StoreItemCreateValidator : AbstractValidator<StoreItemCreateRequest> {
     public StoreItemCreateValidator(ValidationHelper helper) {
         RuleFor(x => x.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxNameLength);
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameEmptyMessage);
         RuleFor(x => x.UnitName)
+            .MaximumLength(ValidationConstants.MaxUnitNameLength)
+            .OverridePropertyName(ValidationMessages.UnitNamePropName)
+            .WithMessage(ValidationMessages.UnitNameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxUnitNameLength);
+            .OverridePropertyName(ValidationMessages.UnitNamePropName)
+            .WithMessage(ValidationMessages.UnitNameEmptyMessage);
         RuleFor(x => x.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
-            .WithMessage("All category IDs must identify existing categories");
+            .OverridePropertyName(ValidationMessages.CategoryIdsPropName)
+            .WithMessage(ValidationMessages.CategoryIdsNotValidMessage);
         RuleFor(x => x.InitialCost)
             .GreaterThan(0)
             .LessThan(ValidationConstants.MaxAllowedCost);
@@ -31,14 +41,23 @@ public class StoreItemCreateValidator : AbstractValidator<StoreItemCreateRequest
 public class StoreItemUpdateValidator : AbstractValidator<StoreItemUpdateRequest> {
     public StoreItemUpdateValidator(ValidationHelper helper) {
         RuleFor(x => x.Model.Name)
+            .MaximumLength(ValidationConstants.MaxNameLength)
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxNameLength);
+            .OverridePropertyName(ValidationMessages.NamePropName)
+            .WithMessage(ValidationMessages.NameEmptyMessage);
         RuleFor(x => x.Model.UnitName)
+            .MaximumLength(ValidationConstants.MaxUnitNameLength)
+            .OverridePropertyName(ValidationMessages.UnitNamePropName)
+            .WithMessage(ValidationMessages.UnitNameTooLongMessage)
             .NotEmpty()
-            .MaximumLength(ValidationConstants.MaxUnitNameLength);
+            .OverridePropertyName(ValidationMessages.UnitNamePropName)
+            .WithMessage(ValidationMessages.UnitNameEmptyMessage);
         RuleFor(x => x.Model.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
-            .WithMessage("All category IDs must identify existing categories");
+            .OverridePropertyName(ValidationMessages.CategoryIdsPropName)
+            .WithMessage(ValidationMessages.CategoryIdsNotValidMessage);
     }
 }
 
@@ -46,6 +65,6 @@ public class StoreItemDeleteValidator : AbstractValidator<StoreItemDeleteRequest
     public StoreItemDeleteValidator(ValidationHelper helper) {
         RuleFor(x => x)
             .MustAsync(helper.NotHaveAnyAssociatedContainerTemplates)
-            .WithMessage("Can't delete store items with active container templates");
+            .WithMessage(ValidationMessages.StoreItemUsedInContainersMessage);
     }
 }
