@@ -18,7 +18,7 @@ public static class RouteBuilderExtensions {
     /// Adds a PassThroughRequirement by default, which means that the requirements
     /// are not important in that case, just that the request should be authorized.
     /// </summary
-    public static RouteHandlerBuilder RequireAuthorization<T>(
+    public static RouteHandlerBuilder AddAuthorizationFilter<T>(
         this RouteHandlerBuilder builder,
         params List<IAuthorizationRequirement> requirements
     ) where T : class {
@@ -30,6 +30,13 @@ public static class RouteBuilderExtensions {
             var filter = new AuthorizationFilter<T>(authService, requirements);
             return await filter.InvokeAsync(context, next);
         });
+    }
+
+    public static RouteHandlerBuilder AllowOnlyRoles(
+        this RouteHandlerBuilder builder,
+        params string[] allowedRoles
+    ) {
+        return builder.RequireAuthorization(auth => auth.RequireRole(allowedRoles));
     }
 
     public static RouteHandlerBuilder WithAdminOverride(

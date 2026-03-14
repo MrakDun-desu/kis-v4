@@ -1,10 +1,10 @@
 using System.Data;
 using System.Globalization;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Audit.EntityFramework.Providers;
-using FluentValidation;
 using KisV4.Api.Endpoints;
 using KisV4.Api.Middlewares;
 using KisV4.BL.EF;
@@ -12,6 +12,7 @@ using KisV4.Common;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
@@ -39,6 +40,10 @@ builder.Services.AddAuthentication(allowTestingTokens ? "Bearer" : "oidc")
     .AddJwtBearer("oidc", opts => {
         opts.Authority = oidcAuthority;
         opts.TokenValidationParameters.ValidateAudience = false;
+        opts.TokenValidationParameters.NameClaimType = "sub";
+        opts.TokenValidationParameters.RoleClaimType = "role";
+        opts.MapInboundClaims = false;
+        opts.SaveToken = true;
         if (builder.Environment.IsDevelopment()) {
             opts.BackchannelHttpHandler = new HttpClientHandler {
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
@@ -48,6 +53,7 @@ builder.Services.AddAuthentication(allowTestingTokens ? "Bearer" : "oidc")
 
 builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+builder.Services.AddScoped<IClaimsTransformation, UserInfoClaimsTransformation>();
 
 // OpenAPI
 builder.Services.AddOpenApi(opts => {
@@ -144,6 +150,17 @@ builder.Services.AddEntityFrameworkBL();
 
 // HTTP context accessor for getting the user ID during auditing
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient()
+    .ConfigureHttpClientDefaults(opts => {
+        if (!builder.Environment.IsDevelopment()) {
+            return;
+        }
+        opts.ConfigurePrimaryHttpMessageHandler(() =>
+        new HttpClientHandler {
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        });
+    });
+builder.Services.AddMemoryCache();
 
 // Time
 builder.Services.AddSingleton(TimeProvider.System);
@@ -152,17 +169,6 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.ConfigureHttpJsonOptions(opts => {
     opts.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-// ValidatorOptions.Global.PropertyNameResolver = (type, memberInfo, expression) => {
-//     if (expression is null) {
-//         return memberInfo?.Name;
-//     }
-//     var chain = FluentValidation.Internal.PropertyChain.FromExpression(expression);
-//     // For requests that nest models inside, remove the model so the errors are easier to read
-//     if (chain.Count > 0) {
-//         return chain.ToString().Replace("Model.", string.Empty);
-//     }
-//     return memberInfo?.Name;
-// };
 
 // Production exception handling
 if (!builder.Environment.IsDevelopment()) {
@@ -229,5 +235,13 @@ Users.MapEndpoints(app);
 // OpenAPI
 app.MapOpenApi().AllowAnonymous();
 app.MapScalarApiReference().AllowAnonymous();
+
+// add a testing identity for development environment
+if (builder.Environment.IsDevelopment()) {
+    app.MapGet("identity", (ClaimsPrincipal user) => {
+        var output = user.Claims.Select(c => new { c.Type, c.Value });
+        return JsonSerializer.Serialize(output);
+    });
+}
 
 app.Run();

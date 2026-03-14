@@ -23,7 +23,7 @@ public static class StoreTransactions {
             .AddValidation<StoreTransactionCreateRequest>();
         routeBuilder.MapDelete("store-transactions/{id:int}", Delete)
             .WithName("StoreTransactionsDelete")
-            .RequireAuthorization<StoreTransactionDeleteRequest>()
+            .AddAuthorizationFilter<StoreTransactionDeleteRequest>()
             .WithAdminOverride();
     }
 

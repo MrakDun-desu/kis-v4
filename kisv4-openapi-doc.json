@@ -2968,6 +2968,25 @@
           }
         }
       }
+    },
+    "/identity": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -6432,6 +6451,9 @@
     },
     {
       "name": "Users"
+    },
+    {
+      "name": "Api"
     }
   ]
 }

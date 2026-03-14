@@ -27,15 +27,15 @@ public static class SaleTransactions {
             .AddValidation<SaleTransactionOpenRequest>();
         routeBuilder.MapPatch("sale-transactions/{id:int}", Update)
             .WithName("SaleTransactionsUpdate")
-            .RequireAuthorization<SaleTransactionUpdateRequest>()
+            .AddAuthorizationFilter<SaleTransactionUpdateRequest>()
             .AddValidation<SaleTransactionUpdateRequest>();
         routeBuilder.MapPost("sale-transactions/{id:int}/close", Close)
             .WithName("SaleTransactionsClose")
-            .RequireAuthorization<SaleTransactionCloseRequest>()
+            .AddAuthorizationFilter<SaleTransactionCloseRequest>()
             .AddValidation<SaleTransactionCloseRequest>();
         routeBuilder.MapDelete("sale-transactions/{id:int}", Delete)
             .WithName("SaleTransactionsDelete")
-            .RequireAuthorization<SaleTransactionDeleteRequest>()
+            .AddAuthorizationFilter<SaleTransactionDeleteRequest>()
             .WithAdminOverride();
     }
 
