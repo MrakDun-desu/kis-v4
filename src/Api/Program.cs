@@ -52,7 +52,9 @@ builder.Services.AddAuthentication(allowTestingTokens ? "Bearer" : "oidc")
 
 builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
-builder.Services.AddScoped<IClaimsTransformation, UserInfoClaimsTransformation>();
+if (!allowTestingTokens) {
+    builder.Services.AddScoped<IClaimsTransformation, UserInfoClaimsTransformation>();
+}
 
 // OpenAPI
 builder.Services.AddOpenApi(opts => {

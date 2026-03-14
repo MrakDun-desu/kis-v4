@@ -45,6 +45,7 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
+        // global filters
         modelBuilder.Entity<Cashbox>().HasQueryFilter(e => !e.Deleted);
         modelBuilder.Entity<Composite>().HasQueryFilter(e => !e.Hidden);
         modelBuilder.Entity<ContainerTemplate>().HasQueryFilter(e => !e.Deleted);
@@ -53,12 +54,7 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
         modelBuilder.Entity<StoreItem>().HasQueryFilter(e => !e.Hidden);
         modelBuilder.Entity<StoreTransactionItem>().HasQueryFilter(e => !e.Cancelled);
 
-        // Maybe use this to auto-include some properties that are used even in
-        // list models in the future
-        // modelBuilder.Entity<ContainerTemplate>()
-        //     .Navigation(ct => ct.StoreItem)
-        //     .AutoInclude();
-
+        // relation configs
         modelBuilder.Entity<Category>()
             .HasMany(c => c.Composites)
             .WithMany(c => c.Categories)
@@ -87,6 +83,7 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
             .WithOne(m => m.SaleTransactionItem)
             .HasForeignKey(m => new { m.SaleTransactionItemLineNumber, m.SaleTransactionId });
 
+        // inheritance configs
         modelBuilder.Entity<LayoutItem>()
             .HasDiscriminator(e => e.Type)
             .HasValue<LayoutSaleItem>(LayoutItemType.SaleItem)
@@ -99,6 +96,7 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
             .HasForeignKey(c => c.PipeId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        // type configs
         modelBuilder.Entity<AuditLog>(b => {
             b.Property(x => x.Changes).HasColumnType("jsonb");
             b.Property(x => x.EntityKeys).HasColumnType("jsonb");
@@ -107,15 +105,15 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) {
         // 11 digits with 2 decimal places
-        configurationBuilder.Properties<decimal>().HavePrecision(11, 2);
+        configurationBuilder.Properties<decimal>().HavePrecision(13, 4);
         // discard seconds for timestamps
         configurationBuilder.Properties<DateTimeOffset>().HavePrecision(0);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         // remove warnings that say that required navigations with global filters will cause
-        // unexpected results (we don't want to see the results of global filters even as
-        // navigations 99% of the time)
+        // unexpected results. In the necessary cases, it's always better to ignore the global
+        // filters rather than removing them altogether
         optionsBuilder.ConfigureWarnings(w => {
             w.Ignore(CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning);
         });

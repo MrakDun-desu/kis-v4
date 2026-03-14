@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
 using System.Net.Http.Headers;
+using System.Text.Json.Serialization;
 
 public class UserInfoClaimsTransformation(
     IHttpClientFactory httpClientFactory,
@@ -80,5 +81,5 @@ public class UserInfoClaimsTransformation(
         }
     }
 
-    private record OidcDiscoveryDocument([property: System.Text.Json.Serialization.JsonPropertyName("userinfo_endpoint")] string UserInfoEndpoint);
+    private record OidcDiscoveryDocument([property: JsonPropertyName("userinfo_endpoint")] string UserInfoEndpoint);
 }

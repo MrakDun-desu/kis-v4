@@ -7,7 +7,8 @@ public static class UserMapping {
     public static UserListModel? ToModel(this User? source) => source switch {
         null => null,
         var val => new UserListModel {
-            Id = val.Id
+            Id = val.Id,
+            Nick = val.Nick,
         }
     };
 }

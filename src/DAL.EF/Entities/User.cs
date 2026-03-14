@@ -7,6 +7,8 @@ namespace KisV4.DAL.EF.Entities;
 public record User {
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public required string Id { get; init; }
+    public string? Nick { get; set; }
+    public bool GamificationAllowed { get; set; }
 
     public int PrestigeAccountId { get; init; }
     public Account? PrestigeAccount { get; init; } = new();

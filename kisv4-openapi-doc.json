@@ -6328,12 +6328,19 @@
       },
       "UserListModel": {
         "required": [
-          "id"
+          "id",
+          "nick"
         ],
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
+          },
+          "nick": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
