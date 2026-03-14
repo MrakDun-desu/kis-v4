@@ -6,7 +6,7 @@ namespace KisV4.DAL.EF.Entities;
 [AuditIgnore]
 public record User {
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
-    public required int Id { get; init; }
+    public required string Id { get; init; }
 
     public int PrestigeAccountId { get; init; }
     public Account? PrestigeAccount { get; init; } = new();

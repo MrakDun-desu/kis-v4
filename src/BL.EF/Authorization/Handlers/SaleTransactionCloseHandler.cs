@@ -22,7 +22,7 @@ public class SaleTransactionCloseHandler(
             return;
         }
 
-        var userId = context.User.GetUserId();
+        var userId = context.User.Identity!.Name!;
         var isOwner = saleTransaction.StartedById == userId;
 
         if (isOwner) {

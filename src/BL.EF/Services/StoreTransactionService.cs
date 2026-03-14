@@ -22,7 +22,7 @@ public class StoreTransactionService(
 
     public async Task<StoreTransactionReadAllResponse> ReadAllAsync(
         StoreTransactionReadAllRequest req,
-        int userId,
+        string userId,
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
@@ -94,7 +94,7 @@ public class StoreTransactionService(
 
     public async Task<StoreTransactionCreateResponse> CreateAsync(
             StoreTransactionCreateRequest req,
-            int userId,
+            string userId,
             CancellationToken token = default
             ) {
         var reqTime = _timeProvider.GetUtcNow();
@@ -131,13 +131,13 @@ public class StoreTransactionService(
 
     public async Task<bool> DeleteAsync(
         StoreTransactionDeleteRequest req,
-        int userId,
+        string userId,
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
         await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
         try {
-            var user = _userService.GetAsync(userId);
+            var user = await _userService.GetAsync(userId);
             var deletedCount = await _dbContext.StoreTransactions
                 .Where(st => st.Id == req.Id)
                 .ExecuteUpdateAsync(props => {
@@ -177,7 +177,7 @@ public class StoreTransactionService(
     /// </summary>
     internal static async Task<StoreTransaction> CreateInternalAsync(
             StoreTransactionCreateRequest req,
-            int userId,
+            string userId,
             DateTimeOffset reqTime,
             KisDbContext dbContext,
             SaleTransaction? saleTransaction = null,
@@ -222,7 +222,7 @@ public class StoreTransactionService(
 
     internal static async Task<StoreTransaction> CreateInternalAsync(
         StoreTransaction storeTransaction,
-        int userId,
+        string userId,
         KisDbContext dbContext,
         DateTimeOffset reqTime,
         CancellationToken token = default,
@@ -299,7 +299,7 @@ public class StoreTransactionService(
 
     private static async Task UpdateCostsAsync(
         int transactionId,
-        int userId,
+        string userId,
         DateTimeOffset reqTime,
         KisDbContext dbContext,
         CancellationToken token = default

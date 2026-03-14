@@ -22,6 +22,6 @@ public static class Costs {
             ClaimsPrincipal claims,
             CancellationToken token = default
             ) {
-        return TypedResults.Ok(await service.Create(req, claims.GetUserId(), token));
+        return TypedResults.Ok(await service.Create(req, claims.Identity!.Name!, token));
     }
 }

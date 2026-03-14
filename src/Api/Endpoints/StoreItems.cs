@@ -65,7 +65,7 @@ public static class StoreItems {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var userId = claims.GetUserId();
+        var userId = claims.Identity!.Name!;
         var data = await service.CreateAsync(req, userId, token);
 
         return TypedResults.CreatedAtRoute(data, ReadRouteName, new { id = data.Id });

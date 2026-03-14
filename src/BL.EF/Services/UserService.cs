@@ -11,7 +11,7 @@ public class UserService(
 
     private readonly KisDbContext _dbContext = dbContext;
 
-    public async Task<UserListModel> GetAsync(int id, CancellationToken token = default) {
+    public async Task<UserListModel> GetAsync(string id, CancellationToken token = default) {
         var entity = await _dbContext.Users.FindAsync(id, token)
             ?? throw new InvalidOperationException($"""
                 User {id} should already be created when accessing in the service

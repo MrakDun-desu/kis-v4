@@ -8,7 +8,6 @@ using Audit.EntityFramework.Providers;
 using KisV4.Api.Endpoints;
 using KisV4.Api.Middlewares;
 using KisV4.BL.EF;
-using KisV4.Common;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
@@ -148,8 +147,11 @@ if (Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider") {
 // Business layer (services, validation, authorization handlers)
 builder.Services.AddEntityFrameworkBL();
 
-// HTTP context accessor for getting the user ID during auditing
+// HTTP context accessor - usable basically everywhere
+// validation, authorization, automatic role creation, auditing... all need the current HTTP context
 builder.Services.AddHttpContextAccessor();
+
+// HTTP client and memory cache for requesting UserInfo from the authorization server
 builder.Services.AddHttpClient()
     .ConfigureHttpClientDefaults(opts => {
         if (!builder.Environment.IsDevelopment()) {
@@ -186,8 +188,7 @@ Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => 
             var context = contextAccessor.HttpContext!;
             var claims = context.User;
 
-            entity.UserId = claims.GetUserId();
-
+            entity.UserId = claims.Identity?.Name;
             entity.EntityType = entry.EntityType.Name;
             entity.Action = entry.Action;
             entity.Changes = JsonSerializer.SerializeToDocument(entry.Changes);

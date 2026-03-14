@@ -4,7 +4,7 @@ namespace KisV4.Common.Models;
 
 // Base models
 public record UserListModel {
-    public required int Id { get; init; }
+    public required string Id { get; init; }
     // will probably need to add more things like username later, but that needs to be somehow
     // figured out with the authentication server
 }

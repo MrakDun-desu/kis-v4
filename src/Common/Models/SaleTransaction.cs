@@ -53,7 +53,7 @@ public record SaleTransactionCreateRequest {
     public string? Note { get; init; }
     public required int StoreId { get; init; }
     public required int CashBoxId { get; init; }
-    public required int CustomerId { get; init; }
+    public required string CustomerId { get; init; }
     public required decimal PaidAmount { get; init; }
     public SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
 }
@@ -80,7 +80,7 @@ public record SaleTransactionUpdateRequest {
 public record SaleTransactionCloseRequestModel {
     public string? Note { get; init; }
     public required int CashBoxId { get; init; }
-    public required int CustomerId { get; init; }
+    public required string CustomerId { get; init; }
     public required decimal PaidAmount { get; init; }
 }
 

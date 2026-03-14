@@ -33,6 +33,6 @@ public static class ContainerChanges {
             ContainerChangeCreateRequest req,
             CancellationToken token = default
             ) {
-        return TypedResults.Ok(await service.Create(req, user.GetUserId(), token));
+        return TypedResults.Ok(await service.Create(req, user.Identity!.Name!, token));
     }
 }

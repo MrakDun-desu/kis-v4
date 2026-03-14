@@ -19,7 +19,7 @@ public class CostService(
 
     public async Task<CostCreateResponse> Create(
             CostCreateRequest req,
-            int userId,
+            string userId,
             CancellationToken token = default
             ) {
         var reqTime = _timeProvider.GetUtcNow();

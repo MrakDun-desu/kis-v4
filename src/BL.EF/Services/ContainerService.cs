@@ -111,7 +111,7 @@ public class ContainerService(
             .FirstOrDefaultAsync(c => c.Id == id, token);
     }
 
-    public async Task<ContainerCreateResponse> CreateAsync(ContainerCreateRequest req, int userId, CancellationToken token = default) {
+    public async Task<ContainerCreateResponse> CreateAsync(ContainerCreateRequest req, string userId, CancellationToken token = default) {
         var reqTime = _timeProvider.GetUtcNow();
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(token);
 
@@ -171,7 +171,7 @@ public class ContainerService(
 
     public async Task<ContainerUpdateResponse?> UpdateAsync(
         ContainerUpdateRequest req,
-        int userId,
+        string userId,
         CancellationToken token
     ) {
         var id = req.Id;

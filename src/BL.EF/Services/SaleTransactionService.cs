@@ -22,7 +22,7 @@ public class SaleTransactionService(
 
     public async Task<SaleTransactionReadAllResponse> ReadAllAsync(
         SaleTransactionReadAllRequest req,
-        int userId,
+        string userId,
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
@@ -114,7 +114,7 @@ public class SaleTransactionService(
 
     public async Task<SaleTransactionDetailModel> CreateAsync(
         SaleTransactionCreateRequest req,
-        int userId,
+        string userId,
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
@@ -224,7 +224,7 @@ public class SaleTransactionService(
 
     public async Task<SaleTransactionDetailModel> OpenAsync(
         SaleTransactionOpenRequest req,
-        int userId,
+        string userId,
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
@@ -269,7 +269,7 @@ public class SaleTransactionService(
 
     public async Task<SaleTransactionDetailModel?> UpdateAsync(
         SaleTransactionUpdateRequest req,
-        int userId,
+        string userId,
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
@@ -347,7 +347,7 @@ public class SaleTransactionService(
 
     public async Task<SaleTransactionDetailModel?> CloseAsync(
         SaleTransactionCloseRequest req,
-        int userId,
+        string userId,
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
@@ -442,7 +442,7 @@ public class SaleTransactionService(
 
     public async Task<bool> DeleteAsync(
         SaleTransactionDeleteRequest req,
-        int userId,
+        string userId,
         CancellationToken token = default
     ) {
         var reqTime = _timeProvider.GetUtcNow();
@@ -504,7 +504,7 @@ public class SaleTransactionService(
     )> CreateBaseTransactionAsync(
         string? note,
         int storeId,
-        int userId,
+        string userId,
         bool open,
         SaleTransactionItemCreateRequest[] itemsToCreate,
         DateTimeOffset reqTime,
@@ -693,7 +693,7 @@ public class SaleTransactionService(
         Dictionary<int, (Composite Item, decimal Price)> composites,
         int storeId,
         DateTimeOffset reqTime,
-        int userId
+        string userId
     ) {
         var storeTransactionItems = GetStoreTransactionItems(composites, saleTransactionItems, storeId);
 

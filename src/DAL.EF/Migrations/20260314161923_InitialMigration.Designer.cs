@@ -13,15 +13,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KisV4.DAL.EF.Migrations
 {
     [DbContext(typeof(KisDbContext))]
-    [Migration("20260303092014_SaleTransactionUpdates")]
-    partial class SaleTransactionUpdates
+    [Migration("20260314161923_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -84,6 +84,9 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<bool>("Cancelled")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.HasKey("AccountId", "SaleTransactionId");
 
                     b.HasIndex("SaleTransactionId");
@@ -123,8 +126,8 @@ namespace KisV4.DAL.EF.Migrations
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -312,8 +315,9 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<int>("NewState")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("ContainerId", "Timestamp");
 
@@ -368,8 +372,9 @@ namespace KisV4.DAL.EF.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("StoreItemId", "Timestamp");
 
@@ -413,8 +418,9 @@ namespace KisV4.DAL.EF.Migrations
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -681,8 +687,8 @@ namespace KisV4.DAL.EF.Migrations
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
-                    b.Property<int?>("CancelledById")
-                        .HasColumnType("integer");
+                    b.Property<string>("CancelledById")
+                        .HasColumnType("text");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -699,8 +705,9 @@ namespace KisV4.DAL.EF.Migrations
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
-                    b.Property<int>("StartedById")
-                        .HasColumnType("integer");
+                    b.Property<string>("StartedById")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -717,8 +724,8 @@ namespace KisV4.DAL.EF.Migrations
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<int>("PrestigeAccountId")
                         .HasColumnType("integer");
@@ -818,8 +825,8 @@ namespace KisV4.DAL.EF.Migrations
                         .HasPrecision(0)
                         .HasColumnType("timestamp(0) with time zone");
 
-                    b.Property<int?>("OpenedById")
-                        .HasColumnType("integer");
+                    b.Property<string>("OpenedById")
+                        .HasColumnType("text");
 
                     b.HasIndex("OpenedById");
 

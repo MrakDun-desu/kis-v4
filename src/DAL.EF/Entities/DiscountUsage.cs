@@ -6,7 +6,7 @@ public record DiscountUsage {
 
     public int DiscountId { get; init; }
     public Discount? Discount { get; set; }
-    public int UserId { get; init; }
+    public string UserId { get; init; } = string.Empty;
     public User? User { get; set; }
     public ICollection<PriceChange> PriceChanges { get; init; } = [];
 }

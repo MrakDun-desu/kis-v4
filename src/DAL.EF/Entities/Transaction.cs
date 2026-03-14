@@ -9,8 +9,8 @@ public abstract record Transaction {
     public DateTimeOffset? CancelledAt { get; set; }
     public required TransactionReason Reason { get; init; }
 
-    public required int StartedById { get; init; }
+    public required string StartedById { get; init; }
     public User? StartedBy { get; init; }
-    public int? CancelledById { get; init; }
+    public string? CancelledById { get; init; }
     public User? CancelledBy { get; init; }
 }

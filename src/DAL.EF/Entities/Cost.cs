@@ -12,6 +12,6 @@ public record Cost {
 
     public int StoreItemId { get; init; }
     public StoreItem? StoreItem { get; set; }
-    public required int UserId { get; init; }
+    public required string UserId { get; init; }
     public User? User { get; set; }
 }

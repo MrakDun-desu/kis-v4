@@ -13,6 +13,6 @@ public record ContainerChange {
 
     public required int ContainerId { get; init; }
     public Container? Container { get; set; }
-    public required int UserId { get; init; }
+    public required string UserId { get; init; }
     public User? User { get; set; }
 }

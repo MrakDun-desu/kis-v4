@@ -39,7 +39,7 @@ public static class StoreTransactions {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var userId = claims.GetUserId();
+        var userId = claims.Identity!.Name!;
         return TypedResults.Ok(await service.ReadAllAsync(req, userId, token));
     }
 
@@ -60,7 +60,7 @@ public static class StoreTransactions {
         ClaimsPrincipal claims,
         CancellationToken token = default
     ) {
-        var userId = claims.GetUserId();
+        var userId = claims.Identity!.Name!;
         var output = await service.CreateAsync(req, userId, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
@@ -72,7 +72,7 @@ public static class StoreTransactions {
         StoreTransactionService service,
         CancellationToken token = default
     ) {
-        var userId = claims.GetUserId();
+        var userId = claims.Identity!.Name!;
         return await service.DeleteAsync(req, userId, token)
             ? TypedResults.NoContent()
             : TypedResults.NotFound();

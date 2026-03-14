@@ -2968,25 +2968,6 @@
           }
         }
       }
-    },
-    "/identity": {
-      "get": {
-        "tags": [
-          "Api"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -5292,9 +5273,7 @@
             "format": "int32"
           },
           "customerId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "int32"
+            "type": "string"
           },
           "paidAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -5329,9 +5308,7 @@
             "format": "int32"
           },
           "customerId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "int32"
+            "type": "string"
           },
           "paidAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -6356,9 +6333,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "int32"
+            "type": "string"
           }
         }
       },
@@ -6451,9 +6426,6 @@
     },
     {
       "name": "Users"
-    },
-    {
-      "name": "Api"
     }
   ]
 }

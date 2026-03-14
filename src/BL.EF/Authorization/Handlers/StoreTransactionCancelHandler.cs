@@ -25,7 +25,7 @@ public class StoreTransactionUpdateHandler(
             return;
         }
 
-        var userId = context.User.GetUserId();
+        var userId = context.User.Identity!.Name!;
         var isOwner = storeTransaction.StartedById == userId;
         var withinTimeLimit = storeTransaction.StartedAt + AuthorizationConstants.TransactionCancelTimeout >= reqTime;
 

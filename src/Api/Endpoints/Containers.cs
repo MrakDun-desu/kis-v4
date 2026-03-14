@@ -61,7 +61,7 @@ public static class Containers {
         ContainerCreateRequest req,
         CancellationToken token = default
     ) {
-        return TypedResults.Ok(await service.CreateAsync(req, user.GetUserId(), token));
+        return TypedResults.Ok(await service.CreateAsync(req, user.Identity!.Name!, token));
     }
 
     public static async Task<Results<Ok<ContainerUpdateResponse>, NotFound, ValidationProblem>> Update(
@@ -71,7 +71,7 @@ public static class Containers {
         ContainerUpdateRequest req,
         CancellationToken token = default
     ) {
-        return await service.UpdateAsync(req, user.GetUserId(), token) switch {
+        return await service.UpdateAsync(req, user.Identity!.Name!, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
         };

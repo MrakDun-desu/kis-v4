@@ -48,7 +48,7 @@ public static class SaleTransactions {
         ClaimsPrincipal claims,
         CancellationToken token = default
     ) {
-        var output = await service.ReadAllAsync(req, claims.GetUserId(), token);
+        var output = await service.ReadAllAsync(req, claims.Identity!.Name!, token);
         return TypedResults.Ok(output);
     }
 
@@ -76,7 +76,7 @@ public static class SaleTransactions {
         ClaimsPrincipal claims,
         CancellationToken token = default
     ) {
-        var output = await service.CreateAsync(req, claims.GetUserId(), token);
+        var output = await service.CreateAsync(req, claims.Identity!.Name!, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
@@ -101,7 +101,7 @@ public static class SaleTransactions {
         ClaimsPrincipal claims,
         CancellationToken token = default
     ) {
-        var output = await service.OpenAsync(req, claims.GetUserId(), token);
+        var output = await service.OpenAsync(req, claims.Identity!.Name!, token);
         return TypedResults.CreatedAtRoute(output, ReadRouteName, new { id = output.Id });
     }
 
@@ -117,7 +117,7 @@ public static class SaleTransactions {
         ClaimsPrincipal claims,
         CancellationToken token = default
     ) {
-        var output = await service.UpdateAsync(req, claims.GetUserId(), token);
+        var output = await service.UpdateAsync(req, claims.Identity!.Name!, token);
         return output switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
@@ -136,7 +136,7 @@ public static class SaleTransactions {
         ClaimsPrincipal claims,
         CancellationToken token = default
     ) {
-        var output = await service.CloseAsync(req, claims.GetUserId(), token);
+        var output = await service.CloseAsync(req, claims.Identity!.Name!, token);
         return output switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
@@ -154,7 +154,7 @@ public static class SaleTransactions {
         ClaimsPrincipal claims,
         CancellationToken token = default
     ) {
-        return await service.DeleteAsync(req, claims.GetUserId(), token)
+        return await service.DeleteAsync(req, claims.Identity!.Name!, token)
             ? TypedResults.NoContent()
             : TypedResults.NotFound();
     }

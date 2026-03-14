@@ -71,7 +71,7 @@ public class StoreItemService(
 
     public async Task<StoreItemCreateResponse> CreateAsync(
             StoreItemCreateRequest req,
-            int userId,
+            string userId,
             CancellationToken token = default
             ) {
         var reqTime = _timeProvider.GetUtcNow();

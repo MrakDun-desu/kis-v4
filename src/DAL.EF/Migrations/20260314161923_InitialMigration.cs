@@ -163,7 +163,7 @@ namespace KisV4.DAL.EF.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Id = table.Column<string>(type: "text", nullable: false),
                     PrestigeAccountId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -399,7 +399,7 @@ namespace KisV4.DAL.EF.Migrations
                     Changes = table.Column<JsonDocument>(type: "jsonb", nullable: false),
                     StartDate = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: false),
                     EndDate = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: true)
+                    UserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -419,7 +419,7 @@ namespace KisV4.DAL.EF.Migrations
                     StoreItemId = table.Column<int>(type: "integer", nullable: false),
                     Amount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -446,7 +446,7 @@ namespace KisV4.DAL.EF.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Timestamp = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: false),
                     DiscountId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -475,11 +475,11 @@ namespace KisV4.DAL.EF.Migrations
                     StartedAt = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: false),
                     CancelledAt = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: true),
                     Reason = table.Column<int>(type: "integer", nullable: false),
-                    StartedById = table.Column<int>(type: "integer", nullable: false),
-                    CancelledById = table.Column<int>(type: "integer", nullable: true),
+                    StartedById = table.Column<string>(type: "text", nullable: false),
+                    CancelledById = table.Column<string>(type: "text", nullable: true),
                     Discriminator = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
                     ClosedAt = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: true),
-                    OpenedById = table.Column<int>(type: "integer", nullable: true),
+                    OpenedById = table.Column<string>(type: "text", nullable: true),
                     SaleTransactionId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -550,7 +550,7 @@ namespace KisV4.DAL.EF.Migrations
                     AccountId = table.Column<int>(type: "integer", nullable: false),
                     SaleTransactionId = table.Column<int>(type: "integer", nullable: false),
                     Amount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false),
-                    Timestamp = table.Column<DateTimeOffset>(type: "timestamp(0) with time zone", precision: 0, nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
                     Cancelled = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -574,16 +574,16 @@ namespace KisV4.DAL.EF.Migrations
                 name: "SaleTransactionItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ItemAmount = table.Column<int>(type: "integer", nullable: false),
-                    Cancelled = table.Column<bool>(type: "boolean", nullable: false),
+                    LineNumber = table.Column<int>(type: "integer", nullable: false),
                     SaleTransactionId = table.Column<int>(type: "integer", nullable: false),
+                    Amount = table.Column<int>(type: "integer", nullable: false),
+                    Cancelled = table.Column<bool>(type: "boolean", nullable: false),
+                    BasePrice = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false),
                     SaleItemId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SaleTransactionItems", x => x.Id);
+                    table.PrimaryKey("PK_SaleTransactionItems", x => new { x.LineNumber, x.SaleTransactionId });
                     table.ForeignKey(
                         name: "FK_SaleTransactionItems_Composites_SaleItemId",
                         column: x => x.SaleItemId,
@@ -640,7 +640,7 @@ namespace KisV4.DAL.EF.Migrations
                     ContainerId = table.Column<int>(type: "integer", nullable: false),
                     NewState = table.Column<int>(type: "integer", nullable: false),
                     NewAmount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -664,12 +664,14 @@ namespace KisV4.DAL.EF.Migrations
                 columns: table => new
                 {
                     ModifierId = table.Column<int>(type: "integer", nullable: false),
-                    SaleTransactionItemId = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<int>(type: "integer", nullable: false)
+                    SaleTransactionItemLineNumber = table.Column<int>(type: "integer", nullable: false),
+                    SaleTransactionId = table.Column<int>(type: "integer", nullable: false),
+                    Amount = table.Column<int>(type: "integer", nullable: false),
+                    PriceChange = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Modifications", x => new { x.ModifierId, x.SaleTransactionItemId });
+                    table.PrimaryKey("PK_Modifications", x => new { x.ModifierId, x.SaleTransactionItemLineNumber, x.SaleTransactionId });
                     table.ForeignKey(
                         name: "FK_Modifications_Composites_ModifierId",
                         column: x => x.ModifierId,
@@ -677,10 +679,10 @@ namespace KisV4.DAL.EF.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Modifications_SaleTransactionItems_SaleTransactionItemId",
-                        column: x => x.SaleTransactionItemId,
+                        name: "FK_Modifications_SaleTransactionItems_SaleTransactionItemLineN~",
+                        columns: x => new { x.SaleTransactionItemLineNumber, x.SaleTransactionId },
                         principalTable: "SaleTransactionItems",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "LineNumber", "SaleTransactionId" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -690,7 +692,9 @@ namespace KisV4.DAL.EF.Migrations
                 {
                     DiscountUsageId = table.Column<int>(type: "integer", nullable: false),
                     SaleTransactionItemId = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false)
+                    Amount = table.Column<decimal>(type: "numeric(11,2)", precision: 11, scale: 2, nullable: false),
+                    SaleTransactionItemLineNumber = table.Column<int>(type: "integer", nullable: true),
+                    SaleTransactionItemSaleTransactionId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -702,11 +706,10 @@ namespace KisV4.DAL.EF.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PriceChanges_SaleTransactionItems_SaleTransactionItemId",
-                        column: x => x.SaleTransactionItemId,
+                        name: "FK_PriceChanges_SaleTransactionItems_SaleTransactionItemLineNu~",
+                        columns: x => new { x.SaleTransactionItemLineNumber, x.SaleTransactionItemSaleTransactionId },
                         principalTable: "SaleTransactionItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumns: new[] { "LineNumber", "SaleTransactionId" });
                 });
 
             migrationBuilder.CreateIndex(
@@ -805,14 +808,14 @@ namespace KisV4.DAL.EF.Migrations
                 column: "TargetId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Modifications_SaleTransactionItemId",
+                name: "IX_Modifications_SaleTransactionItemLineNumber_SaleTransaction~",
                 table: "Modifications",
-                column: "SaleTransactionItemId");
+                columns: new[] { "SaleTransactionItemLineNumber", "SaleTransactionId" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PriceChanges_SaleTransactionItemId",
+                name: "IX_PriceChanges_SaleTransactionItemLineNumber_SaleTransactionI~",
                 table: "PriceChanges",
-                column: "SaleTransactionItemId");
+                columns: new[] { "SaleTransactionItemLineNumber", "SaleTransactionItemSaleTransactionId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SaleTransactionItems_SaleItemId",

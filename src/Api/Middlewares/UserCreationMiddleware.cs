@@ -7,7 +7,7 @@ namespace KisV4.Api.Middlewares;
 public class UserCreationMiddleware(RequestDelegate next) {
 
     public async Task InvokeAsync(HttpContext context, KisDbContext dbContext) {
-        var userIdOpt = context.User.TryGetUserId();
+        var userIdOpt = context.User.Identity?.Name;
         if (userIdOpt is not { } userId) {
             await next(context);
             return;
