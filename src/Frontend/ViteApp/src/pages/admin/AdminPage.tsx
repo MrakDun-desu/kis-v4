@@ -46,81 +46,81 @@ const links: Link[][] = [
       url: "store-items",
       icon: <Inventory />,
     },
-    {
-      label: "Skladové transakce",
-      url: "store-transactions",
-      icon: <MoveDown />,
-    },
-    {
-      label: "Sklady",
-      url: "stores",
-      icon: <Store />,
-    },
+    // {
+    //   label: "Skladové transakce",
+    //   url: "store-transactions",
+    //   icon: <MoveDown />,
+    // },
+    // {
+    //   label: "Sklady",
+    //   url: "stores",
+    //   icon: <Store />,
+    // },
   ],
-
-  [
-    {
-      label: "Prodejní položky",
-      url: "sale-items",
-      icon: <ShoppingBag />,
-    },
-    {
-      label: "Prodejní transakce",
-      url: "sale-transactions",
-      icon: <Receipt />,
-    },
-    {
-      label: "Modifikátory",
-      url: "modifiers",
-      icon: <Build />,
-    },
-    {
-      label: "Layouty",
-      url: "layouts",
-      icon: <GridView />,
-    },
-    {
-      label: "Slevy",
-      url: "discounts",
-      icon: <Discount />,
-    },
-  ],
-
-  [
-    {
-      label: "Typy kegů",
-      url: "container-templates",
-      icon: <Liquor />,
-    },
-    {
-      label: "Kegy",
-      url: "containers",
-      icon: <OilBarrel />,
-    },
-    {
-      label: "Pípy",
-      url: "taps",
-      icon: <WaterDrop />,
-    },
-  ],
-
-  [
-    {
-      label: "Kasy",
-      url: "cashboxes",
-      icon: <PointOfSale />,
-    },
-    {
-      label: "Uživatelé",
-      url: "users",
-      icon: <AccountCircle />,
-    },
-    {
-      label: "Operátor",
-      url: "/pos",
-      icon: <Storefront />,
-    },
-  ],
+  //
+  // [
+  //   {
+  //     label: "Prodejní položky",
+  //     url: "sale-items",
+  //     icon: <ShoppingBag />,
+  //   },
+  //   {
+  //     label: "Prodejní transakce",
+  //     url: "sale-transactions",
+  //     icon: <Receipt />,
+  //   },
+  //   {
+  //     label: "Modifikátory",
+  //     url: "modifiers",
+  //     icon: <Build />,
+  //   },
+  //   {
+  //     label: "Layouty",
+  //     url: "layouts",
+  //     icon: <GridView />,
+  //   },
+  //   {
+  //     label: "Slevy",
+  //     url: "discounts",
+  //     icon: <Discount />,
+  //   },
+  // ],
+  //
+  // [
+  //   {
+  //     label: "Typy kegů",
+  //     url: "container-templates",
+  //     icon: <Liquor />,
+  //   },
+  //   {
+  //     label: "Kegy",
+  //     url: "containers",
+  //     icon: <OilBarrel />,
+  //   },
+  //   {
+  //     label: "Pípy",
+  //     url: "taps",
+  //     icon: <WaterDrop />,
+  //   },
+  // ],
+  //
+  // [
+  //   {
+  //     label: "Kasy",
+  //     url: "cashboxes",
+  //     icon: <PointOfSale />,
+  //   },
+  //   {
+  //     label: "Uživatelé",
+  //     url: "users",
+  //     icon: <AccountCircle />,
+  //   },
+  //   {
+  //     label: "Operátor",
+  //     url: "/pos",
+  //     icon: <Storefront />,
+  //   },
+  // ],
 ];
 
 export const AdminPage = () => {

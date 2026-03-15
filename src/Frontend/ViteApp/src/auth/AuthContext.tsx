@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }),
         );
         if (authResponse.ok) {
-          var respValue = await authResponse.json();
+          const respValue = await authResponse.json();
           setUserClaims(respValue);
         } else if (authResponse.status === 401) {
         }
@@ -45,7 +45,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = () => {
-    const currentOrigin = encodeURIComponent(window.location.origin);
     if (userClaims) {
       const logoutUrlClaim = userClaims.find(
         (claim) => claim["type"] === "bff:logout_url",

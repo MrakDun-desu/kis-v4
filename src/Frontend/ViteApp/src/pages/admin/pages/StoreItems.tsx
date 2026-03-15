@@ -1,12 +1,11 @@
 import type { GridColDef } from "@mui/x-data-grid";
-import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import {
   CategoriesApi,
   StoreItemsApi,
   type CategoryModel,
   type StoreItemCreateRequest,
   type StoreItemListModel,
-  type StoreItemsCreateRequest,
   type StoreItemsReadAllRequest,
 } from "../../../api-generated";
 import { useEffect, useState } from "react";
@@ -22,7 +21,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography,
   TextField,
   Checkbox,
   FormControlLabel,
@@ -31,7 +29,6 @@ import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import { NumberField } from "@base-ui/react";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
@@ -270,15 +267,15 @@ export const StoreItems = () => {
           >
             {categories
               ? [
-                  <MenuItem key="empty" value={0}>
-                    Zobrazit všechny
-                  </MenuItem>,
-                  ...categories.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  )),
-                ]
+                <MenuItem key="empty" value={0}>
+                  Zobrazit všechny
+                </MenuItem>,
+                ...categories.map((category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.name}
+                  </MenuItem>
+                )),
+              ]
               : null}
           </Select>
         </FormControl>

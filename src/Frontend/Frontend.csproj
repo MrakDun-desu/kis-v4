@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" Version="4.1.1" />
     <PackageReference Include="Duende.BFF" Version="4.1.1" />
     <PackageReference Include="Duende.BFF.Yarp" Version="4.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.3" />

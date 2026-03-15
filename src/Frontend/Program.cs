@@ -1,3 +1,4 @@
+using Duende.AccessTokenManagement.OpenIdConnect;
 using Duende.Bff;
 using Duende.Bff.Yarp;
 
@@ -26,7 +27,7 @@ builder.Services
     .AddCookie("Cookies")
     .AddOpenIdConnect("oidc", options => {
         options.Authority = "https://su-dev.fit.vutbr.cz";
-        options.ClientId = "kis-frontend";
+        options.ClientId = "kis_frontend";
         options.ClientSecret = "secret";
         options.ResponseType = "code";
         options.SaveTokens = true;
@@ -37,6 +38,7 @@ builder.Services
             "openid",
             "roles",
             "fpo",
+            "offline_access"
             // TODO add scopes for sales API
         ];
         foreach (var scope in requiredScopes) {
@@ -46,6 +48,8 @@ builder.Services
             options.BackchannelHttpHandler = developmentHandler;
         }
     });
+
+builder.Services.AddOpenIdConnectAccessTokenManagement();
 
 var app = builder.Build();
 
