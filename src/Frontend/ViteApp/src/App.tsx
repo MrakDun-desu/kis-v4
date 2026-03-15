@@ -17,6 +17,8 @@ import {
 import { RequireAuth } from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthContext";
 import { StoreItemDetail } from "./pages/admin/pages/StoreItemDetail";
+import { LoadingProvider } from "./contexts/LoadingContext";
+import { SnackbarProvider } from "./contexts/SnackbarContext";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -39,7 +41,11 @@ function App() {
           <Route
             element={
               <AuthProvider>
-                <Outlet />
+                <LoadingProvider>
+                  <SnackbarProvider>
+                    <Outlet />
+                  </SnackbarProvider>
+                </LoadingProvider>
               </AuthProvider>
             }
           >

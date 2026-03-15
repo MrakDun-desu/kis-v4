@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
+import { useLoading } from "../../../contexts/LoadingContext";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
@@ -31,6 +32,7 @@ const costApi = new CostsApi(defaultConfiguration);
 
 export const StoreItemDetail = () => {
   const { id } = useParams();
+  const { startLoading, stopLoading } = useLoading();
   const [storeItem, setStoreItem] = useState<StoreItemReadResponse | null>(
     null,
   );
@@ -48,15 +50,15 @@ export const StoreItemDetail = () => {
     values:
       storeItem === null
         ? {
-            name: "",
-            unitName: "",
-            categoryIds: [],
-          }
+          name: "",
+          unitName: "",
+          categoryIds: [],
+        }
         : {
-            name: storeItem.name,
-            unitName: storeItem.unitName,
-            categoryIds: storeItem.categories.map((cat) => cat.id),
-          },
+          name: storeItem.name,
+          unitName: storeItem.unitName,
+          categoryIds: storeItem.categories.map((cat) => cat.id),
+        },
   });
 
   useEffect(() => {
@@ -102,12 +104,11 @@ export const StoreItemDetail = () => {
   };
 
   if (!storeItem) {
-    return (
-      <Backdrop open={true}>
-        <CircularProgress />
-      </Backdrop>
-    );
+    startLoading();
+    return;
   }
+
+  stopLoading();
 
   return (
     <>

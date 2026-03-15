@@ -33,8 +33,9 @@ public class StoreItemCreateValidator : AbstractValidator<StoreItemCreateRequest
             .OverridePropertyName(ValidationMessages.CategoryIdsPropName)
             .WithMessage(ValidationMessages.CategoryIdsNotValidMessage);
         RuleFor(x => x.InitialCost)
-            .GreaterThanOrEqualTo(0)
-            .LessThan(ValidationConstants.MaxAllowedCost);
+            .InclusiveBetween(0, ValidationConstants.MaxAllowedCost)
+            .OverridePropertyName(ValidationMessages.CostPropName)
+            .WithMessage(ValidationMessages.CostOutOfRangeMessage);
     }
 }
 
