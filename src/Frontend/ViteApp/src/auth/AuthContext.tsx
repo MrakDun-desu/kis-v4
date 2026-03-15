@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const respValue = await authResponse.json();
           setUserClaims(respValue);
         } else if (authResponse.status === 401) {
+          setUserClaims(null);
         }
       } catch (e) {
         alert("Nepovedlo se zjistit status přihlášení");

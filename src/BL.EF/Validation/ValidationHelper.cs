@@ -85,10 +85,10 @@ public class ValidationHelper(
         return categoryCount == categoryIds.Length;
     }
 
-    internal async Task<bool> NotHaveExistingContainers(ContainerTemplateUpdateRequest command, CancellationToken token = default) {
+    internal async Task<bool> NotHaveExistingContainers(ContainerTemplateUpdateRequest request, CancellationToken token = default) {
         var hasContainers = await _dbContext.Containers
             .IgnoreQueryFilters()
-            .AnyAsync(c => c.TemplateId == command.Id, token);
+            .AllAsync(c => c.TemplateId != request.Id, token);
         return !hasContainers;
     }
 
@@ -140,9 +140,9 @@ public class ValidationHelper(
         CancellationToken token = default
     ) {
         var storeItemIds = storeTransactionItems.Select(sti => sti.StoreItemId);
-        return !await _dbContext.StoreItems
+        return await _dbContext.StoreItems
             .Where(si => storeItemIds.Contains(si.Id))
-            .AnyAsync(si => si.IsContainerItem, token);
+            .AllAsync(si => !si.IsContainerItem, token);
     }
 
     internal async Task<bool> AllHaveExistingStoreItems(
@@ -325,13 +325,13 @@ public class ValidationHelper(
         StoreItemDeleteRequest request,
         CancellationToken token
     ) {
-        return await _dbContext.ContainerTemplates.AnyAsync(ct => ct.StoreItemId == request.Id);
+        return await _dbContext.ContainerTemplates.AllAsync(ct => ct.StoreItemId != request.Id, token);
     }
 
     internal async Task<bool> NotHaveAnyAssociatedContainers(
         ContainerTemplateDeleteRequest request,
         CancellationToken token
     ) {
-        return await _dbContext.Containers.AnyAsync(c => c.TemplateId == request.Id, token);
+        return await _dbContext.Containers.AllAsync(c => c.TemplateId != request.Id, token);
     }
 }

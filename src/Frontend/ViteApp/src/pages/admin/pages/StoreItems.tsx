@@ -4,7 +4,6 @@ import {
   CategoriesApi,
   StoreItemsApi,
   type CategoryModel,
-  type StoreItemCreateRequest,
   type StoreItemListModel,
   type StoreItemsReadAllRequest,
 } from "../../../api-generated";
@@ -21,14 +20,11 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
-  Checkbox,
-  FormControlLabel,
 } from "@mui/material";
 import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import StoreItemCreateForm from "../../../components/StoreItemCreateForm";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
@@ -42,15 +38,6 @@ export const StoreItems = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [rowCount, setRowCount] = useState<number>(0);
   const [categories, setCategories] = useState<CategoryModel[] | null>(null);
-  const { register, handleSubmit, control } = useForm<StoreItemCreateRequest>({
-    values: {
-      initialCost: "0.00",
-      name: "",
-      unitName: "ks",
-      categoryIds: [],
-      isContainerItem: false,
-    },
-  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,15 +58,15 @@ export const StoreItems = () => {
     getCategories();
   }, []);
 
-  const createStoreItem: SubmitHandler<StoreItemCreateRequest> = async (
-    data,
-  ) => {
-    closeCreateDialog();
-    await api.storeItemsCreate({
-      storeItemCreateRequest: data,
-    });
-    setRequest({ ...request });
-  };
+  // const createStoreItem: SubmitHandler<StoreItemCreateRequest> = async (
+  //   data,
+  // ) => {
+  //   closeCreateDialog();
+  //   await api.storeItemsCreate({
+  //     storeItemCreateRequest: data,
+  //   });
+  //   setRequest({ ...request });
+  // };
 
   const columns: GridColDef<StoreItemListModel>[] = [
     {
@@ -90,6 +77,7 @@ export const StoreItems = () => {
       editable: false,
       filterable: false,
     },
+
     {
       field: "name",
       headerName: "Název",
@@ -102,6 +90,7 @@ export const StoreItems = () => {
       editable: false,
       flex: 1,
     },
+
     {
       field: "unitName",
       headerName: "Jednotka",
@@ -111,6 +100,7 @@ export const StoreItems = () => {
       editable: false,
       flex: 1,
     },
+
     {
       field: "currentCost",
       headerName: "Cena za jednotku",
@@ -123,6 +113,7 @@ export const StoreItems = () => {
         return `${value} czk`;
       },
     },
+
     {
       field: "isContainerItem",
       headerName: "Kegová položka",
@@ -132,6 +123,7 @@ export const StoreItems = () => {
       editable: false,
       flex: 1,
     },
+
     {
       field: "actions",
       headerName: "Akce",
@@ -158,7 +150,6 @@ export const StoreItems = () => {
               await api.storeItemsDelete({
                 id: params.row.id,
               });
-
               setRequest({ ...request });
             }
           }}
@@ -171,6 +162,7 @@ export const StoreItems = () => {
 
   const openCreateDialog = () => setCreateDialogOpen(true);
   const closeCreateDialog = () => setCreateDialogOpen(false);
+  const refreshStoreItems = () => setRequest({ ...request });
 
   return (
     <>
@@ -189,53 +181,11 @@ export const StoreItems = () => {
         <Dialog open={createDialogOpen} onClose={closeCreateDialog}>
           <DialogTitle>Vytvořit novou skladovou položku</DialogTitle>
           <DialogContent>
-            <form
-              onSubmit={handleSubmit(createStoreItem)}
+            <StoreItemCreateForm
               id="storeItemCreateForm"
-            >
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="flex-start"
-                gap={2}
-                marginTop={1}
-              >
-                <TextField label="Název" {...register("name")} />
-                <TextField label="Název jednotky" {...register("unitName")} />
-                <FormControl>
-                  <InputLabel id="categorySelect">Kategorie</InputLabel>
-                  <Controller
-                    name="categoryIds"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        sx={{
-                          minWidth: "10em",
-                        }}
-                        labelId="categorySelect"
-                        multiple
-                        {...field}
-                        label="Kategorie"
-                      >
-                        {categories?.map((cat) => (
-                          <MenuItem key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </MenuItem>
-                        )) ?? null}
-                      </Select>
-                    )}
-                  />
-                </FormControl>
-                <FormControlLabel
-                  label="Kegová položka"
-                  control={<Checkbox {...register("isContainerItem")} />}
-                />
-                <TextField
-                  label="Počáteční cena"
-                  {...register("initialCost")}
-                />
-              </Box>
-            </form>
+              afterSubmit={refreshStoreItems}
+              beforeSubmit={closeCreateDialog}
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeCreateDialog}>Zrušit</Button>
