@@ -6,6 +6,8 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useLoading } from "../contexts/LoadingContext";
+import handleApiCall from "../errorHandling/apiResponseHandler";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
@@ -40,6 +42,7 @@ type Props = {
 
 const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+  const { startLoading, stopLoading } = useLoading();
   const {
     register,
     handleSubmit,
@@ -51,25 +54,27 @@ const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   });
   useEffect(() => {
     const getCategories = async () => {
-      const response = await categoryApi.categoriesReadAll();
-      setCategories(response.data);
+      const response = await handleApiCall(categoryApi.categoriesReadAll());
+      if (response) {
+        setCategories(response.data);
+      } else {
+        setCategories(null);
+      }
     };
     getCategories();
   }, []);
 
-  const createStoreItem: SubmitHandler<StoreItemCreateRequest> = async (
-    data,
-  ) => {
+  const submitForm: SubmitHandler<StoreItemCreateRequest> = async (data) => {
     beforeSubmit?.();
-    await api.storeItemsCreate({
-      storeItemCreateRequest: data,
-    });
+    startLoading();
+    await handleApiCall(api.storeItemsCreate({ storeItemCreateRequest: data }));
+    stopLoading();
     afterSubmit?.();
   };
 
 
   return <form
-    onSubmit={handleSubmit(createStoreItem)}
+    onSubmit={handleSubmit(submitForm)}
     id={id}
   >
     <Box

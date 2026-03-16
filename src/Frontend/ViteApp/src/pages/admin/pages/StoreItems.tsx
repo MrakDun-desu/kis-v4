@@ -25,6 +25,7 @@ import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
 import StoreItemCreateForm from "../../../components/StoreItemCreateForm";
+import handleApiCall from "../../../errorHandling/apiResponseHandler";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
@@ -41,32 +42,32 @@ export const StoreItems = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handler = setTimeout(async () => {
+    const getStoreItemsDeferred = setTimeout(async () => {
       setLoading(true);
-      const response = await api.storeItemsReadAll(request);
+      const response = await handleApiCall(api.storeItemsReadAll(request));
+      if (!response) {
+        setStoreItems(null);
+        setRowCount(0);
+        setLoading(false);
+        return;
+      }
       setStoreItems(response.data);
       setRowCount(response.meta.total ?? 0);
       setLoading(false);
     }, 500);
-    return () => clearTimeout(handler);
+    return () => clearTimeout(getStoreItemsDeferred);
   }, [request]);
   useEffect(() => {
     const getCategories = async () => {
-      const response = await categoryApi.categoriesReadAll();
+      const response = await handleApiCall(categoryApi.categoriesReadAll());
+      if (!response) {
+        setCategories(null);
+        return;
+      }
       setCategories(response.data);
     };
     getCategories();
   }, []);
-
-  // const createStoreItem: SubmitHandler<StoreItemCreateRequest> = async (
-  //   data,
-  // ) => {
-  //   closeCreateDialog();
-  //   await api.storeItemsCreate({
-  //     storeItemCreateRequest: data,
-  //   });
-  //   setRequest({ ...request });
-  // };
 
   const columns: GridColDef<StoreItemListModel>[] = [
     {
@@ -147,9 +148,9 @@ export const StoreItems = () => {
               `Opravdu chcete ${params.row.name} smazat?`,
             );
             if (confirmed) {
-              await api.storeItemsDelete({
+              await handleApiCall(api.storeItemsDelete({
                 id: params.row.id,
-              });
+              }));
               setRequest({ ...request });
             }
           }}
@@ -183,8 +184,8 @@ export const StoreItems = () => {
           <DialogContent>
             <StoreItemCreateForm
               id="storeItemCreateForm"
-              afterSubmit={refreshStoreItems}
               beforeSubmit={closeCreateDialog}
+              afterSubmit={refreshStoreItems}
             />
           </DialogContent>
           <DialogActions>

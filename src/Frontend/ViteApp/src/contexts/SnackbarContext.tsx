@@ -1,27 +1,40 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import Snackbar from '@mui/material/Snackbar'; // or your own component
 import { Alert } from '@mui/material';
+import { snackbarRef } from '../globalRefs/snackbarRef';
+import { CheckCircleOutline, InfoOutline, ReportGmailerrorred, WarningOutlined } from '@mui/icons-material';
 
 type Severity = "success" | "info" | "warning" | "error";
 interface SnackbarState {
   open?: boolean,
   message?: string,
-  icon?: ReactNode | null,
-  severity?: Severity,
+  severity: Severity,
 }
 
-interface SnackbarContextType {
-  showSnackbar: (message: string, icon: ReactNode | null, severity?: Severity) => void
+export interface SnackbarContextType {
+  showSnackbar: (message: string, severity?: Severity) => void
 }
 
 const SnackbarContext = createContext<SnackbarContextType>(null!);
 
-export function SnackbarProvider({ children }: { children: React.ReactNode }) {
-  const [snackbarState, setSnackbarState] = useState<SnackbarState>({});
+const severityIconMap: Record<Severity, ReactNode> = {
+  error: <ReportGmailerrorred />,
+  info: <InfoOutline />,
+  success: <CheckCircleOutline />,
+  warning: <WarningOutlined />
+}
 
-  const showSnackbar = (message: string, icon: ReactNode, severity?: Severity) =>
-    setSnackbarState({ open: true, message, icon, severity });
+export function SnackbarProvider({ children }: { children: React.ReactNode }) {
+  const [snackbarState, setSnackbarState] = useState<SnackbarState>({ severity: "info" });
+
+  const showSnackbar = (message: string, severity: Severity = "info") =>
+    setSnackbarState({ open: true, message, severity });
   const handleClose = () => setSnackbarState((s) => ({ ...s, open: false }));
+
+  useEffect(() => {
+    snackbarRef.show = showSnackbar;
+    return () => { snackbarRef.show = null; }
+  }, []);
 
   return (
     <SnackbarContext.Provider value={{ showSnackbar }}>
@@ -31,7 +44,7 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
         onClose={handleClose}
         autoHideDuration={3000}
       >
-        <Alert severity={snackbarState.severity} icon={snackbarState.icon}>
+        <Alert severity={snackbarState.severity} icon={severityIconMap[snackbarState.severity]}>
           {snackbarState.message}
         </Alert>
       </Snackbar>

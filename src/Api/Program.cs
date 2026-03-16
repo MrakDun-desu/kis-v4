@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
-var applicationCulture = new CultureInfo("cs-CZ");
+var applicationCulture = new CultureInfo("cs");
 CultureInfo.CurrentCulture = applicationCulture;
 CultureInfo.DefaultThreadCurrentCulture = applicationCulture;
 

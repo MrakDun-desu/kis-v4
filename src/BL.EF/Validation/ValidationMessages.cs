@@ -23,6 +23,9 @@ public static class ValidationMessages {
     public const string SaleTransactionItemsPropName = "Transakční položky";
     public const string StoreTransactionItemsPropName = "Transakční položky";
     public const string TransactionReasonPropName = "Důvod transakce";
+    public const string MarginStaticPropName = "Marže v korunách";
+    public const string MarginPercentPropName = "Procentuální marže";
+    public const string PrestigePropName = "Prestiž";
 
     public const string StoreIdPropName = "ID skladu";
     public const string ContainerIdPropName = "ID kegu";
@@ -49,6 +52,12 @@ public static class ValidationMessages {
         """;
     public const string CostOutOfRangeMessage = """
         Specifikovaná nákupní cena je mimo rozsah
+        """;
+    public const string MarginOutOfRangeMessage = """
+        Specifikovaná marže je mimo rozsah
+        """;
+    public const string PrestigeOutOfRangeMessage = """
+        Specifikovaná prestiž je mimo rozsah
         """;
     public const string ContainerAmountTooGreatMessage = """
         Nové množství položky v kegu musí být nižší nebo rovné předchozímu množství

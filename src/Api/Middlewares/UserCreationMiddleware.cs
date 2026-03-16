@@ -17,8 +17,8 @@ public class UserCreationMiddleware(RequestDelegate next) {
         if (existingUser is null) {
             dbContext.Users.Add(new User {
                 Id = userId,
-                Nick = user?.Claims.First(c => c.Type == "nick")?.Value,
-                GamificationAllowed = user?.Claims.First(c => c.Type == "gam")?.Value.ToLower() == "true"
+                Nick = user?.Claims.FirstOrDefault(c => c.Type == "nick")?.Value,
+                GamificationAllowed = user?.Claims.FirstOrDefault(c => c.Type == "gam")?.Value.ToLower() == "true"
             });
             await dbContext.SaveChangesAsync();
         }

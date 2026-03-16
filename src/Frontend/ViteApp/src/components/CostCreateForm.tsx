@@ -1,68 +1,59 @@
 import z from "zod";
-import { StoreItemsApi, CategoriesApi, type StoreItemCreateRequest, type CategoryModel, type CostCreateRequest } from "../api-generated";
+import { type CostCreateRequest, CostsApi, type CostCreateResponse } from "../api-generated";
 import { defaultConfiguration } from "../configuration";
 import validationConstants from "../constants/validationConstants";
-import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Button, TextField } from "@mui/material";
+import handleApiCall from "../errorHandling/apiResponseHandler";
+import { useLoading } from "../contexts/LoadingContext";
 
-const api = new StoreItemsApi(defaultConfiguration);
-const categoryApi = new CategoriesApi(defaultConfiguration);
+const api = new CostsApi(defaultConfiguration);
 
 const ValidationSchema = z.object({
   storeItemId: z.number(),
   amount: z.string()
-    .regex(validationConstants.numberRegex)
-    .refine(x => Number(x) >= 0),
+    .regex(validationConstants.numberRegex, "Cena musí být číslo")
+    .refine(x => Number(x) >= 0, "Cena musí být větší/rovna nule"),
   description: z.string()
-    .min
+    .min(1, "Popis nesmí být prázdný")
+    .max(validationConstants.maxDescriptionLength, "Popis přesahuje maximální délku")
 })
-
-const defaultValue: CostCreateRequest = {
-  storeItemId: 0,
-  amount: "0",
-  description: "Popis nové ceny"
-}
 
 type Props = {
   id: string,
+  storeItemId: number,
   beforeSubmit?: () => void,
-  afterSubmit?: () => void,
+  afterSubmit?: (output: CostCreateResponse) => void,
 }
 
-const CostCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
-  const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+const CostCreateForm = ({ id, storeItemId, beforeSubmit, afterSubmit }: Props) => {
+  const { startLoading, stopLoading } = useLoading();
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors }
   } = useForm<CostCreateRequest>({
-    values: defaultValue,
+    values: {
+      storeItemId: storeItemId,
+      amount: "0.00",
+      description: "Popis nové ceny"
+    },
     resolver: zodResolver(ValidationSchema)
   });
-  useEffect(() => {
-    const getCategories = async () => {
-      const response = await categoryApi.categoriesReadAll();
-      setCategories(response.data);
-    };
-    getCategories();
-  }, []);
 
-  const createStoreItem: SubmitHandler<StoreItemCreateRequest> = async (
-    data,
-  ) => {
+  const submitForm: SubmitHandler<CostCreateRequest> = async (data) => {
     beforeSubmit?.();
-    await api.storeItemsCreate({
-      storeItemCreateRequest: data,
-    });
-    afterSubmit?.();
+    startLoading();
+    const output = await handleApiCall(api.costsCreate({ costCreateRequest: data }));
+    stopLoading();
+    if (output) {
+      afterSubmit?.(output);
+    }
   };
 
-
   return <form
-    onSubmit={handleSubmit(createStoreItem)}
+    onSubmit={handleSubmit(submitForm)}
     id={id}
   >
     <Box
@@ -70,56 +61,24 @@ const CostCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
       flexDirection="column"
       alignItems="flex-start"
       gap={2}
-      marginTop={1}
     >
       <TextField
-        label="Název"
-        {...register("name")}
-        error={!!errors.name}
-        helperText={errors.name?.message}
+        label="Nová cena"
+        {...register("amount")}
+        error={!!errors.amount}
+        helperText={errors.amount?.message}
       />
       <TextField
-        label="Název jednotky"
-        {...register("unitName")}
-        error={!!errors.unitName}
-        helperText={errors.unitName?.message}
+        label="Popis nové ceny"
+        {...register("description")}
+        error={!!errors.description}
+        helperText={errors.description?.message}
       />
-      <FormControl>
-        <InputLabel id="categorySelect">Kategorie</InputLabel>
-        <Controller
-          name="categoryIds"
-          control={control}
-          render={({ field }) => (
-            <Select
-              sx={{
-                minWidth: "10em",
-              }}
-              labelId="categorySelect"
-              multiple
-              {...field}
-              label="Kategorie"
-            >
-              {categories?.map((cat) => (
-                <MenuItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </MenuItem>
-              )) ?? null}
-            </Select>
-          )}
-        />
-      </FormControl>
-      <FormControlLabel
-        label="Kegová položka"
-        control={<Checkbox {...register("isContainerItem")} />}
-      />
-      <TextField
-        label="Počáteční cena"
-        {...register("initialCost")}
-        error={!!errors.initialCost}
-        helperText={errors.initialCost?.message}
-      />
+      <Button type="submit" variant="contained">
+        Nastavit novou cenu
+      </Button>
     </Box>
   </form>
 }
 
-export default StoreItemCreateForm;
+export default CostCreateForm;

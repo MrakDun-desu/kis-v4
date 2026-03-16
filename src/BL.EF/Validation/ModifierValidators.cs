@@ -22,14 +22,17 @@ public class ModifierCreateRequestValidator : AbstractValidator<ModifierCreateRe
             .OverridePropertyName(ValidationMessages.NamePropName)
             .WithMessage(ValidationMessages.NameEmptyMessage);
         RuleFor(x => x.MarginStatic)
-            .GreaterThan(-ValidationConstants.MaxAllowedCost)
-            .LessThan(ValidationConstants.MaxAllowedCost);
+            .InclusiveBetween(-ValidationConstants.MaxAllowedCost, ValidationConstants.MaxAllowedCost)
+            .OverridePropertyName(ValidationMessages.MarginStaticPropName)
+            .WithMessage(ValidationMessages.MarginOutOfRangeMessage);
         RuleFor(x => x.MarginPercent)
-            .GreaterThan(-ValidationConstants.MaxMarginPercent)
-            .LessThan(ValidationConstants.MaxMarginPercent);
+            .InclusiveBetween(-ValidationConstants.MaxMarginPercent, ValidationConstants.MaxMarginPercent)
+            .OverridePropertyName(ValidationMessages.MarginPercentPropName)
+            .WithMessage(ValidationMessages.MarginOutOfRangeMessage);
         RuleFor(x => x.PrestigeAmount)
-            .GreaterThan(-ValidationConstants.MaxAllowedCost)
-            .LessThan(ValidationConstants.MaxAllowedCost);
+            .InclusiveBetween(-ValidationConstants.MaxAllowedCost, ValidationConstants.MaxAllowedCost)
+            .OverridePropertyName(ValidationMessages.PrestigePropName)
+            .WithMessage(ValidationMessages.PrestigeOutOfRangeMessage);
         RuleFor(x => x.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
             .OverridePropertyName(ValidationMessages.CategoryIdsPropName)
@@ -51,14 +54,17 @@ public class ModifierUpdateRequestValidator : AbstractValidator<ModifierUpdateRe
             .OverridePropertyName(ValidationMessages.NamePropName)
             .WithMessage(ValidationMessages.NameEmptyMessage);
         RuleFor(x => x.Model.MarginStatic)
-            .GreaterThan(-ValidationConstants.MaxAllowedCost)
-            .LessThan(ValidationConstants.MaxAllowedCost);
+            .InclusiveBetween(-ValidationConstants.MaxAllowedCost, ValidationConstants.MaxAllowedCost)
+            .OverridePropertyName(ValidationMessages.MarginStaticPropName)
+            .WithMessage(ValidationMessages.MarginOutOfRangeMessage);
         RuleFor(x => x.Model.MarginPercent)
-            .GreaterThan(-ValidationConstants.MaxMarginPercent)
-            .LessThan(ValidationConstants.MaxMarginPercent);
+            .InclusiveBetween(-ValidationConstants.MaxMarginPercent, ValidationConstants.MaxMarginPercent)
+            .OverridePropertyName(ValidationMessages.MarginPercentPropName)
+            .WithMessage(ValidationMessages.MarginOutOfRangeMessage);
         RuleFor(x => x.Model.PrestigeAmount)
-            .GreaterThan(-ValidationConstants.MaxAllowedCost)
-            .LessThan(ValidationConstants.MaxAllowedCost);
+            .InclusiveBetween(-ValidationConstants.MaxAllowedCost, ValidationConstants.MaxAllowedCost)
+            .OverridePropertyName(ValidationMessages.PrestigePropName)
+            .WithMessage(ValidationMessages.PrestigeOutOfRangeMessage);
         RuleFor(x => x.Model.CategoryIds)
             .MustAsync(helper.AllIdentifyExistingCategories)
             .OverridePropertyName(ValidationMessages.CategoryIdsPropName)
