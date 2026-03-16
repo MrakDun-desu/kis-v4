@@ -19,6 +19,7 @@ import { AuthProvider } from "./auth/AuthContext";
 import { StoreItemDetail } from "./pages/admin/pages/StoreItemDetail";
 import { LoadingProvider } from "./contexts/LoadingContext";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
+import Orders from "./pages/pos/pages/Orders";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -68,18 +69,18 @@ function App() {
             >
               <Route path="store-items" element={<StoreItems />} />
               <Route path="store-items/:id" element={<StoreItemDetail />} />
-              <Route path="stores" element={<StoreItems />} />
-              <Route path="store-transactions" element={<StoreItems />} />
-              <Route path="sale-items" element={<StoreItems />} />
-              <Route path="modifiers" element={<StoreItems />} />
-              <Route path="sale-transactions" element={<StoreItems />} />
-              <Route path="cashboxes" element={<StoreItems />} />
-              <Route path="container-templates" element={<StoreItems />} />
-              <Route path="containers" element={<StoreItems />} />
-              <Route path="taps" element={<StoreItems />} />
-              <Route path="users" element={<StoreItems />} />
-              <Route path="layouts" element={<StoreItems />} />
-              <Route path="discounts" element={<StoreItems />} />
+              <Route path="stores" element={null} />
+              <Route path="store-transactions" element={null} />
+              <Route path="sale-items" element={null} />
+              <Route path="modifiers" element={null} />
+              <Route path="sale-transactions" element={null} />
+              <Route path="cashboxes" element={null} />
+              <Route path="container-templates" element={null} />
+              <Route path="containers" element={null} />
+              <Route path="taps" element={null} />
+              <Route path="users" element={null} />
+              <Route path="layouts" element={null} />
+              <Route path="discounts" element={null} />
             </Route>
 
             <Route
@@ -89,7 +90,15 @@ function App() {
                   <PosMain />
                 </RequireAuth>
               }
-            />
+            >
+              <Route path="orders" element={<Orders />} />
+              <Route path="recent-transactions" element={null} />
+              <Route path="containers" element={null} />
+              <Route path="card-pairing" element={null} />
+              <Route path="settings" element={null} />
+              <Route path="pipes/:id" element={null} />
+              <Route path="containers/:id" element={null} />
+            </Route>
 
             <Route path="*" element={<NotFoundPage />} />
           </Route>

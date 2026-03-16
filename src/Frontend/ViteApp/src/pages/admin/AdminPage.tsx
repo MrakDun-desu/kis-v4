@@ -28,7 +28,7 @@ import {
   Store,
   WaterDrop,
 } from "@mui/icons-material";
-import { type ReactElement } from "react";
+import { type ReactElement, type ReactNode } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 
@@ -37,8 +37,9 @@ const drawerWidth = 240;
 interface Link {
   label: string;
   url: string;
-  icon?: ReactElement<any, any>;
+  icon?: ReactNode;
 }
+
 const links: Link[][] = [
   [
     {
@@ -104,23 +105,23 @@ const links: Link[][] = [
   //   },
   // ],
   //
-  // [
-  //   {
-  //     label: "Kasy",
-  //     url: "cashboxes",
-  //     icon: <PointOfSale />,
-  //   },
-  //   {
-  //     label: "Uživatelé",
-  //     url: "users",
-  //     icon: <AccountCircle />,
-  //   },
-  //   {
-  //     label: "Operátor",
-  //     url: "/pos",
-  //     icon: <Storefront />,
-  //   },
-  // ],
+  [
+    //   {
+    //     label: "Kasy",
+    //     url: "cashboxes",
+    //     icon: <PointOfSale />,
+    //   },
+    //   {
+    //     label: "Uživatelé",
+    //     url: "users",
+    //     icon: <AccountCircle />,
+    //   },
+    {
+      label: "Operátor",
+      url: "/pos",
+      icon: <Storefront />,
+    },
+  ],
 ];
 
 export const AdminPage = () => {
