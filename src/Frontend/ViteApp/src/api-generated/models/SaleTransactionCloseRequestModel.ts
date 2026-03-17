@@ -33,10 +33,10 @@ export interface SaleTransactionCloseRequestModel {
     cashBoxId: number;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof SaleTransactionCloseRequestModel
      */
-    customerId: number;
+    customerId: string;
     /**
      * 
      * @type {string}

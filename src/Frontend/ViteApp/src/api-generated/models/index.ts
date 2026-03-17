@@ -3,6 +3,7 @@
 export * from './AccountTransactionModel';
 export * from './AccountTransactionReadAllResponse';
 export * from './AccountTransactionType';
+export * from './CashBoxCreateRequest';
 export * from './CashBoxCreateResponse';
 export * from './CashBoxListModel';
 export * from './CashBoxReadAllResponse';

@@ -1,24 +1,22 @@
 
-# UserListModel
+# CashBoxCreateRequest
 
 
 ## Properties
 
 Name | Type
 ------------ | -------------
-`id` | string
-`nick` | string
+`name` | string
 
 ## Example
 
 ```typescript
-import type { UserListModel } from ''
+import type { CashBoxCreateRequest } from ''
 
 // TODO: Update the object below with actual values
 const example = {
-  "id": null,
-  "nick": null,
-} satisfies UserListModel
+  "name": null,
+} satisfies CashBoxCreateRequest
 
 console.log(example)
 
@@ -27,7 +25,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as UserListModel
+const exampleParsed = JSON.parse(exampleJSON) as CashBoxCreateRequest
 console.log(exampleParsed)
 ```
 

@@ -14,7 +14,7 @@ All URIs are relative to *http://localhost*
 
 ## cashBoxesCreate
 
-> CashBoxCreateResponse cashBoxesCreate(name)
+> CashBoxCreateResponse cashBoxesCreate(cashBoxCreateRequest)
 
 
 
@@ -34,8 +34,8 @@ async function example() {
   const api = new CashBoxesApi(config);
 
   const body = {
-    // string
-    name: name_example,
+    // CashBoxCreateRequest
+    cashBoxCreateRequest: ...,
   } satisfies CashBoxesCreateRequest;
 
   try {
@@ -55,7 +55,7 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **name** | `string` |  | [Defaults to `&#39;Kasa Kachna&#39;`] |
+| **cashBoxCreateRequest** | [CashBoxCreateRequest](CashBoxCreateRequest.md) |  | |
 
 ### Return type
 
@@ -67,7 +67,7 @@ example().catch(console.error);
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: `application/json`
 - **Accept**: `application/json`, `application/problem+json`
 
 

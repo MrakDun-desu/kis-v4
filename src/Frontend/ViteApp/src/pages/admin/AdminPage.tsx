@@ -106,11 +106,11 @@ const links: Link[][] = [
   // ],
   //
   [
-    //   {
-    //     label: "Kasy",
-    //     url: "cashboxes",
-    //     icon: <PointOfSale />,
-    //   },
+    {
+      label: "Kasy",
+      url: "cashboxes",
+      icon: <PointOfSale />,
+    },
     //   {
     //     label: "Uživatelé",
     //     url: "users",

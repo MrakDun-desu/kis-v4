@@ -47,10 +47,10 @@ export interface SaleTransactionCreateRequest {
     cashBoxId: number;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof SaleTransactionCreateRequest
      */
-    customerId: number;
+    customerId: string;
     /**
      * 
      * @type {string}

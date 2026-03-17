@@ -16,13 +16,14 @@ import {
 } from "./pages";
 import { RequireAuth } from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthContext";
-import { StoreItemDetail } from "./pages/admin/pages/StoreItemDetail";
 import { LoadingProvider } from "./contexts/LoadingContext";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
+import StoreItemDetail from "./pages/admin/pages/StoreItemDetail";
 import Orders from "./pages/pos/pages/Orders";
-import { SaleItems } from "./pages/admin/pages/SaleItems";
-import { SaleItemDetail } from "./pages/admin/pages/SaleItemDetail";
-import { Stores } from "./pages/admin/pages/Stores";
+import SaleItems from "./pages/admin/pages/SaleItems";
+import SaleItemDetail from "./pages/admin/pages/SaleItemDetail";
+import Stores from "./pages/admin/pages/Stores";
+import CashBoxes from "./pages/admin/pages/CashBoxes";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -78,7 +79,7 @@ function App() {
               <Route path="sale-items/:id" element={<SaleItemDetail />} />
               <Route path="modifiers" element={null} />
               <Route path="sale-transactions" element={null} />
-              <Route path="cashboxes" element={null} />
+              <Route path="cashboxes" element={<CashBoxes />} />
               <Route path="container-templates" element={null} />
               <Route path="containers" element={null} />
               <Route path="taps" element={null} />

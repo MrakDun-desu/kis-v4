@@ -9,7 +9,7 @@ Name | Type
 `note` | string
 `storeId` | number
 `cashBoxId` | number
-`customerId` | number
+`customerId` | string
 `paidAmount` | string
 `saleTransactionItems` | [Array&lt;SaleTransactionItemCreateRequest&gt;](SaleTransactionItemCreateRequest.md)
 

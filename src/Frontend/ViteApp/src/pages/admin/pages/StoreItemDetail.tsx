@@ -45,7 +45,7 @@ const ValidationSchema = z.object({
   categoryIds: z.array(z.number()).optional(),
 });
 
-export const StoreItemDetail = () => {
+const StoreItemDetail = () => {
   const { id } = useParams();
   const [storeItem, setStoreItem] = useState<StoreItemReadResponse | null>(
     null,
@@ -235,3 +235,5 @@ export const StoreItemDetail = () => {
     </>
   );
 };
+
+export default StoreItemDetail;

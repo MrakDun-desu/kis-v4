@@ -77,7 +77,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -110,7 +110,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -163,7 +163,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -249,7 +249,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -295,7 +295,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -323,7 +323,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -332,7 +332,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -341,7 +341,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -383,7 +383,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -456,7 +456,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -535,7 +535,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -544,7 +544,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -553,7 +553,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -569,7 +569,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -578,7 +578,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -658,7 +658,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -691,7 +691,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -746,7 +746,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -787,7 +787,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -796,7 +796,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -805,7 +805,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -885,7 +885,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -938,7 +938,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1073,7 +1073,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1125,7 +1125,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -1134,7 +1134,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1174,7 +1174,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -1183,7 +1183,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1236,7 +1236,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1263,7 +1263,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1314,7 +1314,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -1323,7 +1323,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -1332,7 +1332,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -1341,7 +1341,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1421,7 +1421,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1456,7 +1456,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1509,7 +1509,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1595,7 +1595,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1628,7 +1628,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1681,7 +1681,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1715,7 +1715,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -1724,7 +1724,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -1733,7 +1733,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1813,7 +1813,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1846,7 +1846,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1899,7 +1899,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -1949,7 +1949,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -1958,7 +1958,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2038,7 +2038,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2071,7 +2071,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2124,7 +2124,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2232,7 +2232,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2287,7 +2287,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -2296,7 +2296,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -2305,7 +2305,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2360,7 +2360,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -2369,7 +2369,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -2378,7 +2378,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2458,7 +2458,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2491,7 +2491,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2544,7 +2544,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2630,7 +2630,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2663,7 +2663,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2716,7 +2716,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2766,7 +2766,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -2775,7 +2775,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2855,7 +2855,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2888,7 +2888,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -2932,7 +2932,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           {
@@ -2941,7 +2941,7 @@
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         ],
@@ -2989,7 +2989,7 @@
           "saleTransactionId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "timestamp": {
             "type": "string",
@@ -3014,7 +3014,7 @@
           "accountId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "from": {
             "type": "string",
@@ -3069,7 +3069,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -3086,7 +3086,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -3120,7 +3120,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -3162,7 +3162,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -3191,7 +3191,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -3208,7 +3208,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -3257,12 +3257,12 @@
           "compositeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "storeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -3303,7 +3303,7 @@
           "compositeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -3317,12 +3317,12 @@
           "compositeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "storeItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3357,17 +3357,17 @@
           "templateId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "storeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "cost": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3415,7 +3415,7 @@
           "containerId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -3438,7 +3438,7 @@
           "containerId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "user": {
             "$ref": "#/components/schemas/UserListModel"
@@ -3464,7 +3464,7 @@
           "containerId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "user": {
             "$ref": "#/components/schemas/UserListModel"
@@ -3499,7 +3499,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3540,7 +3540,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3573,7 +3573,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3621,7 +3621,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3684,7 +3684,7 @@
           "storeItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -3700,7 +3700,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -3727,7 +3727,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -3781,7 +3781,7 @@
           "storeItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -3797,7 +3797,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -3821,12 +3821,12 @@
           "storeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "pipeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -3844,7 +3844,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3883,7 +3883,7 @@
           "storeItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -3921,7 +3921,7 @@
           "storeItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "user": {
             "$ref": "#/components/schemas/UserListModel"
@@ -3946,7 +3946,7 @@
           "status": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "detail": {
             "type": [
@@ -4017,7 +4017,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4051,17 +4051,17 @@
           "x": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "y": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "targetId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "type": {
             "default": "SaleItem",
@@ -4114,12 +4114,12 @@
           "x": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "y": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -4143,12 +4143,12 @@
           "x": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "y": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -4172,12 +4172,12 @@
           "x": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "y": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -4200,7 +4200,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4243,7 +4243,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4307,7 +4307,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4339,12 +4339,12 @@
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "modifierId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -4359,7 +4359,7 @@
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "modifierName": {
             "type": "string"
@@ -4416,7 +4416,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           "targetIds": {
@@ -4424,7 +4424,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         }
@@ -4445,7 +4445,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4499,7 +4499,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4561,7 +4561,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4646,7 +4646,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           "targetIds": {
@@ -4654,7 +4654,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         }
@@ -4675,7 +4675,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4726,17 +4726,17 @@
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "total": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -4762,7 +4762,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4779,7 +4779,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4811,7 +4811,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4846,7 +4846,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4904,7 +4904,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           "modifierIds": {
@@ -4912,7 +4912,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         }
@@ -4934,7 +4934,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -4992,7 +4992,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5036,7 +5036,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5094,7 +5094,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5180,7 +5180,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           "modifierIds": {
@@ -5188,7 +5188,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         }
@@ -5210,7 +5210,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5270,7 +5270,7 @@
           "cashBoxId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "customerId": {
             "type": "string"
@@ -5300,12 +5300,12 @@
           "storeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "cashBoxId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "customerId": {
             "type": "string"
@@ -5341,7 +5341,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "note": {
             "type": [
@@ -5441,13 +5441,13 @@
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32",
+            "format": "number",
             "default": 1
           },
           "saleItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "modifications": {
             "type": "array",
@@ -5470,12 +5470,12 @@
           "lineNumber": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "saleItemName": {
             "type": "string"
@@ -5508,7 +5508,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "note": {
             "type": [
@@ -5567,7 +5567,7 @@
           "storeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "saleTransactionItems": {
             "type": "array",
@@ -5624,7 +5624,7 @@
           "storeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "saleTransactionItems": {
             "type": "array",
@@ -5656,7 +5656,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5679,12 +5679,12 @@
           "storeItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "storeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -5731,7 +5731,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           },
           "initialCost": {
@@ -5756,7 +5756,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5793,7 +5793,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5843,7 +5843,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5887,7 +5887,7 @@
             "items": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
-              "format": "int32"
+              "format": "number"
             }
           }
         }
@@ -5906,7 +5906,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5940,7 +5940,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -5973,7 +5973,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"
@@ -6011,12 +6011,12 @@
           "storeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "sourceStoreId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "updateCosts": {
             "type": "boolean",
@@ -6041,7 +6041,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "note": {
             "type": [
@@ -6079,7 +6079,7 @@
           "saleTransactionId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "storeTransactionItems": {
             "type": "array",
@@ -6110,7 +6110,7 @@
           "storeItemId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -6143,7 +6143,7 @@
           "storeTransactionId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -6163,7 +6163,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "note": {
             "type": [
@@ -6201,7 +6201,7 @@
           "saleTransactionId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           }
         }
       },
@@ -6240,7 +6240,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "note": {
             "type": [
@@ -6278,7 +6278,7 @@
           "saleTransactionId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "storeTransactionItems": {
             "type": "array",
@@ -6310,7 +6310,7 @@
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
-            "format": "int32"
+            "format": "number"
           },
           "name": {
             "type": "string"

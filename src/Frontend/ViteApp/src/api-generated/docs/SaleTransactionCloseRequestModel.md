@@ -8,7 +8,7 @@ Name | Type
 ------------ | -------------
 `note` | string
 `cashBoxId` | number
-`customerId` | number
+`customerId` | string
 `paidAmount` | string
 
 ## Example

@@ -24,7 +24,7 @@ export interface StoreTransactionItemCreateRequest {
      * @type {string}
      * @memberof StoreTransactionItemCreateRequest
      */
-    itemAmount: string;
+    amount: string;
     /**
      * 
      * @type {string}
@@ -43,7 +43,7 @@ export interface StoreTransactionItemCreateRequest {
  * Check if a given object implements the StoreTransactionItemCreateRequest interface.
  */
 export function instanceOfStoreTransactionItemCreateRequest(value: object): value is StoreTransactionItemCreateRequest {
-    if (!('itemAmount' in value) || value['itemAmount'] === undefined) return false;
+    if (!('amount' in value) || value['amount'] === undefined) return false;
     if (!('cost' in value) || value['cost'] === undefined) return false;
     if (!('storeItemId' in value) || value['storeItemId'] === undefined) return false;
     return true;
@@ -59,7 +59,7 @@ export function StoreTransactionItemCreateRequestFromJSONTyped(json: any, ignore
     }
     return {
         
-        'itemAmount': json['itemAmount'],
+        'amount': json['amount'],
         'cost': json['cost'],
         'storeItemId': json['storeItemId'],
     };
@@ -76,7 +76,7 @@ export function StoreTransactionItemCreateRequestToJSONTyped(value?: StoreTransa
 
     return {
         
-        'itemAmount': value['itemAmount'],
+        'amount': value['amount'],
         'cost': value['cost'],
         'storeItemId': value['storeItemId'],
     };

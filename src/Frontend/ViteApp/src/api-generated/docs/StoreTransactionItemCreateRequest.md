@@ -6,7 +6,7 @@
 
 Name | Type
 ------------ | -------------
-`itemAmount` | string
+`amount` | string
 `cost` | string
 `storeItemId` | number
 
@@ -17,7 +17,7 @@ import type { StoreTransactionItemCreateRequest } from ''
 
 // TODO: Update the object below with actual values
 const example = {
-  "itemAmount": null,
+  "amount": null,
   "cost": null,
   "storeItemId": null,
 } satisfies StoreTransactionItemCreateRequest

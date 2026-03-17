@@ -21,10 +21,16 @@ import { mapValues } from '../runtime';
 export interface UserListModel {
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof UserListModel
      */
-    id: number;
+    id: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserListModel
+     */
+    nick: string | null;
 }
 
 /**
@@ -32,6 +38,7 @@ export interface UserListModel {
  */
 export function instanceOfUserListModel(value: object): value is UserListModel {
     if (!('id' in value) || value['id'] === undefined) return false;
+    if (!('nick' in value) || value['nick'] === undefined) return false;
     return true;
 }
 
@@ -46,6 +53,7 @@ export function UserListModelFromJSONTyped(json: any, ignoreDiscriminator: boole
     return {
         
         'id': json['id'],
+        'nick': json['nick'],
     };
 }
 
@@ -61,6 +69,7 @@ export function UserListModelToJSONTyped(value?: UserListModel | null, ignoreDis
     return {
         
         'id': value['id'],
+        'nick': value['nick'],
     };
 }
 

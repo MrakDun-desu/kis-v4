@@ -21,6 +21,7 @@ apis/index.ts
 docs/AccountTransactionModel.md
 docs/AccountTransactionReadAllResponse.md
 docs/AccountTransactionType.md
+docs/CashBoxCreateRequest.md
 docs/CashBoxCreateResponse.md
 docs/CashBoxListModel.md
 docs/CashBoxReadAllResponse.md
@@ -159,6 +160,7 @@ index.ts
 models/AccountTransactionModel.ts
 models/AccountTransactionReadAllResponse.ts
 models/AccountTransactionType.ts
+models/CashBoxCreateRequest.ts
 models/CashBoxCreateResponse.ts
 models/CashBoxListModel.ts
 models/CashBoxReadAllResponse.ts

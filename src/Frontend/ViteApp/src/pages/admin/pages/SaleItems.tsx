@@ -32,7 +32,7 @@ import { printTypes } from "../../../constants/printTypes";
 const api = new SaleItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
 
-export const SaleItems = () => {
+const SaleItems = () => {
   const [saleItems, setSaleItems] = useState<SaleItemListModel[] | null>(null);
   const [request, setRequest] = useState<SaleItemsReadAllRequest>({ page: 1 });
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -297,3 +297,5 @@ export const SaleItems = () => {
     </>
   );
 };
+
+export default SaleItems;

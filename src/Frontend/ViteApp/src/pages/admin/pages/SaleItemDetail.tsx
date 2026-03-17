@@ -65,7 +65,7 @@ const ValidationSchema = z.object({
   categoryIds: z.array(z.number()).optional(),
 });
 
-export const SaleItemDetail = () => {
+const SaleItemDetail = () => {
   const [saleItem, setSaleItem] = useState<SaleItemReadResponse | null>(null);
   const [categories, setCategories] = useState<CategoryModel[] | null>(null);
   const [compositionRefreshCounter, setCompositionRefreshCounter] = useState(0);
@@ -288,3 +288,5 @@ export const SaleItemDetail = () => {
     </>
   );
 };
+
+export default SaleItemDetail;

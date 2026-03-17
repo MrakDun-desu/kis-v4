@@ -106,7 +106,7 @@ builder.Services.AddOpenApi(opts => {
         if (context.JsonTypeInfo.Type == typeof(int) ||
             context.JsonTypeInfo.Type == typeof(int?)) {
             schema.Type = JsonSchemaType.Number;
-            schema.Format = "int32";
+            schema.Format = "number";
             schema.AnyOf = null;
         }
 

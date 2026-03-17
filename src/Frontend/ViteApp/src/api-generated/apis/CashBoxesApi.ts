@@ -15,6 +15,7 @@
 
 import * as runtime from '../runtime';
 import type {
+  CashBoxCreateRequest,
   CashBoxCreateResponse,
   CashBoxReadAllResponse,
   CashBoxReadResponse,
@@ -23,6 +24,8 @@ import type {
   HttpValidationProblemDetails,
 } from '../models/index';
 import {
+    CashBoxCreateRequestFromJSON,
+    CashBoxCreateRequestToJSON,
     CashBoxCreateResponseFromJSON,
     CashBoxCreateResponseToJSON,
     CashBoxReadAllResponseFromJSON,
@@ -38,7 +41,7 @@ import {
 } from '../models/index';
 
 export interface CashBoxesCreateRequest {
-    name: string;
+    cashBoxCreateRequest: CashBoxCreateRequest;
 }
 
 export interface CashBoxesDeleteRequest {
@@ -62,20 +65,18 @@ export class CashBoxesApi extends runtime.BaseAPI {
     /**
      */
     async cashBoxesCreateRaw(requestParameters: CashBoxesCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CashBoxCreateResponse>> {
-        if (requestParameters['name'] == null) {
+        if (requestParameters['cashBoxCreateRequest'] == null) {
             throw new runtime.RequiredError(
-                'name',
-                'Required parameter "name" was null or undefined when calling cashBoxesCreate().'
+                'cashBoxCreateRequest',
+                'Required parameter "cashBoxCreateRequest" was null or undefined when calling cashBoxesCreate().'
             );
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters['name'] != null) {
-            queryParameters['Name'] = requestParameters['name'];
-        }
-
         const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
 
 
         let urlPath = `/cashboxes`;
@@ -85,6 +86,7 @@ export class CashBoxesApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
+            body: CashBoxCreateRequestToJSON(requestParameters['cashBoxCreateRequest']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => CashBoxCreateResponseFromJSON(jsonValue));

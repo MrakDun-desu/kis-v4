@@ -1,12 +1,6 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  CategoriesApi,
-  StoresApi,
-  type CategoryModel,
-  type StoreItemListModel,
-  type StoreListModel,
-} from "../../../api-generated";
+import { CashBoxesApi, type CashBoxListModel } from "../../../api-generated";
 import { useEffect, useState } from "react";
 import { defaultConfiguration } from "../../../configuration";
 import {
@@ -16,23 +10,16 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
 } from "@mui/material";
-import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import StoreItemCreateForm from "../../../components/StoreItemCreateForm";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import StoreCreateForm from "../../../components/StoreCreateForm";
+import CashBoxCreateForm from "../../../components/CashBoxCreateForm";
 
-const api = new StoresApi(defaultConfiguration);
-const categoryApi = new CategoriesApi(defaultConfiguration);
+const api = new CashBoxesApi(defaultConfiguration);
 
-const Stores = () => {
-  const [stores, setStores] = useState<StoreListModel[] | null>(null);
+const CashBoxes = () => {
+  const [cashBoxes, setCashBoxes] = useState<CashBoxListModel[] | null>(null);
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
@@ -40,20 +27,20 @@ const Stores = () => {
 
   useEffect(() => {
     setLoading(true);
-    const getStoresDeferred = setTimeout(async () => {
-      const response = await handleApiCall(api.storesReadAll());
+    const getCashBoxesDeferred = setTimeout(async () => {
+      const response = await handleApiCall(api.cashBoxesReadAll());
       if (!response) {
-        setStores(null);
+        setCashBoxes(null);
         setLoading(false);
         return;
       }
-      setStores(response.data);
+      setCashBoxes(response.data);
       setLoading(false);
     }, 500);
-    return () => clearTimeout(getStoresDeferred);
+    return () => clearTimeout(getCashBoxesDeferred);
   }, [refreshCounter]);
 
-  const columns: GridColDef<StoreListModel>[] = [
+  const columns: GridColDef<CashBoxListModel>[] = [
     {
       field: "id",
       headerName: "ID",
@@ -97,11 +84,11 @@ const Stores = () => {
             );
             if (confirmed) {
               await handleApiCall(
-                api.storesDelete({
+                api.cashBoxesDelete({
                   id: params.row.id,
                 }),
               );
-              refreshStores();
+              refreshCashBoxes();
             }
           }}
         >
@@ -113,11 +100,11 @@ const Stores = () => {
 
   const openCreateDialog = () => setCreateDialogOpen(true);
   const closeCreateDialog = () => setCreateDialogOpen(false);
-  const refreshStores = () => setRefreshCounter((val) => val + 1);
+  const refreshCashBoxes = () => setRefreshCounter((val) => val + 1);
 
   return (
     <>
-      <h2>Sklady</h2>
+      <h2>Kasy</h2>
 
       <Box
         display="flex"
@@ -126,21 +113,21 @@ const Stores = () => {
         alignItems="flex-start"
       >
         <Button color="success" variant="contained" onClick={openCreateDialog}>
-          Přidat nový
+          Přidat novou
         </Button>
 
         <Dialog open={createDialogOpen} onClose={closeCreateDialog}>
           <DialogTitle>Vytvořit nový sklad</DialogTitle>
           <DialogContent>
-            <StoreCreateForm
-              id="storeCreateForm"
+            <CashBoxCreateForm
+              id="cashBoxCreateForm"
               beforeSubmit={closeCreateDialog}
-              afterSubmit={refreshStores}
+              afterSubmit={refreshCashBoxes}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeCreateDialog}>Zrušit</Button>
-            <Button type="submit" form="storeCreateForm">
+            <Button type="submit" form="cashBoxCreateForm">
               Vytvořit
             </Button>
           </DialogActions>
@@ -150,7 +137,7 @@ const Stores = () => {
           rowSelection={false}
           loading={isLoading}
           sx={{ width: "100%" }}
-          rows={stores ?? []}
+          rows={cashBoxes ?? []}
           columns={columns}
           slotProps={{
             loadingOverlay: {
@@ -159,7 +146,6 @@ const Stores = () => {
             },
           }}
           pageSizeOptions={[]}
-          pagination={undefined}
           localeText={csCZ.components.MuiDataGrid.defaultProps.localeText}
         />
       </Box>
@@ -167,4 +153,4 @@ const Stores = () => {
   );
 };
 
-export default Stores;
+export default CashBoxes;
