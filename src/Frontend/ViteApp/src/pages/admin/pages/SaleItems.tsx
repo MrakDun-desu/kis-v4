@@ -2,10 +2,11 @@ import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   CategoriesApi,
-  StoreItemsApi,
+  PrintType,
+  SaleItemsApi,
   type CategoryModel,
-  type StoreItemListModel,
-  type StoreItemsReadAllRequest,
+  type SaleItemListModel,
+  type SaleItemsReadAllRequest,
 } from "../../../api-generated";
 import { useEffect, useState } from "react";
 import { defaultConfiguration } from "../../../configuration";
@@ -24,17 +25,16 @@ import {
 import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import StoreItemCreateForm from "../../../components/StoreItemCreateForm";
+import SaleItemCreateForm from "../../../components/SaleItemCreateForm";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
+import { printTypes } from "../../../constants/printTypes";
 
-const api = new StoreItemsApi(defaultConfiguration);
+const api = new SaleItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
 
-export const StoreItems = () => {
-  const [storeItems, setStoreItems] = useState<StoreItemListModel[] | null>(
-    null,
-  );
-  const [request, setRequest] = useState<StoreItemsReadAllRequest>({ page: 1 });
+export const SaleItems = () => {
+  const [saleItems, setSaleItems] = useState<SaleItemListModel[] | null>(null);
+  const [request, setRequest] = useState<SaleItemsReadAllRequest>({ page: 1 });
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [rowCount, setRowCount] = useState<number>(0);
@@ -42,20 +42,20 @@ export const StoreItems = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true);
-    const getStoreItemsDeferred = setTimeout(async () => {
-      const response = await handleApiCall(api.storeItemsReadAll(request));
+    const getSaleItemsDeferred = setTimeout(async () => {
+      setLoading(true);
+      const response = await handleApiCall(api.saleItemsReadAll(request));
       if (!response) {
-        setStoreItems(null);
+        setSaleItems(null);
         setRowCount(0);
         setLoading(false);
         return;
       }
-      setStoreItems(response.data);
+      setSaleItems(response.data);
       setRowCount(response.meta.total ?? 0);
       setLoading(false);
     }, 500);
-    return () => clearTimeout(getStoreItemsDeferred);
+    return () => clearTimeout(getSaleItemsDeferred);
   }, [request]);
   useEffect(() => {
     const getCategories = async () => {
@@ -69,7 +69,7 @@ export const StoreItems = () => {
     getCategories();
   }, []);
 
-  const columns: GridColDef<StoreItemListModel>[] = [
+  const columns: GridColDef<SaleItemListModel>[] = [
     {
       field: "id",
       headerName: "ID",
@@ -93,18 +93,21 @@ export const StoreItems = () => {
     },
 
     {
-      field: "unitName",
-      headerName: "Jednotka",
-      type: "string",
+      field: "marginPercent",
+      headerName: "Procentuální marže",
+      type: "number",
       sortable: false,
       filterable: false,
       editable: false,
       flex: 1,
+      valueFormatter(value: number) {
+        return `${value}%`;
+      },
     },
 
     {
-      field: "currentCost",
-      headerName: "Cena za jednotku",
+      field: "marginStatic",
+      headerName: "Statická marže",
       type: "number",
       sortable: false,
       filterable: false,
@@ -116,13 +119,24 @@ export const StoreItems = () => {
     },
 
     {
-      field: "isContainerItem",
-      headerName: "Kegová položka",
-      type: "boolean",
+      field: "prestigeAmount",
+      headerName: "Prestiž",
+      type: "number",
       sortable: false,
-      filterable: true,
+      filterable: false,
       editable: false,
       flex: 1,
+    },
+
+    {
+      field: "printType",
+      headerName: "Tisknout?",
+      type: "string",
+      sortable: false,
+      filterable: false,
+      editable: false,
+      flex: 1,
+      valueFormatter: (value: PrintType) => printTypes[value],
     },
 
     {
@@ -149,7 +163,7 @@ export const StoreItems = () => {
             );
             if (confirmed) {
               await handleApiCall(
-                api.storeItemsDelete({
+                api.saleItemsDelete({
                   id: params.row.id,
                 }),
               );
@@ -165,7 +179,7 @@ export const StoreItems = () => {
 
   const openCreateDialog = () => setCreateDialogOpen(true);
   const closeCreateDialog = () => setCreateDialogOpen(false);
-  const refreshStoreItems = () => setRequest({ ...request });
+  const refreshSaleItems = () => setRequest({ ...request });
 
   return (
     <>
@@ -184,15 +198,15 @@ export const StoreItems = () => {
         <Dialog open={createDialogOpen} onClose={closeCreateDialog}>
           <DialogTitle>Vytvořit novou skladovou položku</DialogTitle>
           <DialogContent>
-            <StoreItemCreateForm
-              id="storeItemCreateForm"
+            <SaleItemCreateForm
+              id="saleItemCreateForm"
               beforeSubmit={closeCreateDialog}
-              afterSubmit={refreshStoreItems}
+              afterSubmit={refreshSaleItems}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeCreateDialog}>Zrušit</Button>
-            <Button type="submit" form="storeItemCreateForm">
+            <Button type="submit" form="saleItemCreateForm">
               Vytvořit
             </Button>
           </DialogActions>
@@ -236,7 +250,7 @@ export const StoreItems = () => {
         <DataGrid
           loading={isLoading}
           sx={{ width: "100%" }}
-          rows={storeItems ?? []}
+          rows={saleItems ?? []}
           rowCount={rowCount}
           columns={columns}
           slotProps={{

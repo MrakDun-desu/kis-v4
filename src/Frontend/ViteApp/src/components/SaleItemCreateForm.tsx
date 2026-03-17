@@ -1,9 +1,10 @@
 import z from "zod";
 import {
-  StoreItemsApi,
+  SaleItemsApi,
   CategoriesApi,
-  type StoreItemCreateRequest,
+  type SaleItemCreateRequest,
   type CategoryModel,
+  type PrintType,
 } from "../api-generated";
 import { defaultConfiguration } from "../configuration";
 import validationConstants from "../constants/validationConstants";
@@ -11,9 +12,7 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -22,36 +21,53 @@ import {
 import { useEffect, useState } from "react";
 import { useLoading } from "../contexts/LoadingContext";
 import handleApiCall from "../errorHandling/apiResponseHandler";
+import { printTypes } from "../constants/printTypes";
 
-const api = new StoreItemsApi(defaultConfiguration);
+const api = new SaleItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
+// const imageApi = new ImagesApi(defaultConfiguration);
 
 const ValidationSchema = z.object({
   name: z
     .string()
     .min(1, "Jméno nesmí být prázdné")
     .max(validationConstants.maxNameLength, "Jméno přesahuje maximální délku"),
-  unitName: z
+  image: z.string().nullish(),
+  marginPercent: z
     .string()
-    .min(1, "Jednotka nesmí být prázdná")
-    .max(
-      validationConstants.maxUnitNameLength,
-      "Jednotka přesahuje maximální délku",
-    ),
-  initialCost: z
+    .regex(validationConstants.numberRegex, "Procentuální marže musí být číslo")
+    .refine(
+      (val) => Number(val) >= 0,
+      "Procentuální marže musí být větší/rovna nule",
+    )
+    .optional(),
+  marginStatic: z
     .string()
-    .regex(validationConstants.numberRegex, "Počáteční cena musí být číslo")
-    .refine((val) => Number(val) >= 0, "Cena musí být větší/rovna nule"),
-  isContainerItem: z.boolean().optional(),
+    .regex(validationConstants.numberRegex, "Statická marže musí být číslo")
+    .refine(
+      (val) => Number(val) >= 0,
+      "Statická marže musí být větší/rovna nule",
+    )
+    .optional(),
+  prestigeAmount: z
+    .string()
+    .regex(validationConstants.numberRegex, "Prestiž musí být číslo")
+    .refine((val) => Number(val) >= 0, "Prestiž musí být větší/rovna nule")
+    .optional(),
+  printType: z.custom<PrintType>().optional(),
+  modifierIds: z.array(z.number()).optional(),
   categoryIds: z.array(z.number()).optional(),
 });
 
-const defaultValue: StoreItemCreateRequest = {
-  initialCost: "0.00",
-  name: "Nová skladová položka",
-  unitName: "ks",
+const defaultValue: SaleItemCreateRequest = {
+  name: "Nová prodejní položka",
+  image: "",
+  marginPercent: "0.00",
+  marginStatic: "0.00",
+  prestigeAmount: "0.00",
+  printType: "DontPrint",
+  modifierIds: [],
   categoryIds: [],
-  isContainerItem: false,
 };
 
 type Props = {
@@ -60,15 +76,16 @@ type Props = {
   afterSubmit?: () => void;
 };
 
-const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
+const SaleItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+  // TODO add modifiers here
   const { startLoading, stopLoading } = useLoading();
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<StoreItemCreateRequest>({
+  } = useForm<SaleItemCreateRequest>({
     defaultValues: defaultValue,
     resolver: zodResolver(ValidationSchema),
   });
@@ -84,10 +101,10 @@ const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
     getCategories();
   }, []);
 
-  const submitForm: SubmitHandler<StoreItemCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<SaleItemCreateRequest> = async (data) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.storeItemsCreate({ storeItemCreateRequest: data }));
+    await handleApiCall(api.saleItemsCreate({ saleItemCreateRequest: data }));
     stopLoading();
     afterSubmit?.();
   };
@@ -102,18 +119,50 @@ const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
         marginTop={1}
       >
         <TextField
+          fullWidth
           label="Název"
           {...register("name")}
           error={!!errors.name}
           helperText={errors.name?.message}
         />
         <TextField
-          label="Název jednotky"
-          {...register("unitName")}
-          error={!!errors.unitName}
-          helperText={errors.unitName?.message}
+          fullWidth
+          label="Procentuální marže"
+          {...register("marginPercent")}
+          error={!!errors.marginPercent}
+          helperText={errors.marginPercent?.message}
         />
-        <FormControl>
+        <TextField
+          fullWidth
+          label="Statická marže"
+          {...register("marginStatic")}
+          error={!!errors.marginStatic}
+          helperText={errors.marginStatic?.message}
+        />
+        <TextField
+          fullWidth
+          label="Prestiž"
+          {...register("prestigeAmount")}
+          error={!!errors.prestigeAmount}
+          helperText={errors.prestigeAmount?.message}
+        />
+        <FormControl fullWidth>
+          <InputLabel id="printType">Tisknout?</InputLabel>
+          <Select
+            label="Tisknout?"
+            labelId="printType"
+            defaultValue="DontPrint"
+            {...register("printType")}
+          >
+            {Object.keys(printTypes).map((x) => (
+              <MenuItem value={x} key={x}>
+                {printTypes[x as PrintType]}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {/* TODO add image and modifier pickers */}
+        <FormControl fullWidth>
           <InputLabel id="categorySelect">Kategorie</InputLabel>
           <Controller
             name="categoryIds"
@@ -137,19 +186,9 @@ const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
             )}
           />
         </FormControl>
-        <FormControlLabel
-          label="Kegová položka"
-          control={<Checkbox {...register("isContainerItem")} />}
-        />
-        <TextField
-          label="Počáteční cena"
-          {...register("initialCost")}
-          error={!!errors.initialCost}
-          helperText={errors.initialCost?.message}
-        />
       </Box>
     </form>
   );
 };
 
-export default StoreItemCreateForm;
+export default SaleItemCreateForm;

@@ -1,10 +1,11 @@
 import { useParams } from "react-router-dom";
 import {
   CategoriesApi,
-  StoreItemsApi,
+  PrintType,
+  SaleItemsApi,
   type CategoryModel,
-  type StoreItemReadResponse,
-  type StoreItemUpdateModel,
+  type SaleItemReadResponse,
+  type SaleItemUpdateModel,
 } from "../../../api-generated";
 import { defaultConfiguration } from "../../../configuration";
 import { useEffect, useState } from "react";
@@ -20,14 +21,16 @@ import {
   Typography,
 } from "@mui/material";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
-import CostCreateForm from "../../../components/CostCreateForm";
 import z from "zod";
 import validationConstants from "../../../constants/validationConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
+import { printTypes } from "../../../constants/printTypes";
+import CompositionCreateForm from "../../../components/CompositionCreateForm";
+import { useLoading } from "../../../contexts/LoadingContext";
+import CompositionDisplayTable from "../../../components/CompositionDisplayTable";
 
-const api = new StoreItemsApi(defaultConfiguration);
+const api = new SaleItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
 
 const ValidationSchema = z.object({
@@ -35,53 +38,81 @@ const ValidationSchema = z.object({
     .string()
     .min(1, "Jméno nesmí být prázdné")
     .max(validationConstants.maxNameLength, "Jméno přesahuje maximální délku"),
-  unitName: z
+  image: z.string().nullish(),
+  marginPercent: z
     .string()
-    .min(1, "Jednotka nesmí být prázdná")
-    .max(
-      validationConstants.maxUnitNameLength,
-      "Jednotka přesahuje maximální délku",
-    ),
+    .regex(validationConstants.numberRegex, "Procentuální marže musí být číslo")
+    .refine(
+      (val) => Number(val) >= 0,
+      "Procentuální marže musí být větší/rovna nule",
+    )
+    .optional(),
+  marginStatic: z
+    .string()
+    .regex(validationConstants.numberRegex, "Statická marže musí být číslo")
+    .refine(
+      (val) => Number(val) >= 0,
+      "Statická marže musí být větší/rovna nule",
+    )
+    .optional(),
+  prestigeAmount: z
+    .string()
+    .regex(validationConstants.numberRegex, "Prestiž musí být číslo")
+    .refine((val) => Number(val) >= 0, "Prestiž musí být větší/rovna nule")
+    .optional(),
+  printType: z.custom<PrintType>().optional(),
+  modifierIds: z.array(z.number()).optional(),
   categoryIds: z.array(z.number()).optional(),
 });
 
-export const StoreItemDetail = () => {
-  const { id } = useParams();
-  const [storeItem, setStoreItem] = useState<StoreItemReadResponse | null>(
-    null,
-  );
+export const SaleItemDetail = () => {
+  const [saleItem, setSaleItem] = useState<SaleItemReadResponse | null>(null);
   const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+  const [compositionRefreshCounter, setCompositionRefreshCounter] = useState(0);
+  const { startLoading, stopLoading } = useLoading();
+  const { id } = useParams();
+
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<StoreItemUpdateModel>({
+  } = useForm<SaleItemUpdateModel>({
     values:
-      storeItem === null
+      saleItem === null
         ? {
-            name: "",
-            unitName: "",
+            name: "Prodejní položka",
+            image: "",
+            marginPercent: "0",
+            marginStatic: "0.00",
+            prestigeAmount: "0",
+            printType: "DontPrint",
             categoryIds: [],
+            modifierIds: [],
           }
         : {
-            name: storeItem.name,
-            unitName: storeItem.unitName,
-            categoryIds: storeItem.categories.map((cat) => cat.id),
+            name: saleItem.name,
+            image: saleItem.image,
+            marginPercent: String(saleItem.marginPercent),
+            marginStatic: String(saleItem.marginStatic),
+            prestigeAmount: String(saleItem.prestigeAmount),
+            printType: saleItem.printType,
+            categoryIds: saleItem.categories.map((cat) => cat.id),
+            modifierIds: saleItem.applicableModifiers.map((mod) => mod.id),
           },
     resolver: zodResolver(ValidationSchema),
   });
 
   useEffect(() => {
-    const getStoreItem = async () => {
+    const getSaleItem = async () => {
       const response = await handleApiCall(
-        api.storeItemsRead({
+        api.saleItemsRead({
           id: Number(id),
         }),
       );
-      setStoreItem(response);
+      setSaleItem(response);
     };
-    getStoreItem();
+    getSaleItem();
   }, []);
   useEffect(() => {
     const getCategories = async () => {
@@ -95,25 +126,25 @@ export const StoreItemDetail = () => {
     getCategories();
   }, []);
 
-  const saveStoreItem: SubmitHandler<StoreItemUpdateModel> = async (data) => {
-    if (!storeItem) {
-      return;
-    }
-    setStoreItem(null);
+  const saveSaleItem: SubmitHandler<SaleItemUpdateModel> = async (data) => {
+    startLoading();
     const response = await handleApiCall(
-      api.storeItemsUpdate({
-        id: id as unknown as number,
-        storeItemUpdateModel: data,
+      api.saleItemsUpdate({
+        id: Number(id),
+        saleItemUpdateModel: data,
       }),
     );
-    setStoreItem(response);
+    if (response) {
+      setSaleItem(response);
+    }
+    stopLoading();
   };
 
-  if (!storeItem) {
+  if (!saleItem) {
     return (
       <>
         <Skeleton variant="rounded" width={300} height={30} />
-        <Box display="flex" gap={5}>
+        <Box display="flex" gap={5} marginTop={5}>
           <Box display="flex" flexDirection="column" gap={2}>
             <Skeleton variant="rounded" width={300} height={60} />
             <Skeleton variant="rounded" width={300} height={60} />
@@ -132,7 +163,7 @@ export const StoreItemDetail = () => {
 
   return (
     <>
-      <h2>Detail skladové položky</h2>
+      <h2>Detail prodejní položky</h2>
       <Box display="flex" gap={5}>
         <Box
           display="flex"
@@ -148,7 +179,8 @@ export const StoreItemDetail = () => {
           >
             Úprava položky
           </Typography>
-          <form onSubmit={handleSubmit(saveStoreItem)}>
+
+          <form onSubmit={handleSubmit(saveSaleItem)}>
             <Box
               display="flex"
               flexDirection="column"
@@ -156,18 +188,49 @@ export const StoreItemDetail = () => {
               gap={2}
             >
               <TextField
+                fullWidth
                 label="Název"
                 {...register("name")}
                 error={!!errors.name}
-                helperText={errors.name?.message}
+                helperText={errors?.name?.message}
               />
               <TextField
-                label="Název jednotky"
-                {...register("unitName")}
-                error={!!errors.unitName}
-                helperText={errors.unitName?.message}
+                fullWidth
+                label="Procentuální marže"
+                {...register("marginPercent")}
+                error={!!errors.marginPercent}
+                helperText={errors.marginPercent?.message}
               />
-              <FormControl>
+              <TextField
+                fullWidth
+                label="Statická marže"
+                {...register("marginStatic")}
+                error={!!errors.marginStatic}
+                helperText={errors.marginStatic?.message}
+              />
+              <TextField
+                fullWidth
+                label="Prestiž"
+                {...register("prestigeAmount")}
+                error={!!errors.prestigeAmount}
+                helperText={errors.prestigeAmount?.message}
+              />
+              <FormControl fullWidth>
+                <InputLabel id="printType">Tisknout?</InputLabel>
+                <Select
+                  label="Tisknout?"
+                  labelId="printType"
+                  defaultValue="DontPrint"
+                  {...register("printType")}
+                >
+                  {Object.keys(printTypes).map((x) => (
+                    <MenuItem value={x} key={x}>
+                      {printTypes[x as PrintType]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
                 <InputLabel id="categorySelect">Kategorie</InputLabel>
                 <Controller
                   name="categoryIds"
@@ -191,15 +254,6 @@ export const StoreItemDetail = () => {
                   )}
                 />
               </FormControl>
-              <Box display="flex" alignItems="center" gap={1}>
-                {storeItem.isContainerItem ? (
-                  <CheckBox />
-                ) : (
-                  <CheckBoxOutlineBlank />
-                )}
-                Kegová položka
-              </Box>
-              <div>Aktuální cena: {storeItem.currentCost}czk</div>
               <Button type="submit" variant="contained">
                 Uložit změny
               </Button>
@@ -219,16 +273,15 @@ export const StoreItemDetail = () => {
             display="inline"
             sx={{ marginBottom: 1 }}
           >
-            Nastavení ceny
+            Zložení
           </Typography>
-          <CostCreateForm
-            id="costCreateForm"
-            storeItemId={Number(id)}
-            afterSubmit={(newCost) => {
-              setStoreItem((prev) =>
-                !prev ? prev : { ...prev, currentCost: newCost.amount },
-              );
-            }}
+          <CompositionDisplayTable
+            compositeId={Number(id)}
+            refreshCounter={compositionRefreshCounter}
+          />
+          <CompositionCreateForm
+            compositeId={Number(id)}
+            afterSubmit={() => setCompositionRefreshCounter((val) => val + 1)}
           />
         </Box>
       </Box>

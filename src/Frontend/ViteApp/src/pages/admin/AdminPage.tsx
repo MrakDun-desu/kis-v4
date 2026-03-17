@@ -58,34 +58,34 @@ const links: Link[][] = [
     //   icon: <Store />,
     // },
   ],
-  //
-  // [
-  //   {
-  //     label: "Prodejní položky",
-  //     url: "sale-items",
-  //     icon: <ShoppingBag />,
-  //   },
-  //   {
-  //     label: "Prodejní transakce",
-  //     url: "sale-transactions",
-  //     icon: <Receipt />,
-  //   },
-  //   {
-  //     label: "Modifikátory",
-  //     url: "modifiers",
-  //     icon: <Build />,
-  //   },
-  //   {
-  //     label: "Layouty",
-  //     url: "layouts",
-  //     icon: <GridView />,
-  //   },
-  //   {
-  //     label: "Slevy",
-  //     url: "discounts",
-  //     icon: <Discount />,
-  //   },
-  // ],
+
+  [
+    {
+      label: "Prodejní položky",
+      url: "sale-items",
+      icon: <ShoppingBag />,
+    },
+    //   {
+    //     label: "Prodejní transakce",
+    //     url: "sale-transactions",
+    //     icon: <Receipt />,
+    //   },
+    //   {
+    //     label: "Modifikátory",
+    //     url: "modifiers",
+    //     icon: <Build />,
+    //   },
+    //   {
+    //     label: "Layouty",
+    //     url: "layouts",
+    //     icon: <GridView />,
+    //   },
+    //   {
+    //     label: "Slevy",
+    //     url: "discounts",
+    //     icon: <Discount />,
+    //   },
+  ],
   //
   // [
   //   {

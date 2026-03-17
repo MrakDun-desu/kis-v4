@@ -1,5 +1,9 @@
 import z from "zod";
-import { type CostCreateRequest, CostsApi, type CostCreateResponse } from "../api-generated";
+import {
+  type CostCreateRequest,
+  CostsApi,
+  type CostCreateResponse,
+} from "../api-generated";
 import { defaultConfiguration } from "../configuration";
 import validationConstants from "../constants/validationConstants";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -12,73 +16,84 @@ const api = new CostsApi(defaultConfiguration);
 
 const ValidationSchema = z.object({
   storeItemId: z.number(),
-  amount: z.string()
+  amount: z
+    .string()
     .regex(validationConstants.numberRegex, "Cena musí být číslo")
-    .refine(x => Number(x) >= 0, "Cena musí být větší/rovna nule"),
-  description: z.string()
+    .refine((x) => Number(x) >= 0, "Cena musí být větší/rovna nule"),
+  description: z
+    .string()
     .min(1, "Popis nesmí být prázdný")
-    .max(validationConstants.maxDescriptionLength, "Popis přesahuje maximální délku")
-})
+    .max(
+      validationConstants.maxDescriptionLength,
+      "Popis přesahuje maximální délku",
+    ),
+});
 
 type Props = {
-  id: string,
-  storeItemId: number,
-  beforeSubmit?: () => void,
-  afterSubmit?: (output: CostCreateResponse) => void,
-}
+  id: string;
+  storeItemId: number;
+  beforeSubmit?: () => void;
+  afterSubmit?: (output: CostCreateResponse) => void;
+};
 
-const CostCreateForm = ({ id, storeItemId, beforeSubmit, afterSubmit }: Props) => {
+const CostCreateForm = ({
+  id,
+  storeItemId,
+  beforeSubmit,
+  afterSubmit,
+}: Props) => {
   const { startLoading, stopLoading } = useLoading();
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<CostCreateRequest>({
-    values: {
+    defaultValues: {
       storeItemId: storeItemId,
       amount: "0.00",
-      description: "Popis nové ceny"
+      description: "Popis nové ceny",
     },
-    resolver: zodResolver(ValidationSchema)
+    resolver: zodResolver(ValidationSchema),
   });
 
   const submitForm: SubmitHandler<CostCreateRequest> = async (data) => {
     beforeSubmit?.();
     startLoading();
-    const output = await handleApiCall(api.costsCreate({ costCreateRequest: data }));
+    const output = await handleApiCall(
+      api.costsCreate({ costCreateRequest: data }),
+    );
     stopLoading();
     if (output) {
       afterSubmit?.(output);
     }
   };
 
-  return <form
-    onSubmit={handleSubmit(submitForm)}
-    id={id}
-  >
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="flex-start"
-      gap={2}
-    >
-      <TextField
-        label="Nová cena"
-        {...register("amount")}
-        error={!!errors.amount}
-        helperText={errors.amount?.message}
-      />
-      <TextField
-        label="Popis nové ceny"
-        {...register("description")}
-        error={!!errors.description}
-        helperText={errors.description?.message}
-      />
-      <Button type="submit" variant="contained">
-        Nastavit novou cenu
-      </Button>
-    </Box>
-  </form>
-}
+  return (
+    <form onSubmit={handleSubmit(submitForm)} id={id}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="flex-start"
+        gap={2}
+      >
+        <TextField
+          label="Nová cena"
+          {...register("amount")}
+          error={!!errors.amount}
+          helperText={errors.amount?.message}
+        />
+        <TextField
+          label="Popis nové ceny"
+          {...register("description")}
+          error={!!errors.description}
+          helperText={errors.description?.message}
+        />
+        <Button type="submit" variant="contained">
+          Nastavit novou cenu
+        </Button>
+      </Box>
+    </form>
+  );
+};
 
 export default CostCreateForm;

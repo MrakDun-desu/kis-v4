@@ -29,7 +29,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         );
         if (authResponse.ok) {
           const respValue = await authResponse.json();
-          setUserClaims(respValue);
+          const respClaims = respValue as UserClaim[];
+          if (!respClaims) {
+            setUserClaims(null);
+          } else {
+            setUserClaims(respValue);
+          }
         } else if (authResponse.status === 401) {
           setUserClaims(null);
         }
