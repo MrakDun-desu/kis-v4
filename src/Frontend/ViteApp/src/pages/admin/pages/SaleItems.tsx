@@ -252,6 +252,7 @@ export const SaleItems = () => {
           sx={{ width: "100%" }}
           rows={saleItems ?? []}
           rowCount={rowCount}
+          rowSelection={false}
           columns={columns}
           slotProps={{
             loadingOverlay: {

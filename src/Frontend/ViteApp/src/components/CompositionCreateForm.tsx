@@ -41,7 +41,6 @@ const CompositionCreateForm = ({
     register,
     handleSubmit,
     control,
-    getValues,
     formState: { errors },
   } = useForm<CompositionPutRequest>({
     defaultValues: {

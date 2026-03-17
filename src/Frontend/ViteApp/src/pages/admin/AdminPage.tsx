@@ -52,11 +52,11 @@ const links: Link[][] = [
     //   url: "store-transactions",
     //   icon: <MoveDown />,
     // },
-    // {
-    //   label: "Sklady",
-    //   url: "stores",
-    //   icon: <Store />,
-    // },
+    {
+      label: "Sklady",
+      url: "stores",
+      icon: <Store />,
+    },
   ],
 
   [

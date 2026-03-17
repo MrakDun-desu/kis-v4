@@ -22,6 +22,7 @@ import { SnackbarProvider } from "./contexts/SnackbarContext";
 import Orders from "./pages/pos/pages/Orders";
 import { SaleItems } from "./pages/admin/pages/SaleItems";
 import { SaleItemDetail } from "./pages/admin/pages/SaleItemDetail";
+import { Stores } from "./pages/admin/pages/Stores";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -71,7 +72,7 @@ function App() {
             >
               <Route path="store-items" element={<StoreItems />} />
               <Route path="store-items/:id" element={<StoreItemDetail />} />
-              <Route path="stores" element={null} />
+              <Route path="stores" element={<Stores />} />
               <Route path="store-transactions" element={null} />
               <Route path="sale-items" element={<SaleItems />} />
               <Route path="sale-items/:id" element={<SaleItemDetail />} />

@@ -238,6 +238,7 @@ export const StoreItems = () => {
           sx={{ width: "100%" }}
           rows={storeItems ?? []}
           rowCount={rowCount}
+          rowSelection={false}
           columns={columns}
           slotProps={{
             loadingOverlay: {
