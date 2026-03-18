@@ -7,13 +7,7 @@ import {
 } from "@mui/material";
 import { useMemo } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import {
-  AdminPage,
-  HomePage,
-  NotFoundPage,
-  PosMain,
-  StoreItems,
-} from "./pages";
+import { AdminPage, HomePage, NotFoundPage, PosMain } from "./pages";
 import { RequireAuth } from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthContext";
 import { LoadingProvider } from "./contexts/LoadingContext";
@@ -24,6 +18,8 @@ import SaleItems from "./pages/admin/pages/SaleItems";
 import SaleItemDetail from "./pages/admin/pages/SaleItemDetail";
 import Stores from "./pages/admin/pages/Stores";
 import CashBoxes from "./pages/admin/pages/CashBoxes";
+import StoreItems from "./pages/admin/pages/StoreItems";
+import StoreDetail from "./pages/admin/pages/StoreDetail";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -74,6 +70,7 @@ function App() {
               <Route path="store-items" element={<StoreItems />} />
               <Route path="store-items/:id" element={<StoreItemDetail />} />
               <Route path="stores" element={<Stores />} />
+              <Route path="stores/:id" element={<StoreDetail />} />
               <Route path="store-transactions" element={null} />
               <Route path="sale-items" element={<SaleItems />} />
               <Route path="sale-items/:id" element={<SaleItemDetail />} />

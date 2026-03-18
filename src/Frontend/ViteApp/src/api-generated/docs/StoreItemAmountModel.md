@@ -7,7 +7,7 @@
 Name | Type
 ------------ | -------------
 `amount` | string
-`storeItemId` | number
+`storeItem` | [StoreItemListModel](StoreItemListModel.md)
 `storeId` | number
 
 ## Example
@@ -18,7 +18,7 @@ import type { StoreItemAmountModel } from ''
 // TODO: Update the object below with actual values
 const example = {
   "amount": null,
-  "storeItemId": null,
+  "storeItem": null,
   "storeId": null,
 } satisfies StoreItemAmountModel
 

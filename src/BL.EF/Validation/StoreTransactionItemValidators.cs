@@ -10,7 +10,7 @@ public class StoreTransactionItemCreateValidator : AbstractValidator<StoreTransa
             .OverridePropertyName(ValidationMessages.CostPropName)
             .WithMessage(ValidationMessages.CostOutOfRangeMessage);
         RuleFor(x => x.Amount)
-            .InclusiveBetween(0, ValidationConstants.MaxTransactionAmount)
+            .InclusiveBetween(-ValidationConstants.MaxTransactionAmount, ValidationConstants.MaxTransactionAmount)
             .OverridePropertyName(ValidationMessages.AmountPropName)
             .WithMessage(ValidationMessages.AmountOutOfRangeMessage);
         // Not validating store items here because that would mean hitting database multiple times

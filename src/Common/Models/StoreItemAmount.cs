@@ -5,7 +5,7 @@ namespace KisV4.Common.Models;
 // Base models
 public record StoreItemAmountModel {
     public required decimal Amount { get; init; }
-    public required int StoreItemId { get; init; }
+    public required StoreItemListModel StoreItem { get; init; }
     public required int StoreId { get; init; }
 }
 

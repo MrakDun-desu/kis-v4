@@ -5666,7 +5666,7 @@
       "StoreItemAmountModel": {
         "required": [
           "amount",
-          "storeItemId",
+          "storeItem",
           "storeId"
         ],
         "type": "object",
@@ -5676,10 +5676,8 @@
             "type": "string",
             "format": "string"
           },
-          "storeItemId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
+          "storeItem": {
+            "$ref": "#/components/schemas/StoreItemListModel"
           },
           "storeId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",

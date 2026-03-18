@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime';
+import type { StoreItemListModel } from './StoreItemListModel';
+import {
+    StoreItemListModelFromJSON,
+    StoreItemListModelFromJSONTyped,
+    StoreItemListModelToJSON,
+    StoreItemListModelToJSONTyped,
+} from './StoreItemListModel';
+
 /**
  * 
  * @export
@@ -27,10 +35,10 @@ export interface StoreItemAmountModel {
     amount: string;
     /**
      * 
-     * @type {number}
+     * @type {StoreItemListModel}
      * @memberof StoreItemAmountModel
      */
-    storeItemId: number;
+    storeItem: StoreItemListModel;
     /**
      * 
      * @type {number}
@@ -44,7 +52,7 @@ export interface StoreItemAmountModel {
  */
 export function instanceOfStoreItemAmountModel(value: object): value is StoreItemAmountModel {
     if (!('amount' in value) || value['amount'] === undefined) return false;
-    if (!('storeItemId' in value) || value['storeItemId'] === undefined) return false;
+    if (!('storeItem' in value) || value['storeItem'] === undefined) return false;
     if (!('storeId' in value) || value['storeId'] === undefined) return false;
     return true;
 }
@@ -60,7 +68,7 @@ export function StoreItemAmountModelFromJSONTyped(json: any, ignoreDiscriminator
     return {
         
         'amount': json['amount'],
-        'storeItemId': json['storeItemId'],
+        'storeItem': StoreItemListModelFromJSON(json['storeItem']),
         'storeId': json['storeId'],
     };
 }
@@ -77,7 +85,7 @@ export function StoreItemAmountModelToJSONTyped(value?: StoreItemAmountModel | n
     return {
         
         'amount': value['amount'],
-        'storeItemId': value['storeItemId'],
+        'storeItem': StoreItemListModelToJSON(value['storeItem']),
         'storeId': value['storeId'],
     };
 }

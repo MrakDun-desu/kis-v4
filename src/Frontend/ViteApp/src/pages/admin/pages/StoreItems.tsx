@@ -30,7 +30,7 @@ import handleApiCall from "../../../errorHandling/apiResponseHandler";
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
 
-export const StoreItems = () => {
+const StoreItems = () => {
   const [storeItems, setStoreItems] = useState<StoreItemListModel[] | null>(
     null,
   );
@@ -283,3 +283,5 @@ export const StoreItems = () => {
     </>
   );
 };
+
+export default StoreItems;
