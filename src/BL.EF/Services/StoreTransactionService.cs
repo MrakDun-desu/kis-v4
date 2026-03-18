@@ -1,5 +1,4 @@
 using KisV4.BL.EF.Mapping;
-using KisV4.BL.EF.Validation;
 using KisV4.Common.Authorization;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;

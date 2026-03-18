@@ -1,5 +1,4 @@
 using FluentValidation;
-using KisV4.Common.Enums;
 using KisV4.Common.Models;
 
 namespace KisV4.BL.EF.Validation;
@@ -49,10 +48,10 @@ public class LayoutCreateValidator : AbstractValidator<LayoutCreateRequest> {
 public class LayoutItemValidator : AbstractValidator<LayoutItemCreateRequest> {
     public LayoutItemValidator() {
         RuleFor(x => x.X)
-            .InclusiveBetween(0, ValidationConstants.LayoutWidth)
+            .InclusiveBetween(1, ValidationConstants.LayoutWidth)
             .WithMessage(ValidationMessages.LayoutItemPositionOutOfRangeMessage);
         RuleFor(x => x.Y)
-            .InclusiveBetween(0, ValidationConstants.LayoutHeight)
+            .InclusiveBetween(1, ValidationConstants.LayoutHeight)
             .WithMessage(ValidationMessages.LayoutItemPositionOutOfRangeMessage);
     }
 }
@@ -96,5 +95,13 @@ public class LayoutReadTopLevelValidator : AbstractValidator<LayoutReadTopLevelR
             .MustAsync(helper.BeNullOrIdentifyExistingStore)
             .OverridePropertyName(ValidationMessages.StoreIdPropName)
             .WithMessage(ValidationMessages.StoreIdNotValidMessage);
+    }
+}
+
+public class LayoutDeleteValidator : AbstractValidator<LayoutDeleteRequest> {
+    public LayoutDeleteValidator(ValidationHelper helper) {
+        RuleFor(x => x.Id)
+            .MustAsync(helper.NotBeTopLevelLayout)
+            .WithMessage(ValidationMessages.CantDeleteTopLevelLayoutMessage);
     }
 }

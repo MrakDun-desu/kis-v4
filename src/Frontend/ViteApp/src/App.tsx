@@ -20,6 +20,7 @@ import Stores from "./pages/admin/pages/Stores";
 import CashBoxes from "./pages/admin/pages/CashBoxes";
 import StoreItems from "./pages/admin/pages/StoreItems";
 import StoreDetail from "./pages/admin/pages/StoreDetail";
+import Layouts from "./pages/admin/pages/Layouts";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -81,7 +82,7 @@ function App() {
               <Route path="containers" element={null} />
               <Route path="taps" element={null} />
               <Route path="users" element={null} />
-              <Route path="layouts" element={null} />
+              <Route path="layouts" element={<Layouts />} />
               <Route path="discounts" element={null} />
             </Route>
 

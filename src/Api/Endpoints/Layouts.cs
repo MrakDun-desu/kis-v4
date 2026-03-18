@@ -1,5 +1,4 @@
 using FluentValidation;
-using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -25,6 +24,7 @@ public static class Layouts {
             .WithName("LayoutsUpdate")
             .AddValidation<LayoutUpdateRequest>();
         routeBuilder.MapDelete("layouts/{id:int}", Delete)
+            .AddValidation<LayoutDeleteRequest>()
             .WithName("LayoutsDelete");
     }
 
@@ -78,11 +78,12 @@ public static class Layouts {
     }
 
     private static async Task<Results<NoContent, NotFound>> Delete(
-        int id,
+        [AsParameters]
+        LayoutDeleteRequest req,
         LayoutService service,
         CancellationToken token = default
     ) {
-        return await service.DeleteAsync(id, token)
+        return await service.DeleteAsync(req, token)
             ? TypedResults.NoContent()
             : TypedResults.NotFound();
     }

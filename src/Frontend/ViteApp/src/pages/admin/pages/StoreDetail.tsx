@@ -1,4 +1,4 @@
-import type { GridColDef, GridRowParams } from "@mui/x-data-grid";
+import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   StoreItemAmountsApi,
@@ -8,7 +8,6 @@ import {
   type StoreItemAmountModel,
   type StoreItemAmountsReadAllRequest,
   type StoreReadResponse,
-  type StoreTransactionCreateRequest,
   type StoreTransactionItemCreateRequest,
   type StoreUpdateRequest,
 } from "../../../api-generated";

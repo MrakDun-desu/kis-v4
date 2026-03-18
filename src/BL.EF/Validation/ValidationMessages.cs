@@ -15,7 +15,7 @@ public static class ValidationMessages {
     public const string AmountPropName = "Množství";
     public const string CostPropName = "Cena";
     public const string ContainerStatePropName = "Stav kegu";
-    public const string LayoutItemsPropName = "Layoutové položky";
+    public const string LayoutItemsPropName = "Položky rozložení";
     public const string TypePropName = "Typ";
     public const string PagePropName = "Stránka";
     public const string PageSizePropName = "Velikost stránky";
@@ -72,13 +72,13 @@ public static class ValidationMessages {
         Tento typ kegu se používá
         """;
     public const string LayoutItemsNotUniqueMessage = """
-        Všechny položky v layoutu musí mít unikátní pozice
+        Všechny položky v rozložení musí mít unikátní pozice
         """;
     public const string LayoutItemTargetsNotValidMessage = """
-        Všechny položky v layotu musí mít správné odpovídající identifikátory cílů
+        Všechny položky v rozložení musí mít správné odpovídající identifikátory cílů
         """;
     public const string LayoutItemPositionOutOfRangeMessage = """
-        Pozice layoutové položky není platná
+        Pozice položky v rozložení není platná
         """;
     public const string PageOutOfRangeMessage = """
         Specifikované číslo stránky je mimo rozsah
@@ -115,6 +115,9 @@ public static class ValidationMessages {
         """;
     public const string StoreTransactionItemsContainContainerItemsMessage = """
         Nemožno vytvořit skladovou transakci pro kegové položky
+        """;
+    public const string CantDeleteTopLevelLayoutMessage = """
+        Nemožno smazat výchozí rozložení
         """;
 
     // strings

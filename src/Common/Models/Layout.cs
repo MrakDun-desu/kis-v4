@@ -77,3 +77,8 @@ public record LayoutReadTopLevelRequest {
 }
 
 public record LayoutReadResponse : LayoutDetailModel;
+
+public record LayoutDeleteRequest {
+    [FromRoute]
+    public required int Id { get; init; }
+}

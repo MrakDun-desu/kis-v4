@@ -75,11 +75,11 @@ const links: Link[][] = [
     //     url: "modifiers",
     //     icon: <Build />,
     //   },
-    //   {
-    //     label: "Layouty",
-    //     url: "layouts",
-    //     icon: <GridView />,
-    //   },
+    {
+      label: "Layouty",
+      url: "layouts",
+      icon: <GridView />,
+    },
     //   {
     //     label: "Slevy",
     //     url: "discounts",

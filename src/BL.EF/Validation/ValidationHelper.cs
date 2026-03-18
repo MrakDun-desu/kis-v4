@@ -334,4 +334,12 @@ public class ValidationHelper(
     ) {
         return await _dbContext.Containers.AllAsync(c => c.TemplateId != request.Id, token);
     }
+
+    internal async Task<bool> NotBeTopLevelLayout(int layoutId, CancellationToken token) {
+        var layout = await _dbContext.Layouts.FirstOrDefaultAsync(l => l.Id == layoutId);
+        return layout switch {
+            null => true,
+            var val => !val.TopLevel
+        };
+    }
 }

@@ -197,9 +197,10 @@ public class LayoutService(
     }
 
     public async Task<bool> DeleteAsync(
-        int id,
+        LayoutDeleteRequest req,
         CancellationToken token = default
     ) {
+        var id = req.Id;
         await _dbContext.LayoutItems
             .Where(li => li.LayoutId == id)
             .ExecuteDeleteAsync(token);
