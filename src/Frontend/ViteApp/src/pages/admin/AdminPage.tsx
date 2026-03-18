@@ -76,7 +76,7 @@ const links: Link[][] = [
     //     icon: <Build />,
     //   },
     {
-      label: "Layouty",
+      label: "Rozložení",
       url: "layouts",
       icon: <GridView />,
     },

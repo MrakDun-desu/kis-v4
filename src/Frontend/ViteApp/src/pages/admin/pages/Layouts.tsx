@@ -62,7 +62,7 @@ const Layouts = () => {
 
     {
       field: "topLevel",
-      headerName: "Výchozí layout",
+      headerName: "Výchozí rozložení",
       type: "boolean",
       sortable: true,
       filterable: true,

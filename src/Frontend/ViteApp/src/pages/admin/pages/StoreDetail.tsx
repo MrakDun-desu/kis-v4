@@ -191,6 +191,14 @@ const StoreDetail = () => {
       storesApi.storesUpdate({ id: Number(id), storeUpdateRequest: data }),
     );
     if (response) {
+      setStore((prev) =>
+        !prev
+          ? null
+          : {
+              ...prev,
+              name: response.name,
+            },
+      );
     }
     stopLoading();
   };
