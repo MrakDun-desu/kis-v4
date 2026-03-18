@@ -6,7 +6,6 @@ import {
   type CategoryModel,
   type PrintType,
 } from "../api-generated";
-import { defaultConfiguration } from "../configuration";
 import validationConstants from "../constants/validationConstants";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +21,7 @@ import { useEffect, useState } from "react";
 import { useLoading } from "../contexts/LoadingContext";
 import handleApiCall from "../errorHandling/apiResponseHandler";
 import { printTypes } from "../constants/printTypes";
+import { defaultConfiguration } from "../configuration/apiConfiguration";
 
 const api = new SaleItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);

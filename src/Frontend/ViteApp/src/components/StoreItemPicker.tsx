@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import { StoreItemsApi, type StoreItemListModel } from "../api-generated";
 import handleApiCall from "../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../configuration";
 import {
   Autocomplete,
   FormControl,
   FormHelperText,
   TextField,
 } from "@mui/material";
+import { defaultConfiguration } from "../configuration/apiConfiguration";
 
 const api = new StoreItemsApi(defaultConfiguration);
 

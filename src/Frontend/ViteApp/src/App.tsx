@@ -7,7 +7,6 @@ import {
 } from "@mui/material";
 import { useMemo } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import { AdminPage, HomePage, NotFoundPage, PosMain } from "./pages";
 import { RequireAuth } from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthContext";
 import { LoadingProvider } from "./contexts/LoadingContext";
@@ -21,6 +20,11 @@ import CashBoxes from "./pages/admin/pages/CashBoxes";
 import StoreItems from "./pages/admin/pages/StoreItems";
 import StoreDetail from "./pages/admin/pages/StoreDetail";
 import Layouts from "./pages/admin/pages/Layouts";
+import LayoutDetail from "./pages/admin/pages/LayoutDetail";
+import { HomePage } from "./pages/HomePage";
+import { AdminPage } from "./pages/admin/AdminPage";
+import { PosMain } from "./pages/pos/PosMain";
+import { NotFoundPage } from "./pages/NotFoundPage";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -83,6 +87,7 @@ function App() {
               <Route path="taps" element={null} />
               <Route path="users" element={null} />
               <Route path="layouts" element={<Layouts />} />
+              <Route path="layouts/:id" element={<LayoutDetail />} />
               <Route path="discounts" element={null} />
             </Route>
 

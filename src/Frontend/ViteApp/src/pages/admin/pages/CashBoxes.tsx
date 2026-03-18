@@ -2,7 +2,6 @@ import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 import { CashBoxesApi, type CashBoxListModel } from "../../../api-generated";
 import { useEffect, useState } from "react";
-import { defaultConfiguration } from "../../../configuration";
 import {
   Box,
   Button,
@@ -15,6 +14,7 @@ import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import CashBoxCreateForm from "../../../components/CashBoxCreateForm";
+import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 
 const api = new CashBoxesApi(defaultConfiguration);
 

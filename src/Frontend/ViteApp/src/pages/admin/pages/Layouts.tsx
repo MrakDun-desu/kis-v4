@@ -2,7 +2,6 @@ import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 import { LayoutsApi, type LayoutListModel } from "../../../api-generated";
 import { useEffect, useState } from "react";
-import { defaultConfiguration } from "../../../configuration";
 import {
   Box,
   Button,
@@ -15,6 +14,7 @@ import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import LayoutCreateForm from "../../../components/LayoutCreateForm";
+import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 
 const api = new LayoutsApi(defaultConfiguration);
 
@@ -54,8 +54,8 @@ const Layouts = () => {
       field: "name",
       headerName: "Název",
       type: "string",
-      sortable: false,
-      filterable: false,
+      sortable: true,
+      filterable: true,
       editable: false,
       flex: 1,
     },
@@ -64,7 +64,7 @@ const Layouts = () => {
       field: "topLevel",
       headerName: "Výchozí layout",
       type: "boolean",
-      sortable: false,
+      sortable: true,
       filterable: true,
       editable: false,
       flex: 1,
@@ -155,7 +155,7 @@ const Layouts = () => {
               noRowsVariant: "skeleton",
             },
           }}
-          pageSizeOptions={[]}
+          pageSizeOptions={[30, 100]}
           localeText={csCZ.components.MuiDataGrid.defaultProps.localeText}
         />
       </Box>

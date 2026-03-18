@@ -5,7 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import Snackbar from "@mui/material/Snackbar"; // or your own component
+import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 import { snackbarRef } from "../globalRefs/snackbarRef";
 import {

@@ -1,6 +1,5 @@
 import z from "zod";
 import { CompositionsApi, type CompositionPutRequest } from "../api-generated";
-import { defaultConfiguration } from "../configuration";
 import validationConstants from "../constants/validationConstants";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +7,7 @@ import { Box, Button, TextField } from "@mui/material";
 import handleApiCall from "../errorHandling/apiResponseHandler";
 import { useLoading } from "../contexts/LoadingContext";
 import StoreItemPicker from "./StoreItemPicker";
+import { defaultConfiguration } from "../configuration/apiConfiguration";
 
 const api = new CompositionsApi(defaultConfiguration);
 

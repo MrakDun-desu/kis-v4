@@ -6,7 +6,6 @@ import {
   type StoreItemReadResponse,
   type StoreItemUpdateModel,
 } from "../../../api-generated";
-import { defaultConfiguration } from "../../../configuration";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -26,6 +25,7 @@ import z from "zod";
 import validationConstants from "../../../constants/validationConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
+import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);

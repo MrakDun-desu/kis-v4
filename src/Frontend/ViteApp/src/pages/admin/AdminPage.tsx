@@ -28,7 +28,7 @@ import {
   Store,
   WaterDrop,
 } from "@mui/icons-material";
-import { type ReactElement, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 

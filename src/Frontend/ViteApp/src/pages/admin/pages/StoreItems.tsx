@@ -8,7 +8,6 @@ import {
   type StoreItemsReadAllRequest,
 } from "../../../api-generated";
 import { useEffect, useState } from "react";
-import { defaultConfiguration } from "../../../configuration";
 import {
   Box,
   Button,
@@ -26,6 +25,7 @@ import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
 import StoreItemCreateForm from "../../../components/StoreItemCreateForm";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
+import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);

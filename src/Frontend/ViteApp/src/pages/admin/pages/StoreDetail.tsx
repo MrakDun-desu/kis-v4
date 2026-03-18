@@ -12,7 +12,6 @@ import {
   type StoreUpdateRequest,
 } from "../../../api-generated";
 import { useEffect, useState } from "react";
-import { defaultConfiguration } from "../../../configuration";
 import {
   Box,
   Button,
@@ -48,6 +47,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoading } from "../../../contexts/LoadingContext";
 import { AddCircle, RemoveCircle } from "@mui/icons-material";
 import { useSnackbar } from "../../../contexts/SnackbarContext";
+import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 
 const StoreValidationSchema = z.object({
   name: z

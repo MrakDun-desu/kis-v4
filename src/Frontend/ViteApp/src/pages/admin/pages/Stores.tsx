@@ -3,12 +3,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import {
   CategoriesApi,
   StoresApi,
-  type CategoryModel,
-  type StoreItemListModel,
   type StoreListModel,
 } from "../../../api-generated";
 import { useEffect, useState } from "react";
-import { defaultConfiguration } from "../../../configuration";
 import {
   Box,
   Button,
@@ -16,17 +13,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
 } from "@mui/material";
-import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import StoreItemCreateForm from "../../../components/StoreItemCreateForm";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import StoreCreateForm from "../../../components/StoreCreateForm";
+import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 
 const api = new StoresApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);

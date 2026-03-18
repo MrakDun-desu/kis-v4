@@ -7,7 +7,6 @@ import {
   type SaleItemReadResponse,
   type SaleItemUpdateModel,
 } from "../../../api-generated";
-import { defaultConfiguration } from "../../../configuration";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -29,6 +28,7 @@ import { printTypes } from "../../../constants/printTypes";
 import CompositionCreateForm from "../../../components/CompositionCreateForm";
 import { useLoading } from "../../../contexts/LoadingContext";
 import CompositionDisplayTable from "../../../components/CompositionDisplayTable";
+import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 
 const api = new SaleItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);

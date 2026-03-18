@@ -9,7 +9,6 @@ import {
   type SaleItemsReadAllRequest,
 } from "../../../api-generated";
 import { useEffect, useState } from "react";
-import { defaultConfiguration } from "../../../configuration";
 import {
   Box,
   Button,
@@ -28,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import SaleItemCreateForm from "../../../components/SaleItemCreateForm";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { printTypes } from "../../../constants/printTypes";
+import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 
 const api = new SaleItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);

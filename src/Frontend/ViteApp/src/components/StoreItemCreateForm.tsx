@@ -5,7 +5,6 @@ import {
   type StoreItemCreateRequest,
   type CategoryModel,
 } from "../api-generated";
-import { defaultConfiguration } from "../configuration";
 import validationConstants from "../constants/validationConstants";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import { useLoading } from "../contexts/LoadingContext";
 import handleApiCall from "../errorHandling/apiResponseHandler";
+import { defaultConfiguration } from "../configuration/apiConfiguration";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
