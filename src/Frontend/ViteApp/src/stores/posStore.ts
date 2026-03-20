@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { SaleTransactionItemCreateRequest } from "../api-generated";
+import type { LayoutReadResponse } from "../api-generated";
 
 interface ModificationDisplay {
   amount: number;
@@ -7,43 +7,60 @@ interface ModificationDisplay {
   modifierName: string;
 }
 
-interface SaleTransactionItemDisplay {
+export interface SaleTransactionItemDisplay {
   saleItemId: number;
   saleItemName: string;
   amount: number;
-  modifications?: ModificationDisplay[]
+  modifications: ModificationDisplay[]
+}
+
+export interface EntityWithName {
+  id: number;
+  name: string;
 }
 
 interface PosStoreType {
   transactionItems: SaleTransactionItemDisplay[];
-  currentStoreId?: number;
-  currentCashBoxId?: number;
+  currentStore?: EntityWithName;
+  currentCashBox?: EntityWithName;
+  currentLayout?: LayoutReadResponse;
   currentLayoutId?: number;
-  setCashBox: (id: number) => void;
-  setStoreId: (id: number) => void;
-  setCurrentLayout: (id: number) => void;
+  layoutHistory: number[];
+  readerUri?: string;
+  setCurrentLayout: (data: LayoutReadResponse | undefined) => void;
+  setLayoutId: (val: number | undefined) => void;
   addTransactionItem: (item: SaleTransactionItemDisplay) => void;
   removeTransactionItem: (index: number) => void;
   updateTransactionItem: (index: number, update: Partial<SaleTransactionItemDisplay>) => void;
   clearTransactionItems: () => void;
+  clearLayoutHistory: () => void;
+  popLayoutHistory: () => void;
+  updateMetadata: (
+    cashBox: EntityWithName | undefined,
+    store: EntityWithName | undefined,
+    readerUri: string | undefined
+  ) => void
 }
 
-const usePosStore = create<PosStoreType>((set) => ({
-  transactionItems: [{
-    amount: 42,
-    saleItemId: 1,
-    saleItemName: "Testovací prodejní položka",
-    modifications: [
-      {
-        amount: 1,
-        modifierId: 1,
-        modifierName: "Testovací modifikátor"
+export const usePosStore = create<PosStoreType>((set) => ({
+  transactionItems: [],
+  layoutHistory: [],
+  setCurrentLayout: (data) => set(({ layoutHistory }) => {
+    if (data) {
+      return {
+        currentLayout: data,
+        layoutHistory: layoutHistory[layoutHistory.length - 1] === data.id
+          ? layoutHistory
+          : [...layoutHistory, data.id],
+        currentLayoutId: data.id
       }
-    ]
-  }],
-  setCashBox: (id) => set(() => ({ currentCashBoxId: id })),
-  setStoreId: (id) => set(() => ({ currentStoreId: id })),
-  setCurrentLayout: (id) => set(() => ({ currentLayoutId: id })),
+    } else {
+      return {
+        currentLayout: data
+      }
+    }
+  }),
+  setLayoutId: (val) => set(() => ({ currentLayoutId: val })),
   addTransactionItem: (item) => set(({ transactionItems: prev }) =>
     ({ transactionItems: [...prev, item] })
   ),
@@ -53,7 +70,13 @@ const usePosStore = create<PosStoreType>((set) => ({
   updateTransactionItem: (index, update) => set(({ transactionItems: prev }) =>
     ({ transactionItems: prev.map((val, i) => i === index ? { ...val, ...update } : val) })
   ),
-  clearTransactionItems: () => set(() => ({ transactionItems: [] }))
+  clearTransactionItems: () => set(() => ({ transactionItems: [] })),
+  clearLayoutHistory: () => set(() => ({ layoutHistory: [] })),
+  popLayoutHistory: () => set(({ layoutHistory: prev }) =>
+    ({ layoutHistory: prev.slice(0, Math.max(prev.length - 1, 0)) })),
+  updateMetadata: ((cashBox, store, readerUri) => set(() => ({
+    currentCashBox: cashBox,
+    currentStore: store,
+    readerUri: readerUri
+  })))
 }))
-
-export default usePosStore;

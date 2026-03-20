@@ -289,26 +289,6 @@ const StoreDetail = () => {
         >
           Přidat do transakce
         </Button>,
-        <Button
-          sx={{
-            marginRight: 1,
-          }}
-          variant="outlined"
-          color="error"
-          onClick={() => {
-            const existingItem = transactionItems.fields.find(
-              (sti: StoreTransactionItemCreateRequest) =>
-                sti.storeItemId === params.row.storeItem.id,
-            );
-            if (existingItem) {
-              const index = transactionItems.fields.indexOf(existingItem);
-              transactionItems.remove(index);
-            }
-          }}
-          startIcon={<RemoveCircle />}
-        >
-          Odebrat z transakce
-        </Button>,
       ],
     },
   ];

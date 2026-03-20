@@ -140,12 +140,7 @@ const StoreItemDetail = () => {
           alignItems="flex-start"
           gap={2}
         >
-          <Typography
-            variant="h6"
-            component="span"
-            display="inline"
-            sx={{ marginBottom: 1 }}
-          >
+          <Typography variant="h6" component="span" marginBottom={1}>
             Úprava položky
           </Typography>
           <form onSubmit={handleSubmit(saveStoreItem)}>

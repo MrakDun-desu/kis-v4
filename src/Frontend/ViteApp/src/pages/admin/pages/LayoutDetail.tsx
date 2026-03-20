@@ -39,6 +39,7 @@ import { useLoading } from "../../../contexts/LoadingContext";
 import SaleItemPicker from "../../../components/SaleItemPicker";
 import LayoutPicker from "../../../components/LayoutPicker";
 import { GridView, ShoppingBag } from "@mui/icons-material";
+import { usePosStore } from "../../../stores/posStore";
 
 const api = new LayoutsApi(defaultConfiguration);
 
@@ -72,6 +73,7 @@ const LayoutDetail = () => {
   const { startLoading, stopLoading } = useLoading();
   const [layout, setLayout] = useState<LayoutReadResponse | null>(null);
   const [layouts, setLayouts] = useState<LayoutListModel[]>();
+  const setCurrentLayout = usePosStore((state) => state.setCurrentLayout);
 
   const {
     register,
@@ -142,6 +144,7 @@ const LayoutDetail = () => {
     );
     if (response) {
       setLayout(response);
+      setCurrentLayout(undefined);
     }
     stopLoading();
   };
@@ -285,6 +288,7 @@ const LayoutGridItem = ({
 }) => {
   const type = useWatch({ control, name: `layoutItems.${index}.type` });
   const layoutItem = formLayoutItems.fields[index];
+
   if (layoutItem) {
     const labelId = `typeSelect${index}`;
     return (
@@ -297,10 +301,12 @@ const LayoutGridItem = ({
       >
         {type === "SaleItem" && <ShoppingBag />}
         {type === "Layout" && <GridView />}
+
         <FormControl fullWidth>
           <InputLabel size="small" id={labelId}>
             Typ položky
           </InputLabel>
+
           <Controller
             name={`layoutItems.${index}.type`}
             control={control}
@@ -317,6 +323,7 @@ const LayoutGridItem = ({
             )}
           />
         </FormControl>
+
         {type === "SaleItem" && (
           <Controller
             name={`layoutItems.${index}.targetId`}
@@ -331,6 +338,7 @@ const LayoutGridItem = ({
             )}
           />
         )}
+
         {type === "Layout" && (
           <Controller
             name={`layoutItems.${index}.targetId`}
@@ -346,6 +354,7 @@ const LayoutGridItem = ({
             )}
           />
         )}
+
         <Button
           variant="outlined"
           color="error"

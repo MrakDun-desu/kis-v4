@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import LayoutCreateForm from "../../../components/LayoutCreateForm";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
+import { usePosStore } from "../../../stores/posStore";
 
 const api = new LayoutsApi(defaultConfiguration);
 
@@ -23,6 +24,7 @@ const Layouts = () => {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
+  const setCurrentLayout = usePosStore((state) => state.setCurrentLayout);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,6 +100,7 @@ const Layouts = () => {
                   id: params.row.id,
                 }),
               );
+              setCurrentLayout(undefined);
               refreshLayouts();
             }
           }}

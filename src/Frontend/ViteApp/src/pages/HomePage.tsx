@@ -22,11 +22,15 @@ export const HomePage = () => {
         <Button
           variant="outlined"
           size="large"
-          onClick={() => navigate("admin/store-items")}
+          onClick={() => navigate("/admin/store-items")}
         >
           Admin
         </Button>
-        <Button variant="outlined" size="large" onClick={() => navigate("pos")}>
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => navigate("/pos/orders")}
+        >
           POS
         </Button>
       </Box>

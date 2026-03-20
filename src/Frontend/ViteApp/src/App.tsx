@@ -25,6 +25,7 @@ import { HomePage } from "./pages/HomePage";
 import { AdminPage } from "./pages/admin/AdminPage";
 import { PosMain } from "./pages/pos/PosMain";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import PosSettings from "./pages/pos/pages/PosSettings";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -103,7 +104,7 @@ function App() {
               <Route path="recent-transactions" element={null} />
               <Route path="containers" element={null} />
               <Route path="card-pairing" element={null} />
-              <Route path="settings" element={null} />
+              <Route path="settings" element={<PosSettings />} />
               <Route path="pipes/:id" element={null} />
               <Route path="containers/:id" element={null} />
             </Route>

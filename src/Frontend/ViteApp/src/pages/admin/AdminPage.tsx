@@ -118,7 +118,7 @@ const links: Link[][] = [
     //   },
     {
       label: "Operátor",
-      url: "/pos",
+      url: "/pos/orders",
       icon: <Storefront />,
     },
   ],

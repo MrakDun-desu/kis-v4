@@ -58,7 +58,7 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseDefaultFiles();
-app.UseStaticFiles();
+app.MapStaticAssets();
 app.UseRouting();
 app.UseAuthentication();
 app.UseBff();
