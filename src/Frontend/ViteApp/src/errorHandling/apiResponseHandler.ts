@@ -1,7 +1,7 @@
 import { instanceOfHttpValidationProblemDetails, ResponseError } from "../api-generated";
 import { snackbarRef } from "../globalRefs/snackbarRef";
 
-const handleApiCall = async <TRes>(call: Promise<TRes>): Promise<TRes | null> => {
+const handleApiCall = async <TRes>(call: Promise<TRes>, onNotFound: (() => void) | null = null): Promise<TRes | null> => {
   try {
     const res = await call;
     return res;
@@ -9,8 +9,12 @@ const handleApiCall = async <TRes>(call: Promise<TRes>): Promise<TRes | null> =>
     if (err instanceof ResponseError) {
       const resp = err.response;
       if (resp.status == 404) {
-        // TODO make this more resilient
-        window.location.href = "/not-found";
+        if (onNotFound !== null) {
+          onNotFound();
+        } else {
+          // TODO make this more resilient
+          window.location.href = "/not-found";
+        }
         return null;
       }
 

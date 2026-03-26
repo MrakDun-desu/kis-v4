@@ -26,6 +26,9 @@ import { AdminPage } from "./pages/admin/AdminPage";
 import { PosMain } from "./pages/pos/PosMain";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import PosSettings from "./pages/pos/pages/PosSettings";
+import Categories from "./pages/admin/pages/Categories";
+import Pipes from "./pages/admin/pages/Pipes";
+import ContainerTemplates from "./pages/admin/pages/ContainerTemplates";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -83,9 +86,13 @@ function App() {
               <Route path="modifiers" element={null} />
               <Route path="sale-transactions" element={null} />
               <Route path="cashboxes" element={<CashBoxes />} />
-              <Route path="container-templates" element={null} />
+              <Route path="categories" element={<Categories />} />
+              <Route
+                path="container-templates"
+                element={<ContainerTemplates />}
+              />
               <Route path="containers" element={null} />
-              <Route path="taps" element={null} />
+              <Route path="taps" element={<Pipes />} />
               <Route path="users" element={null} />
               <Route path="layouts" element={<Layouts />} />
               <Route path="layouts/:id" element={<LayoutDetail />} />
