@@ -82,7 +82,7 @@ const LayoutCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
           helperText={errors.name?.message}
         />
         <FormControlLabel
-          label="Výchozí layout"
+          label="Výchozí rozložení"
           control={<Checkbox {...register("topLevel")} />}
         />
       </Box>

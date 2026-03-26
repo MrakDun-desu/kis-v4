@@ -13,10 +13,12 @@ const api = new StoreItemsApi(defaultConfiguration);
 
 const StoreItemPicker = ({
   onChange,
+  containerItemsOnly,
   error,
   helperText,
 }: {
   onChange: (val: number | undefined) => void;
+  containerItemsOnly?: boolean;
   error: boolean;
   helperText: string | undefined;
 }) => {
@@ -47,8 +49,14 @@ const StoreItemPicker = ({
             setStoreItems(null);
           } else {
             debounceRef.current = setTimeout(async () => {
+              const isContainerItem = containerItemsOnly ?? undefined;
               const response = await handleApiCall(
-                api.storeItemsReadAll({ page: 1, pageSize: 100, name: value }),
+                api.storeItemsReadAll({
+                  page: 1,
+                  pageSize: 100,
+                  name: value,
+                  isContainerItem,
+                }),
               );
               if (!response) {
                 setStoreItems(null);

@@ -27,6 +27,7 @@ import {
   Storefront,
   Store,
   WaterDrop,
+  Category,
 } from "@mui/icons-material";
 import { type ReactNode } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -57,6 +58,11 @@ const links: Link[][] = [
       url: "stores",
       icon: <Store />,
     },
+    {
+      label: "Kategorie",
+      url: "categories",
+      icon: <Category />,
+    },
   ],
 
   [
@@ -86,25 +92,25 @@ const links: Link[][] = [
     //     icon: <Discount />,
     //   },
   ],
-  //
-  // [
-  //   {
-  //     label: "Typy kegů",
-  //     url: "container-templates",
-  //     icon: <Liquor />,
-  //   },
-  //   {
-  //     label: "Kegy",
-  //     url: "containers",
-  //     icon: <OilBarrel />,
-  //   },
-  //   {
-  //     label: "Pípy",
-  //     url: "taps",
-  //     icon: <WaterDrop />,
-  //   },
-  // ],
-  //
+
+  [
+    {
+      label: "Typy kegů",
+      url: "container-templates",
+      icon: <Liquor />,
+    },
+    //   {
+    //     label: "Kegy",
+    //     url: "containers",
+    //     icon: <OilBarrel />,
+    //   },
+    {
+      label: "Pípy",
+      url: "taps",
+      icon: <WaterDrop />,
+    },
+  ],
+
   [
     {
       label: "Kasy",

@@ -19,7 +19,7 @@
     "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.3.9",
     "@mui/x-data-grid": "^8.27.3",
-    "kis-reader-lib": "github:su-fit-vut/kis-reader-lib#mobilecard-implementation",
+    "kis-reader-lib": "../../../../kis-reader-lib",
     "npm-check-updates": "^19.6.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

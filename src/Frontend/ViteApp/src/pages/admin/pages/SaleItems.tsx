@@ -183,7 +183,7 @@ const SaleItems = () => {
 
   return (
     <>
-      <h2>Skladové položky</h2>
+      <h2>Prodejní položky</h2>
 
       <Box
         display="flex"
