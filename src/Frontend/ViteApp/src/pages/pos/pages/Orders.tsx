@@ -13,6 +13,7 @@ import {
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { GridView, ShoppingBag, WaterDrop } from "@mui/icons-material";
+import { useSnackbar } from "../../../contexts/SnackbarContext";
 
 const layoutsApi = new LayoutsApi(defaultConfiguration);
 
@@ -38,11 +39,13 @@ const Orders = () => {
       updateTransactionItem: state.updateTransactionItem,
     })),
   );
+  const { showSnackbar } = useSnackbar();
 
   const fetchLayout = async () => {
     const resp = !layoutId
       ? await handleApiCall(
           layoutsApi.layoutsReadTopLevel({ storeId: currentStore?.id }),
+          () => showSnackbar("Není nastaveno výchozí rozložení!", "warning"),
         )
       : await handleApiCall(
           layoutsApi.layoutsRead({ id: layoutId, storeId: currentStore?.id }),
