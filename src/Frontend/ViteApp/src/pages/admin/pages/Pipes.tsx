@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import PipeCreateForm from "../../../components/PipeCreateForm";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
+import PipeCreateForm from "../../../components/forms/PipeCreateForm";
 
 const api = new PipesApi(defaultConfiguration);
 

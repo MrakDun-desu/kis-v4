@@ -132,7 +132,7 @@ public class ContainerService(
                                 Amount = req.Amount * template.Amount,
                                 StoreItemId = template.StoreItemId
                             }
-                        ]
+                        ],
                     },
                 userId,
                 reqTime,
@@ -146,7 +146,15 @@ public class ContainerService(
             var containers = Enumerable.Range(0, req.Amount).Select(_ => new Container {
                 TemplateId = req.TemplateId,
                 StoreId = req.StoreId,
-                Amount = template.Amount
+                Amount = template.Amount,
+                ContainerChanges = [
+                    new() {
+                        NewAmount = template.Amount,
+                        NewState = ContainerState.New,
+                        Timestamp = reqTime,
+                        UserId = user.Id,
+                    }
+                ]
             })
             .ToArray();
             _dbContext.Containers.AddRange(containers);
@@ -180,6 +188,7 @@ public class ContainerService(
         var user = await _userService.GetAsync(userId, token);
 
         var entity = await _dbContext.Containers
+            .Include(c => c.Template)
             .FirstOrDefaultAsync(c => c.Id == id, token);
 
         if (entity is null) {
@@ -189,18 +198,35 @@ public class ContainerService(
         await using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
         try {
+            var oldStoreId = entity.StoreId;
+            var oldPipeId = entity.PipeId;
             entity.StoreId = model.StoreId;
             entity.PipeId = model.PipeId;
+
+            // automatically change the container state when the pipe changes to not null
+            // for the first time
+            if (oldPipeId is null && entity.PipeId is not null && entity.State == ContainerState.New) {
+                entity.State = ContainerState.Opened;
+                _dbContext.ContainerChanges.Add(new() {
+                    ContainerId = entity.Id,
+                    NewAmount = entity.Amount,
+                    NewState = ContainerState.Opened,
+                    Timestamp = reqTime,
+                    UserId = user.Id
+                });
+            }
 
             _dbContext.Containers.Update(entity);
             await _dbContext.SaveChangesAsync(token);
 
-            if (entity.StoreId != model.StoreId) {
+            // automatically transfer the store items contained in the container
+            // if the store ID has changed
+            if (entity.StoreId != oldStoreId) {
                 await StoreTransactionService.CreateInternalAsync(
                         new StoreTransactionCreateRequest {
                             Reason = TransactionReason.ChangingStores,
                             StoreId = model.StoreId,
-                            SourceStoreId = entity.StoreId,
+                            SourceStoreId = oldStoreId,
                             StoreTransactionItems = [
                                 new StoreTransactionItemCreateRequest {
                                 Cost = 0,

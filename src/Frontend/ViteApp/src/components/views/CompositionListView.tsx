@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CompositionsApi, type CompositionModel } from "../api-generated";
-import handleApiCall from "../errorHandling/apiResponseHandler";
 import {
   Paper,
   Table,
@@ -11,11 +9,13 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
+import { CompositionsApi, type CompositionModel } from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
 
 const api = new CompositionsApi(defaultConfiguration);
 
-const CompositionDisplayTable = ({
+const CompositionListView = ({
   compositeId,
   refreshCounter,
 }: {
@@ -66,4 +66,4 @@ const CompositionDisplayTable = ({
   );
 };
 
-export default CompositionDisplayTable;
+export default CompositionListView;

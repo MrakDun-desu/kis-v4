@@ -1,11 +1,4 @@
 import z from "zod";
-import {
-  StoreItemsApi,
-  CategoriesApi,
-  type StoreItemCreateRequest,
-  type CategoryModel,
-} from "../api-generated";
-import validationConstants from "../constants/validationConstants";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -19,9 +12,16 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useLoading } from "../contexts/LoadingContext";
-import handleApiCall from "../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
+import {
+  StoreItemsApi,
+  CategoriesApi,
+  type StoreItemCreateRequest,
+  type CategoryModel,
+} from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import validationConstants from "../../constants/validationConstants";
+import { useLoading } from "../../contexts/LoadingContext";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);

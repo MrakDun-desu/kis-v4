@@ -1,14 +1,14 @@
 import z from "zod";
-import { PipesApi, type PipeCreateRequest } from "../api-generated";
-import validationConstants from "../constants/validationConstants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField } from "@mui/material";
-import { useLoading } from "../contexts/LoadingContext";
-import handleApiCall from "../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
+import { CategoriesApi, type CategoryCreateRequest } from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import validationConstants from "../../constants/validationConstants";
+import { useLoading } from "../../contexts/LoadingContext";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
 
-const api = new PipesApi(defaultConfiguration);
+const api = new CategoriesApi(defaultConfiguration);
 
 const ValidationSchema = z.object({
   name: z
@@ -17,8 +17,8 @@ const ValidationSchema = z.object({
     .max(validationConstants.maxNameLength, "Jméno přesahuje maximální délku"),
 });
 
-const defaultValue: PipeCreateRequest = {
-  name: "Nová pípa",
+const defaultValue: CategoryCreateRequest = {
+  name: "Nová kategorie",
 };
 
 type Props = {
@@ -27,21 +27,21 @@ type Props = {
   afterSubmit?: () => void;
 };
 
-const PipeCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
+const CategoryCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   const { startLoading, stopLoading } = useLoading();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<PipeCreateRequest>({
+  } = useForm<CategoryCreateRequest>({
     defaultValues: defaultValue,
     resolver: zodResolver(ValidationSchema),
   });
 
-  const submitForm: SubmitHandler<PipeCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<CategoryCreateRequest> = async (data) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.pipesCreate({ pipeCreateRequest: data }));
+    await handleApiCall(api.categoriesCreate({ categoryCreateRequest: data }));
     stopLoading();
     afterSubmit?.();
   };
@@ -66,4 +66,4 @@ const PipeCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   );
 };
 
-export default PipeCreateForm;
+export default CategoryCreateForm;

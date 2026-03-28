@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import CategoryCreateForm from "../../../components/CategoryCreateForm";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
+import CategoryCreateForm from "../../../components/forms/CategoryCreateForm";
 
 const api = new CategoriesApi(defaultConfiguration);
 

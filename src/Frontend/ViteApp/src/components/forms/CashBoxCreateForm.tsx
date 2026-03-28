@@ -1,14 +1,14 @@
 import z from "zod";
-import { StoresApi, type StoreCreateRequest } from "../api-generated";
-import validationConstants from "../constants/validationConstants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField } from "@mui/material";
-import { useLoading } from "../contexts/LoadingContext";
-import handleApiCall from "../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
+import { CashBoxesApi, type CashBoxCreateRequest } from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import validationConstants from "../../constants/validationConstants";
+import { useLoading } from "../../contexts/LoadingContext";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
 
-const api = new StoresApi(defaultConfiguration);
+const api = new CashBoxesApi(defaultConfiguration);
 
 const ValidationSchema = z.object({
   name: z
@@ -17,8 +17,8 @@ const ValidationSchema = z.object({
     .max(validationConstants.maxNameLength, "Jméno přesahuje maximální délku"),
 });
 
-const defaultValue: StoreCreateRequest = {
-  name: "Nový sklad",
+const defaultValue: CashBoxCreateRequest = {
+  name: "Nová kasa",
 };
 
 type Props = {
@@ -27,21 +27,21 @@ type Props = {
   afterSubmit?: () => void;
 };
 
-const StoreCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
+const CashBoxCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   const { startLoading, stopLoading } = useLoading();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<StoreCreateRequest>({
+  } = useForm<CashBoxCreateRequest>({
     defaultValues: defaultValue,
     resolver: zodResolver(ValidationSchema),
   });
 
-  const submitForm: SubmitHandler<StoreCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<CashBoxCreateRequest> = async (data) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.storesCreate({ storeCreateRequest: data }));
+    await handleApiCall(api.cashBoxesCreate({ cashBoxCreateRequest: data }));
     stopLoading();
     afterSubmit?.();
   };
@@ -66,4 +66,4 @@ const StoreCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   );
 };
 
-export default StoreCreateForm;
+export default CashBoxCreateForm;

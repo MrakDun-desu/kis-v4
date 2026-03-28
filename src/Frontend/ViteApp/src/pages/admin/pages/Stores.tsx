@@ -1,10 +1,6 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  CategoriesApi,
-  StoresApi,
-  type StoreListModel,
-} from "../../../api-generated";
+import { StoresApi, type StoreListModel } from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -17,11 +13,10 @@ import {
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import StoreCreateForm from "../../../components/StoreCreateForm";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
+import StoreCreateForm from "../../../components/forms/StoreCreateForm";
 
 const api = new StoresApi(defaultConfiguration);
-const categoryApi = new CategoriesApi(defaultConfiguration);
 
 const Stores = () => {
   const [stores, setStores] = useState<StoreListModel[] | null>(null);

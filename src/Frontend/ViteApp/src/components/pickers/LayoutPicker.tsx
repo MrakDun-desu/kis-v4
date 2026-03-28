@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { LayoutsApi, type LayoutListModel } from "../api-generated";
-import handleApiCall from "../errorHandling/apiResponseHandler";
+import { useEffect, useState } from "react";
 import {
   Autocomplete,
   FormControl,
   FormHelperText,
   TextField,
 } from "@mui/material";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
+import { LayoutsApi, type LayoutListModel } from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
 
 const api = new LayoutsApi(defaultConfiguration);
 

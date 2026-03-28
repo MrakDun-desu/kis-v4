@@ -4,7 +4,7 @@ import {
   type SaleTransactionItemDisplay,
 } from "../../../stores/posStore";
 import { useShallow } from "zustand/react/shallow";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   instanceOfLayoutItemModelLayoutSaleItemModel,
   LayoutsApi,

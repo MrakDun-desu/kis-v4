@@ -15,9 +15,9 @@ import {
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import ContainerTemplateCreateForm from "../../../components/ContainerTemplateCreateForm";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import { Link } from "react-router-dom";
+import ContainerTemplateCreateForm from "../../../components/forms/ContainerTemplateCreateForm";
 
 const api = new ContainerTemplatesApi(defaultConfiguration);
 

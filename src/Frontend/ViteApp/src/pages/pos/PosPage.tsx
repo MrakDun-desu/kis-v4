@@ -71,7 +71,7 @@ const links: Link[] = [
   },
 ];
 
-export const PosMain = () => {
+const PosPage = () => {
   const navigate = useNavigate();
   const {
     transactionItems,
@@ -555,3 +555,5 @@ const OrderFinish = ({
     </form>
   );
 };
+
+export default PosPage;

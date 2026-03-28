@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import {
-  ContainerTemplatesApi,
-  type ContainerTemplateModel,
-} from "../api-generated";
-import handleApiCall from "../errorHandling/apiResponseHandler";
-import {
   FormControl,
   FormHelperText,
   InputLabel,
   MenuItem,
   Select,
 } from "@mui/material";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
-import type { EntityWithName } from "../stores/posStore";
+import {
+  ContainerTemplatesApi,
+  type ContainerTemplateModel,
+} from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
+import type { EntityWithName } from "../../stores/posStore";
 
 const api = new ContainerTemplatesApi(defaultConfiguration);
 
@@ -27,7 +27,7 @@ const ContainerTemplatePicker = ({
   options?: ContainerTemplateModel[];
   error: boolean;
   helperText?: string;
-  initialValue: number | undefined;
+  initialValue?: number;
 }) => {
   const [containerTemplates, setContainerTemplates] = useState<
     ContainerTemplateModel[] | undefined
@@ -48,8 +48,8 @@ const ContainerTemplatePicker = ({
   }, []);
 
   return (
-    <FormControl error={error}>
-      <InputLabel id="containerTemplatePicker">Výběr skladu</InputLabel>
+    <FormControl error={error} fullWidth>
+      <InputLabel id="containerTemplatePicker">Typ kegu</InputLabel>
       <Select
         label="Výběr skladu"
         labelId="containerTemplatePicker"

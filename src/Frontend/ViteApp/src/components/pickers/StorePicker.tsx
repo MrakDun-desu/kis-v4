@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { StoresApi, type StoreListModel } from "../api-generated";
-import handleApiCall from "../errorHandling/apiResponseHandler";
 import {
   FormControl,
   FormHelperText,
@@ -8,8 +6,10 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
-import type { EntityWithName } from "../stores/posStore";
+import { StoresApi, type StoreListModel } from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
+import type { EntityWithName } from "../../stores/posStore";
 
 const api = new StoresApi(defaultConfiguration);
 
@@ -22,9 +22,9 @@ const StorePicker = ({
 }: {
   onChange: (val: EntityWithName | undefined) => void;
   options?: StoreListModel[];
-  error: boolean;
+  error?: boolean;
   helperText?: string;
-  initialValue: number | undefined;
+  initialValue?: number;
 }) => {
   const [stores, setStores] = useState<StoreListModel[] | undefined>(options);
   const [value, setValue] = useState(initialValue);
@@ -43,7 +43,7 @@ const StorePicker = ({
   }, []);
 
   return (
-    <FormControl error={error}>
+    <FormControl error={error} fullWidth>
       <InputLabel id="storePicker">Výběr skladu</InputLabel>
       <Select
         label="Výběr skladu"

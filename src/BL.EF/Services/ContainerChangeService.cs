@@ -29,7 +29,8 @@ public class ContainerChangeService(
                 ContainerId = cc.ContainerId,
                 User = cc.User.ToModel()!,
                 NewState = cc.NewState,
-                Timestamp = cc.Timestamp
+                Timestamp = cc.Timestamp,
+                NewAmount = cc.NewAmount
             })
             .OrderByDescending(cc => cc.Timestamp)
             .ToArrayAsync(token);
@@ -99,7 +100,8 @@ public class ContainerChangeService(
                 ContainerId = entity.ContainerId,
                 NewState = entity.NewState,
                 Timestamp = entity.Timestamp,
-                User = user
+                User = user,
+                NewAmount = entity.NewAmount
             };
 
             await transaction.CommitAsync(token);

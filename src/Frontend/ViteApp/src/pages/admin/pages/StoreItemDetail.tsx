@@ -20,12 +20,12 @@ import {
 } from "@mui/material";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
-import CostCreateForm from "../../../components/CostCreateForm";
 import z from "zod";
 import validationConstants from "../../../constants/validationConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
+import CostCreateForm from "../../../components/forms/CostCreateForm";
 
 const api = new StoreItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);

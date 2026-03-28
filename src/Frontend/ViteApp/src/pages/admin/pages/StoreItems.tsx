@@ -1,9 +1,7 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 import {
-  CategoriesApi,
   StoreItemsApi,
-  type CategoryModel,
   type StoreItemListModel,
   type StoreItemsReadAllRequest,
 } from "../../../api-generated";
@@ -15,20 +13,16 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
 } from "@mui/material";
 import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import StoreItemCreateForm from "../../../components/StoreItemCreateForm";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
+import CategoryFilter from "../../../components/filters/CategoryFilter";
+import StoreItemCreateForm from "../../../components/forms/StoreItemCreateForm";
 
 const api = new StoreItemsApi(defaultConfiguration);
-const categoryApi = new CategoriesApi(defaultConfiguration);
 
 const StoreItems = () => {
   const [storeItems, setStoreItems] = useState<StoreItemListModel[] | null>(
@@ -38,7 +32,6 @@ const StoreItems = () => {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [rowCount, setRowCount] = useState<number>(0);
-  const [categories, setCategories] = useState<CategoryModel[] | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,17 +50,6 @@ const StoreItems = () => {
     }, 500);
     return () => clearTimeout(getStoreItemsDeferred);
   }, [request]);
-  useEffect(() => {
-    const getCategories = async () => {
-      const response = await handleApiCall(categoryApi.categoriesReadAll());
-      if (!response) {
-        setCategories(null);
-        return;
-      }
-      setCategories(response.data);
-    };
-    getCategories();
-  }, []);
 
   const columns: GridColDef<StoreItemListModel>[] = [
     {
@@ -181,57 +163,11 @@ const StoreItems = () => {
           Přidat novou
         </Button>
 
-        <Dialog open={createDialogOpen} onClose={closeCreateDialog}>
-          <DialogTitle>Vytvořit novou skladovou položku</DialogTitle>
-          <DialogContent>
-            <StoreItemCreateForm
-              id="storeItemCreateForm"
-              beforeSubmit={closeCreateDialog}
-              afterSubmit={refreshStoreItems}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={closeCreateDialog}>Zrušit</Button>
-            <Button type="submit" form="storeItemCreateForm">
-              Vytvořit
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        <FormControl fullWidth>
-          <InputLabel id="categoryFilterLabel">
-            Filtrování podle kategorie
-          </InputLabel>
-          <Select
-            id="categoryFilter"
-            label="Zobrazit pouze kategorii"
-            labelId="categoryFilterLabel"
-            value={request.categoryId ?? ""}
-            onChange={(evt) => {
-              const newValue =
-                evt.target.value === 0 ? undefined : evt.target.value;
-              setRequest((prev) => {
-                return {
-                  ...prev,
-                  categoryId: newValue,
-                };
-              });
-            }}
-          >
-            {categories
-              ? [
-                  <MenuItem key="empty" value={0}>
-                    Zobrazit všechny
-                  </MenuItem>,
-                  ...categories.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  )),
-                ]
-              : null}
-          </Select>
-        </FormControl>
+        <CategoryFilter
+          onChange={(categoryId) =>
+            setRequest((prev) => ({ ...prev, categoryId }))
+          }
+        />
 
         <DataGrid
           loading={isLoading}
@@ -258,11 +194,14 @@ const StoreItems = () => {
           paginationMode="server"
           sortingMode="server"
           filterMode="server"
-          onPaginationModelChange={(newModel) => {
+          onPaginationModelChange={(newModel, details) => {
+            if (details.reason === "stateRestorePreProcessing") {
+              return;
+            }
             setRequest((prev) => {
               return {
                 ...prev,
-                page: newModel.page,
+                page: Math.max(1, newModel.page),
                 pageSize: newModel.pageSize,
               };
             });
@@ -279,6 +218,23 @@ const StoreItems = () => {
           }}
           localeText={csCZ.components.MuiDataGrid.defaultProps.localeText}
         />
+
+        <Dialog open={createDialogOpen} onClose={closeCreateDialog}>
+          <DialogTitle>Vytvořit novou skladovou položku</DialogTitle>
+          <DialogContent>
+            <StoreItemCreateForm
+              id="storeItemCreateForm"
+              beforeSubmit={closeCreateDialog}
+              afterSubmit={refreshStoreItems}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeCreateDialog}>Zrušit</Button>
+            <Button type="submit" form="storeItemCreateForm">
+              Vytvořit
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </>
   );

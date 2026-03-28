@@ -1,31 +1,47 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
+import { useEffect, useRef, useState } from "react";
 import {
-  ContainerChangesApi,
-  ContainersApi,
-  ContainerState,
-  type ContainerListModel,
-  type ContainersReadAllRequest,
-} from "../api-generated";
-import { useEffect, useState } from "react";
-import {
-  Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { Link, useNavigate } from "react-router-dom";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
-import handleApiCall from "../errorHandling/apiResponseHandler";
-import ContainerCreateForm from "./ContainerCreateForm";
+import {
+  ContainersApi,
+  type ContainerReadAllResponse,
+  type ContainerListModel,
+  type ContainersReadAllRequest,
+  ContainerState,
+} from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
+import ContainerCreateForm from "../forms/ContainerCreateForm";
+import PipeFilter from "../filters/PipeFilter";
+import StoreFilter from "../filters/StoreFilter";
+import ContainerTemplateFilter from "../filters/ContainerTemplateFilter";
+import { containerStates } from "../../constants/containerStates";
 
 const api = new ContainersApi(defaultConfiguration);
-const containerChangesApi = new ContainerChangesApi(defaultConfiguration);
 
-const ContainerListView = ({ storeId }: { storeId: number }) => {
+const ContainerListView = ({
+  storeId,
+  initialContainers,
+  showPipeFilter,
+  showUnusableFilter,
+  showTemplateFilter,
+}: {
+  storeId?: number;
+  initialContainers?: ContainerReadAllResponse;
+  showPipeFilter?: boolean;
+  showUnusableFilter?: boolean;
+  showTemplateFilter?: boolean;
+}) => {
   const [containers, setContainers] = useState<ContainerListModel[] | null>(
     null,
   );
@@ -37,9 +53,19 @@ const ContainerListView = ({ storeId }: { storeId: number }) => {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [rowCount, setRowCount] = useState<number>(0);
+  const firstRender = useRef(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // In production, this will work and prevent useless fetching.
+    // In development, hooks run twice, so the containers are still fetched once for no reason.
+    if (firstRender.current && initialContainers !== undefined) {
+      setContainers(initialContainers.data);
+      setRowCount(initialContainers.meta.total);
+      firstRender.current = false;
+      return;
+    }
+    firstRender.current = false;
     const getContainersDeferred = setTimeout(async () => {
       setLoading(true);
       const response = await handleApiCall(api.containersReadAll(request));
@@ -74,11 +100,7 @@ const ContainerListView = ({ storeId }: { storeId: number }) => {
       editable: false,
       filterable: false,
       flex: 1,
-      renderCell: ({ row }) => (
-        <Link to={`/admin/container-templates/${row.template.id}`}>
-          {row.template.name}
-        </Link>
-      ),
+      renderCell: ({ row }) => row.template.name,
     },
 
     {
@@ -89,6 +111,8 @@ const ContainerListView = ({ storeId }: { storeId: number }) => {
       editable: false,
       filterable: false,
       flex: 1,
+      renderCell: ({ row }) =>
+        `${row.amount} ${row.template.storeItem.unitName}`,
     },
 
     {
@@ -99,20 +123,7 @@ const ContainerListView = ({ storeId }: { storeId: number }) => {
       editable: false,
       filterable: false,
       flex: 1,
-      valueFormatter: (val: ContainerState) => {
-        switch (val) {
-          case "New":
-            return "Nový";
-          case "Opened":
-            return "Otevřený";
-          case "WrittenOff":
-            return "Odepsaný";
-          case "Bad":
-            return "Špatný";
-          default:
-            return "Neznámý";
-        }
-      },
+      valueFormatter: (val: ContainerState) => containerStates[val],
     },
 
     {
@@ -123,14 +134,8 @@ const ContainerListView = ({ storeId }: { storeId: number }) => {
       editable: false,
       filterable: false,
       flex: 1,
-      renderCell: ({ row }) =>
-        !row.pipe ? (
-          "Žádná"
-        ) : (
-          <Link to={`/admin/container-templates/${row.pipe.id}`}>
-            {row.template.name}
-          </Link>
-        ),
+      renderCell: ({ row }) => (!row.pipe ? "Žádná" : row.pipe.name),
+      //<Link to={`/admin/taps/${row.pipe.id}`}>{row.pipe.name}</Link>
     },
 
     {
@@ -140,38 +145,29 @@ const ContainerListView = ({ storeId }: { storeId: number }) => {
       type: "actions",
       renderCell: (params) => [
         <Button
-          sx={{
-            marginRight: 1,
-          }}
           variant="contained"
-          onClick={() => navigate(`${params.row.id}`)}
+          onClick={() => navigate(`/admin/containers/${params.row.id}`)}
         >
           Detail
-        </Button>,
-        <Button
-          color="error"
-          variant="outlined"
-          onClick={async () => {
-            const confirmed = confirm(`Opravdu chcete tento keg odepsat?`);
-            if (confirmed) {
-              await handleApiCall(
-                containerChangesApi.containerChangesCreate({
-                  containerChangeCreateRequest: {
-                    containerId: params.row.id,
-                    newAmount: params.row.amount,
-                    newState: "WrittenOff",
-                  },
-                }),
-              );
-              setRequest({ ...request });
-            }
-          }}
-        >
-          Smazat
         </Button>,
       ],
     },
   ];
+
+  if (storeId === undefined) {
+    columns.splice(2, 0, {
+      field: "store",
+      headerName: "Sklad",
+      type: "string",
+      sortable: false,
+      editable: false,
+      filterable: false,
+      flex: 1,
+      renderCell: ({ row }) => (
+        <Link to={`/admin/stores/${row.store.id}`}>{row.store.name}</Link>
+      ),
+    });
+  }
 
   const openCreateDialog = () => setCreateDialogOpen(true);
   const closeCreateDialog = () => setCreateDialogOpen(false);
@@ -182,6 +178,43 @@ const ContainerListView = ({ storeId }: { storeId: number }) => {
       <Button color="success" variant="contained" onClick={openCreateDialog}>
         Naskladnit kegy
       </Button>
+
+      {showPipeFilter && (
+        <PipeFilter
+          onChange={(pipeId) => setRequest((prev) => ({ ...prev, pipeId }))}
+        />
+      )}
+
+      {showTemplateFilter && (
+        <ContainerTemplateFilter
+          onChange={(templateId) =>
+            setRequest((prev) => ({ ...prev, templateId }))
+          }
+        />
+      )}
+
+      {storeId === undefined && (
+        <StoreFilter
+          onChange={(storeId) => setRequest((prev) => ({ ...prev, storeId }))}
+        />
+      )}
+
+      {showUnusableFilter && (
+        <FormControlLabel
+          label="Zobrazit staré kegy"
+          control={
+            <Checkbox
+              value={request.includeUnusable}
+              onChange={(evt) => {
+                setRequest((prev) => ({
+                  ...prev,
+                  includeUnusable: evt.target.checked,
+                }));
+              }}
+            />
+          }
+        />
+      )}
 
       <Dialog open={createDialogOpen} onClose={closeCreateDialog}>
         <DialogTitle>Naskladnit kegy</DialogTitle>
@@ -226,11 +259,14 @@ const ContainerListView = ({ storeId }: { storeId: number }) => {
         paginationMode="server"
         sortingMode="server"
         filterMode="server"
-        onPaginationModelChange={(newModel) => {
+        onPaginationModelChange={(newModel, details) => {
+          if (!details.reason) {
+            return;
+          }
           setRequest((prev) => {
             return {
               ...prev,
-              page: newModel.page,
+              page: Math.max(1, newModel.page),
               pageSize: newModel.pageSize,
             };
           });

@@ -2,10 +2,10 @@ import { useShallow } from "zustand/react/shallow";
 import { usePosStore } from "../../../stores/posStore";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
-import CashBoxPicker from "../../../components/CashBoxPicker";
-import { Box, Button, TextField, Typography } from "@mui/material";
-import StorePicker from "../../../components/StorePicker";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Box, Typography, TextField, Button } from "@mui/material";
+import CashBoxPicker from "../../../components/pickers/CashBoxPicker";
+import StorePicker from "../../../components/pickers/StorePicker";
 
 const ValidationSchema = z.object({
   store: z

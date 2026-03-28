@@ -10,6 +10,7 @@ Name | Type
 `timestamp` | Date
 `containerId` | number
 `user` | [UserListModel](UserListModel.md)
+`newAmount` | string
 
 ## Example
 
@@ -22,6 +23,7 @@ const example = {
   "timestamp": null,
   "containerId": null,
   "user": null,
+  "newAmount": null,
 } satisfies ContainerChangeCreateResponse
 
 console.log(example)

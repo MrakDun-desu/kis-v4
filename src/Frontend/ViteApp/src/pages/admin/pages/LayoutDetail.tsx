@@ -36,10 +36,10 @@ import {
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoading } from "../../../contexts/LoadingContext";
-import SaleItemPicker from "../../../components/SaleItemPicker";
-import LayoutPicker from "../../../components/LayoutPicker";
 import { GridView, ShoppingBag } from "@mui/icons-material";
 import { usePosStore } from "../../../stores/posStore";
+import SaleItemPicker from "../../../components/pickers/SaleItemPicker";
+import LayoutPicker from "../../../components/pickers/LayoutPicker";
 
 const api = new LayoutsApi(defaultConfiguration);
 

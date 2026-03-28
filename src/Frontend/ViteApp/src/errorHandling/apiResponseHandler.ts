@@ -18,18 +18,23 @@ const handleApiCall = async <TRes>(call: Promise<TRes>, onNotFound: (() => void)
         return null;
       }
 
-      const respBody = await resp.json();
-      if (instanceOfHttpValidationProblemDetails(respBody)) {
-        if (!respBody.errors) {
-          snackbarRef.show?.(`Chyba ${resp.status}.`, "error");
-          console.log(resp);
-          return null;
+      try {
+        const respBody = await resp.json();
+        if (instanceOfHttpValidationProblemDetails(respBody)) {
+          if (!respBody.errors) {
+            snackbarRef.show?.(`Chyba ${resp.status}.`, "error");
+            console.log(resp);
+            return null;
+          }
+          let errorMessage = "Naskytli se validační chyby:";
+          for (const error in respBody.errors) {
+            errorMessage = errorMessage.concat(`\n${error}: ${respBody.errors[error]}`);
+          }
+          snackbarRef.show?.(errorMessage, "warning");
         }
-        let errorMessage = "Naskytli se validační chyby:";
-        for (const error in respBody.errors) {
-          errorMessage = errorMessage.concat(`\n${error}: ${respBody.errors[error]}`);
-        }
-        snackbarRef.show?.(errorMessage, "warning");
+      } catch {
+        snackbarRef.show?.("Uh oh, něco se seriózně pokazilo. Detaily v konzoli", "error");
+        console.log(err);
       }
     } else {
       snackbarRef.show?.("Uh oh, něco se seriózně pokazilo. Detaily v konzoli", "error");

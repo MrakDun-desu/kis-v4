@@ -45,10 +45,10 @@ import z from "zod";
 import validationConstants from "../../../constants/validationConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoading } from "../../../contexts/LoadingContext";
-import { AddCircle, RemoveCircle } from "@mui/icons-material";
+import { AddCircle } from "@mui/icons-material";
 import { useSnackbar } from "../../../contexts/SnackbarContext";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
-import ContainerListView from "../../../components/ContainerListView";
+import ContainerListView from "../../../components/views/ContainerListView";
 
 const StoreValidationSchema = z.object({
   name: z
@@ -166,11 +166,11 @@ const StoreDetail = () => {
   }, []);
 
   useEffect(() => {
-    if (!request) {
+    if (request === null) {
       return;
     }
-    setLoading(true);
     const getStoreItemAmountsDeferred = setTimeout(async () => {
+      setLoading(true);
       const response = await handleApiCall(
         storeItemAmountsApi.storeItemAmountsReadAll(request),
       );
@@ -265,32 +265,38 @@ const StoreDetail = () => {
       headerName: "Akce",
       flex: 1,
       type: "actions",
-      renderCell: (params) => [
-        <Button
-          sx={{
-            marginRight: 1,
-          }}
-          variant="contained"
-          onClick={() => {
-            const existingItem = transactionItems.fields.find(
-              (sti: StoreTransactionItemCreateRequest) =>
-                sti.storeItemId === params.row.storeItem.id,
-            );
-            if (!existingItem) {
-              transactionItems.append({
-                amount: "0",
-                cost: "0",
-                storeItemId: params.row.storeItem.id,
-                storeItemName: params.row.storeItem.name,
-                storeItemUnitName: params.row.storeItem.unitName,
-              });
-            }
-          }}
-          startIcon={<AddCircle />}
-        >
-          Přidat do transakce
-        </Button>,
-      ],
+      renderCell: ({ row: itemAmount }) =>
+        // don't let people add stuff into transactions if it's container items
+        !itemAmount.storeItem.isContainerItem &&
+        // also don't display the button for items that already are in the transaction
+        transactionItems.fields.findIndex(
+          (val) => val.storeItemId === itemAmount.storeItem.id,
+        ) === -1 ? (
+          <Button
+            sx={{
+              marginRight: 1,
+            }}
+            variant="contained"
+            onClick={() => {
+              const existingItem = transactionItems.fields.find(
+                (sti: StoreTransactionItemCreateRequest) =>
+                  sti.storeItemId === itemAmount.storeItem.id,
+              );
+              if (!existingItem) {
+                transactionItems.append({
+                  amount: "0",
+                  cost: "0",
+                  storeItemId: itemAmount.storeItem.id,
+                  storeItemName: itemAmount.storeItem.name,
+                  storeItemUnitName: itemAmount.storeItem.unitName,
+                });
+              }
+            }}
+            startIcon={<AddCircle />}
+          >
+            Přidat do transakce
+          </Button>
+        ) : null,
     },
   ];
 
@@ -322,6 +328,7 @@ const StoreDetail = () => {
       <Box
         display="flex"
         gap={2}
+        paddingBottom={30}
         flexDirection="column"
         alignItems="flex-start"
       >
@@ -375,7 +382,10 @@ const StoreDetail = () => {
           paginationMode="server"
           sortingMode="server"
           filterMode="server"
-          onPaginationModelChange={(newModel) => {
+          onPaginationModelChange={(newModel, details) => {
+            if (!details.reason) {
+              return;
+            }
             setRequest({
               storeId: Number(id),
               page: Math.max(newModel.page, 1),
@@ -539,7 +549,12 @@ const StoreDetail = () => {
 
         <h3>Kegy</h3>
 
-        <ContainerListView storeId={store.id} />
+        <ContainerListView
+          storeId={store.id}
+          initialContainers={store.containers}
+          showPipeFilter
+          showTemplateFilter
+        />
       </Box>
     </>
   );

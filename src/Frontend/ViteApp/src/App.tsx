@@ -21,14 +21,16 @@ import StoreItems from "./pages/admin/pages/StoreItems";
 import StoreDetail from "./pages/admin/pages/StoreDetail";
 import Layouts from "./pages/admin/pages/Layouts";
 import LayoutDetail from "./pages/admin/pages/LayoutDetail";
-import { HomePage } from "./pages/HomePage";
-import { AdminPage } from "./pages/admin/AdminPage";
-import { PosMain } from "./pages/pos/PosMain";
-import { NotFoundPage } from "./pages/NotFoundPage";
+import HomePage from "./pages/HomePage";
+import AdminPage from "./pages/admin/AdminPage";
+import PosPage from "./pages/pos/PosPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import PosSettings from "./pages/pos/pages/PosSettings";
 import Categories from "./pages/admin/pages/Categories";
 import Pipes from "./pages/admin/pages/Pipes";
 import ContainerTemplates from "./pages/admin/pages/ContainerTemplates";
+import Containers from "./pages/admin/pages/Containers";
+import ContainerDetail from "./pages/admin/pages/ContainerDetail";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -91,7 +93,8 @@ function App() {
                 path="container-templates"
                 element={<ContainerTemplates />}
               />
-              <Route path="containers" element={null} />
+              <Route path="containers" element={<Containers />} />
+              <Route path="containers/:id" element={<ContainerDetail />} />
               <Route path="taps" element={<Pipes />} />
               <Route path="users" element={null} />
               <Route path="layouts" element={<Layouts />} />
@@ -103,7 +106,7 @@ function App() {
               path="pos"
               element={
                 <RequireAuth>
-                  <PosMain />
+                  <PosPage />
                 </RequireAuth>
               }
             >

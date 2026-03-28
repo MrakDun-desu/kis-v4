@@ -40,6 +40,9 @@ public class ContainerCreateValidator : AbstractValidator<ContainerCreateRequest
 
 public class ContainerUpdateValidator : AbstractValidator<ContainerUpdateRequest> {
     public ContainerUpdateValidator(ValidationHelper helper) {
+        RuleFor(x => x)
+            .MustAsync(helper.MustBeUpdateableContainer)
+            .WithMessage(ValidationMessages.CantUpdateUnusableContainer);
         RuleFor(x => x.Model.StoreId)
             .MustAsync(helper.IdentifyExistingStore)
             .OverridePropertyName(ValidationMessages.StoreIdPropName)

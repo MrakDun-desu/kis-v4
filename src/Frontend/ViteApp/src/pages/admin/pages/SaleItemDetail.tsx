@@ -25,10 +25,10 @@ import validationConstants from "../../../constants/validationConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { printTypes } from "../../../constants/printTypes";
-import CompositionCreateForm from "../../../components/CompositionCreateForm";
 import { useLoading } from "../../../contexts/LoadingContext";
-import CompositionDisplayTable from "../../../components/CompositionDisplayTable";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
+import CompositionListView from "../../../components/views/CompositionListView";
+import CompositionCreateForm from "../../../components/forms/CompositionCreateForm";
 
 const api = new SaleItemsApi(defaultConfiguration);
 const categoryApi = new CategoriesApi(defaultConfiguration);
@@ -275,7 +275,7 @@ const SaleItemDetail = () => {
           >
             Zložení
           </Typography>
-          <CompositionDisplayTable
+          <CompositionListView
             compositeId={Number(id)}
             refreshCounter={compositionRefreshCounter}
           />

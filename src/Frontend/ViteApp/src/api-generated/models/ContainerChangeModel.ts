@@ -58,6 +58,12 @@ export interface ContainerChangeModel {
      * @memberof ContainerChangeModel
      */
     user: UserListModel;
+    /**
+     * 
+     * @type {string}
+     * @memberof ContainerChangeModel
+     */
+    newAmount: string;
 }
 
 
@@ -70,6 +76,7 @@ export function instanceOfContainerChangeModel(value: object): value is Containe
     if (!('timestamp' in value) || value['timestamp'] === undefined) return false;
     if (!('containerId' in value) || value['containerId'] === undefined) return false;
     if (!('user' in value) || value['user'] === undefined) return false;
+    if (!('newAmount' in value) || value['newAmount'] === undefined) return false;
     return true;
 }
 
@@ -87,6 +94,7 @@ export function ContainerChangeModelFromJSONTyped(json: any, ignoreDiscriminator
         'timestamp': (new Date(json['timestamp'])),
         'containerId': json['containerId'],
         'user': UserListModelFromJSON(json['user']),
+        'newAmount': json['newAmount'],
     };
 }
 
@@ -105,6 +113,7 @@ export function ContainerChangeModelToJSONTyped(value?: ContainerChangeModel | n
         'timestamp': value['timestamp'].toISOString(),
         'containerId': value['containerId'],
         'user': UserListModelToJSON(value['user']),
+        'newAmount': value['newAmount'],
     };
 }
 

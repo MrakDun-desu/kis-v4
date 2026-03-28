@@ -1,0 +1,8 @@
+import type { ContainerState } from "../api-generated";
+
+export const containerStates: Record<ContainerState, string> = {
+  Bad: "Špatný",
+  New: "Nový",
+  Opened: "Naražený",
+  WrittenOff: "Odepsaný"
+}

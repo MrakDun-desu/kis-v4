@@ -174,10 +174,8 @@ builder.Services.ConfigureHttpJsonOptions(opts => {
     opts.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-// Production exception handling
-if (!builder.Environment.IsDevelopment()) {
-    builder.Services.AddExceptionHandler<ExceptionHandlerMiddleware>();
-}
+// Exception handling
+builder.Services.AddExceptionHandler<ExceptionHandlerMiddleware>();
 
 var app = builder.Build();
 

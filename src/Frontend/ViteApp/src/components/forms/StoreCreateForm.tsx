@@ -1,14 +1,14 @@
 import z from "zod";
-import { CategoriesApi, type CategoryCreateRequest } from "../api-generated";
-import validationConstants from "../constants/validationConstants";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField } from "@mui/material";
-import { useLoading } from "../contexts/LoadingContext";
-import handleApiCall from "../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
+import { StoresApi, type StoreCreateRequest } from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import validationConstants from "../../constants/validationConstants";
+import { useLoading } from "../../contexts/LoadingContext";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
 
-const api = new CategoriesApi(defaultConfiguration);
+const api = new StoresApi(defaultConfiguration);
 
 const ValidationSchema = z.object({
   name: z
@@ -17,8 +17,8 @@ const ValidationSchema = z.object({
     .max(validationConstants.maxNameLength, "Jméno přesahuje maximální délku"),
 });
 
-const defaultValue: CategoryCreateRequest = {
-  name: "Nová kategorie",
+const defaultValue: StoreCreateRequest = {
+  name: "Nový sklad",
 };
 
 type Props = {
@@ -27,21 +27,21 @@ type Props = {
   afterSubmit?: () => void;
 };
 
-const CategoryCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
+const StoreCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   const { startLoading, stopLoading } = useLoading();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CategoryCreateRequest>({
+  } = useForm<StoreCreateRequest>({
     defaultValues: defaultValue,
     resolver: zodResolver(ValidationSchema),
   });
 
-  const submitForm: SubmitHandler<CategoryCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<StoreCreateRequest> = async (data) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.categoriesCreate({ categoryCreateRequest: data }));
+    await handleApiCall(api.storesCreate({ storeCreateRequest: data }));
     stopLoading();
     afterSubmit?.();
   };
@@ -66,4 +66,4 @@ const CategoryCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   );
 };
 
-export default CategoryCreateForm;
+export default StoreCreateForm;

@@ -9,6 +9,7 @@ public static class ContainerChangeMapping {
             User = source.User.ToModel()!,
             ContainerId = source.ContainerId,
             NewState = source.NewState,
-            Timestamp = source.Timestamp
+            Timestamp = source.Timestamp,
+            NewAmount = source.NewAmount
         };
 }

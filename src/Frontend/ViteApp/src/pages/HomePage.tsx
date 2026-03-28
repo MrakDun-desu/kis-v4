@@ -1,7 +1,7 @@
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-export const HomePage = () => {
+const HomePage = () => {
   const navigate = useNavigate();
 
   return (
@@ -37,3 +37,5 @@ export const HomePage = () => {
     </Box>
   );
 };
+
+export default HomePage;

@@ -111,14 +111,8 @@ public class ValidationHelper(
                 _ => true,
             },
             // written off containers and bad containers can't change states anymore
-            ContainerState.WrittenOff => newState switch {
-                ContainerState.WrittenOff => true,
-                _ => false
-            },
-            ContainerState.Bad => newState switch {
-                ContainerState.Bad => true,
-                _ => false
-            },
+            ContainerState.WrittenOff => false,
+            ContainerState.Bad => false,
             _ => throw new ArgumentOutOfRangeException("Invalid enum value"),
         };
     }
@@ -341,5 +335,18 @@ public class ValidationHelper(
             null => true,
             var val => !val.TopLevel
         };
+    }
+
+    internal async Task<bool> MustBeUpdateableContainer(ContainerUpdateRequest request, CancellationToken token) {
+        var container = await _dbContext.Containers.FindAsync(request.Id, token);
+        if (container is null) {
+            return true;
+        }
+
+        if (container.State is ContainerState.Bad or ContainerState.WrittenOff &&
+                container.PipeId != request.Model.PipeId) {
+            return false;
+        }
+        return true;
     }
 }

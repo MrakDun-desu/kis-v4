@@ -1,3 +1,5 @@
+using KisV4.Common.Models;
+
 namespace KisV4.BL.EF.Validation;
 
 public static class ValidationMessages {
@@ -118,6 +120,9 @@ public static class ValidationMessages {
         """;
     public const string CantDeleteTopLevelLayoutMessage = """
         Nemožno smazat výchozí rozložení
+        """;
+    public const string CantUpdateUnusableContainer = $"""
+        Nemožno upravit pípu starému kegu
         """;
 
     // strings

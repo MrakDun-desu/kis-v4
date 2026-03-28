@@ -10,6 +10,7 @@ public record ContainerChangeModel {
     public required DateTimeOffset Timestamp { get; init; }
     public required int ContainerId { get; init; }
     public required UserListModel User { get; init; }
+    public required decimal NewAmount { get; init; }
 }
 
 // Requests and responses

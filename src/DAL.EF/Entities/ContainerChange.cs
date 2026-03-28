@@ -11,7 +11,7 @@ public record ContainerChange {
     public required decimal NewAmount { get; init; }
     public required DateTimeOffset Timestamp { get; init; }
 
-    public required int ContainerId { get; init; }
+    public int ContainerId { get; init; }
     public Container? Container { get; set; }
     public required string UserId { get; init; }
     public User? User { get; set; }

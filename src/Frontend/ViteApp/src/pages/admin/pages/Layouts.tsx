@@ -13,9 +13,9 @@ import {
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import LayoutCreateForm from "../../../components/LayoutCreateForm";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import { usePosStore } from "../../../stores/posStore";
+import LayoutCreateForm from "../../../components/forms/LayoutCreateForm";
 
 const api = new LayoutsApi(defaultConfiguration);
 

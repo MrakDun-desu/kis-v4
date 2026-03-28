@@ -1,16 +1,16 @@
 import z from "zod";
-import {
-  ContainerTemplatesApi,
-  type ContainerTemplateCreateRequest,
-} from "../api-generated";
-import validationConstants from "../constants/validationConstants";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField } from "@mui/material";
-import { useLoading } from "../contexts/LoadingContext";
-import handleApiCall from "../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
-import StoreItemPicker from "./StoreItemPicker";
+import {
+  ContainerTemplatesApi,
+  type ContainerTemplateCreateRequest,
+} from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import validationConstants from "../../constants/validationConstants";
+import { useLoading } from "../../contexts/LoadingContext";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
+import StoreItemPicker from "../pickers/StoreItemPicker";
 
 const api = new ContainerTemplatesApi(defaultConfiguration);
 

@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { CashBoxesApi, type CashBoxListModel } from "../api-generated";
-import handleApiCall from "../errorHandling/apiResponseHandler";
 import {
   FormControl,
   FormHelperText,
@@ -8,8 +6,10 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { defaultConfiguration } from "../configuration/apiConfiguration";
-import type { EntityWithName } from "../stores/posStore";
+import { CashBoxesApi, type CashBoxListModel } from "../../api-generated";
+import { defaultConfiguration } from "../../configuration/apiConfiguration";
+import handleApiCall from "../../errorHandling/apiResponseHandler";
+import type { EntityWithName } from "../../stores/posStore";
 
 const api = new CashBoxesApi(defaultConfiguration);
 

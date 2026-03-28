@@ -13,8 +13,8 @@ import {
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import CashBoxCreateForm from "../../../components/CashBoxCreateForm";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
+import CashBoxCreateForm from "../../../components/forms/CashBoxCreateForm";
 
 const api = new CashBoxesApi(defaultConfiguration);
 

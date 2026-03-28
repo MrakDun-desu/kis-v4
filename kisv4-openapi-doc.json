@@ -3424,7 +3424,8 @@
           "newState",
           "timestamp",
           "containerId",
-          "user"
+          "user",
+          "newAmount"
         ],
         "type": "object",
         "properties": {
@@ -3442,6 +3443,11 @@
           },
           "user": {
             "$ref": "#/components/schemas/UserListModel"
+          },
+          "newAmount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
           }
         }
       },
@@ -3450,7 +3456,8 @@
           "newState",
           "timestamp",
           "containerId",
-          "user"
+          "user",
+          "newAmount"
         ],
         "type": "object",
         "properties": {
@@ -3468,6 +3475,11 @@
           },
           "user": {
             "$ref": "#/components/schemas/UserListModel"
+          },
+          "newAmount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
           }
         }
       },
