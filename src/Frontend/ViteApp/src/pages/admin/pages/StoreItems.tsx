@@ -42,8 +42,8 @@ const StoreItems = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true);
     const getStoreItemsDeferred = setTimeout(async () => {
+      setLoading(true);
       const response = await handleApiCall(api.storeItemsReadAll(request));
       if (!response) {
         setStoreItems(null);

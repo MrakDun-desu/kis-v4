@@ -72,6 +72,7 @@ const ContainerTemplates = () => {
       filterable: true,
       editable: false,
       flex: 1,
+      valueFormatter: (val, row) => `${val} ${row.storeItem.unitName}`,
     },
 
     {

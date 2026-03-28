@@ -99,11 +99,11 @@ const links: Link[][] = [
       url: "container-templates",
       icon: <Liquor />,
     },
-    //   {
-    //     label: "Kegy",
-    //     url: "containers",
-    //     icon: <OilBarrel />,
-    //   },
+    // {
+    //   label: "Kegy",
+    //   url: "containers",
+    //   icon: <OilBarrel />,
+    // },
     {
       label: "Pípy",
       url: "taps",

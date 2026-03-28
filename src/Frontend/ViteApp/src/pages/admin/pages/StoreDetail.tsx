@@ -48,6 +48,7 @@ import { useLoading } from "../../../contexts/LoadingContext";
 import { AddCircle, RemoveCircle } from "@mui/icons-material";
 import { useSnackbar } from "../../../contexts/SnackbarContext";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
+import ContainerListView from "../../../components/ContainerListView";
 
 const StoreValidationSchema = z.object({
   name: z
@@ -535,6 +536,10 @@ const StoreDetail = () => {
             </form>
           </>
         )}
+
+        <h3>Kegy</h3>
+
+        <ContainerListView storeId={store.id} />
       </Box>
     </>
   );
