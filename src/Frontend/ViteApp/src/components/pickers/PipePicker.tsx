@@ -19,12 +19,14 @@ const PipePicker = ({
   error,
   helperText,
   initialValue,
+  small,
 }: {
   onChange: (val: EntityWithName | undefined) => void;
   options?: PipeListModel[];
   error?: boolean;
   helperText?: string;
   initialValue?: number;
+  small?: boolean;
 }) => {
   const [pipes, setPipes] = useState<PipeListModel[] | undefined>(options);
   const [value, setValue] = useState(initialValue);
@@ -43,9 +45,10 @@ const PipePicker = ({
   }, []);
 
   return (
-    <FormControl error={error} fullWidth>
+    <FormControl error={error} fullWidth size={small ? "small" : "medium"}>
       <InputLabel id="pipePicker">Výběr pípy</InputLabel>
       <Select
+        size={small ? "small" : "medium"}
         label="Výběr pípy"
         labelId="pipePicker"
         value={value ?? ""}

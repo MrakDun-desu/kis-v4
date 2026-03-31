@@ -96,16 +96,18 @@ public class ContainerService(
                     .Include(si => si.Compositions)
                     .ThenInclude(c => c.StoreItem)
                     .Where(si => si.Compositions.Any(comp => comp.StoreItemId == c.Template!.StoreItemId))
-                    .Select(si => new SaleItemOperatorModel {
+                    .Select(si => new SaleItemContainerModel {
                         Id = si.Id,
                         Name = si.Name,
                         Image = si.Image,
                         CurrentCost = Math.Round(si.Compositions
                             .Sum(c => c.Amount * c.StoreItem!.CurrentCost)
                             * (si.MarginPercent * 0.01m + 1m) + si.MarginStatic, 2),
-                        AmountInStore = _dbContext.CompositeAmounts.First(
-                            ca => ca.CompositeId == si.Id && ca.StoreId == c.StoreId
-                        ).Amount
+                        AmountInContainer = Math.Min(
+                                Math.Max(0, c.Amount / si.Compositions.First(comp => c.Template!.StoreItemId == comp.StoreItemId).Amount),
+                                _dbContext.CompositeAmounts.First(ca => ca.CompositeId == si.Id && ca.StoreId == c.StoreId).Amount
+                                ),
+                        AmountInStore = _dbContext.CompositeAmounts.First(ca => ca.CompositeId == si.Id && ca.StoreId == c.StoreId).Amount
                     }).ToArray()
             })
             .FirstOrDefaultAsync(c => c.Id == id, token);

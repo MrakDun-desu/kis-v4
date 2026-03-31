@@ -65,34 +65,32 @@ public class PipeService(
     }
 
     public async Task<PipeReadResponse?> ReadAsync(
-        int id,
+        PipeReadRequest req,
         CancellationToken token = default
     ) {
-        var entity = await _dbContext.Pipes
-            .Include(p => p.Containers)
-            .ThenInclude(c => c.Template)
+        var containersQuery = _dbContext.Containers
+            .Where(c => c.PipeId == req.Id)
+            .Include(c => c.Template)
             .ThenInclude(ct => ct!.StoreItem)
-            .FirstAsync(p => p.Id == id, token);
-
-        if (entity is null) {
-            return null;
+            .AsQueryable();
+        if (req.StoreId is { } storeId) {
+            containersQuery = containersQuery.Where(c => c.StoreId == storeId);
         }
+        var containers = await containersQuery.ToArrayAsync(token);
 
-        var containerStoreItems = entity.Containers
-            .Select(c => c.Template!.StoreItemId)
-            .Distinct()
-            .ToArray();
-
-        return new PipeReadResponse {
-            Id = entity.Id,
-            Name = entity.Name,
-            Containers = entity.Containers.Select(c => new ContainerPipeModel {
-                Id = c.Id,
-                Amount = c.Amount,
-                State = c.State,
-                Template = c.Template!.ToModel()
-            }),
-        };
+        return await _dbContext.Pipes
+            .Select(p => new PipeReadResponse {
+                Id = p.Id,
+                Name = p.Name,
+                Containers = containers.Select(c => new ContainerPipeModel {
+                    Id = c.Id,
+                    Amount = c.Amount,
+                    State = c.State,
+                    Template = c.Template!.ToModel(),
+                    StoreId = c.StoreId
+                }),
+            })
+            .FirstOrDefaultAsync(p => p.Id == req.Id, token);
     }
 
     public async Task<bool> DeleteAsync(

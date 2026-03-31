@@ -9,16 +9,22 @@ import StorePicker from "../../../components/pickers/StorePicker";
 
 const ValidationSchema = z.object({
   store: z
-    .object({
-      id: z.number(),
-      name: z.string(),
-    })
+    .object(
+      {
+        id: z.number(),
+        name: z.string(),
+      },
+      "Vyberte platný sklad",
+    )
     .refine((val) => val?.id > 0, "Vyberte platný sklad"),
   cashBox: z
-    .object({
-      id: z.number(),
-      name: z.string(),
-    })
+    .object(
+      {
+        id: z.number(),
+        name: z.string(),
+      },
+      "Vyberte platnout kasu",
+    )
     .refine((val) => val?.id > 0, "Vyberte platnou kasu"),
   readerUri: z.union([z.url("Zadejte platné URL"), z.literal("")]),
 });

@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
-import type { SaleItemOperatorModel } from './SaleItemOperatorModel';
+import type { SaleItemContainerModel } from './SaleItemContainerModel';
 import {
-    SaleItemOperatorModelFromJSON,
-    SaleItemOperatorModelFromJSONTyped,
-    SaleItemOperatorModelToJSON,
-    SaleItemOperatorModelToJSONTyped,
-} from './SaleItemOperatorModel';
+    SaleItemContainerModelFromJSON,
+    SaleItemContainerModelFromJSONTyped,
+    SaleItemContainerModelToJSON,
+    SaleItemContainerModelToJSONTyped,
+} from './SaleItemContainerModel';
 import type { ContainerTemplateModel } from './ContainerTemplateModel';
 import {
     ContainerTemplateModelFromJSON,
@@ -67,10 +67,10 @@ export interface ContainerOperatorReadResponse {
     template: ContainerTemplateModel;
     /**
      * 
-     * @type {Array<SaleItemOperatorModel>}
+     * @type {Array<SaleItemContainerModel>}
      * @memberof ContainerOperatorReadResponse
      */
-    saleItems: Array<SaleItemOperatorModel>;
+    saleItems: Array<SaleItemContainerModel>;
 }
 
 
@@ -101,7 +101,7 @@ export function ContainerOperatorReadResponseFromJSONTyped(json: any, ignoreDisc
         'amount': json['amount'],
         'state': ContainerStateFromJSON(json['state']),
         'template': ContainerTemplateModelFromJSON(json['template']),
-        'saleItems': ((json['saleItems'] as Array<any>).map(SaleItemOperatorModelFromJSON)),
+        'saleItems': ((json['saleItems'] as Array<any>).map(SaleItemContainerModelFromJSON)),
     };
 }
 
@@ -120,7 +120,7 @@ export function ContainerOperatorReadResponseToJSONTyped(value?: ContainerOperat
         'amount': value['amount'],
         'state': ContainerStateToJSON(value['state']),
         'template': ContainerTemplateModelToJSON(value['template']),
-        'saleItems': ((value['saleItems'] as Array<any>).map(SaleItemOperatorModelToJSON)),
+        'saleItems': ((value['saleItems'] as Array<any>).map(SaleItemContainerModelToJSON)),
     };
 }
 

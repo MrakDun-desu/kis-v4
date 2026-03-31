@@ -1,5 +1,5 @@
 
-# ContainerOperatorReadResponse
+# SaleItemContainerModel
 
 
 ## Properties
@@ -7,24 +7,26 @@
 Name | Type
 ------------ | -------------
 `id` | number
-`amount` | string
-`state` | [ContainerState](ContainerState.md)
-`template` | [ContainerTemplateModel](ContainerTemplateModel.md)
-`saleItems` | [Array&lt;SaleItemContainerModel&gt;](SaleItemContainerModel.md)
+`name` | string
+`image` | string
+`currentCost` | string
+`amountInStore` | string
+`amountInContainer` | string
 
 ## Example
 
 ```typescript
-import type { ContainerOperatorReadResponse } from ''
+import type { SaleItemContainerModel } from ''
 
 // TODO: Update the object below with actual values
 const example = {
   "id": null,
-  "amount": null,
-  "state": null,
-  "template": null,
-  "saleItems": null,
-} satisfies ContainerOperatorReadResponse
+  "name": null,
+  "image": null,
+  "currentCost": null,
+  "amountInStore": null,
+  "amountInContainer": null,
+} satisfies SaleItemContainerModel
 
 console.log(example)
 
@@ -33,7 +35,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as ContainerOperatorReadResponse
+const exampleParsed = JSON.parse(exampleJSON) as SaleItemContainerModel
 console.log(exampleParsed)
 ```
 

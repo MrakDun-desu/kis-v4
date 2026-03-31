@@ -188,4 +188,7 @@ public static class ValidationMessages {
     public const string StoreItemIdsNotValidMessage = $"""
         Aspoň jedno z {StoreItemIdPropName} neodpovídá žádné existující skladové položce
         """;
+    public const string ContainerSaleItemNotValidMessage = $"""
+        Prodejní položka může mít v zložení jen jednu (exkluzivní) kegovou skladovou položku
+        """;
 }

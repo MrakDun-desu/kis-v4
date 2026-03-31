@@ -42,4 +42,11 @@ public record PipeUpdateRequest {
 
 public record PipeUpdateResponse : PipeListModel;
 
+public record PipeReadRequest {
+    [FromRoute]
+    public required int Id { get; init; }
+    [FromQuery]
+    public required int? StoreId { get; init; }
+}
+
 public record PipeReadResponse : PipeDetailModel;

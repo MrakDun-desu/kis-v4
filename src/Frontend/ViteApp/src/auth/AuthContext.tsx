@@ -1,13 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import z from "zod";
+import { authEvents } from "./authEvents";
 
-interface UserClaim {
-  type: string;
-  value: string;
-  valueType: string | null;
-}
+const UserClaimSchema = z.array(
+  z.object({
+    type: z.string(),
+    value: z.union([z.string(), z.number()]),
+    valueType: z.string().nullable(),
+  }),
+);
+
+type UserClaims = z.infer<typeof UserClaimSchema>;
 
 interface AuthContextType {
-  userClaims: UserClaim[] | null;
+  userClaims: UserClaims | null;
+  loading: boolean;
   signIn: () => void;
   signOut: () => void;
 }
@@ -15,55 +22,134 @@ interface AuthContextType {
 const AuthContext = React.createContext<AuthContextType>(null!);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [userClaims, setUserClaims] = React.useState<UserClaim[] | null>(null);
+  const [userClaims, setUserClaims] = useState<UserClaims | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
-    const auth = async () => {
-      try {
-        const authResponse = await fetch(
-          new Request("/bff/user", {
-            headers: new Headers({
-              "X-CSRF": "1",
-            }),
-          }),
-        );
-        if (authResponse.ok) {
-          const respValue = await authResponse.json();
-          const respClaims = respValue as UserClaim[];
-          if (!respClaims) {
-            setUserClaims(null);
-          } else {
-            setUserClaims(respValue);
-          }
-        } else if (authResponse.status === 401) {
-          setUserClaims(null);
-        }
-      } catch (e) {
-        alert("Nepovedlo se zjistit status přihlášení");
-        console.error("Error checking user status: ", e);
+  useEffect(() => {
+    const periodicAuthRefresher = setInterval(
+      async () => {
+        await refreshAuth(true);
+      },
+      1000 * 60 * 20,
+    );
+    const visibilityAuthRefresher = async () => {
+      if (document.visibilityState === "visible") {
+        await refreshAuth(true);
       }
     };
-    auth();
+    const unsubscribe = authEvents.on("unauthorized", handleUnauthorized);
+
+    document.addEventListener("visibilitychange", visibilityAuthRefresher);
+
+    refreshAuth();
+
+    return () => {
+      unsubscribe();
+      clearInterval(periodicAuthRefresher);
+      document.removeEventListener("visibilitychange", visibilityAuthRefresher);
+    };
   }, []);
+
+  const handleUnauthorized = async () => {
+    const authKeys = Object.keys(sessionStorage).filter(
+      (key) =>
+        key.startsWith(".AspNetCore") ||
+        key.startsWith("oidc") ||
+        key.startsWith("bff") ||
+        key.startsWith("user") ||
+        key.startsWith("token") ||
+        key.startsWith("auth"),
+    );
+
+    authKeys.forEach((key) => sessionStorage.removeItem(key));
+
+    const lsAuthKeys = Object.keys(localStorage).filter(
+      (key) =>
+        key.startsWith(".AspNetCore") ||
+        key.startsWith("oidc") ||
+        key.startsWith("bff") ||
+        key.startsWith("user") ||
+        key.startsWith("token") ||
+        key.startsWith("auth"),
+    );
+
+    lsAuthKeys.forEach((key) => localStorage.removeItem(key));
+
+    let signOutUrl = "/bff/logout";
+    if (userClaims) {
+      const logoutUrlClaim = userClaims.find(
+        (claim) => claim["type"] === "bff:logout_url",
+      );
+      if (logoutUrlClaim) {
+        signOutUrl = logoutUrlClaim.value as string;
+      }
+    }
+
+    try {
+      await fetch(signOutUrl, {
+        headers: {
+          "X-CSRF": "1",
+        },
+        keepalive: true,
+      });
+    } catch {}
+
+    setTimeout(() => {
+      signIn();
+    }, 500);
+  };
+
+  const refreshAuth = async (autoRelogin: boolean = false) => {
+    try {
+      setLoading(true);
+      const authResponse = await fetch(
+        new Request("/bff/user", {
+          headers: new Headers({
+            "X-CSRF": "1",
+          }),
+          keepalive: true,
+        }),
+      );
+      if (authResponse.ok) {
+        const respValue = await authResponse.json();
+        const respClaims = UserClaimSchema.parse(respValue);
+        setUserClaims(respClaims);
+        setLoading(false);
+        return respValue;
+      } else {
+        if (authResponse.status === 401 && autoRelogin) {
+          handleUnauthorized();
+        }
+      }
+    } catch (e) {
+      alert("Nepovedlo se zjistit status přihlášení");
+      console.error("Error checking user status: ", e);
+    }
+
+    setLoading(false);
+    return null;
+  };
 
   const signIn = () => {
     window.location.href = `/bff/login`;
   };
 
   const signOut = () => {
+    let signOutUrl = "/bff/logout";
     if (userClaims) {
       const logoutUrlClaim = userClaims.find(
         (claim) => claim["type"] === "bff:logout_url",
       );
       if (logoutUrlClaim) {
-        window.location.href = logoutUrlClaim.value;
+        signOutUrl = logoutUrlClaim.value as string;
       }
-      return;
     }
-    window.location.href = `/bff/logout`;
+
+    setUserClaims(null);
+    window.location.href = signOutUrl;
   };
 
-  const value = { userClaims, signIn, signOut };
+  const value = { userClaims, signIn, signOut, loading };
 
   return <AuthContext value={value}>{children}</AuthContext>;
 };

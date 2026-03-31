@@ -10,6 +10,7 @@ Name | Type
 `amount` | string
 `state` | [ContainerState](ContainerState.md)
 `template` | [ContainerTemplateModel](ContainerTemplateModel.md)
+`storeId` | number
 
 ## Example
 
@@ -22,6 +23,7 @@ const example = {
   "amount": null,
   "state": null,
   "template": null,
+  "storeId": null,
 } satisfies ContainerPipeModel
 
 console.log(example)

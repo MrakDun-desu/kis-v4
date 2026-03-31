@@ -104,6 +104,7 @@ docs/PipeUpdateModel.md
 docs/PipeUpdateResponse.md
 docs/PipesApi.md
 docs/PrintType.md
+docs/SaleItemContainerModel.md
 docs/SaleItemCreateRequest.md
 docs/SaleItemCreateResponse.md
 docs/SaleItemListModel.md
@@ -231,6 +232,7 @@ models/PipeReadResponse.ts
 models/PipeUpdateModel.ts
 models/PipeUpdateResponse.ts
 models/PrintType.ts
+models/SaleItemContainerModel.ts
 models/SaleItemCreateRequest.ts
 models/SaleItemCreateResponse.ts
 models/SaleItemListModel.ts

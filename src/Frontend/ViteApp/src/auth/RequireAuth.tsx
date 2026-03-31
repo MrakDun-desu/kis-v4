@@ -1,8 +1,17 @@
+import { useEffect } from "react";
 import { useAuth } from "./AuthContext";
-import { Box, Button } from "@mui/material";
+import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
 
 export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const auth = useAuth();
+
+  if (auth.loading) {
+    return (
+      <Backdrop open={true}>
+        <CircularProgress />
+      </Backdrop>
+    );
+  }
 
   if (auth.userClaims) {
     return children;

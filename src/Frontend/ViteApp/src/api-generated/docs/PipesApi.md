@@ -150,7 +150,7 @@ example().catch(console.error);
 
 ## pipesRead
 
-> PipeReadResponse pipesRead(id)
+> PipeReadResponse pipesRead(id, storeId)
 
 
 
@@ -172,6 +172,8 @@ async function example() {
   const body = {
     // number
     id: 8.14,
+    // number (optional)
+    storeId: 8.14,
   } satisfies PipesReadRequest;
 
   try {
@@ -192,6 +194,7 @@ example().catch(console.error);
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **id** | `number` |  | [Defaults to `undefined`] |
+| **storeId** | `number` |  | [Optional] [Defaults to `undefined`] |
 
 ### Return type
 

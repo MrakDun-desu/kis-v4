@@ -57,10 +57,10 @@ const links: Link[] = [
   //   label: "Nedávné transakce",
   //   url: "recent-transactions",
   // },
-  // {
-  //   label: "Kegy",
-  //   url: "containers",
-  // },
+  {
+    label: "Kegy",
+    url: "containers",
+  },
   // {
   //   label: "Párování karty",
   //   url: "card-pairing",
@@ -160,9 +160,10 @@ const PosPage = () => {
           flexGrow: 1,
           display: "flex",
           flexDirection: "column",
+          overflow: "hidden",
         }}
       >
-        <Box display="flex" gap={2} padding={1} flexWrap="wrap">
+        <Box display="flex" gap={2} padding={1} flexWrap="wrap" flexShrink={0}>
           <Paper
             elevation={4}
             sx={{
@@ -216,13 +217,23 @@ const PosPage = () => {
         <Typography variant="h5" component="h2" marginTop={1}>
           Aktuální objednávka
         </Typography>
+
         <Box
           display="flex"
           flexDirection="column"
           justifyContent="space-between"
-          flexGrow="1"
+          flex="1"
+          minHeight="0"
         >
-          <Box display="flex" flexDirection="column" gap={1}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap={1}
+            flex="1"
+            minHeight="0"
+            overflow="auto"
+            marginBottom="1em"
+          >
             {transactionItems.map((sti, i) => (
               <Paper key={i} elevation={4}>
                 <Box
@@ -269,6 +280,7 @@ const PosPage = () => {
               </Paper>
             ))}
           </Box>
+
           <Box display="flex" flexDirection="column" gap={2}>
             <Button
               variant="contained"
@@ -289,6 +301,7 @@ const PosPage = () => {
             >
               Dokončit objednávku
             </Button>
+
             <Button
               variant="contained"
               color="error"
@@ -305,6 +318,7 @@ const PosPage = () => {
           </Box>
         </Box>
       </Paper>
+
       <Dialog open={finishingOrder}>
         <DialogTitle>Dokončení objednávky</DialogTitle>
         <DialogContent>

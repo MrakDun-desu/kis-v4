@@ -1,4 +1,5 @@
 import { instanceOfHttpValidationProblemDetails, ResponseError } from "../api-generated";
+import { authEvents } from "../auth/authEvents";
 import { snackbarRef } from "../globalRefs/snackbarRef";
 
 const handleApiCall = async <TRes>(call: Promise<TRes>, onNotFound: (() => void) | null = null): Promise<TRes | null> => {
@@ -8,7 +9,7 @@ const handleApiCall = async <TRes>(call: Promise<TRes>, onNotFound: (() => void)
   } catch (err) {
     if (err instanceof ResponseError) {
       const resp = err.response;
-      if (resp.status == 404) {
+      if (resp.status === 404) {
         if (onNotFound !== null) {
           onNotFound();
         } else {
@@ -16,6 +17,10 @@ const handleApiCall = async <TRes>(call: Promise<TRes>, onNotFound: (() => void)
           window.location.href = "/not-found";
         }
         return null;
+      }
+
+      if (resp.status === 401) {
+        authEvents.emit("unauthorized");
       }
 
       try {

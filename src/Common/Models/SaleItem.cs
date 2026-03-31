@@ -26,6 +26,15 @@ public record SaleItemOperatorModel {
     public required decimal? AmountInStore { get; init; }
 }
 
+public record SaleItemContainerModel {
+    public required int Id { get; init; }
+    public required string Name { get; init; }
+    public required string? Image { get; init; }
+    public required decimal CurrentCost { get; init; }
+    public required decimal AmountInStore { get; init; }
+    public required decimal AmountInContainer { get; init; }
+}
+
 // Used in admin for detail view (composition is fetched separately)
 public record SaleItemDetailModel {
     public required int Id { get; init; }

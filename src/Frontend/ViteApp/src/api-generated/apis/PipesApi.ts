@@ -50,6 +50,7 @@ export interface PipesDeleteRequest {
 
 export interface PipesReadRequest {
     id: number;
+    storeId?: number;
 }
 
 export interface PipesUpdateRequest {
@@ -144,6 +145,10 @@ export class PipesApi extends runtime.BaseAPI {
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['storeId'] != null) {
+            queryParameters['StoreId'] = requestParameters['storeId'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 

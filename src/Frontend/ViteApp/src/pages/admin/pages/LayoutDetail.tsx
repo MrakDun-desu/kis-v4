@@ -5,6 +5,8 @@ import {
   LayoutsApi,
   type LayoutItemModel,
   type LayoutListModel,
+  type PipeListModel,
+  PipesApi,
 } from "../../../api-generated";
 import validationConstants from "../../../constants/validationConstants";
 import {
@@ -36,12 +38,14 @@ import {
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoading } from "../../../contexts/LoadingContext";
-import { GridView, ShoppingBag } from "@mui/icons-material";
+import { GridView, ShoppingBag, WaterDrop } from "@mui/icons-material";
 import { usePosStore } from "../../../stores/posStore";
 import SaleItemPicker from "../../../components/pickers/SaleItemPicker";
 import LayoutPicker from "../../../components/pickers/LayoutPicker";
+import PipePicker from "../../../components/pickers/PipePicker";
 
 const api = new LayoutsApi(defaultConfiguration);
+const pipesApi = new PipesApi(defaultConfiguration);
 
 const ValidationSchema = z.object({
   name: z
@@ -73,6 +77,7 @@ const LayoutDetail = () => {
   const { startLoading, stopLoading } = useLoading();
   const [layout, setLayout] = useState<LayoutReadResponse | null>(null);
   const [layouts, setLayouts] = useState<LayoutListModel[]>();
+  const [pipes, setPipes] = useState<PipeListModel[]>();
   const setCurrentLayout = usePosStore((state) => state.setCurrentLayout);
 
   const {
@@ -119,6 +124,19 @@ const LayoutDetail = () => {
       }
     };
     getLayout();
+  }, []);
+
+  useEffect(() => {
+    if (pipes) {
+      return;
+    }
+    const getPipes = async () => {
+      const resp = await handleApiCall(pipesApi.pipesReadAll());
+      if (resp) {
+        setPipes(resp.data);
+      }
+    };
+    getPipes();
   }, []);
 
   useEffect(() => {
@@ -246,6 +264,7 @@ const LayoutDetail = () => {
                         formLayoutItems={layoutItems}
                         errors={errors}
                         layouts={layouts}
+                        pipes={pipes}
                       />
                     </Box>
                   </Paper>
@@ -270,6 +289,7 @@ const LayoutGridItem = ({
   existingItem,
   errors,
   layouts,
+  pipes,
   x,
   y,
 }: {
@@ -301,6 +321,7 @@ const LayoutGridItem = ({
       >
         {type === "SaleItem" && <ShoppingBag />}
         {type === "Layout" && <GridView />}
+        {type === "Pipe" && <WaterDrop />}
 
         <FormControl fullWidth>
           <InputLabel size="small" id={labelId}>
@@ -319,6 +340,7 @@ const LayoutGridItem = ({
               >
                 <MenuItem value="SaleItem">Prodejní položka</MenuItem>
                 <MenuItem value="Layout">Rozložení</MenuItem>
+                <MenuItem value="Pipe">Pípa</MenuItem>
               </Select>
             )}
           />
@@ -350,6 +372,23 @@ const LayoutGridItem = ({
                 helperText={errors.layoutItems?.[index]?.targetId?.message}
                 initialValue={existingItem?.target.name}
                 options={layouts}
+              />
+            )}
+          />
+        )}
+
+        {type === "Pipe" && (
+          <Controller
+            name={`layoutItems.${index}.targetId`}
+            control={control}
+            render={({ field }) => (
+              <PipePicker
+                small
+                onChange={(val) => field.onChange(val?.id)}
+                error={!!errors.layoutItems?.[index]?.targetId}
+                helperText={errors.layoutItems?.[index]?.targetId?.message}
+                initialValue={existingItem?.target.id}
+                options={pipes}
               />
             )}
           />

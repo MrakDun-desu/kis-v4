@@ -1,6 +1,7 @@
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Duende.Bff;
 using Duende.Bff.Yarp;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,5 +67,10 @@ app.UseAuthorization();
 
 app.MapRemoteBffApiEndpoint("/api", new Uri("https://localhost:7001"))
     .WithAccessToken();
+
+app.MapGet("/bff/logout", async (HttpContext ctx) => {
+    await ctx.SignOutAsync("Cookies");
+    await ctx.SignOutAsync("oidc");
+}).RequireAuthorization();
 
 app.Run();

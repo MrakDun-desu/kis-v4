@@ -1597,6 +1597,15 @@
               "type": "number",
               "format": "number"
             }
+          },
+          {
+            "name": "StoreId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "number",
+              "format": "number"
+            }
           }
         ],
         "responses": {
@@ -3568,7 +3577,7 @@
           "saleItems": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SaleItemOperatorModel"
+              "$ref": "#/components/schemas/SaleItemContainerModel"
             }
           }
         }
@@ -3578,7 +3587,8 @@
           "id",
           "amount",
           "state",
-          "template"
+          "template",
+          "storeId"
         ],
         "type": "object",
         "properties": {
@@ -3597,6 +3607,11 @@
           },
           "template": {
             "$ref": "#/components/schemas/ContainerTemplateModel"
+          },
+          "storeId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
           }
         }
       },
@@ -4872,6 +4887,48 @@
           "PrintForEmployee",
           "PrintForBoth"
         ]
+      },
+      "SaleItemContainerModel": {
+        "required": [
+          "id",
+          "name",
+          "image",
+          "currentCost",
+          "amountInStore",
+          "amountInContainer"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "currentCost": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          },
+          "amountInStore": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          },
+          "amountInContainer": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          }
+        }
       },
       "SaleItemCreateRequest": {
         "required": [

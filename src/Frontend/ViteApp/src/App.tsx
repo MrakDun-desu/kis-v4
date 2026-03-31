@@ -31,6 +31,9 @@ import Pipes from "./pages/admin/pages/Pipes";
 import ContainerTemplates from "./pages/admin/pages/ContainerTemplates";
 import Containers from "./pages/admin/pages/Containers";
 import ContainerDetail from "./pages/admin/pages/ContainerDetail";
+import PosPipe from "./pages/pos/pages/PosPipe";
+import PosContainers from "./pages/pos/pages/PosContainers";
+import PosContainerDetail from "./pages/pos/pages/PosContainerDetail";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -112,11 +115,11 @@ function App() {
             >
               <Route path="orders" element={<Orders />} />
               <Route path="recent-transactions" element={null} />
-              <Route path="containers" element={null} />
+              <Route path="containers" element={<PosContainers />} />
               <Route path="card-pairing" element={null} />
               <Route path="settings" element={<PosSettings />} />
-              <Route path="pipes/:id" element={null} />
-              <Route path="containers/:id" element={null} />
+              <Route path="pipes/:id" element={<PosPipe />} />
+              <Route path="containers/:id" element={<PosContainerDetail />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

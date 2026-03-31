@@ -58,6 +58,12 @@ export interface ContainerPipeModel {
      * @memberof ContainerPipeModel
      */
     template: ContainerTemplateModel;
+    /**
+     * 
+     * @type {number}
+     * @memberof ContainerPipeModel
+     */
+    storeId: number;
 }
 
 
@@ -70,6 +76,7 @@ export function instanceOfContainerPipeModel(value: object): value is ContainerP
     if (!('amount' in value) || value['amount'] === undefined) return false;
     if (!('state' in value) || value['state'] === undefined) return false;
     if (!('template' in value) || value['template'] === undefined) return false;
+    if (!('storeId' in value) || value['storeId'] === undefined) return false;
     return true;
 }
 
@@ -87,6 +94,7 @@ export function ContainerPipeModelFromJSONTyped(json: any, ignoreDiscriminator: 
         'amount': json['amount'],
         'state': ContainerStateFromJSON(json['state']),
         'template': ContainerTemplateModelFromJSON(json['template']),
+        'storeId': json['storeId'],
     };
 }
 
@@ -105,6 +113,7 @@ export function ContainerPipeModelToJSONTyped(value?: ContainerPipeModel | null,
         'amount': value['amount'],
         'state': ContainerStateToJSON(value['state']),
         'template': ContainerTemplateModelToJSON(value['template']),
+        'storeId': value['storeId'],
     };
 }
 

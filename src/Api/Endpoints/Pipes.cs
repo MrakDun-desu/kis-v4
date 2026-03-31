@@ -1,7 +1,5 @@
 using FluentValidation;
-using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
-using KisV4.BL.EF.Validation;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -33,11 +31,12 @@ public static class Pipes {
     }
 
     public static async Task<Results<Ok<PipeReadResponse>, NotFound>> Read(
-        int id,
+        [AsParameters]
+        PipeReadRequest req,
         PipeService service,
         CancellationToken token = default
     ) {
-        return await service.ReadAsync(id, token) switch {
+        return await service.ReadAsync(req, token) switch {
             null => TypedResults.NotFound(),
             var val => TypedResults.Ok(val)
         };

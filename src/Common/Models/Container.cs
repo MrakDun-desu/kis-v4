@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KisV4.Common.Models;
@@ -23,6 +22,7 @@ public record ContainerPipeModel {
     public required decimal Amount { get; init; }
     public required ContainerState State { get; init; }
     public required ContainerTemplateModel Template { get; init; }
+    public required int StoreId { get; init; }
 }
 
 // Used in admin for displaying container detail
@@ -79,5 +79,5 @@ public record ContainerOperatorReadResponse {
     public required decimal Amount { get; init; }
     public required ContainerState State { get; init; }
     public required ContainerTemplateModel Template { get; init; }
-    public required IEnumerable<SaleItemOperatorModel> SaleItems { get; init; }
+    public required IEnumerable<SaleItemContainerModel> SaleItems { get; init; }
 }

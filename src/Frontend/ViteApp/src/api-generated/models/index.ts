@@ -74,6 +74,7 @@ export * from './PipeReadResponse';
 export * from './PipeUpdateModel';
 export * from './PipeUpdateResponse';
 export * from './PrintType';
+export * from './SaleItemContainerModel';
 export * from './SaleItemCreateRequest';
 export * from './SaleItemCreateResponse';
 export * from './SaleItemListModel';
