@@ -5,6 +5,7 @@ import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import {
   ContainersApi,
   type ContainerCreateRequest,
+  type ContainerCreateResponse,
 } from "../../api-generated";
 import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import validationConstants from "../../constants/validationConstants";
@@ -32,7 +33,7 @@ const ValidationSchema = z.object({
 type Props = {
   id: string;
   beforeSubmit?: () => void;
-  afterSubmit?: () => void;
+  afterSubmit?: (resp: ContainerCreateResponse) => void;
   storeId?: number;
 };
 
@@ -60,9 +61,13 @@ const ContainerCreateForm = ({
   const submitForm: SubmitHandler<ContainerCreateRequest> = async (data) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.containersCreate({ containerCreateRequest: data }));
+    const resp = await handleApiCall(
+      api.containersCreate({ containerCreateRequest: data }),
+    );
     stopLoading();
-    afterSubmit?.();
+    if (resp) {
+      afterSubmit?.(resp);
+    }
   };
 
   return (

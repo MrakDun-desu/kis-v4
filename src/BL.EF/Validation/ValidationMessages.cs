@@ -110,7 +110,7 @@ public static class ValidationMessages {
         Cílový sklad nemůže být stejný jako zdrojový sklad
         """;
     public const string StoreTransactionReasonAndSourceStoreInvalidMessage = """
-        ID cílového skladu musí být nastaveno jen přesně když je důvod transakce přesun
+        Při přesunu mezi skladu musí být nastaveno ID zdrojového skladu
         """;
     public const string StoreTransactionItemsNotUniqueMessage = """
         Skladová transakce obsahuje duplicitní skladové položky

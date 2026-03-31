@@ -18,6 +18,7 @@ import {
   type ContainerListModel,
   type ContainersReadAllRequest,
   ContainerState,
+  type ContainerCreateResponse,
 } from "../../api-generated";
 import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import handleApiCall from "../../errorHandling/apiResponseHandler";
@@ -35,12 +36,14 @@ const ContainerListView = ({
   showPipeFilter,
   showUnusableFilter,
   showTemplateFilter,
+  afterCreate,
 }: {
   storeId?: number;
   initialContainers?: ContainerReadAllResponse;
   showPipeFilter?: boolean;
   showUnusableFilter?: boolean;
   showTemplateFilter?: boolean;
+  afterCreate?: (resp: ContainerCreateResponse) => void;
 }) => {
   const [containers, setContainers] = useState<ContainerListModel[] | null>(
     null,
@@ -175,9 +178,11 @@ const ContainerListView = ({
 
   return (
     <>
-      <Button color="success" variant="contained" onClick={openCreateDialog}>
-        Naskladnit kegy
-      </Button>
+      <div>
+        <Button color="success" variant="contained" onClick={openCreateDialog}>
+          Naskladnit kegy
+        </Button>
+      </div>
 
       {showPipeFilter && (
         <PipeFilter
@@ -223,7 +228,10 @@ const ContainerListView = ({
             storeId={storeId}
             id="containerCreateForm"
             beforeSubmit={closeCreateDialog}
-            afterSubmit={refreshContainers}
+            afterSubmit={(resp) => {
+              refreshContainers();
+              afterCreate?.(resp);
+            }}
           />
         </DialogContent>
         <DialogActions>

@@ -49,6 +49,7 @@ import { AddCircle } from "@mui/icons-material";
 import { useSnackbar } from "../../../contexts/SnackbarContext";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import ContainerListView from "../../../components/views/ContainerListView";
+import StorePicker from "../../../components/pickers/StorePicker";
 
 const StoreValidationSchema = z.object({
   name: z
@@ -57,44 +58,55 @@ const StoreValidationSchema = z.object({
     .max(validationConstants.maxNameLength, "Jméno přesahuje maximální délku"),
 });
 
-const TransactionValidationSchema = z.object({
-  note: z
-    .string()
-    .max(
-      validationConstants.maxNoteLength,
-      "Poznámka přesahuje maximální délku",
-    )
-    .nullish(),
-  storeTransactionItems: z
-    .array(
-      z.object({
-        amount: z
-          .string()
-          .regex(
-            validationConstants.numberRegex,
-            "Množství skladové položky musí být číslo",
-          ),
-        cost: z
-          .string()
-          .regex(
-            validationConstants.numberRegex,
-            "Cena nákupu položky musí být číslo",
-          )
-          .refine(
-            (x) => Number(x) >= 0,
-            "Cena nákupu položky musí být větší/rovna nule",
-          ),
-        storeItemId: z.number(),
-        storeItemName: z.string(),
-        storeItemUnitName: z.string(),
-      }),
-    )
-    .optional(),
-  reason: z.custom<TransactionReason>().optional(),
-  storeId: z.number(),
-  sourceStoreId: z.number().optional(),
-  updateCosts: z.boolean().optional(),
-});
+const TransactionValidationSchema = z
+  .object({
+    note: z
+      .string()
+      .max(
+        validationConstants.maxNoteLength,
+        "Poznámka přesahuje maximální délku",
+      )
+      .nullish(),
+    storeTransactionItems: z
+      .array(
+        z.object({
+          amount: z
+            .string()
+            .regex(
+              validationConstants.numberRegex,
+              "Množství skladové položky musí být číslo",
+            ),
+          cost: z
+            .string()
+            .regex(
+              validationConstants.numberRegex,
+              "Cena nákupu položky musí být číslo",
+            )
+            .refine(
+              (x) => Number(x) >= 0,
+              "Cena nákupu položky musí být větší/rovna nule",
+            ),
+          storeItemId: z.number(),
+          storeItemName: z.string(),
+          storeItemUnitName: z.string(),
+        }),
+      )
+      .optional(),
+    reason: z.custom<TransactionReason>().optional(),
+    storeId: z.number(),
+    sourceStoreId: z.number().optional(),
+    updateCosts: z.boolean().optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.reason === "ChangingStores" && val.sourceStoreId === undefined) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Při přesunu musíte nastavit ID zdrojového skladu",
+        input: val,
+        path: ["sourceStoreId"],
+      });
+    }
+  });
 
 type StoreTransactionFormData = z.infer<typeof TransactionValidationSchema>;
 
@@ -225,8 +237,20 @@ const StoreDetail = () => {
         `Transakce úspěšně uložena pod ID ${response.id}`,
         "success",
       );
-      setRequest((prev) =>
-        prev ? { ...prev } : { page: 1, pageSize: 30, storeId: Number(id) },
+      setStoreItems(
+        (prev) =>
+          prev?.map((si) => {
+            const transactionItem = response.storeTransactionItems.find(
+              (sti) => sti.storeItem.id === si.storeItem.id,
+            );
+            return {
+              ...si,
+              amount:
+                transactionItem !== undefined
+                  ? si.amount + transactionItem.itemAmount
+                  : si.amount,
+            };
+          }) ?? null,
       );
     }
     transactionForm.reset();
@@ -330,7 +354,7 @@ const StoreDetail = () => {
         gap={2}
         paddingBottom={30}
         flexDirection="column"
-        alignItems="flex-start"
+        alignItems="stretch"
       >
         <form onSubmit={storeForm.handleSubmit(updateStore)}>
           <Box
@@ -409,6 +433,7 @@ const StoreDetail = () => {
                   display="flex"
                   flexDirection="column"
                   alignItems="flex-start"
+                  minWidth="300px"
                   gap={2}
                 >
                   <FormControl fullWidth>
@@ -426,11 +451,35 @@ const StoreDetail = () => {
                             Přidání do skladu
                           </MenuItem>
                           <MenuItem value="WriteOff">Odpis</MenuItem>
-                          {/* TODO implement stock taking and changing stores */}
+                          <MenuItem value="ChangingStores">
+                            Přesun mezi sklady
+                          </MenuItem>
+                          <MenuItem value="StockTaking">Inventura</MenuItem>
                         </Select>
                       )}
                     />
                   </FormControl>
+
+                  {transactionReason === "ChangingStores" && (
+                    <Controller
+                      control={transactionForm.control}
+                      name="sourceStoreId"
+                      render={({ field }) => (
+                        <StorePicker
+                          onChange={(val) => field.onChange(val?.id)}
+                          error={
+                            !!transactionForm.formState.errors.sourceStoreId
+                          }
+                          helperText={
+                            transactionForm.formState.errors?.sourceStoreId
+                              ?.message
+                          }
+                          labelText="Zdrojový sklad"
+                        />
+                      )}
+                    />
+                  )}
+
                   <TextField
                     fullWidth
                     multiline
@@ -439,6 +488,7 @@ const StoreDetail = () => {
                     error={!!transactionForm.formState.errors.note}
                     helperText={transactionForm.formState.errors?.note?.message}
                   />
+
                   {transactionReason === "AddingToStore" && (
                     <FormControlLabel
                       label="Automaticky přepočíst ceny"
@@ -455,12 +505,26 @@ const StoreDetail = () => {
                   </Button>
                 </Box>
 
-                <TableContainer component={Paper}>
+                <TableContainer
+                  component={Paper}
+                  sx={{
+                    flex: "1",
+                  }}
+                >
                   <Table>
                     <TableHead>
                       <TableRow>
                         <TableCell>Skladová položka</TableCell>
-                        <TableCell>Množství</TableCell>
+                        <TableCell>
+                          {transactionReason === "AddingToStore" &&
+                            "Nakoupené množství"}
+                          {transactionReason === "ChangingStores" &&
+                            "Přesunuté množství"}
+                          {transactionReason === "WriteOff" &&
+                            "Množství k odepsání"}
+                          {transactionReason === "StockTaking" &&
+                            "Nové množství"}
+                        </TableCell>
                         {transactionReason === "AddingToStore" && (
                           <TableCell>Nákupní cena</TableCell>
                         )}
@@ -554,6 +618,26 @@ const StoreDetail = () => {
           initialContainers={store.containers}
           showPipeFilter
           showTemplateFilter
+          afterCreate={(resp) => {
+            const storeItemId = resp.data[0]?.template.storeItem.id;
+            if (!storeItemId) {
+              return;
+            }
+
+            const changedAmount =
+              Number(resp.data[0].template.amount) * resp.data.length;
+            setStoreItems(
+              (prev) =>
+                prev?.map((sia) =>
+                  sia.storeItem.id === storeItemId
+                    ? {
+                        ...sia,
+                        amount: String(Number(sia.amount) + changedAmount),
+                      }
+                    : sia,
+                ) ?? null,
+            );
+          }}
         />
       </Box>
     </>

@@ -183,15 +183,33 @@ public class StoreTransactionService(
             CancellationToken token = default
             ) {
         var transactionItemsCount = req.StoreTransactionItems.Length;
-        if (req.SourceStoreId.HasValue) {
+        if (req.Reason == TransactionReason.ChangingStores) {
             transactionItemsCount *= 2;
         }
-        var storeTransactionItems = req.StoreTransactionItems.Aggregate(
+
+        // for stock-taking transactions, dynamically calculate the correct amount
+        // of items to add so that it's always set to correct value
+        List<StoreTransactionItem>? storeTransactionItems = null;
+        if (req.Reason == TransactionReason.StockTaking) {
+            var storeItemIds = req.StoreTransactionItems.Select(sti => sti.StoreItemId);
+            var currentAmounts = await dbContext.StoreItemAmounts
+                .Where(sia => sia.StoreId == req.StoreId)
+                .Where(sia => storeItemIds.Contains(sia.StoreItemId))
+                .Select(sia => new { sia.Amount, sia.StoreItemId })
+                .ToDictionaryAsync(sia => sia.StoreItemId, sia => sia.Amount, token);
+            storeTransactionItems = req.StoreTransactionItems.Select(sti => new StoreTransactionItem {
+                StoreId = req.StoreId,
+                Cost = sti.Cost,
+                ItemAmount = sti.Amount - currentAmounts[sti.StoreItemId],
+                StoreItemId = sti.StoreItemId
+            }).ToList();
+        }
+        storeTransactionItems ??= req.StoreTransactionItems.Aggregate(
             new List<StoreTransactionItem>(transactionItemsCount), (output, sti) => {
                 output.Add(new StoreTransactionItem {
                     StoreId = req.StoreId,
                     Cost = sti.Cost,
-                    ItemAmount = sti.Amount,
+                    ItemAmount = req.Reason == TransactionReason.WriteOff ? -sti.Amount : sti.Amount,
                     StoreItemId = sti.StoreItemId
                 });
 

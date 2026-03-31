@@ -75,7 +75,7 @@ public class ContainerChangeService(
                         StoreTransactionItems = [
                             new StoreTransactionItemCreateRequest {
                                     Cost = 0,
-                                    Amount = -container.Amount,
+                                    Amount = container.Amount,
                                     StoreItemId = container.Template!.StoreItemId
                                 }
                         ]

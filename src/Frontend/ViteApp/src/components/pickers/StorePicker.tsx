@@ -19,12 +19,14 @@ const StorePicker = ({
   error,
   helperText,
   initialValue,
+  labelText,
 }: {
   onChange: (val: EntityWithName | undefined) => void;
   options?: StoreListModel[];
   error?: boolean;
   helperText?: string;
   initialValue?: number;
+  labelText?: string;
 }) => {
   const [stores, setStores] = useState<StoreListModel[] | undefined>(options);
   const [value, setValue] = useState(initialValue);
@@ -44,9 +46,9 @@ const StorePicker = ({
 
   return (
     <FormControl error={error} fullWidth>
-      <InputLabel id="storePicker">Výběr skladu</InputLabel>
+      <InputLabel id="storePicker">{labelText ?? "Výběr skladu"}</InputLabel>
       <Select
-        label="Výběr skladu"
+        label={labelText ?? "Výběr skladu"}
         labelId="storePicker"
         value={value ?? ""}
         error={error}
