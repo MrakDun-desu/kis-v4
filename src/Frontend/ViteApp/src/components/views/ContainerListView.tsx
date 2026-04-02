@@ -258,7 +258,7 @@ const ContainerListView = ({
         initialState={{
           pagination: {
             paginationModel: {
-              page: request.page ?? 1,
+              page: request.page ?? 0,
               pageSize: request.pageSize ?? 30,
             },
           },
@@ -274,7 +274,7 @@ const ContainerListView = ({
           setRequest((prev) => {
             return {
               ...prev,
-              page: Math.max(1, newModel.page),
+              page: newModel.page + 1,
               pageSize: newModel.pageSize,
             };
           });

@@ -21,20 +21,25 @@ interface AuthContextType {
 
 const AuthContext = React.createContext<AuthContextType>(null!);
 
+// 20 minutes auth refresh timeout
+const authRefreshTimeout = 1000 * 60 * 20;
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userClaims, setUserClaims] = useState<UserClaims | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastVisibilityChange, setLastVisibilityChange] = useState(Date.now());
 
   useEffect(() => {
-    const periodicAuthRefresher = setInterval(
-      async () => {
-        await refreshAuth(true);
-      },
-      1000 * 60 * 20,
-    );
+    const periodicAuthRefresher = setInterval(async () => {
+      await refreshAuth(true);
+    }, authRefreshTimeout);
     const visibilityAuthRefresher = async () => {
       if (document.visibilityState === "visible") {
-        await refreshAuth(true);
+        const now = Date.now();
+        if (lastVisibilityChange + authRefreshTimeout < now) {
+          setLastVisibilityChange(now);
+          await refreshAuth(true);
+        }
       }
     };
     const unsubscribe = authEvents.on("unauthorized", handleUnauthorized);
@@ -95,7 +100,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch {}
 
     setTimeout(() => {
-      signIn();
+      window.location.href = "/bff/login";
     }, 500);
   };
 
@@ -117,8 +122,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setLoading(false);
         return respValue;
       } else {
-        if (authResponse.status === 401 && autoRelogin) {
-          handleUnauthorized();
+        if (authResponse.status === 401) {
+          if (autoRelogin) {
+            handleUnauthorized();
+          }
         }
       }
     } catch (e) {

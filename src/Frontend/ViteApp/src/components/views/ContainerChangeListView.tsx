@@ -44,32 +44,27 @@ const ContainerChangeListView = ({
   }, [refreshCounter]);
 
   return (
-    <>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Čas změny</TableCell>
-              <TableCell>Stav</TableCell>
-              <TableCell>Množství</TableCell>
-              {/*<TableCell>Uživatel</TableCell> */}
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Čas změny</TableCell>
+            <TableCell>Stav</TableCell>
+            <TableCell>Množství</TableCell>
+            {/*<TableCell>Uživatel</TableCell> */}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {containerChanges?.map((c) => (
+            <TableRow key={c.timestamp.toDateString()}>
+              <TableCell>{c.timestamp.toLocaleString("cs")}</TableCell>
+              <TableCell>{containerStates[c.newState]}</TableCell>
+              <TableCell>{c.newAmount}</TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {containerChanges?.map((c) => (
-              <TableRow key={c.timestamp.toDateString()}>
-                <TableCell>
-                  {c.timestamp.toLocaleDateString("cs")},{" "}
-                  {c.timestamp.toLocaleTimeString("cs")}
-                </TableCell>
-                <TableCell>{containerStates[c.newState]}</TableCell>
-                <TableCell>{c.newAmount}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

@@ -48,11 +48,11 @@ const links: Link[][] = [
       url: "store-items",
       icon: <Inventory />,
     },
-    // {
-    //   label: "Skladové transakce",
-    //   url: "store-transactions",
-    //   icon: <MoveDown />,
-    // },
+    {
+      label: "Skladové transakce",
+      url: "store-transactions",
+      icon: <MoveDown />,
+    },
     {
       label: "Sklady",
       url: "stores",
@@ -71,11 +71,11 @@ const links: Link[][] = [
       url: "sale-items",
       icon: <ShoppingBag />,
     },
-    //   {
-    //     label: "Prodejní transakce",
-    //     url: "sale-transactions",
-    //     icon: <Receipt />,
-    //   },
+    {
+      label: "Prodejní transakce",
+      url: "sale-transactions",
+      icon: <Receipt />,
+    },
     //   {
     //     label: "Modifikátory",
     //     url: "modifiers",

@@ -167,7 +167,7 @@ const LayoutDetail = () => {
     stopLoading();
   };
 
-  if (!layout) {
+  if (!layout || !pipes || !layouts) {
     return (
       <>
         <Skeleton variant="rounded" width={300} height={30} />
@@ -302,7 +302,8 @@ const LayoutGridItem = ({
     "id"
   >;
   errors: FieldErrors<LayoutUpdateFormData>;
-  layouts?: LayoutListModel[];
+  layouts: LayoutListModel[];
+  pipes: PipeListModel[];
   x: number;
   y: number;
 }) => {

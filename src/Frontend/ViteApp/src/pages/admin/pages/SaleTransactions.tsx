@@ -1,57 +1,51 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 import {
-  PrintType,
-  SaleItemsApi,
-  type SaleItemListModel,
-  type SaleItemsReadAllRequest,
+  SaleTransactionsApi,
+  type SaleTransactionListModel,
+  type SaleTransactionsReadAllRequest,
+  type UserListModel,
 } from "../../../api-generated";
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
-import { getGridStringOperators } from "@mui/x-data-grid";
+import { Box, Button } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
 import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { printTypes } from "../../../constants/printTypes";
 import { defaultConfiguration } from "../../../configuration/apiConfiguration";
-import CategoryFilter from "../../../components/filters/CategoryFilter";
-import SaleItemCreateForm from "../../../components/forms/SaleItemCreateForm";
 
-const api = new SaleItemsApi(defaultConfiguration);
+const api = new SaleTransactionsApi(defaultConfiguration);
 
-const SaleItems = () => {
-  const [saleItems, setSaleItems] = useState<SaleItemListModel[] | null>(null);
-  const [request, setRequest] = useState<SaleItemsReadAllRequest>({ page: 1 });
+const SaleTransactions = () => {
+  const [saleTransactions, setSaleTransactions] = useState<
+    SaleTransactionListModel[] | null
+  >(null);
+  const [request, setRequest] = useState<SaleTransactionsReadAllRequest>({
+    page: 1,
+  });
   const [isLoading, setLoading] = useState<boolean>(true);
-  const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [rowCount, setRowCount] = useState<number>(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getSaleItemsDeferred = setTimeout(async () => {
+    const getSaleTransactionsDeferred = setTimeout(async () => {
       setLoading(true);
-      const response = await handleApiCall(api.saleItemsReadAll(request));
+      const response = await handleApiCall(
+        api.saleTransactionsReadAll(request),
+      );
       if (!response) {
-        setSaleItems(null);
+        setSaleTransactions(null);
         setRowCount(0);
         setLoading(false);
         return;
       }
-      setSaleItems(response.data);
+      setSaleTransactions(response.data);
       setRowCount(response.meta.total ?? 0);
       setLoading(false);
     }, 500);
-    return () => clearTimeout(getSaleItemsDeferred);
+    return () => clearTimeout(getSaleTransactionsDeferred);
   }, [request]);
 
-  const columns: GridColDef<SaleItemListModel>[] = [
+  const columns: GridColDef<SaleTransactionListModel>[] = [
     {
       field: "id",
       headerName: "ID",
@@ -62,63 +56,58 @@ const SaleItems = () => {
     },
 
     {
-      field: "name",
-      headerName: "Název",
+      field: "note",
+      headerName: "Poznámka",
       type: "string",
       sortable: false,
-      filterable: true,
-      filterOperators: getGridStringOperators().filter(
-        (operator) => operator.value === "contains",
-      ),
       editable: false,
-      flex: 1,
-    },
-
-    {
-      field: "marginPercent",
-      headerName: "Procentuální marže",
-      type: "number",
-      sortable: false,
       filterable: false,
-      editable: false,
       flex: 1,
-      valueFormatter(value: number) {
-        return `${value}%`;
-      },
     },
 
     {
-      field: "marginStatic",
-      headerName: "Statická marže",
-      type: "number",
+      field: "startedAt",
+      headerName: "Čas vytvoření",
+      type: "dateTime",
       sortable: false,
-      filterable: false,
       editable: false,
+      filterable: false,
       flex: 1,
-      valueFormatter(value: number) {
-        return `${value} czk`;
-      },
+      valueFormatter: (val: Date) => val.toLocaleString("cs"),
     },
 
     {
-      field: "prestigeAmount",
-      headerName: "Prestiž",
-      type: "number",
-      sortable: false,
-      filterable: false,
-      editable: false,
-      flex: 1,
-    },
-
-    {
-      field: "printType",
-      headerName: "Tisknout?",
+      field: "startedBy",
+      headerName: "Vytvořil",
       type: "string",
       sortable: false,
-      filterable: false,
       editable: false,
+      filterable: false,
       flex: 1,
-      valueFormatter: (value: PrintType) => printTypes[value],
+      valueGetter: (val: UserListModel) => val.nick,
+    },
+
+    {
+      field: "cancelledAt",
+      headerName: "Čas zrušení",
+      type: "dateTime",
+      sortable: false,
+      editable: false,
+      filterable: false,
+      flex: 1,
+      valueFormatter: (val: Date | null) =>
+        val?.toLocaleString("cs") ?? "Nezrušena",
+    },
+
+    {
+      field: "cancelledBy",
+      headerName: "Zrušil",
+      type: "string",
+      sortable: false,
+      editable: false,
+      filterable: false,
+      flex: 1,
+      valueGetter: (val: UserListModel) => val?.nick ?? "Nezrušena",
     },
 
     {
@@ -141,31 +130,29 @@ const SaleItems = () => {
           variant="outlined"
           onClick={async () => {
             const confirmed = confirm(
-              `Opravdu chcete ${params.row.name} smazat?`,
+              `Opravdu chcete transakci ${params.row.id} zrušit?`,
             );
             if (confirmed) {
-              await handleApiCall(
-                api.saleItemsDelete({
+              const resp = await handleApiCall(
+                api.saleTransactionsDelete({
                   id: params.row.id,
                 }),
               );
-              setRequest({ ...request });
+              if (resp !== null) {
+                setRequest({ ...request });
+              }
             }
           }}
         >
-          Smazat
+          Zrušit
         </Button>,
       ],
     },
   ];
 
-  const openCreateDialog = () => setCreateDialogOpen(true);
-  const closeCreateDialog = () => setCreateDialogOpen(false);
-  const refreshSaleItems = () => setRequest({ ...request });
-
   return (
     <>
-      <h2>Prodejní položky</h2>
+      <h2>Prodejní transakce</h2>
 
       <Box
         display="flex"
@@ -173,37 +160,10 @@ const SaleItems = () => {
         flexDirection="column"
         alignItems="flex-start"
       >
-        <Button color="success" variant="contained" onClick={openCreateDialog}>
-          Přidat novou
-        </Button>
-
-        <Dialog open={createDialogOpen} onClose={closeCreateDialog}>
-          <DialogTitle>Vytvořit novou skladovou položku</DialogTitle>
-          <DialogContent>
-            <SaleItemCreateForm
-              id="saleItemCreateForm"
-              beforeSubmit={closeCreateDialog}
-              afterSubmit={refreshSaleItems}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={closeCreateDialog}>Zrušit</Button>
-            <Button type="submit" form="saleItemCreateForm">
-              Vytvořit
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        <CategoryFilter
-          onChange={(categoryId) =>
-            setRequest((prev) => ({ ...prev, categoryId }))
-          }
-        />
-
         <DataGrid
           loading={isLoading}
           sx={{ width: "100%" }}
-          rows={saleItems ?? []}
+          rows={saleTransactions ?? []}
           rowCount={rowCount}
           rowSelection={false}
           columns={columns}
@@ -254,4 +214,4 @@ const SaleItems = () => {
   );
 };
 
-export default SaleItems;
+export default SaleTransactions;

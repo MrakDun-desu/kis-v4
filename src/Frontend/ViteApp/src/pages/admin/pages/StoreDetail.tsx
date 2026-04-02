@@ -397,7 +397,7 @@ const StoreDetail = () => {
           initialState={{
             pagination: {
               paginationModel: {
-                page: request?.page ?? 1,
+                page: request?.page ?? 0,
                 pageSize: request?.pageSize ?? 30,
               },
             },
@@ -412,7 +412,7 @@ const StoreDetail = () => {
             }
             setRequest({
               storeId: Number(id),
-              page: Math.max(newModel.page, 1),
+              page: newModel.page + 1,
               pageSize: newModel.pageSize,
             });
           }}

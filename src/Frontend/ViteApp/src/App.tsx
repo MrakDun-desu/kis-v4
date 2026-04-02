@@ -34,6 +34,10 @@ import ContainerDetail from "./pages/admin/pages/ContainerDetail";
 import PosPipe from "./pages/pos/pages/PosPipe";
 import PosContainers from "./pages/pos/pages/PosContainers";
 import PosContainerDetail from "./pages/pos/pages/PosContainerDetail";
+import StoreTransactions from "./pages/admin/pages/StoreTransactions";
+import SaleTransactions from "./pages/admin/pages/SaleTransactions";
+import StoreTransactionDetail from "./pages/admin/pages/StoreTransactionDetail";
+import SaleTransactionDetail from "./pages/admin/pages/SaleTransactionDetail";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -85,11 +89,22 @@ function App() {
               <Route path="store-items/:id" element={<StoreItemDetail />} />
               <Route path="stores" element={<Stores />} />
               <Route path="stores/:id" element={<StoreDetail />} />
-              <Route path="store-transactions" element={null} />
+              <Route
+                path="store-transactions"
+                element={<StoreTransactions />}
+              />
+              <Route
+                path="store-transactions/:id"
+                element={<StoreTransactionDetail />}
+              />
               <Route path="sale-items" element={<SaleItems />} />
               <Route path="sale-items/:id" element={<SaleItemDetail />} />
               <Route path="modifiers" element={null} />
-              <Route path="sale-transactions" element={null} />
+              <Route path="sale-transactions" element={<SaleTransactions />} />
+              <Route
+                path="sale-transactions/:id"
+                element={<SaleTransactionDetail />}
+              />
               <Route path="cashboxes" element={<CashBoxes />} />
               <Route path="categories" element={<Categories />} />
               <Route
