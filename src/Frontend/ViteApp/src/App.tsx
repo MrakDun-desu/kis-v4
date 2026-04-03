@@ -38,6 +38,7 @@ import StoreTransactions from "./pages/admin/pages/StoreTransactions";
 import SaleTransactions from "./pages/admin/pages/SaleTransactions";
 import StoreTransactionDetail from "./pages/admin/pages/StoreTransactionDetail";
 import SaleTransactionDetail from "./pages/admin/pages/SaleTransactionDetail";
+import RecentTransactions from "./pages/pos/pages/RecentTransactions";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -129,7 +130,10 @@ function App() {
               }
             >
               <Route path="orders" element={<Orders />} />
-              <Route path="recent-transactions" element={null} />
+              <Route
+                path="recent-transactions"
+                element={<RecentTransactions />}
+              />
               <Route path="containers" element={<PosContainers />} />
               <Route path="card-pairing" element={null} />
               <Route path="settings" element={<PosSettings />} />

@@ -34,10 +34,10 @@ const links: Link[] = [
     label: "Objednávky",
     url: "orders",
   },
-  // {
-  //   label: "Nedávné transakce",
-  //   url: "recent-transactions",
-  // },
+  {
+    label: "Nedávné transakce",
+    url: "recent-transactions",
+  },
   {
     label: "Kegy",
     url: "containers",

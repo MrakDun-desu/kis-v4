@@ -34,19 +34,20 @@ public class SaleTransactionService(
             .AsQueryable();
 
         var realFrom = req.From ?? DateTimeOffset.MinValue;
-        if (req.From is { } from) {
-            query = query.Where(st => st.StartedAt >= from);
+        var onlySelfCancellable = req.OnlySelfCancellable ?? false;
+        if (onlySelfCancellable) {
+            realFrom = reqTime - AuthorizationConstants.TransactionCancelTimeout;
+            query = query.Where(st => st.StartedById == userId)
+                .Where(st => st.CancelledAt == null)
+                .Where(st => st.StartedAt >= realFrom);
+        } else {
+            if (req.From is { } from) {
+                query = query.Where(st => st.StartedAt >= from);
+            }
         }
 
         if (req.To is { } to) {
             query = query.Where(st => st.StartedAt <= to);
-        }
-
-        var onlySelfCancellable = req.OnlySelfCancellable ?? false;
-        if (onlySelfCancellable) {
-            realFrom = reqTime - AuthorizationConstants.TransactionCancelTimeout;
-            query = query.Where(st => st.OpenedById == userId)
-                .Where(st => st.StartedAt >= realFrom);
         }
 
         return await query.PaginateAsync(

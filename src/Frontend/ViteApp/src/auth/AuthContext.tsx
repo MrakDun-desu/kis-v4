@@ -81,14 +81,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     lsAuthKeys.forEach((key) => localStorage.removeItem(key));
 
     let signOutUrl = "/bff/logout";
-    if (userClaims) {
-      const logoutUrlClaim = userClaims.find(
-        (claim) => claim["type"] === "bff:logout_url",
-      );
-      if (logoutUrlClaim) {
-        signOutUrl = logoutUrlClaim.value as string;
-      }
-    }
 
     try {
       await fetch(signOutUrl, {

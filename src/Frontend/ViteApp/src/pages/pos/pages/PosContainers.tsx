@@ -97,7 +97,7 @@ const PosContainers = () => {
           display="flex"
           flexDirection="column"
           gap={2}
-          overflow="scroll"
+          overflow="auto"
           flex={1}
         >
           {containers.map((c) => (
