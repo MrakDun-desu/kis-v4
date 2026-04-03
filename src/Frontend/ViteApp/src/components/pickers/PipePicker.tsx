@@ -6,12 +6,10 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { PipesApi, type PipeListModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
 import type { EntityWithName } from "../../stores/posStore";
-
-const api = new PipesApi(defaultConfiguration);
+import type { PipeListModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const PipePicker = ({
   onChange,
@@ -36,9 +34,10 @@ const PipePicker = ({
       return;
     }
     const getPipes = async () => {
-      const resp = await handleApiCall(api.pipesReadAll());
-      if (resp) {
-        setPipes(resp.data);
+      const { response, data } = await apiClient.GET("/pipes");
+      setPipes(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getPipes();

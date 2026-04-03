@@ -1,13 +1,8 @@
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
-import {
-  ContainerTemplatesApi,
-  type ContainerTemplateModel,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new ContainerTemplatesApi(defaultConfiguration);
+import type { ContainerTemplateModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ContainerTemplateFilter = ({
   onChange,
@@ -15,17 +10,15 @@ const ContainerTemplateFilter = ({
   onChange: (id: number | undefined) => void;
 }) => {
   const [current, setCurrent] = useState<number>();
-  const [containerTemplates, setContainerTemplates] = useState<
-    ContainerTemplateModel[] | null
-  >(null);
+  const [containerTemplates, setContainerTemplates] =
+    useState<ContainerTemplateModel[]>();
   useEffect(() => {
     const getContainerTemplates = async () => {
-      const response = await handleApiCall(api.containerTemplatesReadAll());
-      if (!response) {
-        setContainerTemplates(null);
-        return;
+      const { response, data } = await apiClient.GET("/container-templates");
+      setContainerTemplates(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
-      setContainerTemplates(response.data);
     };
     getContainerTemplates();
   }, []);

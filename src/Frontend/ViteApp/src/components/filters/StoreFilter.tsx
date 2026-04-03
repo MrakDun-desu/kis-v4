@@ -1,10 +1,8 @@
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
-import { StoresApi, type StoreListModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new StoresApi(defaultConfiguration);
+import type { StoreListModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const StoreFilter = ({
   onChange,
@@ -12,15 +10,14 @@ const StoreFilter = ({
   onChange: (id: number | undefined) => void;
 }) => {
   const [current, setCurrent] = useState<number>();
-  const [stores, setStores] = useState<StoreListModel[] | null>(null);
+  const [stores, setStores] = useState<StoreListModel[]>();
   useEffect(() => {
     const getStores = async () => {
-      const response = await handleApiCall(api.storesReadAll());
-      if (!response) {
-        setStores(null);
-        return;
+      const { response, data } = await apiClient.GET("/stores");
+      setStores(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
-      setStores(response.data);
     };
     getStores();
   }, []);

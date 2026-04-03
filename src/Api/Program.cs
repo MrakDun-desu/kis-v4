@@ -11,6 +11,7 @@ using KisV4.BL.EF;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
+using KisV4.DAL.EF.Seeding;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -178,6 +179,13 @@ builder.Services.ConfigureHttpJsonOptions(opts => {
 builder.Services.AddExceptionHandler<ExceptionHandlerMiddleware>();
 
 var app = builder.Build();
+
+// Seeding
+if (args.Contains("--test-seed")) {
+    using var scope = app.Services.CreateScope();
+    var seeder = scope.ServiceProvider.GetRequiredService<TestSeeder>();
+    seeder.Seed();
+}
 
 // Auditing
 var contextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();

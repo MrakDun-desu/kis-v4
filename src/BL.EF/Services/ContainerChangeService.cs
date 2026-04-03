@@ -69,7 +69,7 @@ public class ContainerChangeService(
                 req.NewState is ContainerState.Bad or ContainerState.WrittenOff) {
                 await StoreTransactionService.CreateInternalAsync(
                     new StoreTransactionCreateRequest {
-                        Note = "Container write-off",
+                        Note = "Odepsání kegu",
                         Reason = TransactionReason.WriteOff,
                         StoreId = container.StoreId,
                         StoreTransactionItems = [

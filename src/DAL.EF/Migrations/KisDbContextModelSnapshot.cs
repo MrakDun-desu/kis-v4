@@ -61,9 +61,21 @@ namespace KisV4.DAL.EF.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("Accounts");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Account");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.AccountTransaction", b =>
@@ -80,9 +92,6 @@ namespace KisV4.DAL.EF.Migrations
 
                     b.Property<bool>("Cancelled")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
 
                     b.HasKey("AccountId", "SaleTransactionId");
 
@@ -144,21 +153,11 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("DonationsAccountId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("SalesAccountId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("DonationsAccountId");
-
-                    b.HasIndex("SalesAccountId");
 
                     b.ToTable("Cashboxes");
                 });
@@ -730,12 +729,7 @@ namespace KisV4.DAL.EF.Migrations
                     b.Property<string>("Nick")
                         .HasColumnType("text");
 
-                    b.Property<int>("PrestigeAccountId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("PrestigeAccountId");
 
                     b.ToTable("Users");
                 });
@@ -753,6 +747,31 @@ namespace KisV4.DAL.EF.Migrations
                     b.HasIndex("StoreItemsId");
 
                     b.ToTable("StoreItemInCategory");
+                });
+
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CashBoxAccount", b =>
+                {
+                    b.HasBaseType("KisV4.DAL.EF.Entities.Account");
+
+                    b.Property<int>("CashboxId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("CashboxId");
+
+                    b.HasDiscriminator().HasValue("CashBoxAccount");
+                });
+
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.UserAccount", b =>
+                {
+                    b.HasBaseType("KisV4.DAL.EF.Entities.Account");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasIndex("UserId");
+
+                    b.HasDiscriminator().HasValue("UserAccount");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.Modifier", b =>
@@ -904,25 +923,6 @@ namespace KisV4.DAL.EF.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("KisV4.DAL.EF.Entities.Cashbox", b =>
-                {
-                    b.HasOne("KisV4.DAL.EF.Entities.Account", "DonationsAccount")
-                        .WithMany()
-                        .HasForeignKey("DonationsAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KisV4.DAL.EF.Entities.Account", "SalesAccount")
-                        .WithMany()
-                        .HasForeignKey("SalesAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DonationsAccount");
-
-                    b.Navigation("SalesAccount");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.CompositeAmount", b =>
@@ -1186,17 +1186,6 @@ namespace KisV4.DAL.EF.Migrations
                     b.Navigation("StartedBy");
                 });
 
-            modelBuilder.Entity("KisV4.DAL.EF.Entities.User", b =>
-                {
-                    b.HasOne("KisV4.DAL.EF.Entities.Account", "PrestigeAccount")
-                        .WithMany()
-                        .HasForeignKey("PrestigeAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PrestigeAccount");
-                });
-
             modelBuilder.Entity("StoreItemInCategory", b =>
                 {
                     b.HasOne("KisV4.DAL.EF.Entities.Category", null)
@@ -1210,6 +1199,28 @@ namespace KisV4.DAL.EF.Migrations
                         .HasForeignKey("StoreItemsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.CashBoxAccount", b =>
+                {
+                    b.HasOne("KisV4.DAL.EF.Entities.Cashbox", "Cashbox")
+                        .WithMany("Accounts")
+                        .HasForeignKey("CashboxId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cashbox");
+                });
+
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.UserAccount", b =>
+                {
+                    b.HasOne("KisV4.DAL.EF.Entities.User", "User")
+                        .WithMany("Accounts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.LayoutLink", b =>
@@ -1266,6 +1277,11 @@ namespace KisV4.DAL.EF.Migrations
             modelBuilder.Entity("KisV4.DAL.EF.Entities.Account", b =>
                 {
                     b.Navigation("AccountTransactions");
+                });
+
+            modelBuilder.Entity("KisV4.DAL.EF.Entities.Cashbox", b =>
+                {
+                    b.Navigation("Accounts");
                 });
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.Composite", b =>
@@ -1328,6 +1344,8 @@ namespace KisV4.DAL.EF.Migrations
 
             modelBuilder.Entity("KisV4.DAL.EF.Entities.User", b =>
                 {
+                    b.Navigation("Accounts");
+
                     b.Navigation("CancelledTransactions");
 
                     b.Navigation("ContainerChanges");

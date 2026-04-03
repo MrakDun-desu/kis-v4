@@ -1,10 +1,8 @@
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
-import { PipesApi, type PipeListModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new PipesApi(defaultConfiguration);
+import type { PipeListModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const PipeFilter = ({
   onChange,
@@ -12,15 +10,14 @@ const PipeFilter = ({
   onChange: (id: number | undefined) => void;
 }) => {
   const [current, setCurrent] = useState<number>();
-  const [pipes, setPipes] = useState<PipeListModel[] | null>(null);
+  const [pipes, setPipes] = useState<PipeListModel[]>();
   useEffect(() => {
     const getPipes = async () => {
-      const response = await handleApiCall(api.pipesReadAll());
-      if (!response) {
-        setPipes(null);
-        return;
+      const { data, response } = await apiClient.GET("/pipes");
+      setPipes(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
-      setPipes(response.data);
     };
     getPipes();
   }, []);

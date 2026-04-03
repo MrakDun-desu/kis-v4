@@ -9,11 +9,9 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { CompositionsApi, type CompositionModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new CompositionsApi(defaultConfiguration);
+import type { CompositionModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const CompositionListView = ({
   compositeId,
@@ -22,19 +20,16 @@ const CompositionListView = ({
   compositeId: number;
   refreshCounter: number;
 }) => {
-  const [compositions, setCompositions] = useState<CompositionModel[] | null>(
-    null,
-  );
+  const [compositions, setCompositions] = useState<CompositionModel[]>();
 
   useEffect(() => {
     const getCompositions = async () => {
-      const response = await handleApiCall(
-        api.compositionsReadAll({ compositeId }),
-      );
-      if (!response) {
-        setCompositions(null);
-      } else {
-        setCompositions(response.data);
+      const { response, data, error } = await apiClient.GET("/compositions", {
+        params: { query: { CompositeId: compositeId } },
+      });
+      setCompositions(data?.data);
+      if (!response.ok) {
+        handleApiError(response, error);
       }
     };
     getCompositions();

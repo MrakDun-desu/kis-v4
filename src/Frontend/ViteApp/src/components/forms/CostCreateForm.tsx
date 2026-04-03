@@ -2,17 +2,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField } from "@mui/material";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
-import {
-  CostsApi,
-  type CostCreateResponse,
-  type CostCreateRequest,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new CostsApi(defaultConfiguration);
+import type { CostCreateResponse, CostCreateRequest } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   storeItemId: z.number(),
@@ -56,15 +50,18 @@ const CostCreateForm = ({
     resolver: zodResolver(ValidationSchema),
   });
 
-  const submitForm: SubmitHandler<CostCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<CostCreateRequest> = async (requestBody) => {
     beforeSubmit?.();
     startLoading();
-    const output = await handleApiCall(
-      api.costsCreate({ costCreateRequest: data }),
-    );
+    const { response, data, error } = await apiClient.POST("/costs", {
+      body: requestBody,
+    });
+    if (!response.ok) {
+      handleApiError(response, error);
+    }
     stopLoading();
-    if (output) {
-      afterSubmit?.(output);
+    if (data) {
+      afterSubmit?.(data);
     }
   };
 

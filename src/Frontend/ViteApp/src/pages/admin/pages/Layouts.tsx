@@ -1,6 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import { LayoutsApi, type LayoutListModel } from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -12,12 +11,11 @@ import {
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import { usePosStore } from "../../../stores/posStore";
 import LayoutCreateForm from "../../../components/forms/LayoutCreateForm";
-
-const api = new LayoutsApi(defaultConfiguration);
+import type { LayoutListModel } from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const Layouts = () => {
   const [layouts, setLayouts] = useState<LayoutListModel[] | null>(null);
@@ -30,13 +28,13 @@ const Layouts = () => {
   useEffect(() => {
     setLoading(true);
     const getLayoutsDeferred = setTimeout(async () => {
-      const response = await handleApiCall(api.layoutsReadAll());
-      if (!response) {
+      const { response, data } = await apiClient.GET("/layouts");
+      if (!data) {
         setLayouts(null);
-        setLoading(false);
-        return;
+        handleApiError(response);
+      } else {
+        setLayouts(data.data);
       }
-      setLayouts(response.data);
       setLoading(false);
     }, 500);
     return () => clearTimeout(getLayoutsDeferred);
@@ -95,13 +93,15 @@ const Layouts = () => {
               `Opravdu chcete ${params.row.name} smazat?`,
             );
             if (confirmed) {
-              await handleApiCall(
-                api.layoutsDelete({
-                  id: params.row.id,
-                }),
-              );
+              const { response } = await apiClient.DELETE("/layouts/{id}", {
+                params: { path: { id: params.row.id } },
+              });
+              if (!response.ok) {
+                handleApiError(response);
+              } else {
+                refreshLayouts();
+              }
               setCurrentLayout(undefined);
-              refreshLayouts();
             }
           }}
         >

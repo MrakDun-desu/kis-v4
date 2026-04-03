@@ -7,11 +7,11 @@ public record Container {
     public required decimal Amount { get; set; }
     public ContainerState State { get; set; }
 
-    public required int TemplateId { get; init; }
+    public int TemplateId { get; init; }
     public ContainerTemplate? Template { get; set; }
     public int? PipeId { get; set; }
     public Pipe? Pipe { get; set; }
-    public required int StoreId { get; set; }
+    public int StoreId { get; set; }
     public Store? Store { get; set; }
     public ICollection<ContainerChange> ContainerChanges { get; init; } = [];
 }

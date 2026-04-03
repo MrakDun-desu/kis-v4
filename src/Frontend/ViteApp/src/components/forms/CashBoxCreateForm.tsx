@@ -2,13 +2,11 @@ import z from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField } from "@mui/material";
-import { CashBoxesApi, type CashBoxCreateRequest } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new CashBoxesApi(defaultConfiguration);
+import type { CashBoxCreateRequest } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   name: z
@@ -41,7 +39,12 @@ const CashBoxCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   const submitForm: SubmitHandler<CashBoxCreateRequest> = async (data) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.cashBoxesCreate({ cashBoxCreateRequest: data }));
+    const { response, error } = await apiClient.POST("/cashboxes", {
+      body: data,
+    });
+    if (!response.ok) {
+      handleApiError(response, error);
+    }
     stopLoading();
     afterSubmit?.();
   };

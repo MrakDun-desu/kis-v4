@@ -1,12 +1,4 @@
 import { useParams } from "react-router-dom";
-import {
-  CategoriesApi,
-  PrintType,
-  SaleItemsApi,
-  type CategoryModel,
-  type SaleItemReadResponse,
-  type SaleItemUpdateModel,
-} from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -23,15 +15,18 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
 import validationConstants from "../../../constants/validationConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { printTypes } from "../../../constants/printTypes";
 import { useLoading } from "../../../contexts/LoadingContext";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import CompositionListView from "../../../components/views/CompositionListView";
 import CompositionCreateForm from "../../../components/forms/CompositionCreateForm";
-
-const api = new SaleItemsApi(defaultConfiguration);
-const categoryApi = new CategoriesApi(defaultConfiguration);
+import type {
+  CategoryModel,
+  PrintType,
+  SaleItemReadResponse,
+  SaleItemUpdateModel,
+} from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   name: z
@@ -45,29 +40,26 @@ const ValidationSchema = z.object({
     .refine(
       (val) => Number(val) >= 0,
       "Procentuální marže musí být větší/rovna nule",
-    )
-    .optional(),
+    ),
   marginStatic: z
     .string()
     .regex(validationConstants.numberRegex, "Statická marže musí být číslo")
     .refine(
       (val) => Number(val) >= 0,
       "Statická marže musí být větší/rovna nule",
-    )
-    .optional(),
+    ),
   prestigeAmount: z
     .string()
     .regex(validationConstants.numberRegex, "Prestiž musí být číslo")
-    .refine((val) => Number(val) >= 0, "Prestiž musí být větší/rovna nule")
-    .optional(),
-  printType: z.custom<PrintType>().optional(),
+    .refine((val) => Number(val) >= 0, "Prestiž musí být větší/rovna nule"),
+  printType: z.custom<PrintType>(),
   modifierIds: z.array(z.number()).optional(),
   categoryIds: z.array(z.number()).optional(),
 });
 
 const SaleItemDetail = () => {
-  const [saleItem, setSaleItem] = useState<SaleItemReadResponse | null>(null);
-  const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+  const [saleItem, setSaleItem] = useState<SaleItemReadResponse>();
+  const [categories, setCategories] = useState<CategoryModel[]>();
   const [compositionRefreshCounter, setCompositionRefreshCounter] = useState(0);
   const { startLoading, stopLoading } = useLoading();
   const { id } = useParams();
@@ -78,64 +70,65 @@ const SaleItemDetail = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<SaleItemUpdateModel>({
-    values:
-      saleItem === null
-        ? {
-            name: "Prodejní položka",
-            image: "",
-            marginPercent: "0",
-            marginStatic: "0.00",
-            prestigeAmount: "0",
-            printType: "DontPrint",
-            categoryIds: [],
-            modifierIds: [],
-          }
-        : {
-            name: saleItem.name,
-            image: saleItem.image,
-            marginPercent: String(saleItem.marginPercent),
-            marginStatic: String(saleItem.marginStatic),
-            prestigeAmount: String(saleItem.prestigeAmount),
-            printType: saleItem.printType,
-            categoryIds: saleItem.categories.map((cat) => cat.id),
-            modifierIds: saleItem.applicableModifiers.map((mod) => mod.id),
-          },
+    values: !saleItem
+      ? {
+          name: "Prodejní položka",
+          image: "",
+          marginPercent: "0",
+          marginStatic: "0.00",
+          prestigeAmount: "0",
+          printType: "DontPrint",
+          categoryIds: [],
+          modifierIds: [],
+        }
+      : {
+          name: saleItem.name,
+          image: saleItem.image,
+          marginPercent: String(saleItem.marginPercent),
+          marginStatic: String(saleItem.marginStatic),
+          prestigeAmount: String(saleItem.prestigeAmount),
+          printType: saleItem.printType,
+          categoryIds: saleItem.categories.map((cat) => cat.id),
+          modifierIds: saleItem.applicableModifiers.map((mod) => mod.id),
+        },
     resolver: zodResolver(ValidationSchema),
   });
 
   useEffect(() => {
     const getSaleItem = async () => {
-      const response = await handleApiCall(
-        api.saleItemsRead({
-          id: Number(id),
-        }),
-      );
-      setSaleItem(response);
+      const { data, response } = await apiClient.GET("/sale-items/{id}", {
+        params: { path: { id: Number(id) } },
+      });
+      setSaleItem(data);
+      if (!response.ok) {
+        handleApiError(response);
+      }
     };
     getSaleItem();
   }, []);
   useEffect(() => {
     const getCategories = async () => {
-      const response = await handleApiCall(categoryApi.categoriesReadAll());
-      if (response) {
-        setCategories(response.data);
-      } else {
-        setCategories(null);
+      const { response, data } = await apiClient.GET("/categories");
+      setCategories(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getCategories();
   }, []);
 
-  const saveSaleItem: SubmitHandler<SaleItemUpdateModel> = async (data) => {
+  const saveSaleItem: SubmitHandler<SaleItemUpdateModel> = async (
+    requestBody,
+  ) => {
     startLoading();
-    const response = await handleApiCall(
-      api.saleItemsUpdate({
-        id: Number(id),
-        saleItemUpdateModel: data,
-      }),
-    );
-    if (response) {
-      setSaleItem(response);
+    const { response, data, error } = await apiClient.PUT("/sale-items/{id}", {
+      params: { path: { id: Number(id) } },
+      body: requestBody,
+    });
+    if (data) {
+      setSaleItem(data);
+    } else {
+      handleApiError(response, error);
     }
     stopLoading();
   };

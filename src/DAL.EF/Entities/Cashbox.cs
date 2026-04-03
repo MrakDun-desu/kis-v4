@@ -5,8 +5,5 @@ public record Cashbox {
     public bool Deleted { get; set; }
     public required string Name { get; set; }
 
-    public int SalesAccountId { get; init; }
-    public Account? SalesAccount { get; init; } = new();
-    public int DonationsAccountId { get; init; }
-    public Account? DonationsAccount { get; init; } = new();
+    public required ICollection<CashBoxAccount> Accounts { get; init; }
 }

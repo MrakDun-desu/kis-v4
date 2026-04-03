@@ -349,4 +349,14 @@ public class ValidationHelper(
         }
         return true;
     }
+
+    internal async Task<bool> IdentifyOpenTransaction(int transactionId, CancellationToken token) {
+        var saleTransaction = await _dbContext.SaleTransactions.FindAsync(transactionId, token);
+
+        if (saleTransaction is null) {
+            return true;
+        }
+
+        return saleTransaction.OpenedById is not null;
+    }
 }

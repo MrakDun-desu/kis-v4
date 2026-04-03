@@ -1,10 +1,8 @@
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
-import { CategoriesApi, type CategoryModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new CategoriesApi(defaultConfiguration);
+import type { CategoryModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const CategoryFilter = ({
   onChange,
@@ -12,15 +10,14 @@ const CategoryFilter = ({
   onChange: (id: number | undefined) => void;
 }) => {
   const [current, setCurrent] = useState<number>();
-  const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+  const [categories, setCategories] = useState<CategoryModel[]>();
   useEffect(() => {
     const getCategories = async () => {
-      const response = await handleApiCall(api.categoriesReadAll());
-      if (!response) {
-        setCategories(null);
-        return;
+      const { data, response } = await apiClient.GET("/categories");
+      setCategories(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
-      setCategories(response.data);
     };
     getCategories();
   }, []);

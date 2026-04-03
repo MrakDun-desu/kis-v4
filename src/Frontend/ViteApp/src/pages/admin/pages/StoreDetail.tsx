@@ -1,16 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  StoreItemAmountsApi,
-  StoresApi,
-  StoreTransactionsApi,
-  TransactionReason,
-  type StoreItemAmountModel,
-  type StoreItemAmountsReadAllRequest,
-  type StoreReadResponse,
-  type StoreTransactionItemCreateRequest,
-  type StoreUpdateRequest,
-} from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -34,7 +23,6 @@ import {
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { Link, useParams } from "react-router-dom";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import {
   Controller,
   useFieldArray,
@@ -47,9 +35,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoading } from "../../../contexts/LoadingContext";
 import { AddCircle } from "@mui/icons-material";
 import { useSnackbar } from "../../../contexts/SnackbarContext";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import ContainerListView from "../../../components/views/ContainerListView";
 import StorePicker from "../../../components/pickers/StorePicker";
+import type {
+  StoreItemAmountModel,
+  StoreReadResponse,
+  StoreTransactionItemCreateRequest,
+  StoreUpdateRequest,
+  TransactionReason,
+} from "../../../api/apiTypes";
+import type { operations } from "../../../api/apiSchema";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const StoreValidationSchema = z.object({
   name: z
@@ -92,10 +89,10 @@ const TransactionValidationSchema = z
         }),
       )
       .optional(),
-    reason: z.custom<TransactionReason>().optional(),
+    reason: z.custom<TransactionReason>(),
     storeId: z.number(),
     sourceStoreId: z.number().optional(),
-    updateCosts: z.boolean().optional(),
+    updateCosts: z.boolean(),
   })
   .superRefine((val, ctx) => {
     if (val.reason === "ChangingStores" && val.sourceStoreId === undefined) {
@@ -109,20 +106,13 @@ const TransactionValidationSchema = z
   });
 
 type StoreTransactionFormData = z.infer<typeof TransactionValidationSchema>;
-
-const storesApi = new StoresApi(defaultConfiguration);
-const storeItemAmountsApi = new StoreItemAmountsApi(defaultConfiguration);
-const storeTransactionsApi = new StoreTransactionsApi(defaultConfiguration);
+type Query = operations["StoreItemAmountsReadAll"]["parameters"]["query"];
 
 const StoreDetail = () => {
   const { id } = useParams();
-  const [store, setStore] = useState<StoreReadResponse | null>(null);
-  const [storeItems, setStoreItems] = useState<StoreItemAmountModel[] | null>(
-    null,
-  );
-  const [request, setRequest] = useState<StoreItemAmountsReadAllRequest | null>(
-    null,
-  );
+  const [store, setStore] = useState<StoreReadResponse>();
+  const [storeItems, setStoreItems] = useState<StoreItemAmountModel[]>();
+  const [query, setQuery] = useState<Query>();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [rowCount, setRowCount] = useState<number>(0);
   const { startLoading, stopLoading } = useLoading();
@@ -158,19 +148,16 @@ const StoreDetail = () => {
   useEffect(() => {
     const getStore = async () => {
       setLoading(true);
-      const response = await handleApiCall(
-        storesApi.storesRead({
-          id: Number(id),
-        }),
-      );
-      if (response) {
-        setStore(response);
-        setStoreItems(response.storeItemAmounts.data);
-        setRowCount(response.storeItemAmounts.meta.total);
-      } else {
-        setStore(null);
-        setStoreItems(null);
-        setRowCount(0);
+      const { response, data } = await apiClient.GET("/stores/{id}", {
+        params: { path: { id: Number(id) } },
+      });
+
+      setStore(data);
+      setStoreItems(data?.storeItemAmounts.data);
+      setRowCount(data?.storeItemAmounts.meta.total ?? 0);
+
+      if (!response.ok) {
+        handleApiError(response);
       }
       setLoading(false);
     };
@@ -178,80 +165,85 @@ const StoreDetail = () => {
   }, []);
 
   useEffect(() => {
-    if (request === null) {
+    if (!query) {
       return;
     }
     const getStoreItemAmountsDeferred = setTimeout(async () => {
       setLoading(true);
-      const response = await handleApiCall(
-        storeItemAmountsApi.storeItemAmountsReadAll(request),
-      );
-      if (!response) {
-        setStoreItems(null);
-        setRowCount(0);
-      } else {
-        setStoreItems(response.data);
-        setRowCount(response.meta.total ?? 0);
+      const { response, data } = await apiClient.GET("/store-item-amounts", {
+        params: { query },
+      });
+      setStoreItems(data?.data);
+      setRowCount(data?.meta.total ?? 0);
+      if (!response.ok) {
+        handleApiError(response);
       }
       setLoading(false);
     }, 500);
     return () => clearTimeout(getStoreItemAmountsDeferred);
-  }, [request]);
+  }, [query]);
 
-  const updateStore: SubmitHandler<StoreUpdateRequest> = async (data) => {
+  const updateStore: SubmitHandler<StoreUpdateRequest> = async (
+    requestBody,
+  ) => {
     startLoading();
-    const response = await handleApiCall(
-      storesApi.storesUpdate({ id: Number(id), storeUpdateRequest: data }),
-    );
-    if (response) {
+    const { data, response, error } = await apiClient.PUT("/stores/{id}", {
+      params: { path: { id: Number(id) } },
+      body: requestBody,
+    });
+    if (data) {
       setStore((prev) =>
-        !prev
-          ? null
-          : {
+        prev
+          ? {
               ...prev,
-              name: response.name,
-            },
+              name: data.name,
+            }
+          : undefined,
       );
+    } else {
+      handleApiError(response, error);
     }
+
     stopLoading();
   };
 
   const createTransaction: SubmitHandler<StoreTransactionFormData> = async (
-    data,
+    responseBody,
   ) => {
     startLoading();
-    const response = await handleApiCall(
-      storeTransactionsApi.storeTransactionsCreate({
-        storeTransactionCreateRequest: {
-          ...data,
-          storeTransactionItems: data.storeTransactionItems?.map((sti) => ({
-            amount: sti.amount,
-            cost: sti.cost,
-            storeItemId: sti.storeItemId,
-          })),
+    const { response, data, error } = await apiClient.POST(
+      "/store-transactions",
+      {
+        body: {
+          ...responseBody,
+          storeTransactionItems: responseBody.storeTransactionItems?.map(
+            (sti: StoreTransactionItemCreateRequest) => ({
+              amount: sti.amount,
+              cost: sti.cost,
+              storeItemId: sti.storeItemId,
+            }),
+          ),
         },
-      }),
+      },
     );
-    if (response) {
-      showSnackbar(
-        `Transakce úspěšně uložena pod ID ${response.id}`,
-        "success",
+    if (data) {
+      showSnackbar(`Transakce úspěšně uložena pod ID ${data.id}`, "success");
+      setStoreItems((prev) =>
+        prev?.map((si) => {
+          const transactionItem = data.storeTransactionItems.find(
+            (sti) => sti.storeItem.id === si.storeItem.id,
+          );
+          return {
+            ...si,
+            amount:
+              transactionItem !== undefined
+                ? si.amount + transactionItem.itemAmount
+                : si.amount,
+          };
+        }),
       );
-      setStoreItems(
-        (prev) =>
-          prev?.map((si) => {
-            const transactionItem = response.storeTransactionItems.find(
-              (sti) => sti.storeItem.id === si.storeItem.id,
-            );
-            return {
-              ...si,
-              amount:
-                transactionItem !== undefined
-                  ? si.amount + transactionItem.itemAmount
-                  : si.amount,
-            };
-          }) ?? null,
-      );
+    } else {
+      handleApiError(response, error);
     }
     transactionForm.reset();
     stopLoading();
@@ -397,8 +389,8 @@ const StoreDetail = () => {
           initialState={{
             pagination: {
               paginationModel: {
-                page: request?.page ?? 0,
-                pageSize: request?.pageSize ?? 30,
+                page: query?.Page ?? 0,
+                pageSize: query?.PageSize ?? 30,
               },
             },
           }}
@@ -410,10 +402,10 @@ const StoreDetail = () => {
             if (!details.reason) {
               return;
             }
-            setRequest({
-              storeId: Number(id),
-              page: newModel.page + 1,
-              pageSize: newModel.pageSize,
+            setQuery({
+              StoreId: Number(id),
+              Page: newModel.page + 1,
+              PageSize: newModel.pageSize,
             });
           }}
           localeText={csCZ.components.MuiDataGrid.defaultProps.localeText}
@@ -626,16 +618,15 @@ const StoreDetail = () => {
 
             const changedAmount =
               Number(resp.data[0].template.amount) * resp.data.length;
-            setStoreItems(
-              (prev) =>
-                prev?.map((sia) =>
-                  sia.storeItem.id === storeItemId
-                    ? {
-                        ...sia,
-                        amount: String(Number(sia.amount) + changedAmount),
-                      }
-                    : sia,
-                ) ?? null,
+            setStoreItems((prev) =>
+              prev?.map((sia) =>
+                sia.storeItem.id === storeItemId
+                  ? {
+                      ...sia,
+                      amount: String(Number(sia.amount) + changedAmount),
+                    }
+                  : sia,
+              ),
             );
           }}
         />

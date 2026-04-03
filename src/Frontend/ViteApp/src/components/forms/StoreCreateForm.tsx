@@ -2,13 +2,11 @@ import z from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField } from "@mui/material";
-import { StoresApi, type StoreCreateRequest } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new StoresApi(defaultConfiguration);
+import type { StoreCreateRequest } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   name: z
@@ -38,10 +36,17 @@ const StoreCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
     resolver: zodResolver(ValidationSchema),
   });
 
-  const submitForm: SubmitHandler<StoreCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<StoreCreateRequest> = async (
+    responseBody,
+  ) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.storesCreate({ storeCreateRequest: data }));
+    const { response, error } = await apiClient.POST("/stores", {
+      body: responseBody,
+    });
+    if (!response.ok) {
+      handleApiError(response, error);
+    }
     stopLoading();
     afterSubmit?.();
   };

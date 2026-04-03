@@ -11,6 +11,7 @@ public static class SaleTransactionItemMapping {
         LineNumber = source.LineNumber,
         Modifications = source.Modifications.Select(m => m.ToModel()),
         SaleItemName = source.SaleItem!.Name,
+        SaleItemId = source.SaleItemId,
         BasePrice = source.BasePrice
     };
 
@@ -22,6 +23,7 @@ public static class SaleTransactionItemMapping {
         LineNumber = source.LineNumber,
         Modifications = source.Modifications.Select(m => m.ToModel(composites)),
         SaleItemName = composites[source.SaleItemId].Item.Name,
+        SaleItemId = source.SaleItemId,
         BasePrice = source.BasePrice
     };
 }

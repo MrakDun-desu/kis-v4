@@ -6,15 +6,10 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import {
-  ContainerTemplatesApi,
-  type ContainerTemplateModel,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
 import type { EntityWithName } from "../../stores/posStore";
-
-const api = new ContainerTemplatesApi(defaultConfiguration);
+import type { ContainerTemplateModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ContainerTemplatePicker = ({
   onChange,
@@ -39,9 +34,10 @@ const ContainerTemplatePicker = ({
       return;
     }
     const getContainerTemplates = async () => {
-      const resp = await handleApiCall(api.containerTemplatesReadAll());
-      if (resp) {
-        setContainerTemplates(resp.data);
+      const { response, data } = await apiClient.GET("/container-templates");
+      setContainerTemplates(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getContainerTemplates();

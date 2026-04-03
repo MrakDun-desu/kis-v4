@@ -2,17 +2,12 @@ import z from "zod";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField } from "@mui/material";
-import {
-  ContainerTemplatesApi,
-  type ContainerTemplateCreateRequest,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
 import StoreItemPicker from "../pickers/StoreItemPicker";
-
-const api = new ContainerTemplatesApi(defaultConfiguration);
+import type { ContainerTemplateCreateRequest } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   name: z
@@ -52,13 +47,16 @@ const ContainerTemplateCreateForm = ({
   });
 
   const submitForm: SubmitHandler<ContainerTemplateCreateRequest> = async (
-    data,
+    requestBody,
   ) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(
-      api.containerTemplatesCreate({ containerTemplateCreateRequest: data }),
-    );
+    const { response, error } = await apiClient.POST("/container-templates", {
+      body: requestBody,
+    });
+    if (!response.ok) {
+      handleApiError(response, error);
+    }
     stopLoading();
     afterSubmit?.();
   };

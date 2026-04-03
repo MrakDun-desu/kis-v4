@@ -1,25 +1,18 @@
 import { Box, Button, Paper, Skeleton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  ContainerChangesApi,
-  ContainersApi,
-  PipesApi,
-  type ContainerChangeCreateRequest,
-  type PipeReadResponse,
-} from "../../../api-generated";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { useLoading } from "../../../contexts/LoadingContext";
 import { usePosStore } from "../../../stores/posStore";
-
-const api = new PipesApi(defaultConfiguration);
-const changesApi = new ContainerChangesApi(defaultConfiguration);
-const containersApi = new ContainersApi(defaultConfiguration);
+import type {
+  ContainerChangeCreateRequest,
+  PipeReadResponse,
+} from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const PosPipe = () => {
   const { id } = useParams();
-  const [pipe, setPipe] = useState<PipeReadResponse | null>(null);
+  const [pipe, setPipe] = useState<PipeReadResponse>();
   const [refreshCounter, setRefreshCounter] = useState(0);
   const { startLoading, stopLoading } = useLoading();
   const currentStore = usePosStore((state) => state.currentStore);
@@ -27,42 +20,47 @@ const PosPipe = () => {
 
   useEffect(() => {
     const getPipe = async () => {
-      const response = await handleApiCall(
-        api.pipesRead({
-          id: Number(id),
-          storeId: currentStore?.id,
-        }),
-      );
-      setPipe(response);
+      const { data, response, error } = await apiClient.GET("/pipes/{id}", {
+        params: {
+          path: { id: Number(id) },
+          query: { StoreId: currentStore?.id },
+        },
+      });
+      if (!response.ok) {
+        handleApiError(response, error);
+      }
+      setPipe(data);
     };
     getPipe();
   }, [refreshCounter]);
 
-  const changeContainer = async (data: ContainerChangeCreateRequest) => {
+  const changeContainer = async (requestBody: ContainerChangeCreateRequest) => {
     startLoading();
-    const response = await handleApiCall(
-      changesApi.containerChangesCreate({
-        containerChangeCreateRequest: data,
-      }),
-    );
-    stopLoading();
-    if (response) {
+    const { response, error } = await apiClient.POST("/container-changes", {
+      body: requestBody,
+    });
+    if (response.ok) {
       setRefreshCounter((prev) => prev + 1);
+    } else {
+      handleApiError(response, error);
     }
+    stopLoading();
   };
 
   const removeFromPipe = async (id: number, storeId: number) => {
     startLoading();
-    const response = await handleApiCall(
-      containersApi.containersUpdate({
-        id,
-        containerUpdateModel: { storeId, pipeId: undefined },
-      }),
-    );
-    stopLoading();
-    if (response) {
+    const { response, error } = await apiClient.PUT("/containers/{id}", {
+      params: { path: { id } },
+      body: {
+        storeId,
+      },
+    });
+    if (response.ok) {
       setRefreshCounter((prev) => prev + 1);
+    } else {
+      handleApiError(response, error);
     }
+    stopLoading();
   };
 
   if (!pipe) {

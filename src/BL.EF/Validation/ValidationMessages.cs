@@ -1,5 +1,3 @@
-using KisV4.Common.Models;
-
 namespace KisV4.BL.EF.Validation;
 
 public static class ValidationMessages {
@@ -124,6 +122,9 @@ public static class ValidationMessages {
     public const string CantUpdateUnusableContainer = $"""
         Nemožno upravit pípu starému kegu
         """;
+    public const string CantUpdateFinishedTransaction = $"""
+        Není možné upravit už ukončenou prodejní transakci
+        """;
 
     // strings
     public const string NameTooLongMessage = $"""
@@ -187,8 +188,5 @@ public static class ValidationMessages {
         """;
     public const string StoreItemIdsNotValidMessage = $"""
         Aspoň jedno z {StoreItemIdPropName} neodpovídá žádné existující skladové položce
-        """;
-    public const string ContainerSaleItemNotValidMessage = $"""
-        Prodejní položka může mít v zložení jen jednu (exkluzivní) kegovou skladovou položku
         """;
 }

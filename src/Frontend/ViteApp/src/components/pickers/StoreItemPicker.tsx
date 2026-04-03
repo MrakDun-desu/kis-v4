@@ -5,11 +5,9 @@ import {
   FormHelperText,
   TextField,
 } from "@mui/material";
-import { StoreItemsApi, type StoreItemListModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new StoreItemsApi(defaultConfiguration);
+import type { StoreItemListModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const StoreItemPicker = ({
   onChange,
@@ -22,9 +20,7 @@ const StoreItemPicker = ({
   error: boolean;
   helperText: string | undefined;
 }) => {
-  const [storeItems, setStoreItems] = useState<StoreItemListModel[] | null>(
-    null,
-  );
+  const [storeItems, setStoreItems] = useState<StoreItemListModel[]>();
   const [loading, setLoading] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -46,22 +42,21 @@ const StoreItemPicker = ({
           }
 
           if (!value || value.length < 1) {
-            setStoreItems(null);
+            setStoreItems(undefined);
           } else {
             debounceRef.current = setTimeout(async () => {
-              const isContainerItem = containerItemsOnly ?? undefined;
-              const response = await handleApiCall(
-                api.storeItemsReadAll({
-                  page: 1,
-                  pageSize: 100,
-                  name: value,
-                  isContainerItem,
-                }),
+              const IsContainerItem = containerItemsOnly ?? undefined;
+              const { response, data, error } = await apiClient.GET(
+                "/store-items",
+                {
+                  params: {
+                    query: { PageSize: 20, name: value, IsContainerItem },
+                  },
+                },
               );
-              if (!response) {
-                setStoreItems(null);
-              } else {
-                setStoreItems(response.data);
+              setStoreItems(data?.data);
+              if (!response.ok) {
+                handleApiError(response, error);
               }
               setLoading(false);
             }, 500);

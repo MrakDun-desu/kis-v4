@@ -1,6 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import { StoresApi, type StoreListModel } from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -12,14 +11,13 @@ import {
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import StoreCreateForm from "../../../components/forms/StoreCreateForm";
-
-const api = new StoresApi(defaultConfiguration);
+import type { StoreListModel } from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const Stores = () => {
-  const [stores, setStores] = useState<StoreListModel[] | null>(null);
+  const [stores, setStores] = useState<StoreListModel[]>();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
@@ -28,13 +26,11 @@ const Stores = () => {
   useEffect(() => {
     setLoading(true);
     const getStoresDeferred = setTimeout(async () => {
-      const response = await handleApiCall(api.storesReadAll());
-      if (!response) {
-        setStores(null);
-        setLoading(false);
-        return;
+      const { response, data } = await apiClient.GET("/stores");
+      setStores(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
-      setStores(response.data);
       setLoading(false);
     }, 500);
     return () => clearTimeout(getStoresDeferred);
@@ -83,12 +79,14 @@ const Stores = () => {
               `Opravdu chcete ${params.row.name} smazat?`,
             );
             if (confirmed) {
-              await handleApiCall(
-                api.storesDelete({
-                  id: params.row.id,
-                }),
-              );
-              refreshStores();
+              const { response } = await apiClient.DELETE("/stores/{id}", {
+                params: { path: { id: params.row.id } },
+              });
+              if (!response.ok) {
+                handleApiError(response);
+              } else {
+                refreshStores();
+              }
             }
           }}
         >

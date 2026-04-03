@@ -1,29 +1,25 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  ContainersApi,
-  type ContainerOperatorReadResponse,
-} from "../../../api-generated";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import { Box, Typography, Skeleton, Paper } from "@mui/material";
 import ContainerSaleItemView from "../../../components/views/ContainerSaleItemView";
-
-const api = new ContainersApi(defaultConfiguration);
+import type { ContainerOperatorReadResponse } from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const PosContainerDetail = () => {
-  const [container, setContainer] =
-    useState<ContainerOperatorReadResponse | null>(null);
+  const [container, setContainer] = useState<ContainerOperatorReadResponse>();
   const { id } = useParams();
 
   useEffect(() => {
     const getContainer = async () => {
-      const response = await handleApiCall(
-        api.containersOperatorRead({
-          id: Number(id),
-        }),
+      const { response, data } = await apiClient.GET(
+        "/containers/{id}/operator",
+        { params: { path: { id: Number(id) } } },
       );
-      setContainer(response);
+      setContainer(data);
+      if (!response.ok) {
+        handleApiError(response);
+      }
     };
     getContainer();
   }, []);

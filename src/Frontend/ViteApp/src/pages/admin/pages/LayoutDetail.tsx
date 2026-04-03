@@ -1,13 +1,4 @@
 import z from "zod";
-import {
-  type LayoutItemType,
-  type LayoutReadResponse,
-  LayoutsApi,
-  type LayoutItemModel,
-  type LayoutListModel,
-  type PipeListModel,
-  PipesApi,
-} from "../../../api-generated";
 import validationConstants from "../../../constants/validationConstants";
 import {
   Controller,
@@ -20,9 +11,7 @@ import {
   type UseFieldArrayReturn,
 } from "react-hook-form";
 import { useEffect, useState } from "react";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { useParams } from "react-router-dom";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import {
   Box,
   Button,
@@ -43,9 +32,15 @@ import { usePosStore } from "../../../stores/posStore";
 import SaleItemPicker from "../../../components/pickers/SaleItemPicker";
 import LayoutPicker from "../../../components/pickers/LayoutPicker";
 import PipePicker from "../../../components/pickers/PipePicker";
-
-const api = new LayoutsApi(defaultConfiguration);
-const pipesApi = new PipesApi(defaultConfiguration);
+import type {
+  LayoutItemModel,
+  LayoutItemType,
+  LayoutListModel,
+  LayoutReadResponse,
+  PipeListModel,
+} from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   name: z
@@ -53,7 +48,7 @@ const ValidationSchema = z.object({
     .min(1, "Jméno nesmí být prázdné")
     .max(validationConstants.maxNameLength, "Jméno přesahuje maximální délku"),
   image: z.string().nullish(),
-  topLevel: z.boolean().optional(),
+  topLevel: z.boolean(),
   layoutItems: z.array(
     z.object({
       x: z
@@ -75,7 +70,7 @@ type LayoutUpdateFormData = z.infer<typeof ValidationSchema>;
 const LayoutDetail = () => {
   const { id } = useParams();
   const { startLoading, stopLoading } = useLoading();
-  const [layout, setLayout] = useState<LayoutReadResponse | null>(null);
+  const [layout, setLayout] = useState<LayoutReadResponse>();
   const [layouts, setLayouts] = useState<LayoutListModel[]>();
   const [pipes, setPipes] = useState<PipeListModel[]>();
   const setCurrentLayout = usePosStore((state) => state.setCurrentLayout);
@@ -114,13 +109,13 @@ const LayoutDetail = () => {
 
   useEffect(() => {
     const getLayout = async () => {
-      const response = await handleApiCall(
-        api.layoutsRead({
-          id: Number(id),
-        }),
-      );
-      if (response) {
-        setLayout(response);
+      const { response, data } = await apiClient.GET("/layouts/{id}", {
+        params: { path: { id: Number(id) } },
+      });
+
+      setLayout(data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getLayout();
@@ -131,9 +126,10 @@ const LayoutDetail = () => {
       return;
     }
     const getPipes = async () => {
-      const resp = await handleApiCall(pipesApi.pipesReadAll());
-      if (resp) {
-        setPipes(resp.data);
+      const { response, data } = await apiClient.GET("/pipes");
+      setPipes(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getPipes();
@@ -144,25 +140,29 @@ const LayoutDetail = () => {
       return;
     }
     const getLayouts = async () => {
-      const resp = await handleApiCall(api.layoutsReadAll());
-      if (resp) {
-        setLayouts(resp.data);
+      const { response, data } = await apiClient.GET("/layouts");
+      setLayouts(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getLayouts();
   }, []);
 
-  const updateLayout: SubmitHandler<LayoutUpdateFormData> = async (data) => {
+  const updateLayout: SubmitHandler<LayoutUpdateFormData> = async (
+    requestBody,
+  ) => {
     startLoading();
-    const response = await handleApiCall(
-      api.layoutsUpdate({
-        id: Number(id),
-        layoutUpdateRequestModel: data,
-      }),
-    );
-    if (response) {
-      setLayout(response);
+    const { data, response, error } = await apiClient.PUT("/layouts/{id}", {
+      params: { path: { id: Number(id) } },
+      body: requestBody,
+    });
+    if (data) {
+      setLayout(data);
       setCurrentLayout(undefined);
+    }
+    if (!response.ok) {
+      handleApiError(response, error);
     }
     stopLoading();
   };

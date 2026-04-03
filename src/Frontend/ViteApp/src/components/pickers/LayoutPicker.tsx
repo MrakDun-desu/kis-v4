@@ -5,11 +5,9 @@ import {
   FormHelperText,
   TextField,
 } from "@mui/material";
-import { LayoutsApi, type LayoutListModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new LayoutsApi(defaultConfiguration);
+import type { LayoutListModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const LayoutPicker = ({
   onChange,
@@ -36,9 +34,10 @@ const LayoutPicker = ({
     }
     const getLayouts = async () => {
       setLoading(true);
-      const resp = await handleApiCall(api.layoutsReadAll());
-      if (resp) {
-        setLayouts(resp.data);
+      const { data, response } = await apiClient.GET("/layouts");
+      setLayouts(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
       setLoading(false);
     };

@@ -59,8 +59,8 @@ public class StoreTransactionService(
             },
             (data, meta) => new StoreTransactionReadAllResponse { Data = data, Meta = meta },
             entity => entity.StartedAt,
-            true,
-            token
+            orderDesc: true,
+            token: token
         );
     }
 

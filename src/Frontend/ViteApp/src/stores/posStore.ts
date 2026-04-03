@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { LayoutReadResponse } from "../api-generated";
+import type { LayoutReadResponse } from "../api/apiTypes";
 
 interface ModificationDisplay {
   amount: number;

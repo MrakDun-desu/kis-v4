@@ -2,13 +2,10 @@ import { Box, Paper, Skeleton } from "@mui/material";
 import { usePosStore } from "../../../stores/posStore";
 import { useShallow } from "zustand/react/shallow";
 import { useEffect } from "react";
-import { LayoutsApi } from "../../../api-generated";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { useSnackbar } from "../../../contexts/SnackbarContext";
 import LayoutItemView from "../../../components/views/LayoutItemView";
-
-const layoutsApi = new LayoutsApi(defaultConfiguration);
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const Orders = () => {
   const { currentStore, currentLayout, layoutId, setLayout } = usePosStore(
@@ -22,17 +19,23 @@ const Orders = () => {
   const { showSnackbar } = useSnackbar();
 
   const fetchLayout = async () => {
-    const resp = !layoutId
-      ? await handleApiCall(
-          layoutsApi.layoutsReadTopLevel({ storeId: currentStore?.id }),
-          () => showSnackbar("Není nastaveno výchozí rozložení!", "warning"),
-        )
-      : await handleApiCall(
-          layoutsApi.layoutsRead({ id: layoutId, storeId: currentStore?.id }),
-        );
+    const { response, data, error } = !layoutId
+      ? await apiClient.GET("/layouts/top-level", {
+          params: { query: { StoreId: currentStore?.id } },
+        })
+      : await apiClient.GET("/layouts/{id}", {
+          params: {
+            path: { id: layoutId },
+            query: { StoreId: currentStore?.id },
+          },
+        });
 
-    if (resp) {
-      setLayout(resp);
+    if (data) {
+      setLayout(data);
+    } else {
+      handleApiError(response, error, () =>
+        showSnackbar("Není nastaveno výchozí rozložení!", "warning"),
+      );
     }
   };
 

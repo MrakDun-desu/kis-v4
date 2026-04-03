@@ -2,13 +2,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField } from "@mui/material";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
-import { PipesApi, type PipeCreateRequest } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new PipesApi(defaultConfiguration);
+import type { PipeCreateRequest } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   name: z
@@ -38,10 +36,15 @@ const PipeCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
     resolver: zodResolver(ValidationSchema),
   });
 
-  const submitForm: SubmitHandler<PipeCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<PipeCreateRequest> = async (requestBody) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.pipesCreate({ pipeCreateRequest: data }));
+    const { response, error } = await apiClient.POST("/pipes", {
+      body: requestBody,
+    });
+    if (!response.ok) {
+      handleApiError(response, error);
+    }
     stopLoading();
     afterSubmit?.();
   };

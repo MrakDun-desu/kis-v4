@@ -124,7 +124,7 @@ public class ContainerService(
                 .FirstAsync(t => t.Id == req.TemplateId, token);
             await StoreTransactionService.CreateInternalAsync(
                     new StoreTransactionCreateRequest {
-                        Note = "Automatic store transaction triggered by container creation",
+                        Note = "Vytvoření kegu",
                         UpdateCosts = req.UpdateCosts,
                         Reason = TransactionReason.AddingToStore,
                         StoreId = req.StoreId,

@@ -41,7 +41,7 @@ public class StoreItemService(
                     Id = si.Id,
                     IsContainerItem = si.IsContainerItem,
                     Name = si.Name,
-                    CurrentCost = si.CurrentCost,
+                    CurrentCost = Math.Round(si.CurrentCost, 2),
                     UnitName = si.UnitName
                 },
                 (data, meta) => new StoreItemReadAllResponse { Data = data, Meta = meta },
@@ -56,14 +56,12 @@ public class StoreItemService(
             ) {
         return await _dbContext.StoreItems
             .Include(si => si.Categories)
-            .Include(si => si.Costs)
-            .ThenInclude(si => si.User)
             .Select(si => new StoreItemReadResponse {
                 Id = si.Id,
                 Name = si.Name,
                 UnitName = si.UnitName,
                 IsContainerItem = si.IsContainerItem,
-                CurrentCost = si.CurrentCost,
+                CurrentCost = Math.Round(si.CurrentCost, 2),
                 Categories = si.Categories.Select(c => c.ToModel()),
             })
             .FirstOrDefaultAsync(si => si.Id == id, token);
@@ -88,7 +86,7 @@ public class StoreItemService(
             Costs = [
                 new Cost {
                     Amount = req.InitialCost,
-                    Description = "Initial cost",
+                    Description = "Počáteční cena",
                     Timestamp = reqTime,
                     UserId = user.Id
                 }

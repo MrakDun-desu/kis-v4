@@ -1,86 +1,75 @@
 import { Link, useParams } from "react-router-dom";
-import {
-  ContainerChangesApi,
-  ContainersApi,
-  type ContainerChangeCreateRequest,
-  type ContainerReadResponse,
-  type ContainerUpdateModel,
-} from "../../../api-generated";
 import { useEffect, useState } from "react";
 import { Box, Button, Skeleton, Typography } from "@mui/material";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { useLoading } from "../../../contexts/LoadingContext";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import StorePicker from "../../../components/pickers/StorePicker";
 import PipePicker from "../../../components/pickers/PipePicker";
 import ContainerChangeListView from "../../../components/views/ContainerChangeListView";
 import { containerStates } from "../../../constants/containerStates";
-
-const api = new ContainersApi(defaultConfiguration);
-const changesApi = new ContainerChangesApi(defaultConfiguration);
+import type {
+  ContainerChangeCreateRequest,
+  ContainerReadResponse,
+  ContainerUpdateModel,
+} from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const ContainerDetail = () => {
-  const [container, setContainer] = useState<ContainerReadResponse | null>(
-    null,
-  );
+  const [container, setContainer] = useState<ContainerReadResponse>();
   const { startLoading, stopLoading } = useLoading();
   const [changeRefreshCounter, setChangeRefreshCounter] = useState(0);
   const { id } = useParams();
 
   useEffect(() => {
     const getContainer = async () => {
-      const response = await handleApiCall(
-        api.containersRead({
-          id: Number(id),
-        }),
-      );
-      setContainer(response);
+      const { response, data } = await apiClient.GET("/containers/{id}", {
+        params: { path: { id: Number(id) } },
+      });
+      if (!data) {
+        handleApiError(response);
+      }
+      setContainer(data);
     };
     getContainer();
   }, []);
 
-  const updateContainer = async (data: ContainerUpdateModel) => {
+  const updateContainer = async (requestBody: ContainerUpdateModel) => {
     startLoading();
-    const response = await handleApiCall(
-      api.containersUpdate({
-        id: Number(id),
-        containerUpdateModel: data,
-      }),
-    );
+    const { response, data } = await apiClient.PUT("/containers/{id}", {
+      params: { path: { id: Number(id) } },
+      body: requestBody,
+    });
     stopLoading();
-    if (response) {
+    if (data) {
       setChangeRefreshCounter((prev) => prev + 1);
-      setContainer((prev) =>
-        prev
-          ? {
-              ...response,
-              containerChanges: prev.containerChanges,
-            }
-          : null,
-      );
+      setContainer((prev) => ({
+        ...data,
+        containerChanges: prev?.containerChanges ?? [],
+      }));
+    } else {
+      handleApiError(response);
     }
   };
 
-  const changeContainer = async (data: ContainerChangeCreateRequest) => {
+  const changeContainer = async (requestBody: ContainerChangeCreateRequest) => {
     startLoading();
-    const response = await handleApiCall(
-      changesApi.containerChangesCreate({
-        containerChangeCreateRequest: data,
-      }),
-    );
+    const { data, response } = await apiClient.POST("/container-changes", {
+      body: requestBody,
+    });
     stopLoading();
-    if (response) {
+    if (data) {
       setChangeRefreshCounter((prev) => prev + 1);
       setContainer((prev) =>
         prev
           ? {
               ...prev,
-              amount: response.newAmount,
-              state: response.newState,
-              pipe: null,
+              amount: data.newAmount,
+              state: data.newState,
             }
-          : null,
+          : undefined,
       );
+    } else {
+      handleApiError(response);
     }
   };
 

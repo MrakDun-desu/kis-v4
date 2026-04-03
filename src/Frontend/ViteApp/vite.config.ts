@@ -30,6 +30,7 @@ export default defineConfig({
   },
   build: {
     outDir: "../wwwroot",
+    emptyOutDir: true
   },
   plugins: [
     react({

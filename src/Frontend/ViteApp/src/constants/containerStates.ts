@@ -1,4 +1,4 @@
-import type { ContainerState } from "../api-generated";
+import type { ContainerState } from "../api/apiTypes";
 
 export const containerStates: Record<ContainerState, string> = {
   Bad: "Špatný",

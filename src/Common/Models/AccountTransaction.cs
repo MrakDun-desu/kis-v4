@@ -1,4 +1,3 @@
-using KisV4.Common.Enums;
 using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
@@ -8,7 +7,7 @@ public record AccountTransactionModel {
     public required decimal Amount { get; init; }
     public required int SaleTransactionId { get; init; }
     public required DateTimeOffset Timestamp { get; init; }
-    public required AccountTransactionType Type { get; init; }
+    public required AccountModel Account { get; init; }
 }
 
 // Requests and responses

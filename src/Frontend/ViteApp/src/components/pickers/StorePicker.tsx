@@ -6,12 +6,10 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { StoresApi, type StoreListModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
 import type { EntityWithName } from "../../stores/posStore";
-
-const api = new StoresApi(defaultConfiguration);
+import type { StoreListModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const StorePicker = ({
   onChange,
@@ -36,9 +34,10 @@ const StorePicker = ({
       return;
     }
     const getStores = async () => {
-      const resp = await handleApiCall(api.storesReadAll());
-      if (resp) {
-        setStores(resp.data);
+      const { response, data, error } = await apiClient.GET("/stores");
+      setStores(data?.data);
+      if (!response.ok) {
+        handleApiError(response, error);
       }
     };
     getStores();

@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build --emptyOutDir",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-apis": "openapi-generator-cli generate -i ../../../kisv4-openapi-doc.json -g typescript-fetch -o src/api-generated/"
+    "generate-apis": "openapi-typescript ../../../kisv4-openapi-doc.json -o ./src/api/apiSchema.ts && node --experimental-strip-types scripts/generate-api-types.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
@@ -21,6 +21,8 @@
     "@mui/x-data-grid": "^8.27.3",
     "kis-reader-lib": "../../../../kis-reader-lib",
     "npm-check-updates": "^19.6.3",
+    "openapi-fetch": "^0.17.0",
+    "openapi-typescript": "^7.13.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-hook-form": "^7.71.2",
@@ -30,8 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@openapitools/openapi-generator-cli": "^2.30.1",
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.12.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",

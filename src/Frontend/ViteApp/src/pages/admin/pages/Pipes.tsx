@@ -1,6 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import { PipesApi, type PipeListModel } from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -11,11 +10,10 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import PipeCreateForm from "../../../components/forms/PipeCreateForm";
-
-const api = new PipesApi(defaultConfiguration);
+import type { PipeListModel } from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const Pipes = () => {
   const [pipes, setPipes] = useState<PipeListModel[] | null>(null);
@@ -26,13 +24,13 @@ const Pipes = () => {
   useEffect(() => {
     setLoading(true);
     const getPipesDeferred = setTimeout(async () => {
-      const response = await handleApiCall(api.pipesReadAll());
-      if (!response) {
+      const { data, response } = await apiClient.GET("/pipes");
+      if (!data) {
         setPipes(null);
-        setLoading(false);
-        return;
+        handleApiError(response);
+      } else {
+        setPipes(data.data);
       }
-      setPipes(response.data);
       setLoading(false);
     }, 500);
     return () => clearTimeout(getPipesDeferred);
@@ -72,12 +70,14 @@ const Pipes = () => {
               `Opravdu chcete ${params.row.name} smazat?`,
             );
             if (confirmed) {
-              await handleApiCall(
-                api.pipesDelete({
-                  id: params.row.id,
-                }),
-              );
-              refreshPipes();
+              const { response } = await apiClient.DELETE("/pipes/{id}", {
+                params: { path: { id: params.row.id } },
+              });
+              if (!response.ok) {
+                handleApiError(response);
+              } else {
+                refreshPipes();
+              }
             }
           }}
         >

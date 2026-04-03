@@ -7,11 +7,11 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 import type {
   StoreTransactionItemModel,
   TransactionReason,
-} from "../../api-generated";
-import { Link } from "react-router-dom";
+} from "../../api/apiTypes";
 
 const StoreTransactionItemListView = ({
   transactionReason,
@@ -53,6 +53,7 @@ const StoreTransactionItemListView = ({
               </TableCell>
 
               <TableCell>
+                {Number(item.itemAmount) > 0 && "+"}
                 {item.itemAmount} {item.storeItem.unitName}
               </TableCell>
 

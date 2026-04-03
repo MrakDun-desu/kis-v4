@@ -2,19 +2,16 @@ import z from "zod";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material";
-import {
-  ContainersApi,
-  type ContainerCreateRequest,
-  type ContainerCreateResponse,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
 import ContainerTemplatePicker from "../pickers/ContainerTemplatePicker";
 import StorePicker from "../pickers/StorePicker";
-
-const api = new ContainersApi(defaultConfiguration);
+import type {
+  ContainerCreateResponse,
+  ContainerCreateRequest,
+} from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   templateId: z.int("Vyberte typ kegu"),
@@ -27,7 +24,7 @@ const ValidationSchema = z.object({
       (val) => Number(val) >= 0,
       "Nákupná cena musí být větší/rovna nule",
     ),
-  updateCosts: z.boolean().optional(),
+  updateCosts: z.boolean(),
 });
 
 type Props = {
@@ -58,15 +55,20 @@ const ContainerCreateForm = ({
     resolver: zodResolver(ValidationSchema),
   });
 
-  const submitForm: SubmitHandler<ContainerCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<ContainerCreateRequest> = async (
+    requestBody,
+  ) => {
     beforeSubmit?.();
     startLoading();
-    const resp = await handleApiCall(
-      api.containersCreate({ containerCreateRequest: data }),
-    );
+    const { data, response, error } = await apiClient.POST("/containers", {
+      body: requestBody,
+    });
+    if (!response.ok) {
+      handleApiError(response, error);
+    }
     stopLoading();
-    if (resp) {
-      afterSubmit?.(resp);
+    if (data) {
+      afterSubmit?.(data);
     }
   };
 

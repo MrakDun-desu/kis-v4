@@ -1,9 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  ContainerTemplatesApi,
-  type ContainerTemplateModel,
-} from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -14,12 +10,11 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import { Link } from "react-router-dom";
 import ContainerTemplateCreateForm from "../../../components/forms/ContainerTemplateCreateForm";
-
-const api = new ContainerTemplatesApi(defaultConfiguration);
+import type { ContainerTemplateModel } from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const ContainerTemplates = () => {
   const [containerTemplates, setContainerTemplates] = useState<
@@ -32,13 +27,13 @@ const ContainerTemplates = () => {
   useEffect(() => {
     setLoading(true);
     const getContainerTemplatesDeferred = setTimeout(async () => {
-      const response = await handleApiCall(api.containerTemplatesReadAll());
-      if (!response) {
+      const { response, data } = await apiClient.GET("/container-templates");
+      if (!data) {
         setContainerTemplates(null);
-        setLoading(false);
-        return;
+        handleApiError(response);
+      } else {
+        setContainerTemplates(data.data);
       }
-      setContainerTemplates(response.data);
       setLoading(false);
     }, 500);
     return () => clearTimeout(getContainerTemplatesDeferred);
@@ -104,12 +99,13 @@ const ContainerTemplates = () => {
               `Opravdu chcete ${params.row.name} smazat?`,
             );
             if (confirmed) {
-              await handleApiCall(
-                api.containerTemplatesDelete({
-                  id: params.row.id,
-                }),
+              const { response } = await apiClient.DELETE(
+                "/container-templates/{id}",
+                { params: { path: { id: params.row.id } } },
               );
-              refreshContainerTemplates();
+              if (response.ok) {
+                refreshContainerTemplates();
+              }
             }
           }}
         >

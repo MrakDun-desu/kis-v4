@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using KisV4.Common.Enums;
-using KisV4.Common.ModelWrappers;
 
 namespace KisV4.Common.Models;
 

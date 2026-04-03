@@ -68,9 +68,4 @@ app.UseAuthorization();
 app.MapRemoteBffApiEndpoint("/api", new Uri("https://localhost:7001"))
     .WithAccessToken();
 
-app.MapGet("/bff/logout", async (HttpContext ctx) => {
-    await ctx.SignOutAsync("Cookies");
-    await ctx.SignOutAsync("oidc");
-}).RequireAuthorization();
-
 app.Run();

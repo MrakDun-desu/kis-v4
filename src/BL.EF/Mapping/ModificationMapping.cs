@@ -10,6 +10,7 @@ public static class ModificationMapping {
         new() {
             Amount = source.Amount,
             ModifierName = source.Modifier!.Name,
+            ModifierId = source.ModifierId,
             PriceChange = source.PriceChange
         };
 
@@ -19,6 +20,7 @@ public static class ModificationMapping {
     ) =>
         new() {
             Amount = source.Amount,
+            ModifierId = source.ModifierId,
             ModifierName = composites[source.ModifierId].Item.Name,
             PriceChange = source.PriceChange
         };

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useAuth } from "./AuthContext";
 import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
 

@@ -6,12 +6,10 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { CashBoxesApi, type CashBoxListModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
 import type { EntityWithName } from "../../stores/posStore";
-
-const api = new CashBoxesApi(defaultConfiguration);
+import type { CashBoxListModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const CashBoxPicker = ({
   onChange,
@@ -36,9 +34,10 @@ const CashBoxPicker = ({
       return;
     }
     const getCashBoxes = async () => {
-      const resp = await handleApiCall(api.cashBoxesReadAll());
-      if (resp) {
-        setCashBoxes(resp.data);
+      const { data, response } = await apiClient.GET("/cashboxes");
+      setCashBoxes(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getCashBoxes();

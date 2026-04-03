@@ -65,6 +65,7 @@ public static class IQueryableExtensions {
             Func<TOut[], PageMeta, TOutPage> factory,
             Func<TSource, TOrder> order,
             bool orderDesc = false,
+            bool materializeBeforeMapping = false,
             CancellationToken token = default
             )
     where TOutPage : PagedResponse<TOut> {
@@ -78,13 +79,24 @@ public static class IQueryableExtensions {
         var page = req.Page ?? 1;
         var pageSize = req.PageSize ?? DefaultPageSize;
 
-        return factory(
-            await ordered
+        TOut[] output = materializeBeforeMapping switch {
+            false => await ordered
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(mapping)
                 .ToAsyncEnumerable()
                 .ToArrayAsync(token),
+            true => (await ordered
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToAsyncEnumerable()
+                .ToArrayAsync(token))
+                .Select(mapping)
+                .ToArray()
+        };
+
+        return factory(
+            output,
             new PageMeta {
                 Page = page,
                 PageSize = pageSize,

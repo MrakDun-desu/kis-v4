@@ -1,29 +1,25 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  StoreTransactionsApi,
-  TransactionReason,
-  type StoreTransactionListModel,
-  type StoreTransactionsReadAllRequest,
-  type UserListModel,
-} from "../../../api-generated";
 import { useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { Link, useNavigate } from "react-router-dom";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import { transactionReasons } from "../../../constants/transactionReasons";
+import type { operations } from "../../../api/apiSchema";
+import type {
+  StoreTransactionListModel,
+  TransactionReason,
+  UserListModel,
+} from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
-const api = new StoreTransactionsApi(defaultConfiguration);
+type Query = operations["StoreTransactionsReadAll"]["parameters"]["query"];
 
 const StoreTransactions = () => {
-  const [storeTransactions, setStoreTransactions] = useState<
-    StoreTransactionListModel[] | null
-  >(null);
-  const [request, setRequest] = useState<StoreTransactionsReadAllRequest>({
-    page: 1,
-  });
+  const [storeTransactions, setStoreTransactions] =
+    useState<StoreTransactionListModel[]>();
+  const [query, setQuery] = useState<Query>({ Page: 1 });
   const [isLoading, setLoading] = useState<boolean>(true);
   const [rowCount, setRowCount] = useState<number>(0);
   const navigate = useNavigate();
@@ -31,21 +27,18 @@ const StoreTransactions = () => {
   useEffect(() => {
     const getStoreTransactionsDeferred = setTimeout(async () => {
       setLoading(true);
-      const response = await handleApiCall(
-        api.storeTransactionsReadAll(request),
-      );
-      if (!response) {
-        setStoreTransactions(null);
-        setRowCount(0);
-        setLoading(false);
-        return;
+      const { data, response } = await apiClient.GET("/store-transactions", {
+        params: { query },
+      });
+      if (!response.ok) {
+        handleApiError(response);
       }
-      setStoreTransactions(response.data);
-      setRowCount(response.meta.total ?? 0);
+      setStoreTransactions(data?.data);
+      setRowCount(data?.meta.total ?? 0);
       setLoading(false);
     }, 500);
     return () => clearTimeout(getStoreTransactionsDeferred);
-  }, [request]);
+  }, [query]);
 
   const columns: GridColDef<StoreTransactionListModel>[] = [
     {
@@ -86,7 +79,7 @@ const StoreTransactions = () => {
       editable: false,
       filterable: false,
       flex: 1,
-      valueFormatter: (val: Date) => val.toLocaleString("cs"),
+      valueFormatter: (val: string) => new Date(val).toLocaleString("cs"),
     },
 
     {
@@ -108,8 +101,8 @@ const StoreTransactions = () => {
       editable: false,
       filterable: false,
       flex: 1,
-      valueFormatter: (val: Date | null) =>
-        val?.toLocaleString("cs") ?? "Nezrušena",
+      valueFormatter: (val: string | null) =>
+        val ? new Date(val).toLocaleString("cs") : "Nezrušena",
     },
 
     {
@@ -161,13 +154,14 @@ const StoreTransactions = () => {
               `Opravdu chcete transakci ${params.row.id} zrušit?`,
             );
             if (confirmed) {
-              const resp = await handleApiCall(
-                api.storeTransactionsDelete({
-                  id: params.row.id,
-                }),
+              const { response } = await apiClient.DELETE(
+                "/store-transactions/{id}",
+                { params: { path: { id: params.row.id } } },
               );
-              if (resp !== null) {
-                setRequest({ ...request });
+              if (response.ok) {
+                setQuery({ ...query });
+              } else {
+                handleApiError(response);
               }
             }
           }}
@@ -204,8 +198,8 @@ const StoreTransactions = () => {
           initialState={{
             pagination: {
               paginationModel: {
-                page: request.page ?? 0,
-                pageSize: request.pageSize ?? 30,
+                page: query?.Page ?? 0,
+                pageSize: query?.PageSize ?? 30,
               },
             },
           }}
@@ -217,23 +211,13 @@ const StoreTransactions = () => {
             if (!details.reason) {
               return;
             }
-            setRequest((prev) => {
+            setQuery((prev) => {
               return {
                 ...prev,
-                page: newModel.page + 1,
-                pageSize: newModel.pageSize,
+                Page: newModel.page + 1,
+                PageSize: newModel.pageSize,
               };
             });
-          }}
-          onFilterModelChange={(newFilters) => {
-            for (const filter of newFilters.items) {
-              const newRequest: any = {
-                page: request.page,
-                pageSize: request.pageSize,
-              };
-              newRequest[filter.field] = filter.value;
-              setRequest(newRequest);
-            }
           }}
           localeText={csCZ.components.MuiDataGrid.defaultProps.localeText}
         />

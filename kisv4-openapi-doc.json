@@ -2981,12 +2981,85 @@
   },
   "components": {
     "schemas": {
+      "AccountModel": {
+        "required": [
+          "kind"
+        ],
+        "type": "object",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/AccountModelCashBoxAccountModel"
+          },
+          {
+            "$ref": "#/components/schemas/AccountModelUserAccountModel"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "CashBoxAccount": "#/components/schemas/AccountModelCashBoxAccountModel",
+            "UserAccount": "#/components/schemas/AccountModelUserAccountModel"
+          }
+        }
+      },
+      "AccountModelCashBoxAccountModel": {
+        "required": [
+          "cashBox",
+          "id",
+          "type"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "CashBoxAccount"
+            ],
+            "type": "string"
+          },
+          "cashBox": {
+            "$ref": "#/components/schemas/CashBoxListModel"
+          },
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AccountType"
+          }
+        }
+      },
+      "AccountModelUserAccountModel": {
+        "required": [
+          "user",
+          "id",
+          "type"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "UserAccount"
+            ],
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserListModel"
+          },
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AccountType"
+          }
+        }
+      },
       "AccountTransactionModel": {
         "required": [
           "amount",
           "saleTransactionId",
           "timestamp",
-          "type"
+          "account"
         ],
         "type": "object",
         "properties": {
@@ -3004,8 +3077,8 @@
             "type": "string",
             "format": "date-time"
           },
-          "type": {
-            "$ref": "#/components/schemas/AccountTransactionType"
+          "account": {
+            "$ref": "#/components/schemas/AccountModel"
           }
         }
       },
@@ -3049,9 +3122,9 @@
           }
         }
       },
-      "AccountTransactionType": {
+      "AccountType": {
         "enum": [
-          "SaleMoney",
+          "SalesMoney",
           "DonationMoney",
           "Prestige"
         ]
@@ -4379,6 +4452,7 @@
         "required": [
           "amount",
           "modifierName",
+          "modifierId",
           "priceChange"
         ],
         "type": "object",
@@ -4390,6 +4464,11 @@
           },
           "modifierName": {
             "type": "string"
+          },
+          "modifierId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
           },
           "priceChange": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -5531,6 +5610,7 @@
           "lineNumber",
           "amount",
           "saleItemName",
+          "saleItemId",
           "modifications",
           "basePrice"
         ],
@@ -5548,6 +5628,11 @@
           },
           "saleItemName": {
             "type": "string"
+          },
+          "saleItemId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
           },
           "modifications": {
             "type": "array",

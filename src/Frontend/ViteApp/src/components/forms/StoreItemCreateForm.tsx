@@ -12,19 +12,11 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import {
-  StoreItemsApi,
-  CategoriesApi,
-  type StoreItemCreateRequest,
-  type CategoryModel,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new StoreItemsApi(defaultConfiguration);
-const categoryApi = new CategoriesApi(defaultConfiguration);
+import type { StoreItemCreateRequest, CategoryModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   name: z
@@ -42,7 +34,7 @@ const ValidationSchema = z.object({
     .string()
     .regex(validationConstants.numberRegex, "Počáteční cena musí být číslo")
     .refine((val) => Number(val) >= 0, "Cena musí být větší/rovna nule"),
-  isContainerItem: z.boolean().optional(),
+  isContainerItem: z.boolean(),
   categoryIds: z.array(z.number()).optional(),
 });
 
@@ -61,7 +53,7 @@ type Props = {
 };
 
 const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
-  const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+  const [categories, setCategories] = useState<CategoryModel[]>();
   const { startLoading, stopLoading } = useLoading();
   const {
     register,
@@ -74,20 +66,26 @@ const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   });
   useEffect(() => {
     const getCategories = async () => {
-      const response = await handleApiCall(categoryApi.categoriesReadAll());
-      if (response) {
-        setCategories(response.data);
-      } else {
-        setCategories(null);
+      const { response, data } = await apiClient.GET("/categories");
+      setCategories(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getCategories();
   }, []);
 
-  const submitForm: SubmitHandler<StoreItemCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<StoreItemCreateRequest> = async (
+    requestBody,
+  ) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.storeItemsCreate({ storeItemCreateRequest: data }));
+    const { response, error } = await apiClient.POST("/store-items", {
+      body: requestBody,
+    });
+    if (!response.ok) {
+      handleApiError(response, error);
+    }
     stopLoading();
     afterSubmit?.();
   };

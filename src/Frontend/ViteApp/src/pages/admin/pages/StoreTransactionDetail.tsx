@@ -1,32 +1,31 @@
 import { Link, useParams } from "react-router-dom";
-import {
-  StoreTransactionsApi,
-  type StoreTransactionReadResponse,
-} from "../../../api-generated";
 import { useEffect, useState } from "react";
 import { Box, Button, Skeleton, Typography } from "@mui/material";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import { transactionReasons } from "../../../constants/transactionReasons";
 import StoreTransactionItemListView from "../../../components/views/StoreTransactionItemListView";
-
-const api = new StoreTransactionsApi(defaultConfiguration);
+import type { StoreTransactionReadResponse } from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const StoreTransactionDetail = () => {
   const [storeTransaction, setStoreTransaction] =
-    useState<StoreTransactionReadResponse | null>(null);
+    useState<StoreTransactionReadResponse>();
   const [refreshCounter, setRefreshCounter] = useState(0);
   const { id } = useParams();
 
   useEffect(() => {
     const getStoreTransaction = async () => {
-      setStoreTransaction(null);
-      const response = await handleApiCall(
-        api.storeTransactionsRead({
-          id: Number(id),
-        }),
+      setStoreTransaction(undefined);
+      const { response, data } = await apiClient.GET(
+        "/store-transactions/{id}",
+        {
+          params: { path: { id: Number(id) } },
+        },
       );
-      setStoreTransaction(response);
+      setStoreTransaction(data);
+      if (!response.ok) {
+        handleApiError(response);
+      }
     };
     getStoreTransaction();
   }, [refreshCounter]);
@@ -86,16 +85,17 @@ const StoreTransactionDetail = () => {
           </Box>
 
           <Typography>
-            Čas vytvoření: {storeTransaction.startedAt.toLocaleString("cs")}
+            Čas vytvoření:{" "}
+            {new Date(storeTransaction.startedAt).toLocaleString("cs")}
           </Typography>
 
           <Typography>Vytvořil: {storeTransaction.startedBy.nick}</Typography>
 
-          {storeTransaction.cancelledBy ? (
+          {storeTransaction.cancelledBy && storeTransaction.cancelledAt ? (
             <>
               <Typography>
                 Čas zrušení:{" "}
-                {storeTransaction.cancelledAt?.toLocaleString("cs")}
+                {new Date(storeTransaction.cancelledAt).toLocaleString("cs")}
               </Typography>
 
               <Typography>
@@ -111,13 +111,16 @@ const StoreTransactionDetail = () => {
                   `Opravdu chcete transakci ${storeTransaction.id} smazat?`,
                 );
                 if (confirmed) {
-                  const resp = await handleApiCall(
-                    api.storeTransactionsDelete({
-                      id: storeTransaction.id,
-                    }),
+                  const { response } = await apiClient.DELETE(
+                    "/store-transactions/{id}",
+                    {
+                      params: { path: { id: storeTransaction.id } },
+                    },
                   );
-                  if (resp !== null) {
+                  if (response.ok) {
                     setRefreshCounter((prev) => prev + 1);
+                  } else {
+                    handleApiError(response);
                   }
                 }
               }}

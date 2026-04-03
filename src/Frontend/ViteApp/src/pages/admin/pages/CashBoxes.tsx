@@ -1,6 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import { CashBoxesApi, type CashBoxListModel } from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -12,11 +11,10 @@ import {
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import CashBoxCreateForm from "../../../components/forms/CashBoxCreateForm";
-
-const api = new CashBoxesApi(defaultConfiguration);
+import type { CashBoxListModel } from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const CashBoxes = () => {
   const [cashBoxes, setCashBoxes] = useState<CashBoxListModel[] | null>(null);
@@ -28,13 +26,13 @@ const CashBoxes = () => {
   useEffect(() => {
     setLoading(true);
     const getCashBoxesDeferred = setTimeout(async () => {
-      const response = await handleApiCall(api.cashBoxesReadAll());
-      if (!response) {
+      const { response, data } = await apiClient.GET("/cashboxes");
+      if (data) {
+        setCashBoxes(data.data);
+      } else {
         setCashBoxes(null);
-        setLoading(false);
-        return;
+        handleApiError(response);
       }
-      setCashBoxes(response.data);
       setLoading(false);
     }, 500);
     return () => clearTimeout(getCashBoxesDeferred);
@@ -83,11 +81,13 @@ const CashBoxes = () => {
               `Opravdu chcete ${params.row.name} smazat?`,
             );
             if (confirmed) {
-              await handleApiCall(
-                api.cashBoxesDelete({
-                  id: params.row.id,
-                }),
-              );
+              const { response } = await apiClient.DELETE("/cashboxes/{id}", {
+                params: { path: { id: params.row.id } },
+              });
+              if (!response.ok) {
+                handleApiError(response);
+              }
+
               refreshCashBoxes();
             }
           }}

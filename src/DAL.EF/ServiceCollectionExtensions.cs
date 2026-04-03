@@ -1,3 +1,4 @@
+using KisV4.DAL.EF.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,5 +9,6 @@ public static class ServiceCollectionExtensions {
         string connectionString) {
         serviceCollection.AddDbContext<KisDbContext>(options =>
             options.UseNpgsql(connectionString));
+        serviceCollection.AddScoped<TestSeeder>();
     }
 }

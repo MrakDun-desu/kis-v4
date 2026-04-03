@@ -39,8 +39,7 @@ public class StoreTransactionCreateValidator : AbstractValidator<StoreTransactio
             .Must(x => x.StoreId != x.SourceStoreId)
             .WithMessage(ValidationMessages.SourceStoreSameAsTargetStoreMessage);
         RuleFor(x => x)
-            .Must(x => x.Reason == TransactionReason.ChangingStores && x.SourceStoreId is not null ||
-                        x.Reason != TransactionReason.ChangingStores && x.SourceStoreId is null)
+            .Must(x => x.Reason != TransactionReason.ChangingStores || x.SourceStoreId is not null)
             .WithMessage(ValidationMessages.StoreTransactionReasonAndSourceStoreInvalidMessage);
 
         RuleForEach(x => x.StoreTransactionItems)

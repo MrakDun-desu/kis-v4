@@ -19,7 +19,7 @@ public class CashBoxService(
         var data = await _dbContext.Cashboxes.Select(
             cb => new CashBoxListModel {
                 Id = cb.Id,
-                Name = cb.Name
+                Name = cb.Name,
             }
         ).ToArrayAsync(token);
 
@@ -32,12 +32,23 @@ public class CashBoxService(
             ) {
         var entity = new Cashbox {
             Name = req.Name,
+            Accounts = [
+                new CashBoxAccount {
+                    Type = AccountType.DonationMoney
+                },
+                new CashBoxAccount {
+                    Type = AccountType.SalesMoney
+                },
+            ]
         };
 
         _dbContext.Cashboxes.Add(entity);
         await _dbContext.SaveChangesAsync(token);
 
-        return new CashBoxCreateResponse { Id = entity.Id, Name = entity.Name };
+        return new CashBoxCreateResponse {
+            Id = entity.Id,
+            Name = entity.Name,
+        };
     }
 
     public async Task<CashBoxReadResponse?> ReadAsync(
@@ -45,13 +56,18 @@ public class CashBoxService(
         CancellationToken token = default
     ) {
         var id = req.Id;
-        var entity = await _dbContext.Cashboxes.FindAsync(id, token);
+        var entity = await _dbContext.Cashboxes
+            .Include(cb => cb.Accounts)
+            .FirstOrDefaultAsync(cb => cb.Id == id, token);
         if (entity is null) {
             return null;
         }
 
+        var salesAccount = entity.Accounts.First(a => a.Type == AccountType.SalesMoney);
+        var donationsAccount = entity.Accounts.First(a => a.Type == AccountType.DonationMoney);
+
         var stockTakings = await _dbContext.AccountTransactions
-            .Where(at => at.AccountId == entity.SalesAccountId)
+            .Where(at => at.AccountId == salesAccount.Id)
             .Include(at => at.SaleTransaction)
             .Where(at => at.SaleTransaction!.Reason == TransactionReason.StockTaking)
             .Select(at => at.SaleTransaction!.StartedAt)
@@ -61,11 +77,11 @@ public class CashBoxService(
         var accountTransactionsFrom = stockTakings.FirstOrDefault();
 
         var donationsTransactions = await _accountTransactionService.ReadAllAsync(new() {
-            AccountId = entity.DonationsAccountId,
+            AccountId = donationsAccount.Id,
         }, token);
 
         var salesTransacions = await _accountTransactionService.ReadAllAsync(new() {
-            AccountId = entity.SalesAccountId,
+            AccountId = salesAccount.Id,
         }, token);
 
         return new CashBoxReadResponse {
@@ -94,7 +110,10 @@ public class CashBoxService(
         _dbContext.Cashboxes.Update(entity);
         await _dbContext.SaveChangesAsync(token);
 
-        return new CashBoxUpdateResponse { Id = entity.Id, Name = entity.Name, };
+        return new CashBoxUpdateResponse {
+            Id = entity.Id,
+            Name = entity.Name,
+        };
     }
 
     public async Task<bool> DeleteAsync(

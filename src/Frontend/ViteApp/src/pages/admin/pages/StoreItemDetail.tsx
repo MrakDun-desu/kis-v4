@@ -1,11 +1,4 @@
 import { useParams } from "react-router-dom";
-import {
-  CategoriesApi,
-  StoreItemsApi,
-  type CategoryModel,
-  type StoreItemReadResponse,
-  type StoreItemUpdateModel,
-} from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -23,12 +16,14 @@ import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import z from "zod";
 import validationConstants from "../../../constants/validationConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import CostCreateForm from "../../../components/forms/CostCreateForm";
-
-const api = new StoreItemsApi(defaultConfiguration);
-const categoryApi = new CategoriesApi(defaultConfiguration);
+import type {
+  CategoryModel,
+  StoreItemReadResponse,
+  StoreItemUpdateModel,
+} from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   name: z
@@ -47,66 +42,66 @@ const ValidationSchema = z.object({
 
 const StoreItemDetail = () => {
   const { id } = useParams();
-  const [storeItem, setStoreItem] = useState<StoreItemReadResponse | null>(
-    null,
-  );
-  const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+  const [storeItem, setStoreItem] = useState<StoreItemReadResponse>();
+  const [categories, setCategories] = useState<CategoryModel[]>();
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<StoreItemUpdateModel>({
-    values:
-      storeItem === null
-        ? {
-            name: "",
-            unitName: "",
-            categoryIds: [],
-          }
-        : {
-            name: storeItem.name,
-            unitName: storeItem.unitName,
-            categoryIds: storeItem.categories.map((cat) => cat.id),
-          },
+    values: !storeItem
+      ? {
+          name: "",
+          unitName: "",
+          categoryIds: [],
+        }
+      : {
+          name: storeItem.name,
+          unitName: storeItem.unitName,
+          categoryIds: storeItem.categories.map((cat) => cat.id),
+        },
     resolver: zodResolver(ValidationSchema),
   });
 
   useEffect(() => {
     const getStoreItem = async () => {
-      const response = await handleApiCall(
-        api.storeItemsRead({
-          id: Number(id),
-        }),
-      );
-      setStoreItem(response);
+      const { data, response } = await apiClient.GET("/store-items/{id}", {
+        params: { path: { id: Number(id) } },
+      });
+      setStoreItem(data);
+      if (!response.ok) {
+        handleApiError(response);
+      }
     };
     getStoreItem();
   }, []);
   useEffect(() => {
     const getCategories = async () => {
-      const response = await handleApiCall(categoryApi.categoriesReadAll());
-      if (response) {
-        setCategories(response.data);
-      } else {
-        setCategories(null);
+      const { response, data } = await apiClient.GET("/categories");
+      setCategories(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getCategories();
   }, []);
 
-  const saveStoreItem: SubmitHandler<StoreItemUpdateModel> = async (data) => {
+  const saveStoreItem: SubmitHandler<StoreItemUpdateModel> = async (
+    requestBody,
+  ) => {
     if (!storeItem) {
       return;
     }
-    setStoreItem(null);
-    const response = await handleApiCall(
-      api.storeItemsUpdate({
-        id: id as unknown as number,
-        storeItemUpdateModel: data,
-      }),
-    );
-    setStoreItem(response);
+    const { response, data, error } = await apiClient.PUT("/store-items/{id}", {
+      params: { path: { id: Number(id) } },
+      body: requestBody,
+    });
+    if (data) {
+      setStoreItem(data);
+    } else {
+      handleApiError(response, error);
+    }
   };
 
   if (!storeItem) {

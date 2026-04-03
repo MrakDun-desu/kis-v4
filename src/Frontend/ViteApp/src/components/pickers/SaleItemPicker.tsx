@@ -5,11 +5,9 @@ import {
   FormHelperText,
   TextField,
 } from "@mui/material";
-import { SaleItemsApi, type SaleItemListModel } from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new SaleItemsApi(defaultConfiguration);
+import type { SaleItemListModel } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const SaleItemPicker = ({
   onChange,
@@ -22,7 +20,7 @@ const SaleItemPicker = ({
   helperText?: string;
   initialValue?: string;
 }) => {
-  const [saleItems, setSaleItems] = useState<SaleItemListModel[] | null>(null);
+  const [saleItems, setSaleItems] = useState<SaleItemListModel[]>();
   const [loading, setLoading] = useState(false);
   const [currentValue, setCurrentValue] = useState(initialValue);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -49,16 +47,18 @@ const SaleItemPicker = ({
           }
 
           if (!value || value.length < 1) {
-            setSaleItems(null);
+            setSaleItems(undefined);
           } else {
             debounceRef.current = setTimeout(async () => {
-              const response = await handleApiCall(
-                api.saleItemsReadAll({ pageSize: 20, name: value }),
+              const { response, data, error } = await apiClient.GET(
+                "/sale-items",
+                {
+                  params: { query: { PageSize: 20, Name: value } },
+                },
               );
-              if (!response) {
-                setSaleItems(null);
-              } else {
-                setSaleItems(response.data);
+              setSaleItems(data?.data);
+              if (!response.ok) {
+                handleApiError(response, error);
               }
               setLoading(false);
             }, 500);

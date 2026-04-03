@@ -1,4 +1,4 @@
-import type { PrintType } from "../api-generated";
+import type { PrintType } from "../api/apiTypes";
 
 export const printTypes: Record<PrintType, string> = {
   DontPrint: "Netisknout",

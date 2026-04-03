@@ -2,17 +2,12 @@ import z from "zod";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField } from "@mui/material";
-import {
-  CompositionsApi,
-  type CompositionPutRequest,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
 import StoreItemPicker from "../pickers/StoreItemPicker";
-
-const api = new CompositionsApi(defaultConfiguration);
+import type { CompositionPutRequest } from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   compositeId: z.number(),
@@ -56,7 +51,12 @@ const CompositionCreateForm = ({
   const submitForm: SubmitHandler<CompositionPutRequest> = async (data) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.compositionsPut({ compositionPutRequest: data }));
+    const { response, error } = await apiClient.PUT("/compositions", {
+      body: data,
+    });
+    if (!response.ok) {
+      handleApiError(response, error);
+    }
     stopLoading();
     afterSubmit?.();
   };

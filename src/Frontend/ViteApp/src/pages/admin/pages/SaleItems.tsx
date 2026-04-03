@@ -1,11 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  PrintType,
-  SaleItemsApi,
-  type SaleItemListModel,
-  type SaleItemsReadAllRequest,
-} from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -18,17 +12,19 @@ import {
 import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
 import { printTypes } from "../../../constants/printTypes";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import CategoryFilter from "../../../components/filters/CategoryFilter";
 import SaleItemCreateForm from "../../../components/forms/SaleItemCreateForm";
+import type { SaleItemListModel, PrintType } from "../../../api/apiTypes";
+import type { operations } from "../../../api/apiSchema";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
-const api = new SaleItemsApi(defaultConfiguration);
+type Query = operations["SaleItemsReadAll"]["parameters"]["query"];
 
 const SaleItems = () => {
-  const [saleItems, setSaleItems] = useState<SaleItemListModel[] | null>(null);
-  const [request, setRequest] = useState<SaleItemsReadAllRequest>({ page: 1 });
+  const [saleItems, setSaleItems] = useState<SaleItemListModel[]>();
+  const [query, setQuery] = useState<Query>({ Page: 1 });
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [rowCount, setRowCount] = useState<number>(0);
@@ -37,19 +33,18 @@ const SaleItems = () => {
   useEffect(() => {
     const getSaleItemsDeferred = setTimeout(async () => {
       setLoading(true);
-      const response = await handleApiCall(api.saleItemsReadAll(request));
-      if (!response) {
-        setSaleItems(null);
+      const { response, data } = await apiClient.GET("/sale-items");
+      setSaleItems(data?.data);
+      if (!data) {
         setRowCount(0);
-        setLoading(false);
-        return;
+        handleApiError(response);
+      } else {
+        setRowCount(data.meta.total ?? 0);
       }
-      setSaleItems(response.data);
-      setRowCount(response.meta.total ?? 0);
       setLoading(false);
     }, 500);
     return () => clearTimeout(getSaleItemsDeferred);
-  }, [request]);
+  }, [query]);
 
   const columns: GridColDef<SaleItemListModel>[] = [
     {
@@ -144,12 +139,14 @@ const SaleItems = () => {
               `Opravdu chcete ${params.row.name} smazat?`,
             );
             if (confirmed) {
-              await handleApiCall(
-                api.saleItemsDelete({
-                  id: params.row.id,
-                }),
-              );
-              setRequest({ ...request });
+              const { response } = await apiClient.DELETE("/sale-items/{id}", {
+                params: { path: { id: params.row.id } },
+              });
+              if (!response.ok) {
+                handleApiError(response);
+              } else {
+                setQuery({ ...query });
+              }
             }
           }}
         >
@@ -161,7 +158,7 @@ const SaleItems = () => {
 
   const openCreateDialog = () => setCreateDialogOpen(true);
   const closeCreateDialog = () => setCreateDialogOpen(false);
-  const refreshSaleItems = () => setRequest({ ...request });
+  const refreshSaleItems = () => setQuery({ ...query });
 
   return (
     <>
@@ -196,7 +193,7 @@ const SaleItems = () => {
 
         <CategoryFilter
           onChange={(categoryId) =>
-            setRequest((prev) => ({ ...prev, categoryId }))
+            setQuery((prev) => ({ ...prev, CategoryId: categoryId }))
           }
         />
 
@@ -216,8 +213,8 @@ const SaleItems = () => {
           initialState={{
             pagination: {
               paginationModel: {
-                page: request.page ?? 0,
-                pageSize: request.pageSize ?? 30,
+                page: query?.Page ?? 0,
+                pageSize: query?.PageSize ?? 30,
               },
             },
           }}
@@ -229,23 +226,19 @@ const SaleItems = () => {
             if (!details.reason) {
               return;
             }
-            setRequest((prev) => {
+            setQuery((prev) => {
               return {
                 ...prev,
-                page: newModel.page + 1,
-                pageSize: newModel.pageSize,
+                Page: newModel.page + 1,
+                PageSize: newModel.pageSize,
               };
             });
           }}
           onFilterModelChange={(newFilters) => {
-            for (const filter of newFilters.items) {
-              const newRequest: any = {
-                page: request.page,
-                pageSize: request.pageSize,
-              };
-              newRequest[filter.field] = filter.value;
-              setRequest(newRequest);
-            }
+            setQuery((prev) => ({
+              ...prev,
+              Name: newFilters.items.find((f) => f.field === "name")?.value,
+            }));
           }}
           localeText={csCZ.components.MuiDataGrid.defaultProps.localeText}
         />

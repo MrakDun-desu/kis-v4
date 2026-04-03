@@ -1,8 +1,8 @@
 import { ShoppingBag } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
-import { type SaleItemContainerModel } from "../../api-generated";
 import { usePosStore } from "../../stores/posStore";
 import { useShallow } from "zustand/react/shallow";
+import type { SaleItemContainerModel } from "../../api/apiTypes";
 
 const ContainerSaleItemView = ({
   saleItem,

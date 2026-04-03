@@ -12,23 +12,22 @@ import {
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  ContainersApi,
-  type ContainerReadAllResponse,
-  type ContainerListModel,
-  type ContainersReadAllRequest,
-  ContainerState,
-  type ContainerCreateResponse,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
 import ContainerCreateForm from "../forms/ContainerCreateForm";
 import PipeFilter from "../filters/PipeFilter";
 import StoreFilter from "../filters/StoreFilter";
 import ContainerTemplateFilter from "../filters/ContainerTemplateFilter";
 import { containerStates } from "../../constants/containerStates";
+import type {
+  ContainerCreateResponse,
+  ContainerListModel,
+  ContainerReadAllResponse,
+  ContainerState,
+} from "../../api/apiTypes";
+import type { operations } from "../../api/apiSchema";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
-const api = new ContainersApi(defaultConfiguration);
+type Query = operations["ContainersReadAll"]["parameters"]["query"];
 
 const ContainerListView = ({
   storeId,
@@ -45,13 +44,11 @@ const ContainerListView = ({
   showTemplateFilter?: boolean;
   afterCreate?: (resp: ContainerCreateResponse) => void;
 }) => {
-  const [containers, setContainers] = useState<ContainerListModel[] | null>(
-    null,
-  );
-  const [request, setRequest] = useState<ContainersReadAllRequest>({
-    page: 1,
-    storeId,
-    includeUnusable: false,
+  const [containers, setContainers] = useState<ContainerListModel[]>();
+  const [query, setQuery] = useState<Query>({
+    Page: 1,
+    StoreId: storeId,
+    IncludeUnusable: false,
   });
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
@@ -71,19 +68,18 @@ const ContainerListView = ({
     firstRender.current = false;
     const getContainersDeferred = setTimeout(async () => {
       setLoading(true);
-      const response = await handleApiCall(api.containersReadAll(request));
-      if (!response) {
-        setContainers(null);
-        setRowCount(0);
-        setLoading(false);
-      } else {
-        setContainers(response.data);
-        setRowCount(response.meta.total);
-        setLoading(false);
+      const { response, data, error } = await apiClient.GET("/containers", {
+        params: { query },
+      });
+      if (!response.ok) {
+        handleApiError(response, error);
       }
+      setContainers(data?.data);
+      setRowCount(data?.meta.total ?? 0);
+      setLoading(false);
     }, 500);
     return () => clearTimeout(getContainersDeferred);
-  }, [request]);
+  }, [query]);
 
   const columns: GridColDef<ContainerListModel>[] = [
     {
@@ -174,7 +170,7 @@ const ContainerListView = ({
 
   const openCreateDialog = () => setCreateDialogOpen(true);
   const closeCreateDialog = () => setCreateDialogOpen(false);
-  const refreshContainers = () => setRequest({ ...request });
+  const refreshContainers = () => setQuery({ ...query });
 
   return (
     <>
@@ -186,21 +182,25 @@ const ContainerListView = ({
 
       {showPipeFilter && (
         <PipeFilter
-          onChange={(pipeId) => setRequest((prev) => ({ ...prev, pipeId }))}
+          onChange={(pipeId) =>
+            setQuery((prev) => ({ ...prev, PipeId: pipeId }))
+          }
         />
       )}
 
       {showTemplateFilter && (
         <ContainerTemplateFilter
           onChange={(templateId) =>
-            setRequest((prev) => ({ ...prev, templateId }))
+            setQuery((prev) => ({ ...prev, TemplateId: templateId }))
           }
         />
       )}
 
       {storeId === undefined && (
         <StoreFilter
-          onChange={(storeId) => setRequest((prev) => ({ ...prev, storeId }))}
+          onChange={(storeId) =>
+            setQuery((prev) => ({ ...prev, StoreId: storeId }))
+          }
         />
       )}
 
@@ -209,11 +209,11 @@ const ContainerListView = ({
           label="Zobrazit staré kegy"
           control={
             <Checkbox
-              value={request.includeUnusable}
+              value={query?.IncludeUnusable}
               onChange={(evt) => {
-                setRequest((prev) => ({
+                setQuery((prev) => ({
                   ...prev,
-                  includeUnusable: evt.target.checked,
+                  IncludeUnusable: evt.target.checked,
                 }));
               }}
             />
@@ -258,8 +258,8 @@ const ContainerListView = ({
         initialState={{
           pagination: {
             paginationModel: {
-              page: request.page ?? 0,
-              pageSize: request.pageSize ?? 30,
+              page: query?.Page ?? 0,
+              pageSize: query?.PageSize ?? 30,
             },
           },
         }}
@@ -271,23 +271,11 @@ const ContainerListView = ({
           if (!details.reason) {
             return;
           }
-          setRequest((prev) => {
-            return {
-              ...prev,
-              page: newModel.page + 1,
-              pageSize: newModel.pageSize,
-            };
-          });
-        }}
-        onFilterModelChange={(newFilters) => {
-          for (const filter of newFilters.items) {
-            const newRequest: any = {
-              page: request.page,
-              pageSize: request.pageSize,
-            };
-            newRequest[filter.field] = filter.value;
-            setRequest(newRequest);
-          }
+          setQuery((prev) => ({
+            ...prev,
+            Page: newModel.page + 1,
+            PageSize: newModel.pageSize,
+          }));
         }}
         localeText={csCZ.components.MuiDataGrid.defaultProps.localeText}
       />

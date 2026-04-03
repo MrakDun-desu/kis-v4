@@ -1,6 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-import { CategoriesApi, type CategoryModel } from "../../../api-generated";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -11,11 +10,10 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import CategoryCreateForm from "../../../components/forms/CategoryCreateForm";
-
-const api = new CategoriesApi(defaultConfiguration);
+import type { CategoryModel } from "../../../api/apiTypes";
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
 
 const Categories = () => {
   const [categories, setCategories] = useState<CategoryModel[] | null>(null);
@@ -26,13 +24,13 @@ const Categories = () => {
   useEffect(() => {
     setLoading(true);
     const getCategoriesDeferred = setTimeout(async () => {
-      const response = await handleApiCall(api.categoriesReadAll());
-      if (!response) {
+      const { response, data } = await apiClient.GET("/categories");
+      if (!data) {
         setCategories(null);
-        setLoading(false);
-        return;
+        handleApiError(response);
+      } else {
+        setCategories(data.data);
       }
-      setCategories(response.data);
       setLoading(false);
     }, 500);
     return () => clearTimeout(getCategoriesDeferred);
@@ -72,11 +70,12 @@ const Categories = () => {
               `Opravdu chcete ${params.row.name} smazat?`,
             );
             if (confirmed) {
-              await handleApiCall(
-                api.categoriesDelete({
-                  id: params.row.id,
-                }),
-              );
+              const { response } = await apiClient.DELETE("/cashboxes/{id}", {
+                params: { path: { id: params.row.id } },
+              });
+              if (!response.ok) {
+                handleApiError(response);
+              }
               refreshCategories();
             }
           }}

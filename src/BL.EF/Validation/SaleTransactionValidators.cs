@@ -121,6 +121,9 @@ public class SaleTransactionUpdateValidator : AbstractValidator<SaleTransactionU
             .MustAsync(helper.AllModifiersAreCorrect)
             .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
             .WithMessage(ValidationMessages.SaleTransactionItemModifiersNotValidMessage);
+        RuleFor(x => x.Id)
+            .MustAsync(helper.IdentifyOpenTransaction)
+            .WithMessage(ValidationMessages.CantUpdateFinishedTransaction);
     }
 }
 

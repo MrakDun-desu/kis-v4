@@ -1,5 +1,4 @@
 using KisV4.BL.EF.Authorization.Requirements;
-using KisV4.Common;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +22,7 @@ public class SaleTransactionUpdateHandler(
         }
 
         var userId = context.User.Identity!.Name!;
-        var isOwner = saleTransaction.StartedById == userId;
+        var isOwner = saleTransaction.OpenedById == userId;
 
         if (isOwner) {
             context.Succeed(requirement);

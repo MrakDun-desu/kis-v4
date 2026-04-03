@@ -1,4 +1,3 @@
-using KisV4.BL.EF.Mapping;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;
 using KisV4.Common.Models;

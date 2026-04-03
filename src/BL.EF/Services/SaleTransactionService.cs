@@ -67,8 +67,8 @@ public class SaleTransactionService(
                 Meta = meta
             },
             st => st.StartedAt,
-            true,
-            token
+            orderDesc: true,
+            token: token
         );
     }
 
@@ -76,9 +76,14 @@ public class SaleTransactionService(
         int id,
         CancellationToken token = default
     ) {
-        return await _dbContext.SaleTransactions
+        var entity = await _dbContext.SaleTransactions
             .IgnoreQueryFilters()
             .Include(st => st.AccountTransactions)
+            .ThenInclude(at => at.Account)
+            .ThenInclude(a => (a as UserAccount)!.User)
+            .Include(st => st.AccountTransactions)
+            .ThenInclude(at => at.Account)
+            .ThenInclude(a => (a as CashBoxAccount)!.Cashbox)
             .Include(st => st.StoreTransactions)
             .ThenInclude(st => st.StartedBy)
             .Include(st => st.StoreTransactions)
@@ -87,29 +92,52 @@ public class SaleTransactionService(
             .ThenInclude(sti => sti.SaleItem)
             .Include(st => st.SaleTransactionItems)
             .ThenInclude(sti => sti.Modifications)
-            .ThenInclude(sti => sti.Modifier)
+            .ThenInclude(m => m.Modifier)
             .Include(st => st.StartedBy)
             .Include(st => st.CancelledBy)
             .Include(st => st.OpenedBy)
             .AsSplitQuery()
-            .Select(st => new SaleTransactionDetailModel {
-                Id = st.Id,
-                Note = st.Note,
-                StartedAt = st.StartedAt,
-                CancelledAt = st.CancelledAt,
-                StartedBy = st.StartedBy.ToModel()!,
-                CancelledBy = st.CancelledBy.ToModel(),
-                OpenedBy = st.OpenedBy.ToModel(),
-                AccountTransactions = st.AccountTransactions.Select(at => new AccountTransactionModel {
-                    Amount = at.Amount,
-                    SaleTransactionId = at.SaleTransactionId,
-                    Timestamp = st.ClosedAt ?? st.StartedAt,
-                    Type = at.Type
-                }),
-                StoreTransactions = st.StoreTransactions.Select(st => st.ToModel()),
-                SaleTransactionItems = st.SaleTransactionItems.Select(sti => sti.ToModel())
-            })
             .FirstOrDefaultAsync(st => st.Id == id, token);
+
+        if (entity is null) {
+            return null;
+        }
+
+        return new SaleTransactionDetailModel {
+            Id = entity.Id,
+            Note = entity.Note,
+            StartedAt = entity.StartedAt,
+            CancelledAt = entity.CancelledAt,
+            StartedBy = entity.StartedBy.ToModel()!,
+            CancelledBy = entity.CancelledBy.ToModel(),
+            OpenedBy = entity.OpenedBy.ToModel(),
+            AccountTransactions = entity.AccountTransactions.Select(at => new AccountTransactionModel {
+                Amount = at.Amount,
+                SaleTransactionId = at.SaleTransactionId,
+                Timestamp = entity.ClosedAt ?? entity.StartedAt,
+                Account = at.Account switch {
+                    UserAccount ua => new UserAccountModel {
+                        Id = ua.Id,
+                        User = new UserListModel {
+                            Id = ua.User!.Id,
+                            Nick = ua.User.Nick
+                        },
+                        Type = ua.Type
+                    },
+                    CashBoxAccount cba => new CashBoxAccountModel {
+                        Id = cba.Id,
+                        CashBox = new CashBoxListModel {
+                            Id = cba.Cashbox!.Id,
+                            Name = cba.Cashbox.Name,
+                        },
+                        Type = cba.Type
+                    },
+                    _ => null!
+                }
+            }),
+            StoreTransactions = entity.StoreTransactions.Select(st => st.ToModel()),
+            SaleTransactionItems = entity.SaleTransactionItems.Select(sti => sti.ToModel())
+        };
     }
 
     public async Task<SaleTransactionDetailModel> CreateAsync(
@@ -120,9 +148,18 @@ public class SaleTransactionService(
         var reqTime = _timeProvider.GetUtcNow();
         await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
         try {
-            var customer = await _dbContext.Users.FindAsync(req.CustomerId, token);
+            var customer = await _dbContext.Users
+                .Include(u => u.Accounts)
+                .FirstAsync(u => u.Id == req.CustomerId, token);
             if (customer is null) {
-                var newCustomerEntry = _dbContext.Users.Add(new User { Id = req.CustomerId });
+                var newCustomerEntry = _dbContext.Users.Add(new User {
+                    Id = req.CustomerId,
+                    Accounts = [
+                        new UserAccount {
+                            Type = AccountType.Prestige
+                        }
+                    ]
+                });
                 await _dbContext.SaveChangesAsync(token);
                 customer = newCustomerEntry.Entity;
             }
@@ -142,7 +179,9 @@ public class SaleTransactionService(
                 token
             );
 
-            var cashBox = await _dbContext.Cashboxes.FindAsync(req.CashBoxId, token);
+            var cashBox = await _dbContext.Cashboxes
+                .Include(cb => cb.Accounts)
+                .FirstAsync(cb => cb.Id == req.CashBoxId, token);
             var accountTransactions = AddAccountTransactions(
                 entity,
                 saleTransactionItems,
@@ -170,7 +209,25 @@ public class SaleTransactionService(
                     Amount = at.Amount,
                     SaleTransactionId = entity.Id,
                     Timestamp = entity.StartedAt,
-                    Type = at.Type
+                    Account = at.Account switch {
+                        CashBoxAccount cba => new CashBoxAccountModel {
+                            Id = cba.Id,
+                            CashBox = new CashBoxListModel {
+                                Id = cba.Cashbox!.Id,
+                                Name = cba.Cashbox.Name,
+                            },
+                            Type = cba.Type
+                        },
+                        UserAccount ua => new UserAccountModel {
+                            Id = ua.Id,
+                            User = new UserListModel {
+                                Id = ua.User!.Id,
+                                Nick = ua.User.Nick
+                            },
+                            Type = ua.Type
+                        },
+                        _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
+                    }
                 }),
                 SaleTransactionItems = saleTransactionItems.Select(sti => sti.ToModel(composites))
             };
@@ -213,9 +270,11 @@ public class SaleTransactionService(
                 LineNumber = i + 1,
                 BasePrice = compositePrices[sti.SaleItemId].Price,
                 SaleItemName = compositePrices[sti.SaleItemId].Name,
+                SaleItemId = sti.SaleItemId,
                 Modifications = sti.Modifications.Select(m => new ModificationModel {
                     Amount = m.Amount,
                     ModifierName = compositePrices[m.ModifierId].Name,
+                    ModifierId = m.ModifierId,
                     PriceChange = compositePrices[m.ModifierId].Price,
                 })
             })
@@ -275,7 +334,6 @@ public class SaleTransactionService(
         var reqTime = _timeProvider.GetUtcNow();
         var entity = await _dbContext.SaleTransactions
             .IgnoreQueryFilters()
-            .Include(st => st.AccountTransactions)
             .Include(st => st.StoreTransactions)
             .ThenInclude(st => st.StartedBy)
             .Include(st => st.StoreTransactions)
@@ -331,12 +389,8 @@ public class SaleTransactionService(
                 CancelledBy = entity.CancelledBy.ToModel(),
                 OpenedBy = entity.StartedBy.ToModel(),
                 StoreTransactions = entity.StoreTransactions.Select(st => st.ToModel()),
-                AccountTransactions = entity.AccountTransactions.Select(at => new AccountTransactionModel {
-                    Amount = at.Amount,
-                    SaleTransactionId = entity.Id,
-                    Timestamp = entity.StartedAt,
-                    Type = at.Type
-                }),
+                // in update, account transactions should always be empty
+                AccountTransactions = [],
                 SaleTransactionItems = entity.SaleTransactionItems.Select(sti => sti.ToModel())
             };
         } catch {
@@ -354,6 +408,11 @@ public class SaleTransactionService(
         var entity = await _dbContext.SaleTransactions
             .IgnoreQueryFilters()
             .Include(st => st.AccountTransactions)
+            .ThenInclude(at => at.Account)
+            .ThenInclude(a => (a as UserAccount)!.User)
+            .Include(st => st.AccountTransactions)
+            .ThenInclude(at => at.Account)
+            .ThenInclude(a => (a as CashBoxAccount)!.Cashbox)
             .Include(st => st.StoreTransactions)
             .ThenInclude(st => st.StartedBy)
             .Include(st => st.StoreTransactions)
@@ -379,9 +438,18 @@ public class SaleTransactionService(
         }
         await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
         try {
-            var customer = await _dbContext.Users.FindAsync(req.Model.CustomerId, token);
+            var customer = await _dbContext.Users
+                .Include(u => u.Accounts)
+                .FirstAsync(u => u.Id == req.Model.CustomerId, token);
             if (customer is null) {
-                var newCustomerEntry = _dbContext.Users.Add(new User { Id = req.Model.CustomerId });
+                var newCustomerEntry = _dbContext.Users.Add(new User {
+                    Id = req.Model.CustomerId,
+                    Accounts = [
+                        new UserAccount {
+                            Type = AccountType.Prestige
+                        }
+                    ]
+                });
                 await _dbContext.SaveChangesAsync(token);
                 customer = newCustomerEntry.Entity;
             }
@@ -400,13 +468,15 @@ public class SaleTransactionService(
                 token
             );
 
-            var cashBox = await _dbContext.Cashboxes.FindAsync(req.Model.CashBoxId, token);
+            var cashBox = await _dbContext.Cashboxes
+                .Include(cb => cb.Accounts)
+                .FirstAsync(cb => cb.Id == req.Model.CashBoxId, token);
             var accountTransactions = AddAccountTransactions(
                 entity,
                 saleTransactionItems.ToArray(),
                 composites!,
                 customer,
-                cashBox!,
+                cashBox,
                 req.Model.PaidAmount
             );
             _dbContext.AccountTransactions.AddRange(accountTransactions);
@@ -426,11 +496,30 @@ public class SaleTransactionService(
                 CancelledBy = entity.CancelledBy.ToModel(),
                 OpenedBy = entity.StartedBy.ToModel(),
                 StoreTransactions = entity.StoreTransactions.Select(st => st.ToModel()),
-                AccountTransactions = entity.AccountTransactions.Select(at => new AccountTransactionModel {
+                AccountTransactions = accountTransactions.Select(at => new AccountTransactionModel {
                     Amount = at.Amount,
                     SaleTransactionId = entity.Id,
                     Timestamp = entity.StartedAt,
-                    Type = at.Type
+                    Account = at.Account switch {
+                        CashBoxAccount cba => new CashBoxAccountModel {
+                            Id = cba.Id,
+                            CashBox = new CashBoxListModel {
+                                Id = cba.Cashbox!.Id,
+                                Name = cba.Cashbox.Name,
+                            },
+                            Type = cba.Type
+                        },
+                        UserAccount ua => new UserAccountModel {
+                            Id = ua.Id,
+                            User = new UserListModel {
+                                Id = ua.User!.Id,
+                                Nick = ua.User.Nick
+                            },
+                            Type = ua.Type
+                        },
+                        _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
+                    }
+
                 }),
                 SaleTransactionItems = saleTransactionItems.Select(sti => sti.ToModel())
             };
@@ -626,22 +715,19 @@ public class SaleTransactionService(
             // Add the total prestige to the customer's account
             new AccountTransaction {
                 Amount = totalTransactionPrestige,
-                AccountId = customer.PrestigeAccountId,
-                Type = AccountTransactionType.Prestige,
-                SaleTransaction = saleTransaction
+                AccountId = customer.Accounts.First(a => a.Type == AccountType.Prestige).Id,
+                SaleTransaction = saleTransaction,
             },
             // Add amount that was paid for the actual items to the sales account of the cashbox
             new AccountTransaction {
                 Amount = totalTransactionPrice,
-                AccountId = cashBox.SalesAccountId,
-                Type = AccountTransactionType.SaleMoney,
-                SaleTransaction = saleTransaction
+                AccountId = cashBox.Accounts.First(a => a.Type == AccountType.SalesMoney).Id,
+                SaleTransaction = saleTransaction,
             },
             // Add the actual paid amount minus total price to the donations account of the cashbox
             new AccountTransaction {
                 Amount = paidAmount - totalTransactionPrice,
-                AccountId = cashBox.DonationsAccountId,
-                Type = AccountTransactionType.DonationMoney,
+                AccountId = cashBox.Accounts.First(a => a.Type == AccountType.DonationMoney).Id,
                 SaleTransaction = saleTransaction
             }
         ];

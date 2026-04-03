@@ -11,20 +11,15 @@ import {
 } from "@mui/material";
 import { usePosStore } from "../../../stores/posStore";
 import { useEffect, useState } from "react";
-import { ContainersApi, type ContainerListModel } from "../../../api-generated";
-import handleApiCall from "../../../errorHandling/apiResponseHandler";
-import { defaultConfiguration } from "../../../configuration/apiConfiguration";
 import { useLoading } from "../../../contexts/LoadingContext";
-import StoreItemCreateForm from "../../../components/forms/StoreItemCreateForm";
 import PipePicker from "../../../components/pickers/PipePicker";
-
-const api = new ContainersApi(defaultConfiguration);
+import { apiClient } from "../../../api/apiClient";
+import handleApiError from "../../../errorHandling/apiResponseHandler";
+import type { ContainerListModel } from "../../../api/apiTypes";
 
 const PosContainers = () => {
   const currentStore = usePosStore((state) => state.currentStore);
-  const [containers, setContainers] = useState<ContainerListModel[] | null>(
-    null,
-  );
+  const [containers, setContainers] = useState<ContainerListModel[]>();
   const [showPipeDialog, setShowPipeDialog] = useState(false);
   const [changePipeRequest, setChangePipeRequest] = useState<{
     pipeId?: number;
@@ -34,11 +29,12 @@ const PosContainers = () => {
 
   useEffect(() => {
     const getContainers = async () => {
-      const response = await handleApiCall(
-        api.containersReadAll({ includeUnusable: false, pageSize: 100 }),
-      );
-      if (response) {
-        setContainers(response.data);
+      const { response, data } = await apiClient.GET("/containers", {
+        params: { query: { IncludeUnusable: false, PageSize: 100 } },
+      });
+      setContainers(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getContainers();
@@ -52,29 +48,25 @@ const PosContainers = () => {
       return;
     }
     startLoading();
-    const response = await handleApiCall(
-      api.containersUpdate({
-        id: containerId,
-        containerUpdateModel: {
-          storeId: currentStore.id,
-          pipeId,
-        },
-      }),
-    );
+    const { response, data, error } = await apiClient.PUT("/containers/{id}", {
+      params: { path: { id: containerId } },
+      body: { storeId: currentStore.id, pipeId },
+    });
 
-    if (response !== null) {
-      setContainers(
-        (prev) =>
-          prev?.map((c) => {
-            if (c.id !== response.id) {
-              return c;
-            }
-            const output: ContainerListModel = {
-              ...response,
-            };
-            return output;
-          }) ?? null,
+    if (data) {
+      setContainers((prev) =>
+        prev?.map((c) => {
+          if (c.id !== data.id) {
+            return c;
+          }
+          const output: ContainerListModel = {
+            ...data,
+          };
+          return output;
+        }),
       );
+    } else {
+      handleApiError(response, error);
     }
     stopLoading();
   };

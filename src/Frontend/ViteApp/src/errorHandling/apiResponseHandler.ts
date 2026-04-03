@@ -1,53 +1,55 @@
-import { instanceOfHttpValidationProblemDetails, ResponseError } from "../api-generated";
 import { authEvents } from "../auth/authEvents";
 import { snackbarRef } from "../globalRefs/snackbarRef";
+import type { HttpValidationProblemDetails } from "../api/apiTypes";
 
-const handleApiCall = async <TRes>(call: Promise<TRes>, onNotFound: (() => void) | null = null): Promise<TRes | null> => {
-  try {
-    const res = await call;
-    return res;
-  } catch (err) {
-    if (err instanceof ResponseError) {
-      const resp = err.response;
-      if (resp.status === 404) {
-        if (onNotFound !== null) {
-          onNotFound();
-        } else {
-          // TODO make this more resilient
-          window.location.href = "/not-found";
-        }
-        return null;
-      }
 
-      if (resp.status === 401) {
-        authEvents.emit("unauthorized");
-      }
-
-      try {
-        const respBody = await resp.json();
-        if (instanceOfHttpValidationProblemDetails(respBody)) {
-          if (!respBody.errors) {
-            snackbarRef.show?.(`Chyba ${resp.status}.`, "error");
-            console.log(resp);
-            return null;
-          }
-          let errorMessage = "Naskytli se validační chyby:";
-          for (const error in respBody.errors) {
-            errorMessage = errorMessage.concat(`\n${error}: ${respBody.errors[error]}`);
-          }
-          snackbarRef.show?.(errorMessage, "warning");
-        }
-      } catch {
-        snackbarRef.show?.("Uh oh, něco se seriózně pokazilo. Detaily v konzoli", "error");
-        console.log(err);
-      }
-    } else {
-      snackbarRef.show?.("Uh oh, něco se seriózně pokazilo. Detaily v konzoli", "error");
-      console.log(err);
+const handleApiError = (
+  response: Response,
+  problem?: HttpValidationProblemDetails,
+  onNotFound?: () => void
+) => {
+  if (problem) {
+    if (!problem.errors) {
+      snackbarRef.show?.(`Chyba požadavku, detaily v konzoli.`, "error");
+      console.log(response);
     }
+    let errorMessage = "Naskytli se validační chyby:";
+    for (const error in problem.errors) {
+      errorMessage = errorMessage.concat(`\n${error}: ${problem.errors[error]}`);
+    }
+    snackbarRef.show?.(errorMessage, "warning");
+
+    return;
   }
 
-  return null;
+  switch (response.status) {
+    case 400: {
+      snackbarRef.show?.(`Chyba požadavku, detaily v konzoli.`, "error");
+      console.log(response);
+      break;
+    }
+    case 401: {
+      authEvents.emit("unauthorized");
+      break;
+    }
+    case 403: {
+      snackbarRef.show?.("Na tuhle akci nemáte práva", "error");
+      break;
+    }
+    case 404: {
+      if (onNotFound) {
+        onNotFound();
+      } else {
+        // TODO make this work better
+        window.location.href = "/not-found";
+      }
+      break;
+    }
+    default: {
+      snackbarRef.show?.(`Chyba ${response.status}.`, "error");
+      break;
+    }
+  }
 }
 
-export default handleApiCall;
+export default handleApiError;

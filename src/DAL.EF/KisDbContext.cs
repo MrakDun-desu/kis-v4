@@ -9,6 +9,8 @@ namespace KisV4.DAL.EF;
 [AuditDbContext(Mode = AuditOptionMode.OptOut)]
 public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbContext(options) {
     public DbSet<Account> Accounts { get; init; } = null!;
+    public DbSet<CashBoxAccount> DonationsAccounts { get; init; } = null!;
+    public DbSet<UserAccount> PrestigeAccounts { get; init; } = null!;
     public DbSet<AccountTransaction> AccountTransactions { get; init; } = null!;
     public DbSet<AuditLog> AuditLogs { get; init; } = null!;
     public DbSet<Cashbox> Cashboxes { get; init; } = null!;
@@ -104,7 +106,7 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) {
-        // 11 digits with 2 decimal places
+        // 11 digits with 4 decimal places
         configurationBuilder.Properties<decimal>().HavePrecision(13, 4);
         // discard seconds for timestamps
         configurationBuilder.Properties<DateTimeOffset>().HavePrecision(0);
@@ -117,5 +119,10 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
         optionsBuilder.ConfigureWarnings(w => {
             w.Ignore(CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning);
         });
+
+        optionsBuilder.UseSeeding((ctx, _) => ctx.Add(new Layout {
+            Name = "Výchozí rozložení",
+            TopLevel = true,
+        }));
     }
 }

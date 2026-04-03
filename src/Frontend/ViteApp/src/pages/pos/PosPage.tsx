@@ -14,33 +14,14 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  InputAdornment,
   Paper,
-  Skeleton,
-  TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import {
-  usePosStore,
-  type SaleTransactionItemDisplay,
-} from "../../stores/posStore";
+import { usePosStore } from "../../stores/posStore";
 import { useShallow } from "zustand/react/shallow";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import {
-  SaleTransactionsApi,
-  type SaleTransactionCheckPriceResponse,
-  type SaleTransactionCreateRequest,
-  type SaleTransactionItemModel,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-import z from "zod";
-import validationConstants from "../../constants/validationConstants";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useSnackbar } from "../../contexts/SnackbarContext";
+import OrderFinishForm from "../../components/forms/OrderFinishForm";
 
 interface Link {
   label: string;
@@ -322,7 +303,7 @@ const PosPage = () => {
       <Dialog open={finishingOrder}>
         <DialogTitle>Dokončení objednávky</DialogTitle>
         <DialogContent>
-          <OrderFinish
+          <OrderFinishForm
             formId="orderFinishForm"
             transactionItems={transactionItems}
             afterSubmit={() => setFinishingOrder(false)}
@@ -336,237 +317,6 @@ const PosPage = () => {
         </DialogActions>
       </Dialog>
     </Box>
-  );
-};
-
-const saleTransactionsApi = new SaleTransactionsApi(defaultConfiguration);
-
-const ValidationSchema = z.object({
-  note: z
-    .string()
-    .max(
-      validationConstants.maxNoteLength,
-      "Poznámka přesahuje maximální délku",
-    )
-    .nullish(),
-  storeId: z.number(),
-  cashBoxId: z.number(),
-  customerId: z.string(),
-  paidAmount: z
-    .string()
-    .regex(
-      validationConstants.numberRegex,
-      "Zaplacená cena musí být platné číslo",
-    )
-    .refine(
-      (val) => Number(val) >= 0,
-      "Zaplacená cena musí být větší/rovna nule",
-    ),
-  saleTransactionItems: z
-    .array(
-      z.object({
-        amount: z.number(),
-        saleItemId: z.number(),
-        modifications: z
-          .array(
-            z.object({
-              amount: z.number(),
-              modifierId: z.number(),
-            }),
-          )
-          .optional(),
-      }),
-    )
-    .optional(),
-});
-
-const OrderFinish = ({
-  formId,
-  transactionItems,
-  afterSubmit,
-}: {
-  formId: string;
-  transactionItems: SaleTransactionItemDisplay[];
-  afterSubmit: () => void;
-}) => {
-  const { showSnackbar } = useSnackbar();
-  const { store, cashBox } = usePosStore(
-    useShallow((state) => ({
-      store: state.currentStore,
-      cashBox: state.currentCashBox,
-    })),
-  );
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SaleTransactionCreateRequest>({
-    defaultValues: {
-      cashBoxId: cashBox?.id,
-      storeId: store?.id,
-      customerId: "0",
-      paidAmount: "0.00",
-      saleTransactionItems: transactionItems.map((sti) => ({
-        amount: sti.amount,
-        saleItemId: sti.saleItemId,
-        modifications: sti.modifications.map((m) => ({
-          amount: m.amount,
-          modifierId: m.modifierId,
-        })),
-      })),
-    },
-    resolver: zodResolver(ValidationSchema),
-  });
-  const { startLoading, stopLoading } = useLoading();
-  const [prices, setPrices] = useState<SaleTransactionItemModel[] | null>(null);
-  const clearTransactionItems = usePosStore(
-    (state) => state.clearTransactionItems,
-  );
-  const setLayout = usePosStore((state) => state.setCurrentLayout);
-
-  useEffect(() => {
-    const getPrices = async () => {
-      const resp = await handleApiCall(
-        saleTransactionsApi.saleTransactionsCheckPrice({
-          saleTransactionCheckPriceRequest: {
-            saleTransactionItems: transactionItems.map((sti) => ({
-              amount: sti.amount,
-              saleItemId: sti.saleItemId,
-              modifications: sti.modifications.map((m) => ({
-                amount: m.amount,
-                modifierId: m.modifierId,
-              })),
-            })),
-          },
-        }),
-      );
-
-      if (resp) {
-        setPrices(resp.saleTransactionItems);
-      }
-    };
-
-    getPrices();
-  }, []);
-
-  const createSaleTransaction: SubmitHandler<
-    SaleTransactionCreateRequest
-  > = async (data) => {
-    startLoading();
-    const resp = await handleApiCall(
-      saleTransactionsApi.saleTransactionsCreate({
-        saleTransactionCreateRequest: data,
-      }),
-    );
-    if (resp) {
-      clearTransactionItems();
-      setLayout(undefined);
-      showSnackbar(
-        `Transakce byla úspěšně uložena pod ID ${resp.id}!`,
-        "success",
-      );
-      afterSubmit?.();
-    }
-    stopLoading();
-  };
-
-  if (!prices) {
-    return (
-      <>
-        <Skeleton variant="rounded" width={300} height={30} />
-        <Box display="flex" flexDirection="column" gap={2}>
-          <Skeleton variant="rounded" width={300} height={60} />
-          <Skeleton variant="rounded" width={300} height={60} />
-          <Skeleton variant="rounded" width={300} height={60} />
-          <Skeleton variant="rounded" width={300} height={60} />
-        </Box>
-      </>
-    );
-  }
-
-  return (
-    <form onSubmit={handleSubmit(createSaleTransaction)} id={formId}>
-      <Box display="flex" flexDirection="column" alignItems="stretch" gap={2}>
-        <Box display="flex" flexDirection="column" gap={1}>
-          {prices.map((sti, i) => (
-            <Paper key={i} elevation={4}>
-              <Box
-                display="flex"
-                padding={1}
-                justifyContent="space-between"
-                alignItems="center"
-                gap={2}
-              >
-                <Typography>
-                  {sti.amount}ks <b>{sti.saleItemName}</b>
-                </Typography>
-                <Typography>
-                  {(Number(sti.basePrice) * sti.amount).toFixed(2)},-
-                </Typography>
-              </Box>
-              {sti.modifications?.map((mod, i) => (
-                <Box
-                  key={i}
-                  display="flex"
-                  padding={1}
-                  paddingTop={0}
-                  justifyContent="space-between"
-                >
-                  <Typography>
-                    +{mod.amount} <b>{mod.modifierName}</b>
-                  </Typography>
-                  <Typography>
-                    {(
-                      Number(mod.priceChange) *
-                      mod.amount *
-                      sti.amount
-                    ).toFixed(2)}
-                    ,-
-                  </Typography>
-                </Box>
-              ))}
-            </Paper>
-          ))}
-          <Typography fontWeight="bold" fontSize={18}>
-            Celková cena:{" "}
-            {prices
-              .reduce((acc, curr) => {
-                return (
-                  acc +
-                  curr.amount *
-                    (Number(curr.basePrice) +
-                      curr.modifications.reduce(
-                        (macc, mcurr) =>
-                          macc + Number(mcurr.priceChange) * mcurr.amount,
-                        0,
-                      ))
-                );
-              }, 0)
-              .toFixed(2)}
-            czk
-          </Typography>
-        </Box>
-
-        <TextField
-          label="Zaplaceno"
-          {...register("paidAmount")}
-          error={!!errors.paidAmount}
-          helperText={errors.paidAmount?.message}
-          slotProps={{
-            input: {
-              endAdornment: <InputAdornment position="end">czk</InputAdornment>,
-            },
-          }}
-        />
-
-        <TextField
-          label="Poznámka"
-          {...register("note")}
-          error={!!errors.note}
-          helperText={errors.note?.message}
-        />
-      </Box>
-    </form>
   );
 };
 

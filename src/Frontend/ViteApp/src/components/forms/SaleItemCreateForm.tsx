@@ -10,22 +10,16 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import {
-  SaleItemsApi,
-  CategoriesApi,
-  PrintType,
-  type SaleItemCreateRequest,
-  type CategoryModel,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
 import { printTypes } from "../../constants/printTypes";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
-
-const api = new SaleItemsApi(defaultConfiguration);
-const categoryApi = new CategoriesApi(defaultConfiguration);
-// const imageApi = new ImagesApi(defaultConfiguration);
+import type {
+  PrintType,
+  SaleItemCreateRequest,
+  CategoryModel,
+} from "../../api/apiTypes";
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ValidationSchema = z.object({
   name: z
@@ -39,22 +33,19 @@ const ValidationSchema = z.object({
     .refine(
       (val) => Number(val) >= 0,
       "Procentuální marže musí být větší/rovna nule",
-    )
-    .optional(),
+    ),
   marginStatic: z
     .string()
     .regex(validationConstants.numberRegex, "Statická marže musí být číslo")
     .refine(
       (val) => Number(val) >= 0,
       "Statická marže musí být větší/rovna nule",
-    )
-    .optional(),
+    ),
   prestigeAmount: z
     .string()
     .regex(validationConstants.numberRegex, "Prestiž musí být číslo")
-    .refine((val) => Number(val) >= 0, "Prestiž musí být větší/rovna nule")
-    .optional(),
-  printType: z.custom<PrintType>().optional(),
+    .refine((val) => Number(val) >= 0, "Prestiž musí být větší/rovna nule"),
+  printType: z.custom<PrintType>(),
   modifierIds: z.array(z.number()).optional(),
   categoryIds: z.array(z.number()).optional(),
 });
@@ -77,7 +68,7 @@ type Props = {
 };
 
 const SaleItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
-  const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+  const [categories, setCategories] = useState<CategoryModel[]>();
   // TODO add modifiers here
   const { startLoading, stopLoading } = useLoading();
   const {
@@ -91,20 +82,26 @@ const SaleItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   });
   useEffect(() => {
     const getCategories = async () => {
-      const response = await handleApiCall(categoryApi.categoriesReadAll());
-      if (response) {
-        setCategories(response.data);
-      } else {
-        setCategories(null);
+      const { response, data } = await apiClient.GET("/categories");
+      setCategories(data?.data);
+      if (!response.ok) {
+        handleApiError(response);
       }
     };
     getCategories();
   }, []);
 
-  const submitForm: SubmitHandler<SaleItemCreateRequest> = async (data) => {
+  const submitForm: SubmitHandler<SaleItemCreateRequest> = async (
+    requestBody,
+  ) => {
     beforeSubmit?.();
     startLoading();
-    await handleApiCall(api.saleItemsCreate({ saleItemCreateRequest: data }));
+    const { response, error } = await apiClient.POST("/sale-items", {
+      body: requestBody,
+    });
+    if (!response.ok) {
+      handleApiError(response, error);
+    }
     stopLoading();
     afterSubmit?.();
   };

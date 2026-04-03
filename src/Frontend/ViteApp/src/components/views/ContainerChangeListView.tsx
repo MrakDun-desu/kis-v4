@@ -8,15 +8,10 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import {
-  ContainerChangesApi,
-  type ContainerChangeModel,
-} from "../../api-generated";
-import { defaultConfiguration } from "../../configuration/apiConfiguration";
-import handleApiCall from "../../errorHandling/apiResponseHandler";
+import type { ContainerChangeModel } from "../../api/apiTypes";
 import { containerStates } from "../../constants/containerStates";
-
-const api = new ContainerChangesApi(defaultConfiguration);
+import { apiClient } from "../../api/apiClient";
+import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const ContainerChangeListView = ({
   containerId,
@@ -25,19 +20,18 @@ const ContainerChangeListView = ({
   containerId: number;
   refreshCounter: number;
 }) => {
-  const [containerChanges, setContainerChanges] = useState<
-    ContainerChangeModel[] | null
-  >(null);
+  const [containerChanges, setContainerChanges] =
+    useState<ContainerChangeModel[]>();
 
   useEffect(() => {
     const getContainerChanges = async () => {
-      const response = await handleApiCall(
-        api.containerChangesReadAll({ containerId }),
+      const { response, data, error } = await apiClient.GET(
+        "/container-changes",
+        { params: { query: { ContainerId: containerId } } },
       );
-      if (!response) {
-        setContainerChanges(null);
-      } else {
-        setContainerChanges(response.data);
+      setContainerChanges(data?.data);
+      if (!response.ok) {
+        handleApiError(response, error);
       }
     };
     getContainerChanges();
@@ -56,8 +50,10 @@ const ContainerChangeListView = ({
         </TableHead>
         <TableBody>
           {containerChanges?.map((c) => (
-            <TableRow key={c.timestamp.toDateString()}>
-              <TableCell>{c.timestamp.toLocaleString("cs")}</TableCell>
+            <TableRow key={c.timestamp}>
+              <TableCell>
+                {new Date(c.timestamp).toLocaleString("cs")}
+              </TableCell>
               <TableCell>{containerStates[c.newState]}</TableCell>
               <TableCell>{c.newAmount}</TableCell>
             </TableRow>

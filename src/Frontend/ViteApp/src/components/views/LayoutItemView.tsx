@@ -1,7 +1,6 @@
 import { ShoppingBag, GridView, WaterDrop } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { instanceOfLayoutItemModelLayoutSaleItemModel } from "../../api-generated";
 import { usePosStore } from "../../stores/posStore";
 import { useShallow } from "zustand/react/shallow";
 
@@ -93,29 +92,28 @@ const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
         {layoutItem.type === "Pipe" && <WaterDrop fontSize="large" />}
       </Box>
 
-      {layoutItem.type === "SaleItem" &&
-        instanceOfLayoutItemModelLayoutSaleItemModel(layoutItem) && (
-          <Box position="absolute" top="10px" left="10px">
-            <Typography
-              fontSize={16}
-              sx={{ userSelect: "none" }}
-              lineHeight={1.2}
-            >
-              Cena: {layoutItem.target.currentCost},-
-              {layoutItem.target.amountInStore !== null && (
-                <>
-                  <br />
-                  Ve skladu: {layoutItem.target.amountInStore} ks
-                </>
-              )}
-              {amountInOrder !== 0 && (
-                <>
-                  <br />V objednávce: {amountInOrder} ks
-                </>
-              )}
-            </Typography>
-          </Box>
-        )}
+      {layoutItem.type === "SaleItem" && (
+        <Box position="absolute" top="10px" left="10px">
+          <Typography
+            fontSize={16}
+            sx={{ userSelect: "none" }}
+            lineHeight={1.2}
+          >
+            Cena: {layoutItem.target.currentCost},-
+            {layoutItem.target.amountInStore !== null && (
+              <>
+                <br />
+                Ve skladu: {layoutItem.target.amountInStore} ks
+              </>
+            )}
+            {amountInOrder !== 0 && (
+              <>
+                <br />V objednávce: {amountInOrder} ks
+              </>
+            )}
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 };
