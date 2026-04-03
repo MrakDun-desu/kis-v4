@@ -180,13 +180,6 @@ builder.Services.AddExceptionHandler<ExceptionHandlerMiddleware>();
 
 var app = builder.Build();
 
-// Seeding
-if (args.Contains("--test-seed")) {
-    using var scope = app.Services.CreateScope();
-    var seeder = scope.ServiceProvider.GetRequiredService<TestSeeder>();
-    seeder.Seed();
-}
-
 // Auditing
 var contextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => {
@@ -207,6 +200,14 @@ Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => 
         .IgnoreMatchedProperties(true);
 });
 
+// Seeding
+if (args.Contains("--test-seed")) {
+    using var scope = app.Services.CreateScope();
+    var seeder = scope.ServiceProvider.GetRequiredService<TestSeeder>();
+    seeder.Seed();
+}
+
+
 // Middlewares
 app.UseCors();
 app.UseHttpsRedirection();
@@ -221,6 +222,7 @@ app.UseMiddleware<UserCreationMiddleware>();
 app.UseStaticFiles(); // static files only for serving images
 
 // Endpoints
+AccountTransactions.MapEndpoints(app);
 CashBoxes.MapEndpoints(app);
 Categories.MapEndpoints(app);
 CompositeAmounts.MapEndpoints(app);

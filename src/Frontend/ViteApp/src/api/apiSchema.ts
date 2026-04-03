@@ -4,6 +4,22 @@
  */
 
 export interface paths {
+    "/account-transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AccountTransactionsReadAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/cashboxes": {
         parameters: {
             query?: never;
@@ -1597,6 +1613,41 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    AccountTransactionsReadAll: {
+        parameters: {
+            query: {
+                AccountId: number;
+                From?: string;
+                To?: string;
+                Page?: number;
+                PageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountTransactionReadAllResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+        };
+    };
     CashBoxesReadAll: {
         parameters: {
             query?: never;

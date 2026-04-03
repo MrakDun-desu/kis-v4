@@ -39,6 +39,7 @@ import SaleTransactions from "./pages/admin/pages/SaleTransactions";
 import StoreTransactionDetail from "./pages/admin/pages/StoreTransactionDetail";
 import SaleTransactionDetail from "./pages/admin/pages/SaleTransactionDetail";
 import RecentTransactions from "./pages/pos/pages/RecentTransactions";
+import CashBoxDetail from "./pages/admin/pages/CashBoxDetail";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -107,6 +108,7 @@ function App() {
                 element={<SaleTransactionDetail />}
               />
               <Route path="cashboxes" element={<CashBoxes />} />
+              <Route path="cashboxes/:id" element={<CashBoxDetail />} />
               <Route path="categories" element={<Categories />} />
               <Route
                 path="container-templates"

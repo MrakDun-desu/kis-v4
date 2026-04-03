@@ -21,12 +21,16 @@ public class AccountTransactionService(
         var reqTime = _timeProvider.GetUtcNow();
         var query = _dbContext.AccountTransactions
                 .Where(at => at.AccountId == req.AccountId)
+                .Where(at => !at.Cancelled)
                 .Include(at => at.SaleTransaction)
                 .Include(at => at.Account)
                 .ThenInclude(a => (a as UserAccount)!.User)
                 .Include(at => at.Account)
                 .ThenInclude(a => (a as CashBoxAccount)!.Cashbox)
                 .AsQueryable();
+
+        var total = await query
+            .SumAsync(at => at.Amount, token);
 
         if (req.From is not null) {
             query = query.Where(at =>
@@ -40,10 +44,6 @@ public class AccountTransactionService(
                 <= req.To
             );
         }
-
-        var total = await query
-            .Where(at => !at.Cancelled)
-            .SumAsync(at => at.Amount, token);
 
         return await query.PaginateAsync(
                 req,

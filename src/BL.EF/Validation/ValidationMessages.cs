@@ -1,3 +1,5 @@
+using KisV4.Common.Models;
+
 namespace KisV4.BL.EF.Validation;
 
 public static class ValidationMessages {
@@ -27,6 +29,7 @@ public static class ValidationMessages {
     public const string MarginPercentPropName = "Procentuální marže";
     public const string PrestigePropName = "Prestiž";
 
+    public const string AccountIdPropName = "ID účtu";
     public const string StoreIdPropName = "ID skladu";
     public const string ContainerIdPropName = "ID kegu";
     public const string StoreItemIdPropName = "ID skladové položky";
@@ -150,6 +153,9 @@ public static class ValidationMessages {
         """;
 
     // IDs
+    public const string AccountIdNotValidMessage = $"""
+        {AccountIdPropName} neodpovídá žádnému existujícímu účtu
+        """;
     public const string StoreIdNotValidMessage = $"""
         {StoreIdPropName} neodpovídá žádnému existujícímu skladu
         """;

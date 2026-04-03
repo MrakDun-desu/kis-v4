@@ -37,9 +37,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (document.visibilityState === "visible") {
         const now = Date.now();
         if (lastVisibilityChange + authRefreshTimeout < now) {
-          setLastVisibilityChange(now);
           await refreshAuth(true);
         }
+        setLastVisibilityChange(now);
       }
     };
     const unsubscribe = authEvents.on("unauthorized", handleUnauthorized);
