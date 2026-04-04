@@ -132,8 +132,11 @@ public static class ValidationMessages {
     public const string SameContainerAlreadyTappedMessage = $"""
         Nemožno narazit keg - keg se stejnou skladovou položkou už je naražen na pípě v tomto skladu
         """;
-    internal static string RequiredContainerItemsDontHaveOpenContainers = $"""
+    public const string RequiredContainerItemsDontHaveOpenContainers = $"""
         Některým skladovým položkám v této traksakci chybí naražené kegy
+        """;
+    public const string CantAddContainerToBusyPipe = $"""
+        Nemožno přidat keg na obsazenou pípu. Nejdřív odražte aktuální keg
         """;
 
     // strings

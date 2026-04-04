@@ -8,22 +8,22 @@ const handleApiError = (
   problem?: HttpValidationProblemDetails,
   onNotFound?: () => void
 ) => {
-  if (problem) {
-    if (!problem.errors) {
-      snackbarRef.show?.(`Chyba požadavku, detaily v konzoli.`, "error");
-      console.log(response);
-    }
-    let errorMessage = "Naskytli se validační chyby:";
-    for (const error in problem.errors) {
-      errorMessage = errorMessage.concat(`\n${error}: ${problem.errors[error]}`);
-    }
-    snackbarRef.show?.(errorMessage, "warning");
-
-    return;
-  }
-
   switch (response.status) {
     case 400: {
+      if (problem) {
+        if (!problem.errors) {
+          snackbarRef.show?.(`Chyba požadavku, detaily v konzoli.`, "error");
+          console.log(response);
+        }
+        let errorMessage = "Naskytli se validační chyby:";
+        for (const error in problem.errors) {
+          errorMessage = errorMessage.concat(`\n${error}: ${problem.errors[error]}`);
+        }
+        snackbarRef.show?.(errorMessage, "warning");
+
+        return;
+      }
+
       snackbarRef.show?.(`Chyba požadavku, detaily v konzoli.`, "error");
       console.log(response);
       break;

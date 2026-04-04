@@ -39,5 +39,8 @@ public class TapUpdateValidator : AbstractValidator<TapUpdateRequest> {
             .MustAsync(helper.BeContainerWithNewStoreItem)
             .OverridePropertyName(ValidationMessages.ContainerIdPropName)
             .WithMessage(ValidationMessages.SameContainerAlreadyTappedMessage);
+        RuleFor(x => x)
+            .MustAsync(helper.NotHaveContainerIfAddingNew)
+            .WithMessage(ValidationMessages.CantAddContainerToBusyPipe);
     }
 }

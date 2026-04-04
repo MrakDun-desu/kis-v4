@@ -6,6 +6,6 @@ public record Tap {
 
     public int? ContainerId { get; set; }
     public Container? Container { get; set; }
-    public int StoreId { get; set; }
+    public required int StoreId { get; set; }
     public Store? Store { get; set; }
 }

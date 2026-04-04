@@ -210,12 +210,13 @@ public class ContainerService(
                             Reason = TransactionReason.ChangingStores,
                             StoreId = model.StoreId,
                             SourceStoreId = oldStoreId,
+                            Note = "Přesunutí kegu",
                             StoreTransactionItems = [
-                                new StoreTransactionItemCreateRequest {
-                                Cost = 0,
-                                Amount = entity.Amount,
-                                StoreItemId = entity.Template!.StoreItemId
-                            }
+                                    new StoreTransactionItemCreateRequest {
+                                    Cost = 0,
+                                    Amount = entity.Amount,
+                                    StoreItemId = entity.Template!.StoreItemId,
+                                }
                             ]
                         },
                     userId,
@@ -253,7 +254,7 @@ public class ContainerService(
     internal static async Task<Dictionary<int, Container>> GetAvailableContainersAsync(
             int storeId,
             KisDbContext dbContext,
-            SaleTransactionRequestState? state = null,
+            SaleTransactionRequestState? state,
             CancellationToken token = default
             ) {
         if (state?.StoreItemToContainer is not null) {
@@ -262,6 +263,7 @@ public class ContainerService(
 
         var output = await dbContext.Containers
             .Include(c => c.Tap)
+            .Include(c => c.Template)
             .Where(c => c.Tap != null)
             .Where(c => c.StoreId == storeId)
             .ToDictionaryAsync(c => c.Template!.StoreItemId, c => c, token);

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.DAL.EF.Entities;
 
-[PrimaryKey(nameof(AccountId), nameof(SaleTransactionId))]
+[PrimaryKey(nameof(AccountId), nameof(SaleTransactionId), nameof(Type))]
 [AuditIgnore]
 public record AccountTransaction {
     public required decimal Amount { get; init; }

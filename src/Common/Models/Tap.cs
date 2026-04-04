@@ -10,19 +10,21 @@ public record TapListModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
     public required int? ContainerId { get; init; }
+    public required StoreListModel Store { get; init; }
 }
 
 public record TapDetailModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
     public required int? ContainerId { get; init; }
+    public required StoreListModel Store { get; init; }
     public required IEnumerable<ContainerListModel> Containers { get; init; }
 }
 
 public record TapUpdateModel {
     [DefaultValue("Kachna 1")]
     public required string Name { get; init; }
-    public required int? ContainerId { get; init; }
+    public int? ContainerId { get; init; }
 }
 
 // Requests and responses

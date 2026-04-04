@@ -13,7 +13,6 @@ import {
 import { csCZ } from "@mui/x-data-grid/locales";
 import { Link, useNavigate } from "react-router-dom";
 import ContainerCreateForm from "../forms/ContainerCreateForm";
-import PipeFilter from "../filters/PipeFilter";
 import StoreFilter from "../filters/StoreFilter";
 import ContainerTemplateFilter from "../filters/ContainerTemplateFilter";
 import { containerStates } from "../../constants/containerStates";
@@ -32,14 +31,12 @@ type Query = operations["ContainersReadAll"]["parameters"]["query"];
 const ContainerListView = ({
   storeId,
   initialContainers,
-  showPipeFilter,
   showUnusableFilter,
   showTemplateFilter,
   afterCreate,
 }: {
   storeId?: number;
   initialContainers?: ContainerReadAllResponse;
-  showPipeFilter?: boolean;
   showUnusableFilter?: boolean;
   showTemplateFilter?: boolean;
   afterCreate?: (resp: ContainerCreateResponse) => void;
@@ -126,15 +123,15 @@ const ContainerListView = ({
     },
 
     {
-      field: "pipe",
+      field: "tap",
       headerName: "Aktuální pípa",
       type: "string",
       sortable: false,
       editable: false,
       filterable: false,
       flex: 1,
-      renderCell: ({ row }) => (!row.pipe ? "Žádná" : row.pipe.name),
-      //<Link to={`/admin/taps/${row.pipe.id}`}>{row.pipe.name}</Link>
+      renderCell: ({ row }) => (!row.tap ? "Žádná" : row.tap.name),
+      //<Link to={`/admin/taps/${row.tap.id}`}>{row.tap.name}</Link>
     },
 
     {
@@ -179,14 +176,6 @@ const ContainerListView = ({
           Naskladnit kegy
         </Button>
       </div>
-
-      {showPipeFilter && (
-        <PipeFilter
-          onChange={(pipeId) =>
-            setQuery((prev) => ({ ...prev, PipeId: pipeId }))
-          }
-        />
-      )}
 
       {showTemplateFilter && (
         <ContainerTemplateFilter

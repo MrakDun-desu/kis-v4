@@ -9,6 +9,7 @@ const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
     usePosStore(
       useShallow((state) => ({
         currentLayout: state.currentLayout,
+        currentStore: state.currentStore,
         transactionItems: state.transactionItems,
         changeLayout: state.setLayoutId,
         addItem: state.addTransactionItem,
@@ -71,8 +72,9 @@ const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
             changeLayout(layoutItem.target.id);
             break;
           }
-          case "Pipe": {
-            navigate(`/pos/pipes/${layoutItem.target.id}`);
+          case "Tap": {
+            if (layoutItem.target.store.id !== currentStore)
+              navigate(`/pos/taps/${layoutItem.target.id}`);
           }
         }
       }}
@@ -89,7 +91,7 @@ const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
       <Box position="absolute" bottom="0" left="5px">
         {layoutItem.type === "SaleItem" && <ShoppingBag fontSize="large" />}
         {layoutItem.type === "Layout" && <GridView fontSize="large" />}
-        {layoutItem.type === "Pipe" && <WaterDrop fontSize="large" />}
+        {layoutItem.type === "Tap" && <WaterDrop fontSize="large" />}
       </Box>
 
       {layoutItem.type === "SaleItem" && (

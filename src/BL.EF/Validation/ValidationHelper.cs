@@ -438,4 +438,10 @@ public class ValidationHelper(
 
         return containerItemIds.All(ci => storeItemToContainer.ContainsKey(ci));
     }
+
+    internal async Task<bool> NotHaveContainerIfAddingNew(TapUpdateRequest req, CancellationToken token) =>
+        await _dbContext.Taps.FindAsync(req.Id, token) switch {
+            null => true,
+            var val => val.ContainerId is null || req.Model.ContainerId is null
+        };
 }

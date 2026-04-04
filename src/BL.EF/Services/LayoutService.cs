@@ -1,3 +1,4 @@
+using KisV4.BL.EF.Mapping;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;
 using KisV4.Common.Models;
@@ -251,13 +252,15 @@ public class LayoutService(
         var layoutTaps = await _dbContext.LayoutTaps
             .Where(li => li.LayoutId == layoutId)
             .Include(ll => ll.Target)
-            .Select(lp => new LayoutPipeModel {
+            .ThenInclude(t => t!.Store)
+            .Select(lp => new LayoutTapModel {
                 X = lp.X,
                 Y = lp.Y,
                 Target = new TapListModel {
                     Id = lp.Target!.Id,
                     Name = lp.Target.Name,
-                    ContainerId = lp.Target.ContainerId
+                    ContainerId = lp.Target.ContainerId,
+                    Store = lp.Target.Store!.ToModel()
                 }
             })
             .ToArrayAsync(token);

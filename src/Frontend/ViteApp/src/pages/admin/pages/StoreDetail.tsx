@@ -608,7 +608,6 @@ const StoreDetail = () => {
         <ContainerListView
           storeId={store.id}
           initialContainers={store.containers}
-          showPipeFilter
           showTemplateFilter
           afterCreate={(resp) => {
             const storeItemId = resp.data[0]?.template.storeItem.id;

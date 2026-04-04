@@ -27,12 +27,11 @@ import PosPage from "./pages/pos/PosPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import PosSettings from "./pages/pos/pages/PosSettings";
 import Categories from "./pages/admin/pages/Categories";
-import Pipes from "./pages/admin/pages/Pipes";
+import Taps from "./pages/admin/pages/Taps";
 import ContainerTemplates from "./pages/admin/pages/ContainerTemplates";
 import Containers from "./pages/admin/pages/Containers";
 import ContainerDetail from "./pages/admin/pages/ContainerDetail";
-import PosPipe from "./pages/pos/pages/PosPipe";
-import PosContainers from "./pages/pos/pages/PosContainers";
+import PosTap from "./pages/pos/pages/PosTap";
 import PosContainerDetail from "./pages/pos/pages/PosContainerDetail";
 import StoreTransactions from "./pages/admin/pages/StoreTransactions";
 import SaleTransactions from "./pages/admin/pages/SaleTransactions";
@@ -116,7 +115,7 @@ function App() {
               />
               <Route path="containers" element={<Containers />} />
               <Route path="containers/:id" element={<ContainerDetail />} />
-              <Route path="taps" element={<Pipes />} />
+              <Route path="taps" element={<Taps />} />
               <Route path="users" element={null} />
               <Route path="layouts" element={<Layouts />} />
               <Route path="layouts/:id" element={<LayoutDetail />} />
@@ -136,10 +135,9 @@ function App() {
                 path="recent-transactions"
                 element={<RecentTransactions />}
               />
-              <Route path="containers" element={<PosContainers />} />
               <Route path="card-pairing" element={null} />
               <Route path="settings" element={<PosSettings />} />
-              <Route path="pipes/:id" element={<PosPipe />} />
+              <Route path="taps/:id" element={<PosTap />} />
               <Route path="containers/:id" element={<PosContainerDetail />} />
             </Route>
 

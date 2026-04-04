@@ -34,27 +34,26 @@ const AccountTransactionListView = ({
               <TableCell>
                 {Number(transaction.amount) > 0 && "+"}
                 {transaction.amount}
-                {transaction.account.kind === "CashBoxAccount" && "czk"}
+                {transaction.type.endsWith("Money") && "czk"}
               </TableCell>
 
               <TableCell>
-                {transaction.account.kind === "UserAccount" && (
+                {transaction.account.type === "UserAccount" && (
                   <>
                     Uživatel: {transaction.account.user.nick}
-                    {transaction.account.type === "Prestige" && " (prestiž)"}
+                    {transaction.type === "Prestige" && " (prestiž)"}
                   </>
                 )}
-                {transaction.account.kind === "CashBoxAccount" && (
+                {transaction.account.type === "CashBoxAccount" && (
                   <>
                     Kasa:{" "}
                     <Link
-                      to={`/admin/cash-boxes/${transaction.account.cashBox.id}`}
+                      to={`/admin/cashboxes/${transaction.account.cashBox.id}`}
                     >
                       {transaction.account.cashBox.name}
                     </Link>
-                    {transaction.account.type === "SalesMoney" && " (prodej)"}
-                    {transaction.account.type === "DonationMoney" &&
-                      " (příspěvek)"}
+                    {transaction.type === "SalesMoney" && " (prodej)"}
+                    {transaction.type === "DonationMoney" && " (příspěvek)"}
                   </>
                 )}
               </TableCell>

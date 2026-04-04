@@ -1,34 +1,34 @@
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
-import type { PipeListModel } from "../../api/apiTypes";
+import type { TapListModel } from "../../api/apiTypes";
 import { apiClient } from "../../api/apiClient";
 import handleApiError from "../../errorHandling/apiResponseHandler";
 
-const PipeFilter = ({
+const TapFilter = ({
   onChange,
 }: {
   onChange: (id: number | undefined) => void;
 }) => {
   const [current, setCurrent] = useState<number>();
-  const [pipes, setPipes] = useState<PipeListModel[]>();
+  const [taps, setTaps] = useState<TapListModel[]>();
   useEffect(() => {
-    const getPipes = async () => {
-      const { data, response } = await apiClient.GET("/pipes");
-      setPipes(data?.data);
+    const getTaps = async () => {
+      const { data, response } = await apiClient.GET("/taps");
+      setTaps(data?.data);
       if (!response.ok) {
         handleApiError(response);
       }
     };
-    getPipes();
+    getTaps();
   }, []);
 
   return (
     <FormControl fullWidth>
-      <InputLabel id="pipeFilterLabel">Filtrování podle pípy</InputLabel>
+      <InputLabel id="tapFilterLabel">Filtrování podle pípy</InputLabel>
       <Select
-        id="pipeFilter"
+        id="tapFilter"
         label="Filtrování podle pípy"
-        labelId="pipeFilterLabel"
+        labelId="tapFilterLabel"
         value={current ?? ""}
         onChange={(evt) => {
           const newValue =
@@ -37,14 +37,14 @@ const PipeFilter = ({
           setCurrent(newValue);
         }}
       >
-        {pipes
+        {taps
           ? [
               <MenuItem key="empty" value={0}>
                 Zobrazit všechny
               </MenuItem>,
-              ...pipes.map((pipe) => (
-                <MenuItem key={pipe.id} value={pipe.id}>
-                  {pipe.name}
+              ...taps.map((tap) => (
+                <MenuItem key={tap.id} value={tap.id}>
+                  {tap.name}
                 </MenuItem>
               )),
             ]
@@ -54,4 +54,4 @@ const PipeFilter = ({
   );
 };
 
-export default PipeFilter;
+export default TapFilter;

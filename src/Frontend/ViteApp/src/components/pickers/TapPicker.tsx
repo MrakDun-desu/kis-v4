@@ -7,11 +7,11 @@ import {
   Select,
 } from "@mui/material";
 import type { EntityWithName } from "../../stores/posStore";
-import type { PipeListModel } from "../../api/apiTypes";
+import type { TapListModel } from "../../api/apiTypes";
 import { apiClient } from "../../api/apiClient";
 import handleApiError from "../../errorHandling/apiResponseHandler";
 
-const PipePicker = ({
+const TapPicker = ({
   onChange,
   options,
   error,
@@ -20,36 +20,36 @@ const PipePicker = ({
   small,
 }: {
   onChange: (val: EntityWithName | undefined) => void;
-  options?: PipeListModel[];
+  options?: TapListModel[];
   error?: boolean;
   helperText?: string;
   initialValue?: number;
   small?: boolean;
 }) => {
-  const [pipes, setPipes] = useState<PipeListModel[] | undefined>(options);
+  const [taps, setTaps] = useState<TapListModel[] | undefined>(options);
   const [value, setValue] = useState(initialValue);
 
   useEffect(() => {
-    if (pipes) {
+    if (taps) {
       return;
     }
-    const getPipes = async () => {
-      const { response, data } = await apiClient.GET("/pipes");
-      setPipes(data?.data);
+    const getTaps = async () => {
+      const { response, data } = await apiClient.GET("/taps");
+      setTaps(data?.data);
       if (!response.ok) {
         handleApiError(response);
       }
     };
-    getPipes();
+    getTaps();
   }, []);
 
   return (
     <FormControl error={error} fullWidth size={small ? "small" : "medium"}>
-      <InputLabel id="pipePicker">Výběr pípy</InputLabel>
+      <InputLabel id="tapPicker">Výběr pípy</InputLabel>
       <Select
         size={small ? "small" : "medium"}
         label="Výběr pípy"
-        labelId="pipePicker"
+        labelId="tapPicker"
         value={value ?? ""}
         error={error}
         onChange={(evt) => {
@@ -59,17 +59,17 @@ const PipePicker = ({
           } else {
             onChange({
               id: evt.target.value,
-              name: pipes!.find((c) => c.id === evt.target.value)!.name,
+              name: taps!.find((c) => c.id === evt.target.value)!.name,
             });
           }
         }}
       >
-        {pipes
+        {taps
           ? [
               <MenuItem key="empty" value={-1}>
                 Žádná
               </MenuItem>,
-              ...pipes.map((val) => (
+              ...taps.map((val) => (
                 <MenuItem key={val.id} value={val.id}>
                   {val.name}
                 </MenuItem>
@@ -82,4 +82,4 @@ const PipePicker = ({
   );
 };
 
-export default PipePicker;
+export default TapPicker;

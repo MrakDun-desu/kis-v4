@@ -31,13 +31,13 @@ import { GridView, ShoppingBag, WaterDrop } from "@mui/icons-material";
 import { usePosStore } from "../../../stores/posStore";
 import SaleItemPicker from "../../../components/pickers/SaleItemPicker";
 import LayoutPicker from "../../../components/pickers/LayoutPicker";
-import PipePicker from "../../../components/pickers/PipePicker";
+import TapPicker from "../../../components/pickers/TapPicker";
 import type {
   LayoutItemModel,
   LayoutItemType,
   LayoutListModel,
   LayoutReadResponse,
-  PipeListModel,
+  TapListModel,
 } from "../../../api/apiTypes";
 import { apiClient } from "../../../api/apiClient";
 import handleApiError from "../../../errorHandling/apiResponseHandler";
@@ -72,7 +72,7 @@ const LayoutDetail = () => {
   const { startLoading, stopLoading } = useLoading();
   const [layout, setLayout] = useState<LayoutReadResponse>();
   const [layouts, setLayouts] = useState<LayoutListModel[]>();
-  const [pipes, setPipes] = useState<PipeListModel[]>();
+  const [taps, setTaps] = useState<TapListModel[]>();
   const setCurrentLayout = usePosStore((state) => state.setCurrentLayout);
 
   const {
@@ -122,17 +122,17 @@ const LayoutDetail = () => {
   }, []);
 
   useEffect(() => {
-    if (pipes) {
+    if (taps) {
       return;
     }
-    const getPipes = async () => {
-      const { response, data } = await apiClient.GET("/pipes");
-      setPipes(data?.data);
+    const getTaps = async () => {
+      const { response, data } = await apiClient.GET("/taps");
+      setTaps(data?.data);
       if (!response.ok) {
         handleApiError(response);
       }
     };
-    getPipes();
+    getTaps();
   }, []);
 
   useEffect(() => {
@@ -167,7 +167,7 @@ const LayoutDetail = () => {
     stopLoading();
   };
 
-  if (!layout || !pipes || !layouts) {
+  if (!layout || !taps || !layouts) {
     return (
       <>
         <Skeleton variant="rounded" width={300} height={30} />
@@ -264,7 +264,7 @@ const LayoutDetail = () => {
                         formLayoutItems={layoutItems}
                         errors={errors}
                         layouts={layouts}
-                        pipes={pipes}
+                        taps={taps}
                       />
                     </Box>
                   </Paper>
@@ -289,7 +289,7 @@ const LayoutGridItem = ({
   existingItem,
   errors,
   layouts,
-  pipes,
+  taps,
   x,
   y,
 }: {
@@ -303,7 +303,7 @@ const LayoutGridItem = ({
   >;
   errors: FieldErrors<LayoutUpdateFormData>;
   layouts: LayoutListModel[];
-  pipes: PipeListModel[];
+  taps: TapListModel[];
   x: number;
   y: number;
 }) => {
@@ -322,7 +322,7 @@ const LayoutGridItem = ({
       >
         {type === "SaleItem" && <ShoppingBag />}
         {type === "Layout" && <GridView />}
-        {type === "Pipe" && <WaterDrop />}
+        {type === "Tap" && <WaterDrop />}
 
         <FormControl fullWidth>
           <InputLabel size="small" id={labelId}>
@@ -341,7 +341,7 @@ const LayoutGridItem = ({
               >
                 <MenuItem value="SaleItem">Prodejní položka</MenuItem>
                 <MenuItem value="Layout">Rozložení</MenuItem>
-                <MenuItem value="Pipe">Pípa</MenuItem>
+                <MenuItem value="Tap">Pípa</MenuItem>
               </Select>
             )}
           />
@@ -378,18 +378,18 @@ const LayoutGridItem = ({
           />
         )}
 
-        {type === "Pipe" && (
+        {type === "Tap" && (
           <Controller
             name={`layoutItems.${index}.targetId`}
             control={control}
             render={({ field }) => (
-              <PipePicker
+              <TapPicker
                 small
                 onChange={(val) => field.onChange(val?.id)}
                 error={!!errors.layoutItems?.[index]?.targetId}
                 helperText={errors.layoutItems?.[index]?.targetId?.message}
                 initialValue={existingItem?.target.id}
-                options={pipes}
+                options={taps}
               />
             )}
           />

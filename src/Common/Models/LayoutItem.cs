@@ -8,7 +8,7 @@ namespace KisV4.Common.Models;
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(LayoutSaleItemModel), nameof(LayoutItemType.SaleItem))]
 [JsonDerivedType(typeof(LayoutLinkModel), nameof(LayoutItemType.Layout))]
-[JsonDerivedType(typeof(LayoutPipeModel), nameof(LayoutItemType.Tap))]
+[JsonDerivedType(typeof(LayoutTapModel), nameof(LayoutItemType.Tap))]
 public abstract record LayoutItemModel {
     public required int X { get; init; }
     public required int Y { get; init; }
@@ -22,7 +22,7 @@ public record LayoutLinkModel : LayoutItemModel {
     public required LayoutListModel Target { get; init; }
 }
 
-public record LayoutPipeModel : LayoutItemModel {
+public record LayoutTapModel : LayoutItemModel {
     public required TapListModel Target { get; init; }
 }
 

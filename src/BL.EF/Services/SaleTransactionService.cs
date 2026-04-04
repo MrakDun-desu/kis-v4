@@ -722,7 +722,7 @@ public class SaleTransactionService(
                 Amount = paidAmount - totalTransactionPrice,
                 AccountId = cashBox.Account.Id,
                 SaleTransaction = saleTransaction,
-                Type = AccountTransactionType.SalesMoney
+                Type = AccountTransactionType.DonationMoney
             }
         ];
 

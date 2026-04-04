@@ -38,10 +38,6 @@ const links: Link[] = [
     label: "Nedávné transakce",
     url: "recent-transactions",
   },
-  {
-    label: "Kegy",
-    url: "containers",
-  },
   // {
   //   label: "Párování karty",
   //   url: "card-pairing",

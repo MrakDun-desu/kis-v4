@@ -21,10 +21,12 @@ public class TapService(
         CancellationToken token = default
     ) {
         var data = await _dbContext.Taps
+            .Include(t => t.Store)
             .Select(p => new TapListModel {
                 Id = p.Id,
                 Name = p.Name,
-                ContainerId = p.ContainerId
+                ContainerId = p.ContainerId,
+                Store = p.Store!.ToModel()
             })
             .ToArrayAsync(token);
 
@@ -36,7 +38,8 @@ public class TapService(
         CancellationToken token = default
     ) {
         var entity = new Tap {
-            Name = req.Name
+            Name = req.Name,
+            StoreId = req.StoreId
         };
 
         _dbContext.Taps.Add(entity);
@@ -45,7 +48,8 @@ public class TapService(
         return new TapCreateResponse {
             Id = entity.Id,
             Name = entity.Name,
-            ContainerId = null
+            ContainerId = null,
+            Store = entity.Store!.ToModel()
         };
     }
 
@@ -57,43 +61,80 @@ public class TapService(
         var id = req.Id;
         var model = req.Model;
         var reqTime = _timeProvider.GetUtcNow();
-        var entity = await _dbContext.Taps.FindAsync(id, token);
+        var entity = await _dbContext.Taps
+            .Include(t => t.Store)
+            .FirstAsync(t => t.Id == req.Id, token);
 
         if (entity is null) {
             return null;
         }
 
-        entity.Name = model.Name;
-        entity.ContainerId = model.ContainerId;
+        await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
 
-        if (model.ContainerId is { } newContainerId) {
-            var newContainer = await _dbContext.Containers.FindAsync(newContainerId, token);
+        try {
+            entity.Name = model.Name;
+            entity.ContainerId = model.ContainerId;
 
-            if (newContainer!.State == ContainerState.New) {
-                var user = await _userService.GetAsync(userId, token);
-                newContainer.State = ContainerState.Opened;
+            if (model.ContainerId is { } newContainerId) {
+                var newContainer = await _dbContext.Containers
+                    .Include(c => c.Template)
+                    .FirstAsync(c => c.Id == newContainerId, token);
+
+                var oldStoreId = newContainer.StoreId;
                 newContainer.StoreId = entity.StoreId;
+                if (oldStoreId != newContainer.StoreId) {
+                    await StoreTransactionService.CreateInternalAsync(
+                        new StoreTransactionCreateRequest {
+                            Reason = TransactionReason.ChangingStores,
+                            StoreId = newContainer.StoreId,
+                            SourceStoreId = oldStoreId,
+                            Note = "Přesunutí kegu",
+                            StoreTransactionItems = [
+                                new StoreTransactionItemCreateRequest {
+                                    Cost = 0,
+                                    Amount = newContainer.Amount,
+                                    StoreItemId = newContainer.Template!.StoreItemId,
+                                }
+                            ]
+                        },
+                        userId,
+                        reqTime,
+                        _dbContext,
+                        token: token
+                    );
+                }
 
-                _dbContext.Containers.Update(newContainer);
-                _dbContext.ContainerChanges.Add(new() {
-                    ContainerId = newContainerId,
-                    NewAmount = newContainer.Amount,
-                    NewState = ContainerState.Opened,
-                    Timestamp = reqTime,
-                    UserId = user.Id
-                });
+                if (newContainer!.State == ContainerState.New) {
+                    var user = await _userService.GetAsync(userId, token);
+                    newContainer.State = ContainerState.Opened;
 
+                    _dbContext.Containers.Update(newContainer);
+                    _dbContext.ContainerChanges.Add(new() {
+                        ContainerId = newContainerId,
+                        NewAmount = newContainer.Amount,
+                        NewState = ContainerState.Opened,
+                        Timestamp = reqTime,
+                        UserId = user.Id
+                    });
+
+                }
             }
+
+            _dbContext.Taps.Update(entity);
+            await _dbContext.SaveChangesAsync(token);
+            await dbTransaction.CommitAsync(token);
+
+            return new TapUpdateResponse {
+                Id = entity.Id,
+                Name = entity.Name,
+                ContainerId = entity.ContainerId,
+                Store = entity.Store!.ToModel()
+            };
+        } catch {
+            await dbTransaction.RollbackAsync(token);
+            throw;
         }
 
-        _dbContext.Taps.Update(entity);
-        await _dbContext.SaveChangesAsync(token);
-
-        return new TapUpdateResponse {
-            Id = entity.Id,
-            Name = entity.Name,
-            ContainerId = entity.ContainerId
-        };
     }
 
     public async Task<TapReadResponse?> ReadAsync(
@@ -112,6 +153,7 @@ public class TapService(
                 Id = p.Id,
                 Name = p.Name,
                 ContainerId = p.ContainerId,
+                Store = p.Store!.ToModel(),
                 Containers = containers.Select(c => new ContainerListModel {
                     Id = c.Id,
                     Amount = c.Amount,

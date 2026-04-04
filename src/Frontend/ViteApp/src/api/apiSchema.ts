@@ -340,33 +340,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/pipes": {
+    "/taps": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["PipesReadAll"];
+        get: operations["TapsReadAll"];
         put?: never;
-        post: operations["PipesCreate"];
+        post: operations["TapsCreate"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/pipes/{id}": {
+    "/taps/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["PipesRead"];
-        put: operations["PipesUpdate"];
+        get: operations["TapsRead"];
+        put: operations["TapsUpdate"];
         post?: never;
-        delete: operations["PipesDelete"];
+        delete: operations["TapsDelete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -619,19 +619,17 @@ export interface components {
         AccountModel: components["schemas"]["AccountModelCashBoxAccountModel"] | components["schemas"]["AccountModelUserAccountModel"];
         AccountModelCashBoxAccountModel: {
             /** @enum {string} */
-            kind?: "CashBoxAccount";
+            type?: "CashBoxAccount";
             cashBox: components["schemas"]["CashBoxListModel"];
             /** Format: number */
             id: number;
-            type: components["schemas"]["AccountType"];
         };
         AccountModelUserAccountModel: {
             /** @enum {string} */
-            kind?: "UserAccount";
+            type?: "UserAccount";
             user: components["schemas"]["UserListModel"];
             /** Format: number */
             id: number;
-            type: components["schemas"]["AccountType"];
         };
         AccountTransactionModel: {
             /** Format: string */
@@ -641,6 +639,7 @@ export interface components {
             /** Format: date-time */
             timestamp: string;
             account: components["schemas"]["AccountModel"];
+            type: components["schemas"]["AccountTransactionType"];
         };
         AccountTransactionReadAllResponse: {
             /** Format: number */
@@ -655,7 +654,7 @@ export interface components {
             meta: components["schemas"]["PageMeta"];
         };
         /** @enum {unknown} */
-        AccountType: "SalesMoney" | "DonationMoney" | "Prestige";
+        AccountTransactionType: "SalesMoney" | "DonationMoney" | "Prestige" | "StockTaking";
         CashBoxCreateRequest: {
             /** @default Kasa Kachna */
             name: string;
@@ -677,9 +676,7 @@ export interface components {
             /** Format: number */
             id: number;
             name: string;
-            salesTransactions: components["schemas"]["AccountTransactionReadAllResponse"];
-            donationsTransactions: components["schemas"]["AccountTransactionReadAllResponse"];
-            stockTakings: string[];
+            accountTransactions: components["schemas"]["AccountTransactionReadAllResponse"];
         };
         CashBoxUpdateRequestModel: {
             /** @default Kasa Kachna */
@@ -797,7 +794,7 @@ export interface components {
             amount: string;
             state: components["schemas"]["ContainerState"];
             template: components["schemas"]["ContainerTemplateModel"];
-            pipe: null | components["schemas"]["PipeListModel"];
+            tap: null | components["schemas"]["TapListModel"];
             store: components["schemas"]["StoreListModel"];
         };
         ContainerOperatorReadResponse: {
@@ -808,16 +805,6 @@ export interface components {
             state: components["schemas"]["ContainerState"];
             template: components["schemas"]["ContainerTemplateModel"];
             saleItems: components["schemas"]["SaleItemContainerModel"][];
-        };
-        ContainerPipeModel: {
-            /** Format: number */
-            id: number;
-            /** Format: string */
-            amount: string;
-            state: components["schemas"]["ContainerState"];
-            template: components["schemas"]["ContainerTemplateModel"];
-            /** Format: number */
-            storeId: number;
         };
         ContainerReadAllResponse: {
             data: components["schemas"]["ContainerListModel"][];
@@ -830,7 +817,7 @@ export interface components {
             amount: string;
             state: components["schemas"]["ContainerState"];
             template: components["schemas"]["ContainerTemplateModel"];
-            pipe: null | components["schemas"]["PipeListModel"];
+            tap: null | components["schemas"]["TapListModel"];
             store: components["schemas"]["StoreListModel"];
             containerChanges: components["schemas"]["ContainerChangeModel"][];
         };
@@ -889,8 +876,6 @@ export interface components {
         ContainerUpdateModel: {
             /** Format: number */
             storeId: number;
-            /** Format: number */
-            pipeId?: number;
         };
         ContainerUpdateResponse: {
             /** Format: number */
@@ -899,7 +884,7 @@ export interface components {
             amount: string;
             state: components["schemas"]["ContainerState"];
             template: components["schemas"]["ContainerTemplateModel"];
-            pipe: null | components["schemas"]["PipeListModel"];
+            tap: null | components["schemas"]["TapListModel"];
             store: components["schemas"]["StoreListModel"];
         };
         CostCreateRequest: {
@@ -959,20 +944,11 @@ export interface components {
             /** @default SaleItem */
             type: components["schemas"]["LayoutItemType"];
         };
-        LayoutItemModel: components["schemas"]["LayoutItemModelLayoutSaleItemModel"] | components["schemas"]["LayoutItemModelLayoutLinkModel"] | components["schemas"]["LayoutItemModelLayoutPipeModel"];
+        LayoutItemModel: components["schemas"]["LayoutItemModelLayoutSaleItemModel"] | components["schemas"]["LayoutItemModelLayoutLinkModel"] | components["schemas"]["LayoutItemModelLayoutTapModel"];
         LayoutItemModelLayoutLinkModel: {
             /** @enum {string} */
             type: "Layout";
             target: components["schemas"]["LayoutListModel"];
-            /** Format: number */
-            x: number;
-            /** Format: number */
-            y: number;
-        };
-        LayoutItemModelLayoutPipeModel: {
-            /** @enum {string} */
-            type: "Pipe";
-            target: components["schemas"]["PipeListModel"];
             /** Format: number */
             x: number;
             /** Format: number */
@@ -987,8 +963,17 @@ export interface components {
             /** Format: number */
             y: number;
         };
+        LayoutItemModelLayoutTapModel: {
+            /** @enum {string} */
+            type: "Tap";
+            target: components["schemas"]["TapListModel"];
+            /** Format: number */
+            x: number;
+            /** Format: number */
+            y: number;
+        };
         /** @enum {unknown} */
-        LayoutItemType: "SaleItem" | "Pipe" | "Layout";
+        LayoutItemType: "SaleItem" | "Tap" | "Layout";
         LayoutListModel: {
             /** Format: number */
             id: number;
@@ -1147,38 +1132,6 @@ export interface components {
             pageSize: number;
             /** Format: number */
             total: number;
-        };
-        PipeCreateRequest: {
-            /** @default Pípa Kachna */
-            name: string;
-        };
-        PipeCreateResponse: {
-            /** Format: number */
-            id: number;
-            name: string;
-        };
-        PipeListModel: {
-            /** Format: number */
-            id: number;
-            name: string;
-        };
-        PipeReadAllResponse: {
-            data: components["schemas"]["PipeListModel"][];
-        };
-        PipeReadResponse: {
-            /** Format: number */
-            id: number;
-            name: string;
-            containers: components["schemas"]["ContainerPipeModel"][];
-        };
-        PipeUpdateModel: {
-            /** @default Pípa Kachna */
-            name: string;
-        };
-        PipeUpdateResponse: {
-            /** Format: number */
-            id: number;
-            name: string;
         };
         /** @enum {unknown} */
         PrintType: "DontPrint" | "PrintForCustomer" | "PrintForEmployee" | "PrintForBoth";
@@ -1593,6 +1546,54 @@ export interface components {
             /** Format: number */
             id: number;
             name: string;
+        };
+        TapCreateRequest: {
+            /** @default Kachna 1 */
+            name: string;
+            /** Format: number */
+            storeId: number;
+        };
+        TapCreateResponse: {
+            /** Format: number */
+            id: number;
+            name: string;
+            /** Format: number */
+            containerId: number;
+            store: components["schemas"]["StoreListModel"];
+        };
+        TapListModel: {
+            /** Format: number */
+            id: number;
+            name: string;
+            /** Format: number */
+            containerId: number;
+            store: components["schemas"]["StoreListModel"];
+        };
+        TapReadAllResponse: {
+            data: components["schemas"]["TapListModel"][];
+        };
+        TapReadResponse: {
+            /** Format: number */
+            id: number;
+            name: string;
+            /** Format: number */
+            containerId: number;
+            store: components["schemas"]["StoreListModel"];
+            containers: components["schemas"]["ContainerListModel"][];
+        };
+        TapUpdateModel: {
+            /** @default Kachna 1 */
+            name: string;
+            /** Format: number */
+            containerId?: number;
+        };
+        TapUpdateResponse: {
+            /** Format: number */
+            id: number;
+            name: string;
+            /** Format: number */
+            containerId: number;
+            store: components["schemas"]["StoreListModel"];
         };
         /** @enum {unknown} */
         TransactionReason: "AddingToStore" | "ChangingStores" | "WriteOff" | "Sale" | "StockTaking";
@@ -2083,7 +2084,6 @@ export interface operations {
             query?: {
                 StoreId?: number;
                 TemplateId?: number;
-                PipeId?: number;
                 IncludeUnusable?: boolean;
                 Page?: number;
                 PageSize?: number;
@@ -2814,7 +2814,7 @@ export interface operations {
             };
         };
     };
-    PipesReadAll: {
+    TapsReadAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -2829,12 +2829,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PipeReadAllResponse"];
+                    "application/json": components["schemas"]["TapReadAllResponse"];
                 };
             };
         };
     };
-    PipesCreate: {
+    TapsCreate: {
         parameters: {
             query?: never;
             header?: never;
@@ -2843,7 +2843,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PipeCreateRequest"];
+                "application/json": components["schemas"]["TapCreateRequest"];
             };
         };
         responses: {
@@ -2853,7 +2853,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PipeCreateResponse"];
+                    "application/json": components["schemas"]["TapCreateResponse"];
                 };
             };
             /** @description Bad Request */
@@ -2867,11 +2867,9 @@ export interface operations {
             };
         };
     };
-    PipesRead: {
+    TapsRead: {
         parameters: {
-            query?: {
-                StoreId?: number;
-            };
+            query?: never;
             header?: never;
             path: {
                 id: number;
@@ -2886,7 +2884,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PipeReadResponse"];
+                    "application/json": components["schemas"]["TapReadResponse"];
                 };
             };
             /** @description Not Found */
@@ -2898,7 +2896,7 @@ export interface operations {
             };
         };
     };
-    PipesUpdate: {
+    TapsUpdate: {
         parameters: {
             query?: never;
             header?: never;
@@ -2909,7 +2907,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PipeUpdateModel"];
+                "application/json": components["schemas"]["TapUpdateModel"];
             };
         };
         responses: {
@@ -2919,7 +2917,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PipeUpdateResponse"];
+                    "application/json": components["schemas"]["TapUpdateResponse"];
                 };
             };
             /** @description Bad Request */
@@ -2940,7 +2938,7 @@ export interface operations {
             };
         };
     };
-    PipesDelete: {
+    TapsDelete: {
         parameters: {
             query?: never;
             header?: never;

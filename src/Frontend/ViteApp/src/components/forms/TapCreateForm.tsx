@@ -1,23 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField } from "@mui/material";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import type { PipeCreateRequest } from "../../api/apiTypes";
+import type { TapCreateRequest } from "../../api/apiTypes";
 import { apiClient } from "../../api/apiClient";
 import handleApiError from "../../errorHandling/apiResponseHandler";
+import StorePicker from "../pickers/StorePicker";
 
 const ValidationSchema = z.object({
   name: z
     .string()
     .min(1, "Jméno nesmí být prázdné")
     .max(validationConstants.maxNameLength, "Jméno přesahuje maximální délku"),
+  storeId: z.number("Vyberte sklad"),
 });
-
-const defaultValue: PipeCreateRequest = {
-  name: "Nová pípa",
-};
 
 type Props = {
   id: string;
@@ -25,21 +23,24 @@ type Props = {
   afterSubmit?: () => void;
 };
 
-const PipeCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
+const TapCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
   const { startLoading, stopLoading } = useLoading();
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
-  } = useForm<PipeCreateRequest>({
-    defaultValues: defaultValue,
+  } = useForm<TapCreateRequest>({
+    defaultValues: {
+      name: "Nová pípa",
+    },
     resolver: zodResolver(ValidationSchema),
   });
 
-  const submitForm: SubmitHandler<PipeCreateRequest> = async (requestBody) => {
+  const submitForm: SubmitHandler<TapCreateRequest> = async (requestBody) => {
     beforeSubmit?.();
     startLoading();
-    const { response, error } = await apiClient.POST("/pipes", {
+    const { response, error } = await apiClient.POST("/taps", {
       body: requestBody,
     });
     if (!response.ok) {
@@ -64,9 +65,21 @@ const PipeCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
           error={!!errors.name}
           helperText={errors.name?.message}
         />
+
+        <Controller
+          control={control}
+          name="storeId"
+          render={({ field }) => (
+            <StorePicker
+              onChange={(val) => field.onChange(val?.id)}
+              error={!!errors.storeId}
+              helperText={errors.storeId?.message}
+            />
+          )}
+        />
       </Box>
     </form>
   );
 };
 
-export default PipeCreateForm;
+export default TapCreateForm;

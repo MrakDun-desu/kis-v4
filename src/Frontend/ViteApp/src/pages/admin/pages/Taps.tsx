@@ -10,33 +10,34 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { csCZ } from "@mui/x-data-grid/locales";
-import PipeCreateForm from "../../../components/forms/PipeCreateForm";
-import type { PipeListModel } from "../../../api/apiTypes";
+import TapCreateForm from "../../../components/forms/TapCreateForm";
+import type { TapListModel } from "../../../api/apiTypes";
 import { apiClient } from "../../../api/apiClient";
 import handleApiError from "../../../errorHandling/apiResponseHandler";
+import { Link } from "react-router-dom";
 
-const Pipes = () => {
-  const [pipes, setPipes] = useState<PipeListModel[] | null>(null);
+const Taps = () => {
+  const [taps, setTaps] = useState<TapListModel[] | null>(null);
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
 
   useEffect(() => {
     setLoading(true);
-    const getPipesDeferred = setTimeout(async () => {
-      const { data, response } = await apiClient.GET("/pipes");
+    const getTapsDeferred = setTimeout(async () => {
+      const { data, response } = await apiClient.GET("/taps");
       if (!data) {
-        setPipes(null);
+        setTaps(null);
         handleApiError(response);
       } else {
-        setPipes(data.data);
+        setTaps(data.data);
       }
       setLoading(false);
     }, 500);
-    return () => clearTimeout(getPipesDeferred);
+    return () => clearTimeout(getTapsDeferred);
   }, [refreshCounter]);
 
-  const columns: GridColDef<PipeListModel>[] = [
+  const columns: GridColDef<TapListModel>[] = [
     {
       field: "id",
       headerName: "ID",
@@ -57,6 +58,32 @@ const Pipes = () => {
     },
 
     {
+      field: "store",
+      headerName: "Sklad",
+      type: "string",
+      sortable: false,
+      filterable: false,
+      editable: false,
+      flex: 1,
+      renderCell: ({ row }) => (
+        <Link to={`/admin/stores/${row.store.id}`}>{row.store.name}</Link>
+      ),
+    },
+
+    {
+      field: "container",
+      headerName: "Keg",
+      type: "string",
+      sortable: false,
+      filterable: false,
+      editable: false,
+      flex: 1,
+      renderCell: ({ row }) => (
+        <Link to={`/admin/stores/${row.containerId}`}>{row.containerId}</Link>
+      ),
+    },
+
+    {
       field: "actions",
       headerName: "Akce",
       flex: 1,
@@ -70,13 +97,13 @@ const Pipes = () => {
               `Opravdu chcete ${params.row.name} smazat?`,
             );
             if (confirmed) {
-              const { response } = await apiClient.DELETE("/pipes/{id}", {
+              const { response } = await apiClient.DELETE("/taps/{id}", {
                 params: { path: { id: params.row.id } },
               });
               if (!response.ok) {
                 handleApiError(response);
               } else {
-                refreshPipes();
+                refreshTaps();
               }
             }
           }}
@@ -89,7 +116,7 @@ const Pipes = () => {
 
   const openCreateDialog = () => setCreateDialogOpen(true);
   const closeCreateDialog = () => setCreateDialogOpen(false);
-  const refreshPipes = () => setRefreshCounter((val) => val + 1);
+  const refreshTaps = () => setRefreshCounter((val) => val + 1);
 
   return (
     <>
@@ -108,15 +135,15 @@ const Pipes = () => {
         <Dialog open={createDialogOpen} onClose={closeCreateDialog}>
           <DialogTitle>Vytvořit nový sklad</DialogTitle>
           <DialogContent>
-            <PipeCreateForm
-              id="pipeCreateForm"
+            <TapCreateForm
+              id="tapCreateForm"
               beforeSubmit={closeCreateDialog}
-              afterSubmit={refreshPipes}
+              afterSubmit={refreshTaps}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeCreateDialog}>Zrušit</Button>
-            <Button type="submit" form="pipeCreateForm">
+            <Button type="submit" form="tapCreateForm">
               Vytvořit
             </Button>
           </DialogActions>
@@ -126,7 +153,7 @@ const Pipes = () => {
           rowSelection={false}
           loading={isLoading}
           sx={{ width: "100%" }}
-          rows={pipes ?? []}
+          rows={taps ?? []}
           columns={columns}
           slotProps={{
             loadingOverlay: {
@@ -142,4 +169,4 @@ const Pipes = () => {
   );
 };
 
-export default Pipes;
+export default Taps;

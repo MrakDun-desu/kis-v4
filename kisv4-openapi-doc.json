@@ -4187,7 +4187,7 @@
             "$ref": "#/components/schemas/LayoutItemModelLayoutLinkModel"
           },
           {
-            "$ref": "#/components/schemas/LayoutItemModelLayoutPipeModel"
+            "$ref": "#/components/schemas/LayoutItemModelLayoutTapModel"
           }
         ],
         "discriminator": {
@@ -4195,7 +4195,7 @@
           "mapping": {
             "SaleItem": "#/components/schemas/LayoutItemModelLayoutSaleItemModel",
             "Layout": "#/components/schemas/LayoutItemModelLayoutLinkModel",
-            "Tap": "#/components/schemas/LayoutItemModelLayoutPipeModel"
+            "Tap": "#/components/schemas/LayoutItemModelLayoutTapModel"
           }
         }
       },
@@ -4228,35 +4228,6 @@
           }
         }
       },
-      "LayoutItemModelLayoutPipeModel": {
-        "required": [
-          "target",
-          "x",
-          "y",
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "enum": [
-              "Tap"
-            ],
-            "type": "string"
-          },
-          "target": {
-            "$ref": "#/components/schemas/TapListModel"
-          },
-          "x": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
-          },
-          "y": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
-          }
-        }
-      },
       "LayoutItemModelLayoutSaleItemModel": {
         "required": [
           "target",
@@ -4273,6 +4244,35 @@
           },
           "target": {
             "$ref": "#/components/schemas/SaleItemOperatorModel"
+          },
+          "x": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "y": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          }
+        }
+      },
+      "LayoutItemModelLayoutTapModel": {
+        "required": [
+          "target",
+          "x",
+          "y",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "Tap"
+            ],
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/TapListModel"
           },
           "x": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -6383,7 +6383,8 @@
         "required": [
           "id",
           "name",
-          "containerId"
+          "containerId",
+          "store"
         ],
         "type": "object",
         "properties": {
@@ -6399,6 +6400,9 @@
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
             "format": "number"
+          },
+          "store": {
+            "$ref": "#/components/schemas/StoreListModel"
           }
         }
       },
@@ -6406,7 +6410,8 @@
         "required": [
           "id",
           "name",
-          "containerId"
+          "containerId",
+          "store"
         ],
         "type": "object",
         "properties": {
@@ -6422,6 +6427,9 @@
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
             "format": "number"
+          },
+          "store": {
+            "$ref": "#/components/schemas/StoreListModel"
           }
         }
       },
@@ -6444,6 +6452,7 @@
           "id",
           "name",
           "containerId",
+          "store",
           "containers"
         ],
         "type": "object",
@@ -6461,6 +6470,9 @@
             "type": "number",
             "format": "number"
           },
+          "store": {
+            "$ref": "#/components/schemas/StoreListModel"
+          },
           "containers": {
             "type": "array",
             "items": {
@@ -6471,8 +6483,7 @@
       },
       "TapUpdateModel": {
         "required": [
-          "name",
-          "containerId"
+          "name"
         ],
         "type": "object",
         "properties": {
@@ -6491,7 +6502,8 @@
         "required": [
           "id",
           "name",
-          "containerId"
+          "containerId",
+          "store"
         ],
         "type": "object",
         "properties": {
@@ -6507,6 +6519,9 @@
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
             "format": "number"
+          },
+          "store": {
+            "$ref": "#/components/schemas/StoreListModel"
           }
         }
       },

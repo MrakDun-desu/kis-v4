@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { useLoading } from "../../../contexts/LoadingContext";
 import StorePicker from "../../../components/pickers/StorePicker";
-import PipePicker from "../../../components/pickers/PipePicker";
 import ContainerChangeListView from "../../../components/views/ContainerChangeListView";
 import { containerStates } from "../../../constants/containerStates";
 import type {
@@ -127,7 +126,6 @@ const ContainerDetail = () => {
               val &&
               updateContainer({
                 storeId: val.id,
-                pipeId: container.pipe?.id,
               })
             }
             initialValue={container.store.id}
@@ -135,16 +133,6 @@ const ContainerDetail = () => {
 
           {(container.state === "New" || container.state === "Opened") && (
             <>
-              <PipePicker
-                onChange={(val) =>
-                  updateContainer({
-                    storeId: container.store.id,
-                    pipeId: val?.id,
-                  })
-                }
-                initialValue={container.pipe?.id}
-              />
-
               <Button
                 variant="outlined"
                 color="error"

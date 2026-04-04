@@ -124,7 +124,7 @@ builder.Services.AddOpenApi(opts => {
         Type[] derivedTypes = [
             typeof(LayoutSaleItemModel),
             typeof(LayoutLinkModel),
-            typeof(LayoutPipeModel)
+            typeof(LayoutTapModel)
         ];
 
         if (derivedTypes.Contains(context.JsonTypeInfo.Type)) {
@@ -180,6 +180,16 @@ builder.Services.AddExceptionHandler<ExceptionHandlerMiddleware>();
 
 var app = builder.Build();
 
+// Seeding
+if (args.Contains("--test-seed")) {
+    using var scope = app.Services.CreateScope();
+    var seeder = scope.ServiceProvider.GetRequiredService<TestSeeder>();
+
+    Audit.Core.Configuration.AuditDisabled = true;
+    seeder.Seed();
+    Audit.Core.Configuration.AuditDisabled = false;
+}
+
 // Auditing
 var contextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => {
@@ -199,14 +209,6 @@ Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => 
         })
         .IgnoreMatchedProperties(true);
 });
-
-// Seeding
-if (args.Contains("--test-seed")) {
-    using var scope = app.Services.CreateScope();
-    var seeder = scope.ServiceProvider.GetRequiredService<TestSeeder>();
-    seeder.Seed();
-}
-
 
 // Middlewares
 app.UseCors();

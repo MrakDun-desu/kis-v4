@@ -8,9 +8,10 @@ import handleApiError from "../../errorHandling/apiResponseHandler";
 import type {
   AccountTransactionModel,
   AccountTransactionReadAllResponse,
+  AccountTransactionType,
 } from "../../api/apiTypes";
 import { Link } from "react-router-dom";
-import { Typography } from "@mui/material";
+import { accountTransactionTypes } from "../../constants/accountTransactionTypes";
 
 type Query = operations["AccountTransactionsReadAll"]["parameters"]["query"];
 
@@ -68,6 +69,19 @@ const AccountTransactionPagedView = ({
       width: 100,
       valueFormatter: (val: string) => `${Number(val) > 0 && "+"}${val}czk`,
     },
+
+    {
+      field: "type",
+      headerName: "Typ změny",
+      type: "string",
+      sortable: false,
+      editable: false,
+      filterable: false,
+      flex: 1,
+      valueFormatter: (val: AccountTransactionType) =>
+        accountTransactionTypes[val],
+    },
+
     {
       field: "timestamp",
       headerName: "Čas změny",
@@ -96,47 +110,44 @@ const AccountTransactionPagedView = ({
   ];
 
   return (
-    <>
-      <Typography>Aktuálně v kase: {transactions?.total}czk</Typography>
-      <DataGrid
-        loading={isLoading}
-        sx={{ width: "100%" }}
-        rows={transactions?.data ?? []}
-        rowCount={rowCount}
-        getRowId={(row) => `${row.saleTransactionId},${row.account}`}
-        rowSelection={false}
-        columns={columns}
-        slotProps={{
-          loadingOverlay: {
-            variant: "skeleton",
-            noRowsVariant: "skeleton",
+    <DataGrid
+      loading={isLoading}
+      sx={{ width: "100%" }}
+      rows={transactions?.data ?? []}
+      rowCount={rowCount}
+      getRowId={(row) => `${row.saleTransactionId},${row.account},${row.type}`}
+      rowSelection={false}
+      columns={columns}
+      slotProps={{
+        loadingOverlay: {
+          variant: "skeleton",
+          noRowsVariant: "skeleton",
+        },
+      }}
+      initialState={{
+        pagination: {
+          paginationModel: {
+            page: query?.Page ?? 0,
+            pageSize: query?.PageSize ?? 30,
           },
-        }}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              page: query?.Page ?? 0,
-              pageSize: query?.PageSize ?? 30,
-            },
-          },
-        }}
-        pageSizeOptions={[30, 100]}
-        paginationMode="server"
-        sortingMode="server"
-        filterMode="server"
-        onPaginationModelChange={(newModel, details) => {
-          if (!details.reason) {
-            return;
-          }
-          setQuery((prev) => ({
-            ...prev,
-            Page: newModel.page + 1,
-            PageSize: newModel.pageSize,
-          }));
-        }}
-        localeText={csCZ.components.MuiDataGrid.defaultProps.localeText}
-      />
-    </>
+        },
+      }}
+      pageSizeOptions={[30, 100]}
+      paginationMode="server"
+      sortingMode="server"
+      filterMode="server"
+      onPaginationModelChange={(newModel, details) => {
+        if (!details.reason) {
+          return;
+        }
+        setQuery((prev) => ({
+          ...prev,
+          Page: newModel.page + 1,
+          PageSize: newModel.pageSize,
+        }));
+      }}
+      localeText={csCZ.components.MuiDataGrid.defaultProps.localeText}
+    />
   );
 };
 

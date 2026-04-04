@@ -121,16 +121,17 @@ public class TestSeeder(KisDbContext dbContext) {
             Name = "Kachna",
         };
         var store = new Store { Name = "Kachna" };
-        var tap = new Tap { Name = "Kachna" };
+        var tap = new Tap { Name = "Kachna", Store = store, StoreId = 0 };
 
-        var container = new Container {
+        var containerTemplate = new ContainerTemplate {
             Amount = 50,
-            Store = store,
-            Template = new ContainerTemplate {
-                Amount = 50,
-                Name = "Kofola 50l",
-                StoreItem = storeItemKegCola
-            }
+            Name = "Kofola 50l",
+            StoreItem = storeItemKegCola
+        };
+
+        var layout = new Layout {
+            Name = "Výchozí rozložení",
+            TopLevel = true
         };
 
         _dbContext.Users.Add(seedingUser);
@@ -197,7 +198,8 @@ public class TestSeeder(KisDbContext dbContext) {
         _dbContext.Cashboxes.Add(cashBox);
         _dbContext.Stores.Add(store);
         _dbContext.Taps.Add(tap);
-        _dbContext.Containers.Add(container);
+        _dbContext.ContainerTemplates.Add(containerTemplate);
+        _dbContext.Layouts.Add(layout);
 
         _dbContext.SaveChanges();
     }

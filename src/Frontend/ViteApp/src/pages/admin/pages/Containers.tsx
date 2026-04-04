@@ -12,11 +12,7 @@ const Containers = () => {
         flexDirection="column"
         alignItems="flex-start"
       >
-        <ContainerListView
-          showPipeFilter
-          showUnusableFilter
-          showTemplateFilter
-        />
+        <ContainerListView showUnusableFilter showTemplateFilter />
       </Box>
     </>
   );

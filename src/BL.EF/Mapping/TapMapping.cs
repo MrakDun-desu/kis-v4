@@ -9,7 +9,8 @@ public static class TapMapping {
         var val => new TapListModel {
             Id = val.Id,
             Name = val.Name,
-            ContainerId = val.ContainerId
+            ContainerId = val.ContainerId,
+            Store = val.Store!.ToModel()
         }
     };
 }
