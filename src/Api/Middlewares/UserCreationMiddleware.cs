@@ -22,11 +22,6 @@ public class UserCreationMiddleware(RequestDelegate next) {
                 GamificationAllowed = user?.Claims
                     .FirstOrDefault(c => c.Type == "gam")
                     ?.Value.ToLower() == "true",
-                Accounts = [
-                    new UserAccount {
-                        Type = AccountType.Prestige
-                    }
-                ]
             });
             await dbContext.SaveChangesAsync();
         }

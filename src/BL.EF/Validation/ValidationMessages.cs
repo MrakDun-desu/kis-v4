@@ -1,5 +1,3 @@
-using KisV4.Common.Models;
-
 namespace KisV4.BL.EF.Validation;
 
 public static class ValidationMessages {
@@ -127,6 +125,12 @@ public static class ValidationMessages {
         """;
     public const string CantUpdateFinishedTransaction = $"""
         Není možné upravit už ukončenou prodejní transakci
+        """;
+    public const string ContainerNotAvailableMessage = $"""
+        Nemožno narazit odepsaný keg
+        """;
+    public const string SameContainerAlreadyTappedMessage = $"""
+        Nemožno narazit keg - keg se stejnou skladovou položkou už je naražen na pípě v tomto skladu
         """;
 
     // strings

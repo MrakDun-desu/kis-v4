@@ -13,9 +13,7 @@ public record CashBoxListModel {
 public record CashBoxDetailModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
-    public required AccountTransactionReadAllResponse SalesTransactions { get; init; }
-    public required AccountTransactionReadAllResponse DonationsTransactions { get; init; }
-    public required IEnumerable<DateTimeOffset> StockTakings { get; init; }
+    public required AccountTransactionReadAllResponse AccountTransactions { get; init; }
 }
 
 // Requests and responses

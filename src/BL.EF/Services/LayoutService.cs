@@ -92,19 +92,16 @@ public class LayoutService(
                     TargetId = li.TargetId,
                     X = li.X,
                     Y = li.Y,
-                    Type = LayoutItemType.Layout
                 },
-                LayoutItemType.Pipe => new LayoutPipe {
+                LayoutItemType.Tap => new LayoutTap {
                     TargetId = li.TargetId,
                     X = li.X,
                     Y = li.Y,
-                    Type = LayoutItemType.Pipe
                 },
                 LayoutItemType.SaleItem => new LayoutSaleItem {
                     TargetId = li.TargetId,
                     X = li.X,
                     Y = li.Y,
-                    Type = LayoutItemType.SaleItem
                 },
                 _ => throw new ArgumentOutOfRangeException()
             })]
@@ -165,19 +162,16 @@ public class LayoutService(
                     TargetId = li.TargetId,
                     X = li.X,
                     Y = li.Y,
-                    Type = LayoutItemType.Layout
                 },
-                LayoutItemType.Pipe => new LayoutPipe {
+                LayoutItemType.Tap => new LayoutTap {
                     TargetId = li.TargetId,
                     X = li.X,
                     Y = li.Y,
-                    Type = LayoutItemType.Pipe
                 },
                 LayoutItemType.SaleItem => new LayoutSaleItem {
                     TargetId = li.TargetId,
                     X = li.X,
                     Y = li.Y,
-                    Type = LayoutItemType.SaleItem
                 },
                 _ => throw new ArgumentOutOfRangeException()
             }
@@ -254,19 +248,20 @@ public class LayoutService(
             })
             .ToArrayAsync(token);
 
-        var layoutPipes = await _dbContext.LayoutPipes
+        var layoutTaps = await _dbContext.LayoutTaps
             .Where(li => li.LayoutId == layoutId)
             .Include(ll => ll.Target)
             .Select(lp => new LayoutPipeModel {
                 X = lp.X,
                 Y = lp.Y,
-                Target = new PipeListModel {
+                Target = new TapListModel {
                     Id = lp.Target!.Id,
-                    Name = lp.Target.Name
+                    Name = lp.Target.Name,
+                    ContainerId = lp.Target.ContainerId
                 }
             })
             .ToArrayAsync(token);
 
-        return [.. layoutLinks, .. layoutSaleItems, .. layoutPipes];
+        return [.. layoutLinks, .. layoutSaleItems, .. layoutTaps];
     }
 }

@@ -9,8 +9,7 @@ public record Container {
 
     public int TemplateId { get; init; }
     public ContainerTemplate? Template { get; set; }
-    public int? PipeId { get; set; }
-    public Pipe? Pipe { get; set; }
+    public Tap? Tap { get; set; }
     public int StoreId { get; set; }
     public Store? Store { get; set; }
     public ICollection<ContainerChange> ContainerChanges { get; init; } = [];

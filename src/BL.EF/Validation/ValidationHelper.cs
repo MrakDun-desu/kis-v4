@@ -44,6 +44,12 @@ public class ValidationHelper(
             }
         };
 
+    internal async Task<bool> BeNullOrIdentifyExistingContainer(int? containerId, CancellationToken token = default) =>
+        containerId switch {
+            null => true,
+            { } id => await _dbContext.Containers.FindAsync(id, token) is not null
+        };
+
     internal async Task<bool> IdentifyExistingContainerItem(int storeItemId, CancellationToken token = default) =>
         await _dbContext.StoreItems.FindAsync(storeItemId, token) switch {
             null => false,
@@ -62,7 +68,7 @@ public class ValidationHelper(
 
     internal async Task<bool> BeNullOrIdentifyExistingPipe(int? pipeId, CancellationToken token = default) => pipeId switch {
         null => true,
-        { } val => await _dbContext.Pipes.FindAsync(val, token) is not null
+        { } val => await _dbContext.Taps.FindAsync(val, token) is not null
     };
 
     internal async Task<bool> IdentifyExistingStore(int storeId, CancellationToken token = default) =>
@@ -158,8 +164,8 @@ public class ValidationHelper(
             .Select(li => li.TargetId)
             .Distinct()
             .ToArray();
-        var pipeIds = layoutItems
-            .Where(li => li.Type == LayoutItemType.Pipe)
+        var tapIds = layoutItems
+            .Where(li => li.Type == LayoutItemType.Tap)
             .Select(li => li.TargetId)
             .Distinct()
             .ToArray();
@@ -172,9 +178,9 @@ public class ValidationHelper(
         return await _dbContext.SaleItems
                 .Where(si => saleItemIds.Contains(si.Id))
                 .CountAsync(token) == saleItemIds.Length &&
-            await _dbContext.Pipes
-                .Where(p => pipeIds.Contains(p.Id))
-                .CountAsync(token) == pipeIds.Length &&
+            await _dbContext.Taps
+                .Where(p => tapIds.Contains(p.Id))
+                .CountAsync(token) == tapIds.Length &&
             await _dbContext.Layouts
                 .Where(l => layoutIds.Contains(l.Id))
                 .CountAsync(token) == layoutIds.Length;
@@ -343,10 +349,6 @@ public class ValidationHelper(
             return true;
         }
 
-        if (container.State is ContainerState.Bad or ContainerState.WrittenOff &&
-                container.PipeId != request.Model.PipeId) {
-            return false;
-        }
         return true;
     }
 
@@ -358,5 +360,42 @@ public class ValidationHelper(
         }
 
         return saleTransaction.OpenedById is not null;
+    }
+
+    internal async Task<bool> IdentifyAnAvailableContainer(int? containerId, CancellationToken token) =>
+        containerId switch {
+            null => true,
+            { } id => await _dbContext.Containers.FindAsync(id, token) switch {
+                null => true,
+                var val => val.State is ContainerState.New or ContainerState.Opened
+            }
+        };
+
+    internal async Task<bool> BeContainerWithNewStoreItem(TapUpdateRequest req, CancellationToken token) {
+        if (req.Model.ContainerId is not { } containerId) {
+            return true;
+        }
+
+        var tap = await _dbContext.Taps.FindAsync(req.Id);
+        if (tap is null) {
+            return true;
+        }
+
+        var containerOpt = await _dbContext.Containers
+            .Where(c => c.Id == containerId)
+            .Include(c => c.Template)
+            .FirstOrDefaultAsync(token);
+
+        if (containerOpt is not { } container) {
+            return true;
+        }
+
+        return !await _dbContext.Containers
+            .Include(c => c.Template)
+            .Include(c => c.Tap)
+            .Where(c => c.StoreId == tap.StoreId)
+            .Where(c => c.Tap != null)
+            .Where(c => c.Template!.StoreItemId == container.Template!.StoreItemId)
+            .AnyAsync(token);
     }
 }

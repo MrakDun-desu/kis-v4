@@ -1,4 +1,3 @@
-using KisV4.Common.Enums;
 using KisV4.DAL.EF.Entities;
 
 namespace KisV4.DAL.EF.Seeding;
@@ -10,11 +9,6 @@ public class TestSeeder(KisDbContext dbContext) {
         var seedingUser = new User {
             Id = "Seeder",
             Nick = "Seeder",
-            Accounts = [
-                new UserAccount {
-                    Type = AccountType.Prestige
-                }
-            ]
         };
         var categoryToasts = new Category { Name = "Tousty" };
         var categoryDrinks = new Category { Name = "Pití" };
@@ -125,17 +119,9 @@ public class TestSeeder(KisDbContext dbContext) {
 
         var cashBox = new Cashbox {
             Name = "Kachna",
-            Accounts = [
-                new CashBoxAccount {
-                    Type = AccountType.SalesMoney
-                },
-                new CashBoxAccount {
-                    Type = AccountType.DonationMoney
-                },
-            ]
         };
         var store = new Store { Name = "Kachna" };
-        var pipe = new Pipe { Name = "Kachna" };
+        var tap = new Tap { Name = "Kachna" };
 
         var container = new Container {
             Amount = 50,
@@ -210,7 +196,7 @@ public class TestSeeder(KisDbContext dbContext) {
 
         _dbContext.Cashboxes.Add(cashBox);
         _dbContext.Stores.Add(store);
-        _dbContext.Pipes.Add(pipe);
+        _dbContext.Taps.Add(tap);
         _dbContext.Containers.Add(container);
 
         _dbContext.SaveChanges();

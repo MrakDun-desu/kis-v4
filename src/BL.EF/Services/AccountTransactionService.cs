@@ -51,6 +51,7 @@ public class AccountTransactionService(
                     Amount = at.Amount,
                     SaleTransactionId = at.SaleTransactionId,
                     Timestamp = at.SaleTransaction!.ClosedAt ?? at.SaleTransaction!.StartedAt,
+                    Type = at.Type,
                     Account = at.Account switch {
                         CashBoxAccount cba => new CashBoxAccountModel {
                             Id = cba.Id,
@@ -58,7 +59,6 @@ public class AccountTransactionService(
                                 Id = cba.Cashbox!.Id,
                                 Name = cba.Cashbox.Name,
                             },
-                            Type = cba.Type
                         },
                         UserAccount ua => new UserAccountModel {
                             Id = ua.Id,
@@ -66,7 +66,6 @@ public class AccountTransactionService(
                                 Id = ua.User!.Id,
                                 Nick = ua.User.Nick
                             },
-                            Type = ua.Type
                         },
                         _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
                     }

@@ -1,5 +1,4 @@
 using Audit.EntityFramework;
-using KisV4.Common.Enums;
 using KisV4.DAL.EF.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -27,11 +26,11 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
     public DbSet<Layout> Layouts { get; init; } = null!;
     public DbSet<LayoutItem> LayoutItems { get; init; } = null!;
     public DbSet<LayoutLink> LayoutLinks { get; init; } = null!;
-    public DbSet<LayoutPipe> LayoutPipes { get; init; } = null!;
+    public DbSet<LayoutTap> LayoutTaps { get; init; } = null!;
     public DbSet<LayoutSaleItem> LayoutSaleItems { get; init; } = null!;
     public DbSet<Modification> Modifications { get; init; } = null!;
     public DbSet<Modifier> Modifiers { get; init; } = null!;
-    public DbSet<Pipe> Pipes { get; init; } = null!;
+    public DbSet<Tap> Taps { get; init; } = null!;
     public DbSet<PriceChange> PriceChanges { get; init; } = null!;
     public DbSet<SaleItem> SaleItems { get; init; } = null!;
     public DbSet<SaleTransaction> SaleTransactions { get; init; } = null!;
@@ -85,18 +84,21 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
             .WithOne(m => m.SaleTransactionItem)
             .HasForeignKey(m => new { m.SaleTransactionItemLineNumber, m.SaleTransactionId });
 
-        // inheritance configs
-        modelBuilder.Entity<LayoutItem>()
-            .HasDiscriminator(e => e.Type)
-            .HasValue<LayoutSaleItem>(LayoutItemType.SaleItem)
-            .HasValue<LayoutLink>(LayoutItemType.Layout)
-            .HasValue<LayoutPipe>(LayoutItemType.Pipe);
-
-        modelBuilder.Entity<Container>()
-            .HasOne(c => c.Pipe)
-            .WithMany(p => p.Containers)
-            .HasForeignKey(c => c.PipeId)
+        modelBuilder.Entity<Tap>()
+            .HasOne(c => c.Container)
+            .WithOne(p => p.Tap)
+            .HasForeignKey<Tap>(p => p.ContainerId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<CashBoxAccount>()
+            .HasOne(cba => cba.Cashbox)
+            .WithOne(cb => cb.Account)
+            .HasForeignKey<CashBoxAccount>(cba => cba.CashboxId);
+
+        modelBuilder.Entity<UserAccount>()
+            .HasOne(cba => cba.User)
+            .WithOne(cb => cb.Account)
+            .HasForeignKey<UserAccount>(ua => ua.UserId);
 
         // type configs
         modelBuilder.Entity<AuditLog>(b => {

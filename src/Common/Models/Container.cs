@@ -6,23 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace KisV4.Common.Models;
 
 // Base models
-// Used in admin for list view and in operator for viewing all available pipes
+// Used in admin for list view and in operator for viewing all available containers
 public record ContainerListModel {
     public required int Id { get; init; }
     public required decimal Amount { get; init; }
     public required ContainerState State { get; init; }
     public required ContainerTemplateModel Template { get; init; }
-    public required PipeListModel? Pipe { get; init; }
+    public required TapListModel? Tap { get; init; }
     public required StoreListModel Store { get; init; }
-}
-
-// Used in operator when viewing containers at a pipe
-public record ContainerPipeModel {
-    public required int Id { get; init; }
-    public required decimal Amount { get; init; }
-    public required ContainerState State { get; init; }
-    public required ContainerTemplateModel Template { get; init; }
-    public required int StoreId { get; init; }
 }
 
 // Used in admin for displaying container detail
@@ -31,21 +22,19 @@ public record ContainerDetailModel {
     public required decimal Amount { get; init; }
     public required ContainerState State { get; init; }
     public required ContainerTemplateModel Template { get; init; }
-    public required PipeListModel? Pipe { get; init; }
+    public required TapListModel? Tap { get; init; }
     public required StoreListModel Store { get; init; }
     public required IEnumerable<ContainerChangeModel> ContainerChanges { get; init; }
 }
 
 public record ContainerUpdateModel {
     public required int StoreId { get; init; }
-    public int? PipeId { get; init; }
 };
 
 // Requests and responses
 public record ContainerReadAllRequest : PagedRequest {
     public int? StoreId { get; init; }
     public int? TemplateId { get; init; }
-    public int? PipeId { get; init; }
     public bool? IncludeUnusable { get; init; }
 }
 

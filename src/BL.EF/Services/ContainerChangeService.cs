@@ -59,6 +59,7 @@ public class ContainerChangeService(
 
             var container = await _dbContext.Containers
                 .Include(c => c.Template)
+                .Include(c => c.Tap)
                 .FirstAsync(c => c.Id == req.ContainerId, token);
 
             // only create a new store transaction if transitioning from new or opened to bad or
@@ -85,14 +86,17 @@ public class ContainerChangeService(
                     _dbContext,
                     token: token
                 );
-                // if writing off or marking container as bad, also remove it from the pipe
-                container.PipeId = null;
+
+                if (container.Tap is { } tap) {
+                    tap.ContainerId = null;
+                    _dbContext.Taps.Update(tap);
+                }
             }
 
             container.Amount = req.NewAmount;
             container.State = req.NewState;
 
-            _dbContext.Update(container);
+            _dbContext.Containers.Update(container);
             await _dbContext.SaveChangesAsync(token);
 
 

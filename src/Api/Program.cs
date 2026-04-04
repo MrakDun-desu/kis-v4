@@ -234,7 +234,7 @@ Costs.MapEndpoints(app);
 Images.MapEndpoints(app);
 Layouts.MapEndpoints(app);
 Modifiers.MapEndpoints(app);
-Pipes.MapEndpoints(app);
+Taps.MapEndpoints(app);
 SaleItems.MapEndpoints(app);
 SaleTransactions.MapEndpoints(app);
 StoreItemAmounts.MapEndpoints(app);

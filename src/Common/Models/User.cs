@@ -14,7 +14,7 @@ public record UserListModel {
 public record UserDetailModel {
     public required string Id { get; init; }
     public required string? Nick { get; init; }
-    public required AccountTransactionReadAllResponse PrestigeTransactions { get; init; }
+    public required AccountTransactionReadAllResponse AccountTransactions { get; init; }
 }
 
 // used to show prestige for users

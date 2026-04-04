@@ -21,7 +21,7 @@ public class ContainerService(
     public async Task<ContainerReadAllResponse> ReadAllAsync(ContainerReadAllRequest req, CancellationToken token = default) {
         var query = _dbContext.Containers
             .Include(c => c.Store)
-            .Include(c => c.Pipe)
+            .Include(c => c.Tap)
             .Include(c => c.Template)
             .ThenInclude(ct => ct!.StoreItem)
             .AsQueryable();
@@ -32,10 +32,6 @@ public class ContainerService(
 
         if (req.TemplateId is { } templateId) {
             query = query.Where(c => c.TemplateId == templateId);
-        }
-
-        if (req.PipeId is { } pipeId) {
-            query = query.Where(c => c.PipeId == pipeId);
         }
 
         var includeUnusable = req.IncludeUnusable ?? false;
@@ -50,7 +46,7 @@ public class ContainerService(
                     Id = c.Id,
                     Amount = c.Amount,
                     State = c.State,
-                    Pipe = c.Pipe.ToModel(),
+                    Tap = c.Tap.ToModel(),
                     Store = c.Store!.ToModel(),
                     Template = c.Template!.ToModel()
                 },
@@ -64,7 +60,7 @@ public class ContainerService(
         return await _dbContext.Containers
             .Include(c => c.Template)
             .ThenInclude(ct => ct!.StoreItem)
-            .Include(c => c.Pipe)
+            .Include(c => c.Tap)
             .Include(c => c.Store)
             .Include(c => c.ContainerChanges)
             .ThenInclude(cc => cc.User)
@@ -74,7 +70,7 @@ public class ContainerService(
                 State = c.State,
                 Template = c.Template!.ToModel(),
                 Store = c.Store!.ToModel(),
-                Pipe = c.Pipe.ToModel(),
+                Tap = c.Tap.ToModel(),
                 ContainerChanges = c.ContainerChanges.Select(cc => cc.ToModel())
             })
             .FirstOrDefaultAsync(c => c.Id == id, token);
@@ -167,7 +163,7 @@ public class ContainerService(
                 Amount = c.Amount,
                 State = c.State,
                 Store = store!.ToModel(),
-                Pipe = null,
+                Tap = null,
                 Template = template.ToModel()
             }).ToArray();
 
@@ -201,22 +197,7 @@ public class ContainerService(
 
         try {
             var oldStoreId = entity.StoreId;
-            var oldPipeId = entity.PipeId;
             entity.StoreId = model.StoreId;
-            entity.PipeId = model.PipeId;
-
-            // automatically change the container state when the pipe changes to not null
-            // for the first time
-            if (oldPipeId is null && entity.PipeId is not null && entity.State == ContainerState.New) {
-                entity.State = ContainerState.Opened;
-                _dbContext.ContainerChanges.Add(new() {
-                    ContainerId = entity.Id,
-                    NewAmount = entity.Amount,
-                    NewState = ContainerState.Opened,
-                    Timestamp = reqTime,
-                    UserId = user.Id
-                });
-            }
 
             _dbContext.Containers.Update(entity);
             await _dbContext.SaveChangesAsync(token);
@@ -246,7 +227,7 @@ public class ContainerService(
 
             var output = await _dbContext.Containers
                 .Include(c => c.Store)
-                .Include(c => c.Pipe)
+                .Include(c => c.Tap)
                 .Include(c => c.Template)
                 .ThenInclude(ct => ct!.StoreItem)
                 .Select(c =>
@@ -254,7 +235,7 @@ public class ContainerService(
                         Id = c.Id,
                         Amount = c.Amount,
                         State = c.State,
-                        Pipe = c.Pipe.ToModel(),
+                        Tap = c.Tap.ToModel(),
                         Store = c.Store!.ToModel(),
                         Template = c.Template!.ToModel()
                     }

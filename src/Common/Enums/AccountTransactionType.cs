@@ -1,7 +1,8 @@
 namespace KisV4.Common.Enums;
 
-public enum AccountType {
+public enum AccountTransactionType {
     SalesMoney = 0,
     DonationMoney = 1,
     Prestige = 2,
+    StockTaking = 3
 }

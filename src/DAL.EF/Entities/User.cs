@@ -10,7 +10,7 @@ public record User {
     public string? Nick { get; set; }
     public bool GamificationAllowed { get; set; }
 
-    public required ICollection<UserAccount> Accounts { get; init; }
+    public UserAccount Account { get; init; } = new UserAccount();
     public ICollection<SaleTransaction> OpenTransactions { get; init; } = [];
     public ICollection<Transaction> StartedTransactions { get; init; } = [];
     public ICollection<Transaction> CancelledTransactions { get; init; } = [];

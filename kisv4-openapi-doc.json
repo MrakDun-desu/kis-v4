@@ -624,15 +624,6 @@
             }
           },
           {
-            "name": "PipeId",
-            "in": "query",
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "number",
-              "format": "number"
-            }
-          },
-          {
             "name": "IncludeUnusable",
             "in": "query",
             "schema": {
@@ -1599,19 +1590,19 @@
         }
       }
     },
-    "/pipes": {
+    "/taps": {
       "get": {
         "tags": [
-          "Pipes"
+          "Taps"
         ],
-        "operationId": "PipesReadAll",
+        "operationId": "TapsReadAll",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PipeReadAllResponse"
+                  "$ref": "#/components/schemas/TapReadAllResponse"
                 }
               }
             }
@@ -1620,14 +1611,14 @@
       },
       "post": {
         "tags": [
-          "Pipes"
+          "Taps"
         ],
-        "operationId": "PipesCreate",
+        "operationId": "TapsCreate",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PipeCreateRequest"
+                "$ref": "#/components/schemas/TapCreateRequest"
               }
             }
           },
@@ -1639,7 +1630,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PipeCreateResponse"
+                  "$ref": "#/components/schemas/TapCreateResponse"
                 }
               }
             }
@@ -1657,26 +1648,17 @@
         }
       }
     },
-    "/pipes/{id}": {
+    "/taps/{id}": {
       "get": {
         "tags": [
-          "Pipes"
+          "Taps"
         ],
-        "operationId": "PipesRead",
+        "operationId": "TapsRead",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": "number",
-              "format": "number"
-            }
-          },
-          {
-            "name": "StoreId",
-            "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "number",
@@ -1690,7 +1672,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PipeReadResponse"
+                  "$ref": "#/components/schemas/TapReadResponse"
                 }
               }
             }
@@ -1702,9 +1684,9 @@
       },
       "put": {
         "tags": [
-          "Pipes"
+          "Taps"
         ],
-        "operationId": "PipesUpdate",
+        "operationId": "TapsUpdate",
         "parameters": [
           {
             "name": "id",
@@ -1721,7 +1703,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PipeUpdateModel"
+                "$ref": "#/components/schemas/TapUpdateModel"
               }
             }
           },
@@ -1733,7 +1715,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PipeUpdateResponse"
+                  "$ref": "#/components/schemas/TapUpdateResponse"
                 }
               }
             }
@@ -1755,9 +1737,9 @@
       },
       "delete": {
         "tags": [
-          "Pipes"
+          "Taps"
         ],
-        "operationId": "PipesDelete",
+        "operationId": "TapsDelete",
         "parameters": [
           {
             "name": "id",
@@ -3059,7 +3041,7 @@
     "schemas": {
       "AccountModel": {
         "required": [
-          "kind"
+          "type"
         ],
         "type": "object",
         "anyOf": [
@@ -3071,7 +3053,7 @@
           }
         ],
         "discriminator": {
-          "propertyName": "kind",
+          "propertyName": "type",
           "mapping": {
             "CashBoxAccount": "#/components/schemas/AccountModelCashBoxAccountModel",
             "UserAccount": "#/components/schemas/AccountModelUserAccountModel"
@@ -3081,11 +3063,10 @@
       "AccountModelCashBoxAccountModel": {
         "required": [
           "cashBox",
-          "id",
-          "type"
+          "id"
         ],
         "properties": {
-          "kind": {
+          "type": {
             "enum": [
               "CashBoxAccount"
             ],
@@ -3098,20 +3079,16 @@
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
             "format": "number"
-          },
-          "type": {
-            "$ref": "#/components/schemas/AccountType"
           }
         }
       },
       "AccountModelUserAccountModel": {
         "required": [
           "user",
-          "id",
-          "type"
+          "id"
         ],
         "properties": {
-          "kind": {
+          "type": {
             "enum": [
               "UserAccount"
             ],
@@ -3124,9 +3101,6 @@
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
             "format": "number"
-          },
-          "type": {
-            "$ref": "#/components/schemas/AccountType"
           }
         }
       },
@@ -3135,7 +3109,8 @@
           "amount",
           "saleTransactionId",
           "timestamp",
-          "account"
+          "account",
+          "type"
         ],
         "type": "object",
         "properties": {
@@ -3155,6 +3130,9 @@
           },
           "account": {
             "$ref": "#/components/schemas/AccountModel"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AccountTransactionType"
           }
         }
       },
@@ -3198,11 +3176,12 @@
           }
         }
       },
-      "AccountType": {
+      "AccountTransactionType": {
         "enum": [
           "SalesMoney",
           "DonationMoney",
-          "Prestige"
+          "Prestige",
+          "StockTaking"
         ]
       },
       "CashBoxCreateRequest": {
@@ -3269,9 +3248,7 @@
         "required": [
           "id",
           "name",
-          "salesTransactions",
-          "donationsTransactions",
-          "stockTakings"
+          "accountTransactions"
         ],
         "type": "object",
         "properties": {
@@ -3283,18 +3260,8 @@
           "name": {
             "type": "string"
           },
-          "salesTransactions": {
+          "accountTransactions": {
             "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
-          },
-          "donationsTransactions": {
-            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
-          },
-          "stockTakings": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "date-time"
-            }
           }
         }
       },
@@ -3661,7 +3628,7 @@
           "amount",
           "state",
           "template",
-          "pipe",
+          "tap",
           "store"
         ],
         "type": "object",
@@ -3682,13 +3649,13 @@
           "template": {
             "$ref": "#/components/schemas/ContainerTemplateModel"
           },
-          "pipe": {
+          "tap": {
             "oneOf": [
               {
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PipeListModel"
+                "$ref": "#/components/schemas/TapListModel"
               }
             ]
           },
@@ -3731,39 +3698,6 @@
           }
         }
       },
-      "ContainerPipeModel": {
-        "required": [
-          "id",
-          "amount",
-          "state",
-          "template",
-          "storeId"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
-          },
-          "amount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": "string",
-            "format": "string"
-          },
-          "state": {
-            "$ref": "#/components/schemas/ContainerState"
-          },
-          "template": {
-            "$ref": "#/components/schemas/ContainerTemplateModel"
-          },
-          "storeId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
-          }
-        }
-      },
       "ContainerReadAllResponse": {
         "required": [
           "data",
@@ -3788,7 +3722,7 @@
           "amount",
           "state",
           "template",
-          "pipe",
+          "tap",
           "store",
           "containerChanges"
         ],
@@ -3810,13 +3744,13 @@
           "template": {
             "$ref": "#/components/schemas/ContainerTemplateModel"
           },
-          "pipe": {
+          "tap": {
             "oneOf": [
               {
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PipeListModel"
+                "$ref": "#/components/schemas/TapListModel"
               }
             ]
           },
@@ -3998,11 +3932,6 @@
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
             "format": "number"
-          },
-          "pipeId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
           }
         }
       },
@@ -4012,7 +3941,7 @@
           "amount",
           "state",
           "template",
-          "pipe",
+          "tap",
           "store"
         ],
         "type": "object",
@@ -4033,13 +3962,13 @@
           "template": {
             "$ref": "#/components/schemas/ContainerTemplateModel"
           },
-          "pipe": {
+          "tap": {
             "oneOf": [
               {
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PipeListModel"
+                "$ref": "#/components/schemas/TapListModel"
               }
             ]
           },
@@ -4266,7 +4195,7 @@
           "mapping": {
             "SaleItem": "#/components/schemas/LayoutItemModelLayoutSaleItemModel",
             "Layout": "#/components/schemas/LayoutItemModelLayoutLinkModel",
-            "Pipe": "#/components/schemas/LayoutItemModelLayoutPipeModel"
+            "Tap": "#/components/schemas/LayoutItemModelLayoutPipeModel"
           }
         }
       },
@@ -4309,12 +4238,12 @@
         "properties": {
           "type": {
             "enum": [
-              "Pipe"
+              "Tap"
             ],
             "type": "string"
           },
           "target": {
-            "$ref": "#/components/schemas/PipeListModel"
+            "$ref": "#/components/schemas/TapListModel"
           },
           "x": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -4360,7 +4289,7 @@
       "LayoutItemType": {
         "enum": [
           "SaleItem",
-          "Pipe",
+          "Tap",
           "Layout"
         ]
       },
@@ -4919,119 +4848,6 @@
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
             "format": "number"
-          }
-        }
-      },
-      "PipeCreateRequest": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "default": "Pípa Kachna"
-          }
-        }
-      },
-      "PipeCreateResponse": {
-        "required": [
-          "id",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
-      "PipeListModel": {
-        "required": [
-          "id",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
-      "PipeReadAllResponse": {
-        "required": [
-          "data"
-        ],
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PipeListModel"
-            }
-          }
-        }
-      },
-      "PipeReadResponse": {
-        "required": [
-          "id",
-          "name",
-          "containers"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
-          },
-          "name": {
-            "type": "string"
-          },
-          "containers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ContainerPipeModel"
-            }
-          }
-        }
-      },
-      "PipeUpdateModel": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "default": "Pípa Kachna"
-          }
-        }
-      },
-      "PipeUpdateResponse": {
-        "required": [
-          "id",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
-          },
-          "name": {
-            "type": "string"
           }
         }
       },
@@ -6545,6 +6361,155 @@
           }
         }
       },
+      "TapCreateRequest": {
+        "required": [
+          "name",
+          "storeId"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "default": "Kachna 1"
+          },
+          "storeId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          }
+        }
+      },
+      "TapCreateResponse": {
+        "required": [
+          "id",
+          "name",
+          "containerId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "containerId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          }
+        }
+      },
+      "TapListModel": {
+        "required": [
+          "id",
+          "name",
+          "containerId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "containerId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          }
+        }
+      },
+      "TapReadAllResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TapListModel"
+            }
+          }
+        }
+      },
+      "TapReadResponse": {
+        "required": [
+          "id",
+          "name",
+          "containerId",
+          "containers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "containerId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "containers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContainerListModel"
+            }
+          }
+        }
+      },
+      "TapUpdateModel": {
+        "required": [
+          "name",
+          "containerId"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "default": "Kachna 1"
+          },
+          "containerId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          }
+        }
+      },
+      "TapUpdateResponse": {
+        "required": [
+          "id",
+          "name",
+          "containerId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "containerId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          }
+        }
+      },
       "TransactionReason": {
         "enum": [
           "AddingToStore",
@@ -6642,7 +6607,7 @@
       "name": "Modifiers"
     },
     {
-      "name": "Pipes"
+      "name": "Taps"
     },
     {
       "name": "SaleItems"

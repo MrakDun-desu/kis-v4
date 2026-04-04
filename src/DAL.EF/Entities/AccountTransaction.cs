@@ -1,4 +1,5 @@
 using Audit.EntityFramework;
+using KisV4.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace KisV4.DAL.EF.Entities;
@@ -8,6 +9,7 @@ namespace KisV4.DAL.EF.Entities;
 public record AccountTransaction {
     public required decimal Amount { get; init; }
     public bool Cancelled { get; set; }
+    public required AccountTransactionType Type { get; init; }
 
     public required int AccountId { get; init; }
     public Account? Account { get; set; }

@@ -5,5 +5,5 @@ public record Cashbox {
     public bool Deleted { get; set; }
     public required string Name { get; set; }
 
-    public required ICollection<CashBoxAccount> Accounts { get; init; }
+    public CashBoxAccount Account { get; init; } = new CashBoxAccount();
 }

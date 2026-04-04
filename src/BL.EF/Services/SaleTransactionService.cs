@@ -116,6 +116,7 @@ public class SaleTransactionService(
                 Amount = at.Amount,
                 SaleTransactionId = at.SaleTransactionId,
                 Timestamp = entity.ClosedAt ?? entity.StartedAt,
+                Type = at.Type,
                 Account = at.Account switch {
                     UserAccount ua => new UserAccountModel {
                         Id = ua.Id,
@@ -123,7 +124,6 @@ public class SaleTransactionService(
                             Id = ua.User!.Id,
                             Nick = ua.User.Nick
                         },
-                        Type = ua.Type
                     },
                     CashBoxAccount cba => new CashBoxAccountModel {
                         Id = cba.Id,
@@ -131,7 +131,6 @@ public class SaleTransactionService(
                             Id = cba.Cashbox!.Id,
                             Name = cba.Cashbox.Name,
                         },
-                        Type = cba.Type
                     },
                     _ => null!
                 }
@@ -150,16 +149,11 @@ public class SaleTransactionService(
         await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
         try {
             var customer = await _dbContext.Users
-                .Include(u => u.Accounts)
+                .Include(u => u.Account)
                 .FirstAsync(u => u.Id == req.CustomerId, token);
             if (customer is null) {
                 var newCustomerEntry = _dbContext.Users.Add(new User {
                     Id = req.CustomerId,
-                    Accounts = [
-                        new UserAccount {
-                            Type = AccountType.Prestige
-                        }
-                    ]
                 });
                 await _dbContext.SaveChangesAsync(token);
                 customer = newCustomerEntry.Entity;
@@ -181,7 +175,7 @@ public class SaleTransactionService(
             );
 
             var cashBox = await _dbContext.Cashboxes
-                .Include(cb => cb.Accounts)
+                .Include(cb => cb.Account)
                 .FirstAsync(cb => cb.Id == req.CashBoxId, token);
             var accountTransactions = AddAccountTransactions(
                 entity,
@@ -210,6 +204,7 @@ public class SaleTransactionService(
                     Amount = at.Amount,
                     SaleTransactionId = entity.Id,
                     Timestamp = entity.StartedAt,
+                    Type = at.Type,
                     Account = at.Account switch {
                         CashBoxAccount cba => new CashBoxAccountModel {
                             Id = cba.Id,
@@ -217,7 +212,6 @@ public class SaleTransactionService(
                                 Id = cba.Cashbox!.Id,
                                 Name = cba.Cashbox.Name,
                             },
-                            Type = cba.Type
                         },
                         UserAccount ua => new UserAccountModel {
                             Id = ua.Id,
@@ -225,7 +219,6 @@ public class SaleTransactionService(
                                 Id = ua.User!.Id,
                                 Nick = ua.User.Nick
                             },
-                            Type = ua.Type
                         },
                         _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
                     }
@@ -440,16 +433,11 @@ public class SaleTransactionService(
         await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
         try {
             var customer = await _dbContext.Users
-                .Include(u => u.Accounts)
+                .Include(u => u.Account)
                 .FirstAsync(u => u.Id == req.Model.CustomerId, token);
             if (customer is null) {
                 var newCustomerEntry = _dbContext.Users.Add(new User {
                     Id = req.Model.CustomerId,
-                    Accounts = [
-                        new UserAccount {
-                            Type = AccountType.Prestige
-                        }
-                    ]
                 });
                 await _dbContext.SaveChangesAsync(token);
                 customer = newCustomerEntry.Entity;
@@ -470,7 +458,7 @@ public class SaleTransactionService(
             );
 
             var cashBox = await _dbContext.Cashboxes
-                .Include(cb => cb.Accounts)
+                .Include(cb => cb.Account)
                 .FirstAsync(cb => cb.Id == req.Model.CashBoxId, token);
             var accountTransactions = AddAccountTransactions(
                 entity,
@@ -501,6 +489,7 @@ public class SaleTransactionService(
                     Amount = at.Amount,
                     SaleTransactionId = entity.Id,
                     Timestamp = entity.StartedAt,
+                    Type = at.Type,
                     Account = at.Account switch {
                         CashBoxAccount cba => new CashBoxAccountModel {
                             Id = cba.Id,
@@ -508,7 +497,6 @@ public class SaleTransactionService(
                                 Id = cba.Cashbox!.Id,
                                 Name = cba.Cashbox.Name,
                             },
-                            Type = cba.Type
                         },
                         UserAccount ua => new UserAccountModel {
                             Id = ua.Id,
@@ -516,7 +504,6 @@ public class SaleTransactionService(
                                 Id = ua.User!.Id,
                                 Nick = ua.User.Nick
                             },
-                            Type = ua.Type
                         },
                         _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
                     }
@@ -716,20 +703,23 @@ public class SaleTransactionService(
             // Add the total prestige to the customer's account
             new AccountTransaction {
                 Amount = totalTransactionPrestige,
-                AccountId = customer.Accounts.First(a => a.Type == AccountType.Prestige).Id,
+                AccountId = customer.Account.Id,
                 SaleTransaction = saleTransaction,
+                Type = AccountTransactionType.Prestige
             },
             // Add amount that was paid for the actual items to the sales account of the cashbox
             new AccountTransaction {
                 Amount = totalTransactionPrice,
-                AccountId = cashBox.Accounts.First(a => a.Type == AccountType.SalesMoney).Id,
+                AccountId = cashBox.Account.Id,
                 SaleTransaction = saleTransaction,
+                Type = AccountTransactionType.SalesMoney
             },
             // Add the actual paid amount minus total price to the donations account of the cashbox
             new AccountTransaction {
                 Amount = paidAmount - totalTransactionPrice,
-                AccountId = cashBox.Accounts.First(a => a.Type == AccountType.DonationMoney).Id,
-                SaleTransaction = saleTransaction
+                AccountId = cashBox.Account.Id,
+                SaleTransaction = saleTransaction,
+                Type = AccountTransactionType.SalesMoney
             }
         ];
 

@@ -1,5 +1,4 @@
 using KisV4.Common.DependencyInjection;
-using KisV4.Common.Enums;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
@@ -32,14 +31,6 @@ public class CashBoxService(
             ) {
         var entity = new Cashbox {
             Name = req.Name,
-            Accounts = [
-                new CashBoxAccount {
-                    Type = AccountType.DonationMoney
-                },
-                new CashBoxAccount {
-                    Type = AccountType.SalesMoney
-                },
-            ]
         };
 
         _dbContext.Cashboxes.Add(entity);
@@ -57,39 +48,18 @@ public class CashBoxService(
     ) {
         var id = req.Id;
         var entity = await _dbContext.Cashboxes
-            .Include(cb => cb.Accounts)
+            .Include(cb => cb.Account)
             .FirstOrDefaultAsync(cb => cb.Id == id, token);
         if (entity is null) {
             return null;
         }
 
-        var salesAccount = entity.Accounts.First(a => a.Type == AccountType.SalesMoney);
-        var donationsAccount = entity.Accounts.First(a => a.Type == AccountType.DonationMoney);
-
-        var stockTakings = await _dbContext.AccountTransactions
-            .Where(at => at.AccountId == salesAccount.Id)
-            .Include(at => at.SaleTransaction)
-            .Where(at => at.SaleTransaction!.Reason == TransactionReason.StockTaking)
-            .Select(at => at.SaleTransaction!.StartedAt)
-            .OrderDescending()
-            .ToArrayAsync(token);
-
-        var accountTransactionsFrom = stockTakings.FirstOrDefault();
-
-        var donationsTransactions = await _accountTransactionService.ReadAllAsync(new() {
-            AccountId = donationsAccount.Id,
-        }, token);
-
-        var salesTransacions = await _accountTransactionService.ReadAllAsync(new() {
-            AccountId = salesAccount.Id,
-        }, token);
-
         return new CashBoxReadResponse {
             Id = entity.Id,
             Name = entity.Name,
-            StockTakings = stockTakings,
-            DonationsTransactions = donationsTransactions,
-            SalesTransactions = salesTransacions
+            AccountTransactions = await _accountTransactionService.ReadAllAsync(new() {
+                AccountId = entity.Account.Id,
+            }, token)
         };
     }
 

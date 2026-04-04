@@ -15,10 +15,6 @@ public class ContainerReadAllValidator : AbstractValidator<ContainerReadAllReque
             .MustAsync(helper.BeNullOrIdentifyExistingTemplate)
             .OverridePropertyName(ValidationMessages.ContainerTemplateIdPropName)
             .WithMessage(ValidationMessages.ContainerTemplateIdNotValidMessage);
-        RuleFor(x => x.PipeId)
-            .MustAsync(helper.BeNullOrIdentifyExistingPipe)
-            .OverridePropertyName(ValidationMessages.PipeIdPropName)
-            .WithMessage(ValidationMessages.PipeIdNotValidMessage);
     }
 
 }
@@ -47,10 +43,6 @@ public class ContainerUpdateValidator : AbstractValidator<ContainerUpdateRequest
             .MustAsync(helper.IdentifyExistingStore)
             .OverridePropertyName(ValidationMessages.StoreIdPropName)
             .WithMessage(ValidationMessages.StoreIdNotValidMessage);
-        RuleFor(x => x.Model.PipeId)
-            .MustAsync(helper.BeNullOrIdentifyExistingPipe)
-            .OverridePropertyName(ValidationMessages.PipeIdPropName)
-            .WithMessage(ValidationMessages.PipeIdNotValidMessage);
     }
 
 }
