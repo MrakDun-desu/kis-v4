@@ -3,5 +3,6 @@ using KisV4.DAL.EF.Entities;
 
 public class SaleTransactionRequestState : IScopedService {
     public SaleTransactionItem[]? SaleTransactionItems { get; set; }
+    public Dictionary<int, Container>? StoreItemToContainer { get; set; }
     public Dictionary<int, (Composite Item, decimal Price)>? Composites { get; set; }
 }

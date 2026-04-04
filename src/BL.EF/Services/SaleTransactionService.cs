@@ -13,12 +13,14 @@ public class SaleTransactionService(
     KisDbContext dbContext,
     TimeProvider timeProvider,
     UserService userService,
-    SaleTransactionRequestState state
+    SaleTransactionRequestState state,
+    ContainerChangeService containerChangeService
 ) : IScopedService {
     private readonly KisDbContext _dbContext = dbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
     private readonly UserService _userService = userService;
     private readonly SaleTransactionRequestState _state = state;
+    private readonly ContainerChangeService _containerChangeService = containerChangeService;
 
     public async Task<SaleTransactionReadAllResponse> ReadAllAsync(
         SaleTransactionReadAllRequest req,
@@ -357,13 +359,14 @@ public class SaleTransactionService(
             );
             _dbContext.SaleTransactionItems.AddRange(newSaleTransactionItems);
 
-            var storeTransaction = AddStoreTransaction(
+            var storeTransaction = await AddStoreTransactionAsync(
                 entity,
                 req.Model.SaleTransactionItems,
                 composites!,
                 req.Model.StoreId,
                 reqTime,
-                userId
+                userId,
+                token
             );
 
             entity.Note = req.Model.Note;
@@ -571,8 +574,6 @@ public class SaleTransactionService(
         }
     }
 
-    // With the base transaction, we'll need the transaction itself, the customer,
-    // transaction items, and store transaction to be used further
     private async Task<(
         SaleTransaction,
         Dictionary<int, (Composite Item, decimal Price)>,
@@ -600,14 +601,16 @@ public class SaleTransactionService(
         _dbContext.SaleTransactions.Add(entity);
         await _dbContext.SaveChangesAsync(token);
 
-        var storeTransaction = AddStoreTransaction(
+        var storeTransaction = await AddStoreTransactionAsync(
             entity,
             itemsToCreate,
             composites!,
             storeId,
             reqTime,
-            userId
+            userId,
+            token
         );
+
         await StoreTransactionService.CreateInternalAsync(storeTransaction, userId, _dbContext, reqTime, token);
         return (entity, composites!, saleTransactionItems, storeTransaction);
     }
@@ -761,28 +764,77 @@ public class SaleTransactionService(
             }
         }
 
+        var keysToRemove = new List<int>();
+        foreach (var (k, v) in storeTransactionItems) {
+            if (v.ItemAmount == 0) {
+                keysToRemove.Add(k);
+            }
+        }
+
+        foreach (var k in keysToRemove) {
+            storeTransactionItems.Remove(k);
+        }
+
         return storeTransactionItems;
     }
 
-    private StoreTransaction AddStoreTransaction(
+    public async Task<StoreTransaction> AddStoreTransactionAsync(
         SaleTransaction saleTransaction,
-        SaleTransactionItemCreateRequest[] saleTransactionItems,
+        SaleTransactionItemCreateRequest[] itemsToCreate,
         Dictionary<int, (Composite Item, decimal Price)> composites,
         int storeId,
         DateTimeOffset reqTime,
-        string userId
+        string userId,
+        CancellationToken token = default
     ) {
-        var storeTransactionItems = GetStoreTransactionItems(composites, saleTransactionItems, storeId);
+        var storeTransactionItems = GetStoreTransactionItems(
+                composites!,
+                itemsToCreate,
+                storeId
+            );
 
         var storeTransaction = new StoreTransaction {
             Note = null,
             Reason = TransactionReason.Sale,
             StartedAt = reqTime,
             StartedById = userId,
-            StoreTransactionItems = storeTransactionItems.Values
-                .Where(sti => sti.ItemAmount != 0).ToArray(),
+            StoreTransactionItems = storeTransactionItems.Values,
             SaleTransaction = saleTransaction
         };
+
+        var storeItemIds = storeTransactionItems.Values.Select(sti => sti.StoreItemId);
+
+        var containerItemIds = await _dbContext.StoreItems
+            .Where(si => storeItemIds.Contains(si.Id))
+            .Where(si => si.IsContainerItem)
+            .Select(si => si.Id)
+            .ToArrayAsync(token);
+
+        if (containerItemIds.Length > 0) {
+            var storeItemToContainer = await ContainerService.GetAvailableContainersAsync(
+                storeId,
+                _dbContext,
+                _state,
+                token
+            );
+
+            var containerChanges = new List<ContainerChange>(containerItemIds.Length);
+            foreach (var containerItemId in containerItemIds) {
+                var container = storeItemToContainer[containerItemId];
+                container.Amount += storeTransactionItems[containerItemId].ItemAmount;
+                _dbContext.Containers.Update(container);
+
+                containerChanges.Add(new() {
+                    ContainerId = container.Id,
+                    NewAmount = container.Amount,
+                    NewState = container.State,
+                    UserId = userId,
+                    Timestamp = reqTime
+                });
+            }
+
+            _dbContext.ContainerChanges.AddRange(containerChanges);
+        }
 
         return storeTransaction;
     }

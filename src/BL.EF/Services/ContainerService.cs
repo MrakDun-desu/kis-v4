@@ -250,4 +250,25 @@ public class ContainerService(
         }
     }
 
+    internal static async Task<Dictionary<int, Container>> GetAvailableContainersAsync(
+            int storeId,
+            KisDbContext dbContext,
+            SaleTransactionRequestState? state = null,
+            CancellationToken token = default
+            ) {
+        if (state?.StoreItemToContainer is not null) {
+            return state.StoreItemToContainer;
+        }
+
+        var output = await dbContext.Containers
+            .Include(c => c.Tap)
+            .Where(c => c.Tap != null)
+            .Where(c => c.StoreId == storeId)
+            .ToDictionaryAsync(c => c.Template!.StoreItemId, c => c, token);
+
+        state?.StoreItemToContainer = output;
+
+        return output;
+    }
+
 }

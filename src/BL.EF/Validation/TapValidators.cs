@@ -35,7 +35,6 @@ public class TapUpdateValidator : AbstractValidator<TapUpdateRequest> {
             .MustAsync(helper.IdentifyAnAvailableContainer)
             .OverridePropertyName(ValidationMessages.ContainerIdPropName)
             .WithMessage(ValidationMessages.ContainerNotAvailableMessage);
-
         RuleFor(x => x)
             .MustAsync(helper.BeContainerWithNewStoreItem)
             .OverridePropertyName(ValidationMessages.ContainerIdPropName)

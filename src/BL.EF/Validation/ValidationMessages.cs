@@ -132,6 +132,9 @@ public static class ValidationMessages {
     public const string SameContainerAlreadyTappedMessage = $"""
         Nemožno narazit keg - keg se stejnou skladovou položkou už je naražen na pípě v tomto skladu
         """;
+    internal static string RequiredContainerItemsDontHaveOpenContainers = $"""
+        Některým skladovým položkám v této traksakci chybí naražené kegy
+        """;
 
     // strings
     public const string NameTooLongMessage = $"""

@@ -390,12 +390,52 @@ public class ValidationHelper(
             return true;
         }
 
-        return !await _dbContext.Containers
+        return await _dbContext.Containers
             .Include(c => c.Template)
             .Include(c => c.Tap)
             .Where(c => c.StoreId == tap.StoreId)
             .Where(c => c.Tap != null)
-            .Where(c => c.Template!.StoreItemId == container.Template!.StoreItemId)
-            .AnyAsync(token);
+            .AllAsync(c => c.Template!.StoreItemId != container.Template!.StoreItemId, token);
+    }
+
+    internal async Task<bool> AllRequiredContainerItemsAreAvailable(
+            SaleTransactionCreateRequest request,
+            CancellationToken token
+            ) {
+        var composites = await SaleTransactionService.TryGetCompositesAsync(
+            request.SaleTransactionItems,
+            _dbContext,
+            _state,
+            token
+        );
+
+        if (composites is null) {
+            return true;
+        }
+
+        var storeItemToContainer = await ContainerService.GetAvailableContainersAsync(
+                request.StoreId,
+                _dbContext,
+                _state,
+                token
+            );
+
+        var storeItemIds = SaleTransactionService.GetStoreTransactionItems(
+            composites,
+            request.SaleTransactionItems,
+            0
+        ).Values.Select(sti => sti.StoreItemId);
+
+        if (!storeItemIds.Any()) {
+            return true;
+        }
+
+        var containerItemIds = await _dbContext.StoreItems
+            .Where(si => storeItemIds.Contains(si.Id))
+            .Where(si => si.IsContainerItem)
+            .Select(si => si.Id)
+            .ToArrayAsync(token);
+
+        return containerItemIds.All(ci => storeItemToContainer.ContainsKey(ci));
     }
 }

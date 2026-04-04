@@ -52,6 +52,9 @@ public class SaleTransactionCreateValidator : AbstractValidator<SaleTransactionC
             .MustAsync(helper.ItemAmountsArentNegative)
             .OverridePropertyName(ValidationMessages.SaleTransactionItemsPropName)
             .WithMessage(ValidationMessages.StoreTransactionItemAmountsNegativeMessage);
+        RuleFor(x => x)
+            .MustAsync(helper.AllRequiredContainerItemsAreAvailable)
+            .WithMessage(ValidationMessages.RequiredContainerItemsDontHaveOpenContainers);
     }
 }
 
