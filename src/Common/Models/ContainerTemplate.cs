@@ -33,9 +33,6 @@ public record ContainerTemplateCreateResponse : ContainerTemplateModel;
 public record ContainerTemplateUpdateRequestModel {
     [DefaultValue("Kofola 50l")]
     public required string Name { get; init; }
-    [DefaultValue(typeof(decimal), "50")]
-    public required decimal Amount { get; init; }
-    public required int StoreItemId { get; init; }
 }
 
 public record ContainerTemplateUpdateRequest {
@@ -45,7 +42,10 @@ public record ContainerTemplateUpdateRequest {
     public required ContainerTemplateUpdateRequestModel Model { get; init; }
 }
 
-public record ContainerTemplateUpdateResponse : ContainerTemplateModel;
+public record ContainerTemplateUpdateResponse {
+    public required int Id { get; init; }
+    public required string Name { get; init; }
+}
 
 public record ContainerTemplateDeleteRequest {
     [FromRoute]

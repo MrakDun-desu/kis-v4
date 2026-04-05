@@ -5,17 +5,23 @@ import { usePosStore } from "../../stores/posStore";
 import { useShallow } from "zustand/react/shallow";
 
 const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
-  const { currentLayout, transactionItems, changeLayout, addItem, updateItem } =
-    usePosStore(
-      useShallow((state) => ({
-        currentLayout: state.currentLayout,
-        currentStore: state.currentStore,
-        transactionItems: state.transactionItems,
-        changeLayout: state.setLayoutId,
-        addItem: state.addTransactionItem,
-        updateItem: state.updateTransactionItem,
-      })),
-    );
+  const {
+    currentLayout,
+    currentStore,
+    transactionItems,
+    changeLayout,
+    addItem,
+    updateItem,
+  } = usePosStore(
+    useShallow((state) => ({
+      currentLayout: state.currentLayout,
+      currentStore: state.currentStore,
+      transactionItems: state.transactionItems,
+      changeLayout: state.setLayoutId,
+      addItem: state.addTransactionItem,
+      updateItem: state.updateTransactionItem,
+    })),
+  );
   const navigate = useNavigate();
 
   if (!currentLayout) {
@@ -47,6 +53,13 @@ const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
       alignItems="center"
       height="100%"
       padding={1}
+      sx={{
+        opacity:
+          layoutItem.type === "Tap" &&
+          layoutItem.target.store.id !== currentStore?.id
+            ? 0.3
+            : undefined,
+      }}
       onClick={() => {
         switch (layoutItem.type) {
           case "SaleItem": {
@@ -73,7 +86,7 @@ const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
             break;
           }
           case "Tap": {
-            if (layoutItem.target.store.id !== currentStore)
+            if (layoutItem.target.store.id === currentStore?.id)
               navigate(`/pos/taps/${layoutItem.target.id}`);
           }
         }

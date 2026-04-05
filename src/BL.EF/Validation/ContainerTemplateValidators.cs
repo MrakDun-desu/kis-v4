@@ -38,11 +38,6 @@ public class ContainerTemplateCreateValidator : AbstractValidator<ContainerTempl
 
 public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTemplateUpdateRequest> {
     public ContainerTemplateUpdateValidator(ValidationHelper helper) {
-        RuleFor(x => x.Model.StoreItemId)
-            .MustAsync(helper.IdentifyExistingContainerItem)
-            .OverridePropertyName(ValidationMessages.StoreItemIdPropName)
-            .WithMessage(ValidationMessages.ContainerItemIdNotValidMessage);
-
         RuleFor(x => x.Model.Name)
             .MaximumLength(ValidationConstants.MaxNameLength)
             .OverridePropertyName(ValidationMessages.NamePropName)
@@ -50,10 +45,6 @@ public class ContainerTemplateUpdateValidator : AbstractValidator<ContainerTempl
             .NotEmpty()
             .OverridePropertyName(ValidationMessages.NamePropName)
             .WithMessage(ValidationMessages.NameEmptyMessage);
-
-        RuleFor(x => x)
-            .MustAsync(helper.NotHaveExistingContainers)
-            .WithMessage(ValidationMessages.ContainerTemplateUsedMessage);
     }
 }
 

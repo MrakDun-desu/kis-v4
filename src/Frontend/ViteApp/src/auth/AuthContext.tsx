@@ -80,20 +80,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     lsAuthKeys.forEach((key) => localStorage.removeItem(key));
 
-    let signOutUrl = "/bff/logout";
+    alert("Vypršelo přihlášení. Budete přesměrování na stránku odhlášení.");
 
-    try {
-      await fetch(signOutUrl, {
-        headers: {
-          "X-CSRF": "1",
-        },
-        keepalive: true,
-      });
-    } catch {}
-
-    setTimeout(() => {
-      window.location.href = "/bff/login";
-    }, 500);
+    signOut();
   };
 
   const refreshAuth = async (autoRelogin: boolean = false) => {

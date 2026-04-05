@@ -41,6 +41,6 @@ public class TapUpdateValidator : AbstractValidator<TapUpdateRequest> {
             .WithMessage(ValidationMessages.SameContainerAlreadyTappedMessage);
         RuleFor(x => x)
             .MustAsync(helper.NotHaveContainerIfAddingNew)
-            .WithMessage(ValidationMessages.CantAddContainerToBusyPipe);
+            .WithMessage(ValidationMessages.CantAddContainerToBusyTap);
     }
 }

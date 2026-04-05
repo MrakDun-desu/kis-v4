@@ -16,6 +16,7 @@ public class TestSeeder(KisDbContext dbContext) {
             Name = "Chleba",
             UnitName = "kg",
             Categories = [categoryToasts],
+            CurrentCost = 40,
             Costs = [
                 new Cost {
                     Amount = 40,
@@ -29,6 +30,7 @@ public class TestSeeder(KisDbContext dbContext) {
             Name = "Sýr",
             UnitName = "dkg",
             Categories = [categoryToasts],
+            CurrentCost = 1.1m,
             Costs = [
                 new Cost {
                     Amount = 1.1m,
@@ -42,6 +44,7 @@ public class TestSeeder(KisDbContext dbContext) {
             Name = "Šunka",
             UnitName = "dkg",
             Categories = [categoryToasts],
+            CurrentCost = 1m,
             Costs = [
                 new Cost {
                     Amount = 1m,
@@ -55,6 +58,7 @@ public class TestSeeder(KisDbContext dbContext) {
             Name = "Kofola flaška 0.5l",
             UnitName = "ks",
             Categories = [categoryDrinks],
+            CurrentCost = 15,
             Costs = [
                 new Cost {
                     Amount = 15,
@@ -69,6 +73,7 @@ public class TestSeeder(KisDbContext dbContext) {
             UnitName = "l",
             IsContainerItem = true,
             Categories = [categoryDrinks],
+            CurrentCost = 20,
             Costs = [
                 new Cost {
                     Amount = 20,

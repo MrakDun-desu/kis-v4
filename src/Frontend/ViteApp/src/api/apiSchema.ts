@@ -857,21 +857,11 @@ export interface components {
         ContainerTemplateUpdateRequestModel: {
             /** @default Kofola 50l */
             name: string;
-            /**
-             * Format: string
-             * @default 50
-             */
-            amount: string;
-            /** Format: number */
-            storeItemId: number;
         };
         ContainerTemplateUpdateResponse: {
             /** Format: number */
             id: number;
             name: string;
-            /** Format: string */
-            amount: string;
-            storeItem: components["schemas"]["StoreItemListModel"];
         };
         ContainerUpdateModel: {
             /** Format: number */

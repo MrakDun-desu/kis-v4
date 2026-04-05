@@ -71,7 +71,6 @@ public class ContainerTemplateService(
             CancellationToken token = default
             ) {
         var req = cmd.Model;
-        var storeItem = await _dbContext.StoreItems.FindAsync(req.StoreItemId, token);
 
         var entity = await _dbContext.ContainerTemplates.FindAsync(cmd.Id, token);
 
@@ -79,9 +78,7 @@ public class ContainerTemplateService(
             return null;
         }
 
-        entity.Amount = req.Amount;
         entity.Name = req.Name;
-        entity.StoreItemId = req.StoreItemId;
 
         _dbContext.Update(entity);
 
@@ -89,9 +86,7 @@ public class ContainerTemplateService(
 
         return new ContainerTemplateUpdateResponse {
             Id = entity.Id,
-            Name = entity.Name,
-            Amount = entity.Amount,
-            StoreItem = storeItem!.ToModel()
+            Name = entity.Name
         };
     }
 

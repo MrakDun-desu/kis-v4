@@ -133,7 +133,7 @@ const PosTap = () => {
                 order: tap.containerId == c.id ? 1 : undefined,
               }}
               onClick={() => {
-                if (c.tap !== null) {
+                if (c.tap?.id === tap.id) {
                   navigate(`/pos/containers/${c.id}`);
                 }
               }}

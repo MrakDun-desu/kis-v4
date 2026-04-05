@@ -14,22 +14,22 @@ import CategoryCreateForm from "../../../components/forms/CategoryCreateForm";
 import type { CategoryModel } from "../../../api/apiTypes";
 import { apiClient } from "../../../api/apiClient";
 import handleApiError from "../../../errorHandling/apiResponseHandler";
+import { useLoading } from "../../../contexts/LoadingContext";
 
 const Categories = () => {
-  const [categories, setCategories] = useState<CategoryModel[] | null>(null);
+  const [categories, setCategories] = useState<CategoryModel[]>();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
+  const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     setLoading(true);
     const getCategoriesDeferred = setTimeout(async () => {
       const { response, data } = await apiClient.GET("/categories");
-      if (!data) {
-        setCategories(null);
+      setCategories(data?.data);
+      if (!response.ok) {
         handleApiError(response);
-      } else {
-        setCategories(data.data);
       }
       setLoading(false);
     }, 500);
@@ -52,7 +52,7 @@ const Categories = () => {
       type: "string",
       sortable: false,
       filterable: false,
-      editable: false,
+      editable: true,
       flex: 1,
     },
 
@@ -61,28 +61,72 @@ const Categories = () => {
       headerName: "Akce",
       flex: 1,
       type: "actions",
-      renderCell: (params) => [
-        <Button
-          color="error"
-          variant="outlined"
-          onClick={async () => {
-            const confirmed = confirm(
-              `Opravdu chcete ${params.row.name} smazat?`,
-            );
-            if (confirmed) {
-              const { response } = await apiClient.DELETE("/cashboxes/{id}", {
-                params: { path: { id: params.row.id } },
-              });
-              if (!response.ok) {
-                handleApiError(response);
+      renderCell: (params) => (
+        <>
+          {params.row.name !==
+            categories?.find((c) => c.id === params.row.id)?.name && (
+            <Button
+              variant="outlined"
+              sx={{ marginRight: 1 }}
+              onClick={async () => {
+                if (
+                  params.row.name ===
+                  categories?.find((c) => c.id === params.row.id)?.name
+                ) {
+                  alert("Název je nezměněn");
+                }
+                startLoading();
+                const { response, error } = await apiClient.PUT(
+                  "/categories/{id}",
+                  {
+                    params: {
+                      path: { id: params.row.id },
+                    },
+                    body: {
+                      name: params.row.name,
+                    },
+                  },
+                );
+                stopLoading();
+                if (response.ok) {
+                  setCategories((prev) =>
+                    prev?.map((c) =>
+                      c.id === params.row.id
+                        ? { ...c, name: params.row.name }
+                        : c,
+                    ),
+                  );
+                } else {
+                  handleApiError(response, error);
+                }
+              }}
+            >
+              Uložit změny
+            </Button>
+          )}
+
+          <Button
+            color="error"
+            variant="outlined"
+            onClick={async () => {
+              const confirmed = confirm(
+                `Opravdu chcete ${params.row.name} smazat?`,
+              );
+              if (confirmed) {
+                const { response } = await apiClient.DELETE("/cashboxes/{id}", {
+                  params: { path: { id: params.row.id } },
+                });
+                if (!response.ok) {
+                  handleApiError(response);
+                }
+                refreshCategories();
               }
-              refreshCategories();
-            }
-          }}
-        >
-          Smazat
-        </Button>,
-      ],
+            }}
+          >
+            Smazat
+          </Button>
+        </>
+      ),
     },
   ];
 

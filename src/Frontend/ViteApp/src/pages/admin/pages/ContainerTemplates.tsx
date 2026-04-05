@@ -15,24 +15,23 @@ import ContainerTemplateCreateForm from "../../../components/forms/ContainerTemp
 import type { ContainerTemplateModel } from "../../../api/apiTypes";
 import { apiClient } from "../../../api/apiClient";
 import handleApiError from "../../../errorHandling/apiResponseHandler";
+import { useLoading } from "../../../contexts/LoadingContext";
 
 const ContainerTemplates = () => {
-  const [containerTemplates, setContainerTemplates] = useState<
-    ContainerTemplateModel[] | null
-  >(null);
+  const [containerTemplates, setContainerTemplates] =
+    useState<ContainerTemplateModel[]>();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
+  const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     setLoading(true);
     const getContainerTemplatesDeferred = setTimeout(async () => {
       const { response, data } = await apiClient.GET("/container-templates");
-      if (!data) {
-        setContainerTemplates(null);
+      setContainerTemplates(data?.data);
+      if (!response.ok) {
         handleApiError(response);
-      } else {
-        setContainerTemplates(data.data);
       }
       setLoading(false);
     }, 500);
@@ -55,7 +54,7 @@ const ContainerTemplates = () => {
       type: "string",
       sortable: true,
       filterable: true,
-      editable: false,
+      editable: true,
       flex: 1,
     },
 
@@ -90,28 +89,69 @@ const ContainerTemplates = () => {
       headerName: "Akce",
       flex: 1,
       type: "actions",
-      renderCell: (params) => [
-        <Button
-          color="error"
-          variant="outlined"
-          onClick={async () => {
-            const confirmed = confirm(
-              `Opravdu chcete ${params.row.name} smazat?`,
-            );
-            if (confirmed) {
-              const { response } = await apiClient.DELETE(
-                "/container-templates/{id}",
-                { params: { path: { id: params.row.id } } },
+      renderCell: (params) => (
+        <>
+          {params.row.name !==
+            containerTemplates?.find((c) => c.id === params.row.id)?.name && (
+            <Button
+              variant="outlined"
+              sx={{ marginRight: 1 }}
+              onClick={async () => {
+                if (
+                  params.row.name ===
+                  containerTemplates?.find((c) => c.id === params.row.id)?.name
+                ) {
+                  alert("Název je nezměněn");
+                }
+                startLoading();
+                const { data, response, error } = await apiClient.PUT(
+                  "/container-templates/{id}",
+                  {
+                    params: {
+                      path: { id: params.row.id },
+                    },
+                    body: {
+                      name: params.row.name,
+                    },
+                  },
+                );
+                stopLoading();
+                if (data) {
+                  setContainerTemplates((prev) =>
+                    prev?.map((c) =>
+                      c.id === data.id ? { ...c, name: data.name } : c,
+                    ),
+                  );
+                } else {
+                  handleApiError(response, error);
+                }
+              }}
+            >
+              Uložit změny
+            </Button>
+          )}
+          <Button
+            color="error"
+            variant="outlined"
+            onClick={async () => {
+              const confirmed = confirm(
+                `Opravdu chcete ${params.row.name} smazat?`,
               );
-              if (response.ok) {
-                refreshContainerTemplates();
+              if (confirmed) {
+                const { response } = await apiClient.DELETE(
+                  "/container-templates/{id}",
+                  { params: { path: { id: params.row.id } } },
+                );
+                if (response.ok) {
+                  refreshContainerTemplates();
+                }
               }
-            }
-          }}
-        >
-          Smazat
-        </Button>,
-      ],
+            }}
+          >
+            Smazat
+          </Button>
+        </>
+      ),
     },
   ];
 

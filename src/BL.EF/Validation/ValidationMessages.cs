@@ -135,7 +135,7 @@ public static class ValidationMessages {
     public const string RequiredContainerItemsDontHaveOpenContainers = $"""
         Některým skladovým položkám v této traksakci chybí naražené kegy
         """;
-    public const string CantAddContainerToBusyPipe = $"""
+    public const string CantAddContainerToBusyTap = $"""
         Nemožno přidat keg na obsazenou pípu. Nejdřív odražte aktuální keg
         """;
 

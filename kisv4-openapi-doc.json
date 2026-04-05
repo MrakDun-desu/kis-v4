@@ -3872,35 +3872,20 @@
       },
       "ContainerTemplateUpdateRequestModel": {
         "required": [
-          "name",
-          "amount",
-          "storeItemId"
+          "name"
         ],
         "type": "object",
         "properties": {
           "name": {
             "type": "string",
             "default": "Kofola 50l"
-          },
-          "amount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": "string",
-            "format": "string",
-            "default": 50
-          },
-          "storeItemId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": "number",
-            "format": "number"
           }
         }
       },
       "ContainerTemplateUpdateResponse": {
         "required": [
           "id",
-          "name",
-          "amount",
-          "storeItem"
+          "name"
         ],
         "type": "object",
         "properties": {
@@ -3911,14 +3896,6 @@
           },
           "name": {
             "type": "string"
-          },
-          "amount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": "string",
-            "format": "string"
-          },
-          "storeItem": {
-            "$ref": "#/components/schemas/StoreItemListModel"
           }
         }
       },

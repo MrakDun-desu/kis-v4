@@ -15,22 +15,22 @@ import type { TapListModel } from "../../../api/apiTypes";
 import { apiClient } from "../../../api/apiClient";
 import handleApiError from "../../../errorHandling/apiResponseHandler";
 import { Link } from "react-router-dom";
+import { useLoading } from "../../../contexts/LoadingContext";
 
 const Taps = () => {
-  const [taps, setTaps] = useState<TapListModel[] | null>(null);
+  const [taps, setTaps] = useState<TapListModel[]>();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
+  const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     setLoading(true);
     const getTapsDeferred = setTimeout(async () => {
       const { data, response } = await apiClient.GET("/taps");
-      if (!data) {
-        setTaps(null);
+      setTaps(data?.data);
+      if (!response.ok) {
         handleApiError(response);
-      } else {
-        setTaps(data.data);
       }
       setLoading(false);
     }, 500);
@@ -51,9 +51,9 @@ const Taps = () => {
       field: "name",
       headerName: "Název",
       type: "string",
-      sortable: false,
-      filterable: false,
-      editable: false,
+      sortable: true,
+      filterable: true,
+      editable: true,
       flex: 1,
     },
 
@@ -88,29 +88,70 @@ const Taps = () => {
       headerName: "Akce",
       flex: 1,
       type: "actions",
-      renderCell: (params) => [
-        <Button
-          color="error"
-          variant="outlined"
-          onClick={async () => {
-            const confirmed = confirm(
-              `Opravdu chcete ${params.row.name} smazat?`,
-            );
-            if (confirmed) {
-              const { response } = await apiClient.DELETE("/taps/{id}", {
-                params: { path: { id: params.row.id } },
-              });
-              if (!response.ok) {
-                handleApiError(response);
-              } else {
-                refreshTaps();
+      renderCell: (params) => (
+        <>
+          {params.row.name !==
+            taps?.find((c) => c.id === params.row.id)?.name && (
+            <Button
+              variant="outlined"
+              sx={{ marginRight: 1 }}
+              onClick={async () => {
+                if (
+                  params.row.name ===
+                  taps?.find((c) => c.id === params.row.id)?.name
+                ) {
+                  alert("Název je nezměněn");
+                }
+                startLoading();
+                const { data, response, error } = await apiClient.PUT(
+                  "/taps/{id}",
+                  {
+                    params: {
+                      path: { id: params.row.id },
+                    },
+                    body: {
+                      name: params.row.name,
+                    },
+                  },
+                );
+                stopLoading();
+                if (data) {
+                  setTaps((prev) =>
+                    prev?.map((c) =>
+                      c.id === data.id ? { ...c, name: data.name } : c,
+                    ),
+                  );
+                } else {
+                  handleApiError(response, error);
+                }
+              }}
+            >
+              Uložit změny
+            </Button>
+          )}
+          <Button
+            color="error"
+            variant="outlined"
+            onClick={async () => {
+              const confirmed = confirm(
+                `Opravdu chcete ${params.row.name} smazat?`,
+              );
+              if (confirmed) {
+                const { response } = await apiClient.DELETE("/taps/{id}", {
+                  params: { path: { id: params.row.id } },
+                });
+                if (!response.ok) {
+                  handleApiError(response);
+                } else {
+                  refreshTaps();
+                }
               }
-            }
-          }}
-        >
-          Smazat
-        </Button>,
-      ],
+            }}
+          >
+            Smazat
+          </Button>
+        </>
+      ),
     },
   ];
 
