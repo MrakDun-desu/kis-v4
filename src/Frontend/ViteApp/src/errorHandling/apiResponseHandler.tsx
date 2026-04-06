@@ -1,12 +1,12 @@
 import { authEvents } from "../auth/authEvents";
 import { snackbarRef } from "../globalRefs/snackbarRef";
 import type { HttpValidationProblemDetails } from "../api/apiTypes";
-
+import { Box } from "@mui/material";
 
 const handleApiError = (
   response: Response,
   problem?: HttpValidationProblemDetails,
-  onNotFound?: () => void
+  onNotFound?: () => void,
 ) => {
   switch (response.status) {
     case 400: {
@@ -15,11 +15,15 @@ const handleApiError = (
           snackbarRef.show?.(`Chyba požadavku, detaily v konzoli.`, "error");
           console.log(response);
         }
-        let errorMessage = "Naskytli se validační chyby:";
-        for (const error in problem.errors) {
-          errorMessage = errorMessage.concat(`\n${error}: ${problem.errors[error]}`);
+        if (problem.errors !== undefined) {
+          snackbarRef.show?.(
+            Object.keys(problem.errors).map((error) => (
+              <Box>{problem.errors?.[error]}</Box>
+            )),
+            "warning",
+            "Naskytli se validační chyby",
+          );
         }
-        snackbarRef.show?.(errorMessage, "warning");
 
         return;
       }
@@ -50,6 +54,6 @@ const handleApiError = (
       break;
     }
   }
-}
+};
 
 export default handleApiError;

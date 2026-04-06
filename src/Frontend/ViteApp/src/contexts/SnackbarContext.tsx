@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import Snackbar from "@mui/material/Snackbar";
-import { Alert } from "@mui/material";
+import { Alert, AlertTitle } from "@mui/material";
 import { snackbarRef } from "../globalRefs/snackbarRef";
 import {
   CheckCircleOutline,
@@ -18,7 +18,8 @@ import {
 type Severity = "success" | "info" | "warning" | "error";
 interface SnackbarState {
   open?: boolean;
-  message?: string;
+  message?: string | ReactNode;
+  title?: string;
   severity: Severity;
 }
 
@@ -40,8 +41,11 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
     severity: "info",
   });
 
-  const showSnackbar = (message: string, severity: Severity = "info") =>
-    setSnackbarState({ open: true, message, severity });
+  const showSnackbar = (
+    message: string | ReactNode,
+    severity: Severity = "info",
+    title?: string,
+  ) => setSnackbarState({ open: true, message, severity, title });
   const handleClose = () => setSnackbarState((s) => ({ ...s, open: false }));
 
   useEffect(() => {
@@ -63,6 +67,9 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
           severity={snackbarState.severity}
           icon={severityIconMap[snackbarState.severity]}
         >
+          {snackbarState.title && (
+            <AlertTitle>{snackbarState.title}</AlertTitle>
+          )}
           {snackbarState.message}
         </Alert>
       </Snackbar>

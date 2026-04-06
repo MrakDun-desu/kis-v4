@@ -223,23 +223,6 @@ const PosPage = () => {
                   <Typography>
                     {sti.amount}ks <b>{sti.saleItemName}</b>
                   </Typography>
-
-                  <Button
-                    color="error"
-                    variant="contained"
-                    sx={{
-                      minWidth: 0,
-                    }}
-                    onClick={() => {
-                      if (sti.amount > 1) {
-                        updateTransactionItem(i, { amount: sti.amount - 1 });
-                      } else {
-                        removeTransactionItem(i);
-                      }
-                    }}
-                  >
-                    -1
-                  </Button>
                 </Box>
                 {sti.modifications?.map((mod, i) => (
                   <Box
@@ -296,19 +279,25 @@ const PosPage = () => {
         </Box>
       </Paper>
 
-      <Dialog open={finishingOrder}>
+      <Dialog fullScreen open={finishingOrder}>
         <DialogTitle>Dokončení objednávky</DialogTitle>
         <DialogContent>
           <OrderFinishForm
             formId="orderFinishForm"
-            transactionItems={transactionItems}
             afterSubmit={() => setFinishingOrder(false)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setFinishingOrder(false)}>Zrušit</Button>
-          <Button type="submit" form="orderFinishForm">
-            Dokončit
+          <Button size="large" onClick={() => setFinishingOrder(false)}>
+            Zrušit
+          </Button>
+          <Button
+            size="large"
+            type="submit"
+            form="orderFinishForm"
+            variant="contained"
+          >
+            Prodat
           </Button>
         </DialogActions>
       </Dialog>

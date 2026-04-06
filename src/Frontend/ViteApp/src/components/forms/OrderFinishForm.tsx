@@ -1,79 +1,49 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Skeleton,
   Box,
   Paper,
   Typography,
-  TextField,
-  InputAdornment,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  IconButton,
+  Button,
+  Divider,
 } from "@mui/material";
-import { useState, useEffect } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import z from "zod";
+import { useState, useEffect, type SubmitEventHandler } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { apiClient } from "../../api/apiClient";
-import type {
-  SaleTransactionCreateRequest,
-  SaleTransactionItemModel,
-} from "../../api/apiTypes";
-import validationConstants from "../../constants/validationConstants";
+import type { SaleTransactionItemModel } from "../../api/apiTypes";
 import { useLoading } from "../../contexts/LoadingContext";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import handleApiError from "../../errorHandling/apiResponseHandler";
-import {
-  type SaleTransactionItemDisplay,
-  usePosStore,
-} from "../../stores/posStore";
+import { usePosStore } from "../../stores/posStore";
 import { useAuth } from "../../auth/AuthContext";
-
-const ValidationSchema = z.object({
-  note: z
-    .string()
-    .max(
-      validationConstants.maxNoteLength,
-      "Poznámka přesahuje maximální délku",
-    )
-    .nullish(),
-  storeId: z.number(),
-  cashBoxId: z.number(),
-  customerId: z.string(),
-  paidAmount: z
-    .string()
-    .regex(
-      validationConstants.numberRegex,
-      "Zaplacená cena musí být platné číslo",
-    )
-    .refine(
-      (val) => Number(val) >= 0,
-      "Zaplacená cena musí být větší/rovna nule",
-    ),
-  saleTransactionItems: z
-    .array(
-      z.object({
-        amount: z.number(),
-        saleItemId: z.number(),
-        modifications: z
-          .array(
-            z.object({
-              amount: z.number(),
-              modifierId: z.number(),
-            }),
-          )
-          .optional(),
-      }),
-    )
-    .optional(),
-});
+import { Add, Backspace, Remove } from "@mui/icons-material";
 
 const OrderFinishForm = ({
   formId,
-  transactionItems,
   afterSubmit,
 }: {
   formId: string;
-  transactionItems: SaleTransactionItemDisplay[];
   afterSubmit: () => void;
 }) => {
+  const {
+    transactionItems,
+    clearTransactionItems,
+    removeTransactionItem,
+    updateTransactionItem,
+  } = usePosStore(
+    useShallow((state) => ({
+      transactionItems: state.transactionItems,
+      clearTransactionItems: state.clearTransactionItems,
+      removeTransactionItem: state.removeTransactionItem,
+      updateTransactionItem: state.updateTransactionItem,
+    })),
+  );
   const { showSnackbar } = useSnackbar();
   const { store, cashBox } = usePosStore(
     useShallow((state) => ({
@@ -82,33 +52,9 @@ const OrderFinishForm = ({
     })),
   );
   const { userClaims } = useAuth();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SaleTransactionCreateRequest>({
-    defaultValues: {
-      cashBoxId: cashBox?.id,
-      storeId: store?.id,
-      customerId:
-        (userClaims!.find((val) => val.type === "sub")?.value as string) ?? "0",
-      paidAmount: "0.00",
-      saleTransactionItems: transactionItems.map((sti) => ({
-        amount: sti.amount,
-        saleItemId: sti.saleItemId,
-        modifications: sti.modifications.map((m) => ({
-          amount: m.amount,
-          modifierId: m.modifierId,
-        })),
-      })),
-    },
-    resolver: zodResolver(ValidationSchema),
-  });
   const { startLoading, stopLoading } = useLoading();
-  const [prices, setPrices] = useState<SaleTransactionItemModel[] | null>(null);
-  const clearTransactionItems = usePosStore(
-    (state) => state.clearTransactionItems,
-  );
+  const [prices, setPrices] = useState<SaleTransactionItemModel[]>();
+  const [paidAmount, setPaidAmount] = useState("0");
   const setLayout = usePosStore((state) => state.setCurrentLayout);
 
   useEffect(() => {
@@ -129,9 +75,8 @@ const OrderFinishForm = ({
         },
       );
 
-      if (data) {
-        setPrices(data.saleTransactionItems);
-      } else {
+      setPrices(data?.saleTransactionItems);
+      if (!response.ok) {
         handleApiError(response, error);
       }
     };
@@ -139,14 +84,33 @@ const OrderFinishForm = ({
     getPrices();
   }, []);
 
-  const createSaleTransaction: SubmitHandler<
-    SaleTransactionCreateRequest
-  > = async (requestBody) => {
+  const createSaleTransaction: SubmitEventHandler<HTMLFormElement> = async (
+    evt,
+  ) => {
+    evt?.preventDefault();
+    if (!cashBox || !store) {
+      return;
+    }
     startLoading();
     const { response, data, error } = await apiClient.POST(
       "/sale-transactions",
       {
-        body: requestBody,
+        body: {
+          cashBoxId: cashBox.id,
+          storeId: store.id,
+          customerId:
+            (userClaims!.find((val) => val.type === "sub")?.value as string) ??
+            "0",
+          paidAmount,
+          saleTransactionItems: transactionItems.map((sti) => ({
+            amount: sti.amount,
+            saleItemId: sti.saleItemId,
+            modifications: sti.modifications.map((m) => ({
+              amount: m.amount,
+              modifierId: m.modifierId,
+            })),
+          })),
+        },
       },
     );
     if (data) {
@@ -178,49 +142,122 @@ const OrderFinishForm = ({
   }
 
   return (
-    <form onSubmit={handleSubmit(createSaleTransaction)} id={formId}>
-      <Box display="flex" flexDirection="column" alignItems="stretch" gap={2}>
-        <Box display="flex" flexDirection="column" gap={1}>
-          {prices.map((sti, i) => (
-            <Paper key={i} elevation={4}>
-              <Box
-                display="flex"
-                padding={1}
-                justifyContent="space-between"
-                alignItems="center"
-                gap={2}
-              >
-                <Typography>
-                  {sti.amount}ks <b>{sti.saleItemName}</b>
-                </Typography>
-                <Typography>
-                  {(Number(sti.basePrice) * sti.amount).toFixed(2)},-
-                </Typography>
-              </Box>
-              {sti.modifications?.map((mod, i) => (
-                <Box
-                  key={i}
-                  display="flex"
-                  padding={1}
-                  paddingTop={0}
-                  justifyContent="space-between"
-                >
-                  <Typography>
-                    +{mod.amount} <b>{mod.modifierName}</b>
-                  </Typography>
-                  <Typography>
-                    {(
-                      Number(mod.priceChange) *
-                      mod.amount *
-                      sti.amount
-                    ).toFixed(2)}
-                    ,-
-                  </Typography>
-                </Box>
-              ))}
-            </Paper>
-          ))}
-          <Typography fontWeight="bold" fontSize={18}>
+    <form
+      onSubmit={createSaleTransaction}
+      id={formId}
+      style={{ height: "100%" }}
+    >
+      <Box display="flex" gap={5} paddingTop={1} height="100%">
+        <Box display="flex" flexDirection="column" gap={2} flex="1.5">
+          <Typography fontSize="1.2rem">Prodejní položky:</Typography>
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap={1}
+            flexGrow="1"
+            overflow="auto"
+            flexShrink="1"
+            minHeight="0"
+          >
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Počet</TableCell>
+                    <TableCell sx={{ flex: 1 }}>Položka</TableCell>
+                    <TableCell>Za kus</TableCell>
+                    <TableCell>Celkem</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {prices.map((p) => (
+                    <TableRow key={p.lineNumber}>
+                      <TableCell>
+                        <IconButton
+                          onClick={() => {
+                            if (p.amount > 1) {
+                              updateTransactionItem(p.lineNumber - 1, {
+                                amount: p.amount - 1,
+                              });
+                              setPrices((prev) =>
+                                prev?.map((prevP) =>
+                                  prevP.lineNumber === p.lineNumber
+                                    ? {
+                                        ...p,
+                                        amount: p.amount - 1,
+                                      }
+                                    : prevP,
+                                ),
+                              );
+                            } else {
+                              removeTransactionItem(p.lineNumber - 1);
+                              setPrices((prev) =>
+                                prev?.filter(
+                                  (prevP) => prevP.lineNumber !== p.lineNumber,
+                                ),
+                              );
+                            }
+                          }}
+                        >
+                          <Remove />
+                        </IconButton>
+                        <Typography
+                          fontWeight="bold"
+                          fontSize="1.2em"
+                          component="span"
+                        >
+                          {p.amount}
+                        </Typography>
+                        <IconButton
+                          onClick={() => {
+                            updateTransactionItem(p.lineNumber - 1, {
+                              amount: p.amount + 1,
+                            });
+                            setPrices((prev) =>
+                              prev?.map((prevP) =>
+                                prevP.lineNumber === p.lineNumber
+                                  ? {
+                                      ...p,
+                                      amount: p.amount + 1,
+                                    }
+                                  : prevP,
+                              ),
+                            );
+                          }}
+                        >
+                          <Add />
+                        </IconButton>
+                      </TableCell>
+
+                      <TableCell>{p.saleItemName}</TableCell>
+
+                      <TableCell>
+                        {p.basePrice +
+                          p.modifications.reduce(
+                            (acc, curr) =>
+                              acc + curr.amount * Number(curr.priceChange),
+                            0,
+                          )}{" "}
+                        Kč
+                      </TableCell>
+
+                      <TableCell sx={{ fontWeight: "bold" }}>
+                        {(Number(p.basePrice) +
+                          p.modifications.reduce(
+                            (acc, curr) =>
+                              acc + curr.amount * Number(curr.priceChange),
+                            0,
+                          )) *
+                          p.amount}{" "}
+                        Kč
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+          <Typography variant="h4">
             Celková cena:{" "}
             {prices
               .reduce((acc, curr) => {
@@ -240,24 +277,75 @@ const OrderFinishForm = ({
           </Typography>
         </Box>
 
-        <TextField
-          label="Zaplaceno"
-          {...register("paidAmount")}
-          error={!!errors.paidAmount}
-          helperText={errors.paidAmount?.message}
-          slotProps={{
-            input: {
-              endAdornment: <InputAdornment position="end">czk</InputAdornment>,
-            },
-          }}
-        />
+        <Divider variant="fullWidth" orientation="vertical" />
 
-        <TextField
-          label="Poznámka"
-          {...register("note")}
-          error={!!errors.note}
-          helperText={errors.note?.message}
-        />
+        <Box
+          flex="0.7"
+          display="flex"
+          flexDirection="column"
+          gap={2}
+          alignSelf="end"
+        >
+          <Typography component="div" variant="h4" textAlign="right">
+            {paidAmount} Kč
+          </Typography>
+
+          <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={2}>
+            {Array.apply(null, Array(9)).map((_, x) => (
+              <Button
+                key={x}
+                variant="contained"
+                sx={{ aspectRatio: 1, fontSize: "1.5em" }}
+                onClick={() => {
+                  if (Number(paidAmount) === 0) {
+                    setPaidAmount(String(x + 1));
+                  } else {
+                    setPaidAmount((prev) => `${prev}${x + 1}`);
+                  }
+                }}
+              >
+                {x + 1}
+              </Button>
+            ))}
+
+            <Button
+              variant="contained"
+              color="warning"
+              sx={{ aspectRatio: 1, fontSize: "1.5em" }}
+              onClick={() => {
+                setPaidAmount("0");
+              }}
+            >
+              C
+            </Button>
+
+            <Button
+              variant="contained"
+              sx={{ aspectRatio: 1, fontSize: "1.5em" }}
+              onClick={() => {
+                if (Number(paidAmount) !== 0) {
+                  setPaidAmount((prev) => `${prev}0`);
+                }
+              }}
+            >
+              0
+            </Button>
+
+            <Button
+              variant="contained"
+              sx={{ aspectRatio: 1, fontSize: "1.5em" }}
+              onClick={() => {
+                if (paidAmount.length === 1) {
+                  setPaidAmount("0");
+                } else {
+                  setPaidAmount((prev) => prev.slice(0, prev.length - 1));
+                }
+              }}
+            >
+              <Backspace />
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </form>
   );
