@@ -6,23 +6,26 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import type { EntityWithName } from "../../stores/posStore";
 import type { CashBoxListModel } from "../../api/apiTypes";
 import { apiClient } from "../../api/apiClient";
 import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const CashBoxPicker = ({
   onChange,
+  excludeId,
+  label,
   options,
   error,
   helperText,
   initialValue,
 }: {
-  onChange: (val: EntityWithName | undefined) => void;
-  options?: CashBoxListModel[];
+  onChange: (val: CashBoxListModel | undefined) => void;
+  label?: string;
+  excludeId?: number;
   error: boolean;
+  options?: CashBoxListModel[];
   helperText?: string;
-  initialValue: number | undefined;
+  initialValue?: number;
 }) => {
   const [cashBoxes, setCashBoxes] = useState<CashBoxListModel[] | undefined>(
     options,
@@ -44,10 +47,10 @@ const CashBoxPicker = ({
   }, []);
 
   return (
-    <FormControl error={error}>
-      <InputLabel id="cashBoxPicker">Výběr kasy</InputLabel>
+    <FormControl error={error} fullWidth>
+      <InputLabel id="cashBoxPicker">{label ?? "Výběr kasy"}</InputLabel>
       <Select
-        label="Výběr kasy"
+        label={label ?? "Výběr kasy"}
         labelId="cashBoxPicker"
         value={value ?? ""}
         onChange={(evt) => {
@@ -55,19 +58,22 @@ const CashBoxPicker = ({
           if (evt.target.value === 0) {
             onChange(undefined);
           } else {
-            onChange({
-              id: evt.target.value,
-              name: cashBoxes!.find((c) => c.id === evt.target.value)!.name,
-            });
+            const cashbox = cashBoxes?.find((c) => c.id === evt.target.value);
+            if (!cashbox) {
+              return;
+            }
+            onChange(cashbox);
           }
         }}
       >
         {cashBoxes
-          ? cashBoxes.map((val) => (
-              <MenuItem key={val.id} value={val.id}>
-                {val.name}
-              </MenuItem>
-            ))
+          ? cashBoxes.map((val) =>
+              val.id !== excludeId ? (
+                <MenuItem key={val.id} value={val.id}>
+                  {val.name}
+                </MenuItem>
+              ) : null,
+            )
           : null}
       </Select>
       <FormHelperText>{helperText}</FormHelperText>

@@ -132,6 +132,7 @@ public class SaleTransactionService(
                         CashBox = new CashBoxListModel {
                             Id = cba.Cashbox!.Id,
                             Name = cba.Cashbox.Name,
+                            AccountId = at.AccountId
                         },
                     },
                     _ => null!
@@ -185,7 +186,8 @@ public class SaleTransactionService(
                 composites,
                 customer,
                 cashBox!,
-                req.PaidAmount
+                req.PaidAmount,
+                reqTime
             );
             _dbContext.AccountTransactions.AddRange(accountTransactions);
             await _dbContext.SaveChangesAsync(token);
@@ -213,6 +215,7 @@ public class SaleTransactionService(
                             CashBox = new CashBoxListModel {
                                 Id = cba.Cashbox!.Id,
                                 Name = cba.Cashbox.Name,
+                                AccountId = at.AccountId
                             },
                         },
                         UserAccount ua => new UserAccountModel {
@@ -469,7 +472,8 @@ public class SaleTransactionService(
                 composites!,
                 customer,
                 cashBox,
-                req.Model.PaidAmount
+                req.Model.PaidAmount,
+                reqTime
             );
             _dbContext.AccountTransactions.AddRange(accountTransactions);
 
@@ -499,6 +503,7 @@ public class SaleTransactionService(
                             CashBox = new CashBoxListModel {
                                 Id = cba.Cashbox!.Id,
                                 Name = cba.Cashbox.Name,
+                                AccountId = at.AccountId
                             },
                         },
                         UserAccount ua => new UserAccountModel {
@@ -687,7 +692,8 @@ public class SaleTransactionService(
         Dictionary<int, (Composite Item, decimal Price)> composites,
         User customer,
         Cashbox cashBox,
-        decimal paidAmount
+        decimal paidAmount,
+        DateTimeOffset reqTime
     ) {
         var totalTransactionPrice = saleTransactionItems.Aggregate(0m, (acc, curr) =>
             acc + (curr.BasePrice + curr.Modifications.Sum(m => m.PriceChange * m.Amount)) * curr.Amount
@@ -708,21 +714,24 @@ public class SaleTransactionService(
                 Amount = totalTransactionPrestige,
                 AccountId = customer.Account.Id,
                 SaleTransaction = saleTransaction,
-                Type = AccountTransactionType.Prestige
+                Type = AccountTransactionType.Prestige,
+                Timestamp = reqTime
             },
             // Add amount that was paid for the actual items to the sales account of the cashbox
             new AccountTransaction {
                 Amount = totalTransactionPrice,
                 AccountId = cashBox.Account.Id,
                 SaleTransaction = saleTransaction,
-                Type = AccountTransactionType.SalesMoney
+                Type = AccountTransactionType.SalesMoney,
+                Timestamp = reqTime
             },
             // Add the actual paid amount minus total price to the donations account of the cashbox
             new AccountTransaction {
                 Amount = paidAmount - totalTransactionPrice,
                 AccountId = cashBox.Account.Id,
                 SaleTransaction = saleTransaction,
-                Type = AccountTransactionType.DonationMoney
+                Type = AccountTransactionType.DonationMoney,
+                Timestamp = reqTime
             }
         ];
 

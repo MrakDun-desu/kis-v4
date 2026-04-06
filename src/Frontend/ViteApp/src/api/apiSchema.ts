@@ -13,7 +13,7 @@ export interface paths {
         };
         get: operations["AccountTransactionsReadAll"];
         put?: never;
-        post?: never;
+        post: operations["AccountTransactionsCreate"];
         delete?: never;
         options?: never;
         head?: never;
@@ -631,6 +631,25 @@ export interface components {
             /** Format: number */
             id: number;
         };
+        AccountTransactionCreateRequest: {
+            /** Format: number */
+            accountId: number;
+            /** Format: string */
+            amount: string;
+            type: components["schemas"]["AccountTransactionType"];
+            /** Format: number */
+            targetAccountId?: number;
+        };
+        AccountTransactionCreateResponse: {
+            /** Format: string */
+            amount: string;
+            /** Format: number */
+            saleTransactionId: number;
+            /** Format: date-time */
+            timestamp: string;
+            account: components["schemas"]["AccountModel"];
+            type: components["schemas"]["AccountTransactionType"];
+        };
         AccountTransactionModel: {
             /** Format: string */
             amount: string;
@@ -654,7 +673,7 @@ export interface components {
             meta: components["schemas"]["PageMeta"];
         };
         /** @enum {unknown} */
-        AccountTransactionType: "SalesMoney" | "DonationMoney" | "Prestige" | "StockTaking";
+        AccountTransactionType: "SalesMoney" | "DonationMoney" | "Prestige" | "StockTaking" | "Deposit" | "Withdrawal" | "Transfer";
         CashBoxCreateRequest: {
             /** @default Kasa Kachna */
             name: string;
@@ -663,11 +682,15 @@ export interface components {
             /** Format: number */
             id: number;
             name: string;
+            /** Format: number */
+            accountId: number;
         };
         CashBoxListModel: {
             /** Format: number */
             id: number;
             name: string;
+            /** Format: number */
+            accountId: number;
         };
         CashBoxReadAllResponse: {
             data: components["schemas"]["CashBoxListModel"][];
@@ -686,6 +709,8 @@ export interface components {
             /** Format: number */
             id: number;
             name: string;
+            /** Format: number */
+            accountId: number;
         };
         CategoryCreateRequest: {
             /** @default Pivo */
@@ -1626,6 +1651,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountTransactionReadAllResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+        };
+    };
+    AccountTransactionsCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountTransactionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountTransactionCreateResponse"];
                 };
             };
             /** @description Bad Request */

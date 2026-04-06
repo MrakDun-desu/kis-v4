@@ -12,13 +12,18 @@ import type {
 } from "../../api/apiTypes";
 import { Link } from "react-router-dom";
 import { accountTransactionTypes } from "../../constants/accountTransactionTypes";
+import { capitalize } from "../../helpers";
 
 type Query = operations["AccountTransactionsReadAll"]["parameters"]["query"];
 
 const AccountTransactionPagedView = ({
   initialTransactions,
+  refreshCounter,
+  onRefresh,
 }: {
   initialTransactions: AccountTransactionReadAllResponse;
+  refreshCounter?: number;
+  onRefresh?: (data: AccountTransactionReadAllResponse) => void;
 }) => {
   const [transactions, setAccountTransactions] =
     useState<AccountTransactionReadAllResponse>();
@@ -51,12 +56,15 @@ const AccountTransactionPagedView = ({
       if (!response.ok) {
         handleApiError(response, error);
       }
+      if (data) {
+        onRefresh?.(data);
+      }
       setAccountTransactions(data);
       setRowCount(data?.meta.total ?? 0);
       setLoading(false);
     }, 500);
     return () => clearTimeout(getAccountTransactionsDeferred);
-  }, [query]);
+  }, [query, refreshCounter]);
 
   const columns: GridColDef<AccountTransactionModel>[] = [
     {
@@ -66,20 +74,20 @@ const AccountTransactionPagedView = ({
       sortable: false,
       editable: false,
       filterable: false,
-      width: 100,
-      valueFormatter: (val: string) => `${Number(val) > 0 && "+"}${val}czk`,
+      width: 130,
+      valueFormatter: (val: string) => `${Number(val) > 0 ? "+" : ""}${val}czk`,
     },
 
     {
       field: "type",
-      headerName: "Typ změny",
+      headerName: "Typ pohybu",
       type: "string",
       sortable: false,
       editable: false,
       filterable: false,
       flex: 1,
       valueFormatter: (val: AccountTransactionType) =>
-        accountTransactionTypes[val],
+        capitalize(accountTransactionTypes[val]),
     },
 
     {
@@ -95,12 +103,12 @@ const AccountTransactionPagedView = ({
 
     {
       field: "saleTransactionId",
-      headerName: "ID transakce",
+      headerName: "Prodejní transakce",
       type: "string",
       sortable: false,
       editable: false,
       filterable: false,
-      width: 110,
+      width: 180,
       renderCell: ({ row }) => (
         <Link to={`/admin/sale-transactions/${row.saleTransactionId}`}>
           {row.saleTransactionId}

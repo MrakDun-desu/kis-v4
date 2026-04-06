@@ -28,6 +28,7 @@ public static class ValidationMessages {
     public const string PrestigePropName = "Prestiž";
 
     public const string AccountIdPropName = "ID účtu";
+    public const string TargetAccountIdPropName = "ID cílového účtu";
     public const string StoreIdPropName = "ID skladu";
     public const string ContainerIdPropName = "ID kegu";
     public const string StoreItemIdPropName = "ID skladové položky";
@@ -109,7 +110,7 @@ public static class ValidationMessages {
         Cílový sklad nemůže být stejný jako zdrojový sklad
         """;
     public const string StoreTransactionReasonAndSourceStoreInvalidMessage = """
-        Při přesunu mezi skladu musí být nastaveno ID zdrojového skladu
+        Při přesunu mezi sklady musí být nastaveno ID zdrojového skladu
         """;
     public const string StoreTransactionItemsNotUniqueMessage = """
         Skladová transakce obsahuje duplicitní skladové položky
@@ -137,6 +138,12 @@ public static class ValidationMessages {
         """;
     public const string CantAddContainerToBusyTap = $"""
         Nemožno přidat keg na obsazenou pípu. Nejdřív odražte aktuální keg
+        """;
+    internal static string AccountTransactionTypeNotValidMessage = $"""
+        Nemožno manuálně vytvořit pohyb na kase požadovaného typu
+        """;
+    internal static string AccountTransactionTypeAndTargetAccountInvalidMessage = $"""
+        Při přesunu mezi kasami musí být nastaveno ID cílové kasy
         """;
 
     // strings
@@ -186,6 +193,9 @@ public static class ValidationMessages {
         """;
     public const string PipeIdNotValidMessage = $"""
         {PipeIdPropName} neodpovídá žadné existující pípě
+        """;
+    public const string TargetAccountIdNotValidMessage = $"""
+        {TargetAccountIdPropName} neodpovídá žadnému existujícímu účtu
         """;
     public const string CategoryIdNotValidMessage = $"""
         {CategoryIdPropName} neodpovídá žadné existující kategorii

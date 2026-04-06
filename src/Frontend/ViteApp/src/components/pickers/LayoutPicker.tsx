@@ -11,12 +11,14 @@ import handleApiError from "../../errorHandling/apiResponseHandler";
 
 const LayoutPicker = ({
   onChange,
+  excludeId,
   options,
   error,
   helperText,
   initialValue,
 }: {
   onChange: (val: number | undefined) => void;
+  excludeId?: number;
   options?: LayoutListModel[];
   error: boolean;
   helperText?: string;
@@ -47,7 +49,7 @@ const LayoutPicker = ({
   return (
     <FormControl fullWidth error={error}>
       <Autocomplete
-        options={layouts ?? []}
+        options={layouts?.filter((val) => val.id !== excludeId) ?? []}
         loading={loading}
         noOptionsText={layouts ? "Žádné možnosti" : "Začněte vyhledávat..."}
         loadingText={"Hledání..."}

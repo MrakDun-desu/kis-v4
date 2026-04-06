@@ -252,6 +252,7 @@ const LayoutDetail = () => {
                       padding={1}
                     >
                       <LayoutGridItem
+                        parentLayoutId={layout.id}
                         control={control}
                         index={layoutItems.fields.findIndex(
                           (li) => li.x === x + 1 && li.y === y + 1,
@@ -284,6 +285,7 @@ const LayoutDetail = () => {
 
 const LayoutGridItem = ({
   control,
+  parentLayoutId,
   index,
   formLayoutItems,
   existingItem,
@@ -294,6 +296,7 @@ const LayoutGridItem = ({
   y,
 }: {
   control: Control<LayoutUpdateFormData, any, LayoutUpdateFormData>;
+  parentLayoutId: number;
   index: number;
   existingItem?: LayoutItemModel;
   formLayoutItems: UseFieldArrayReturn<
@@ -369,6 +372,7 @@ const LayoutGridItem = ({
             render={({ field }) => (
               <LayoutPicker
                 onChange={field.onChange}
+                excludeId={parentLayoutId}
                 error={!!errors.layoutItems?.[index]?.targetId}
                 helperText={errors.layoutItems?.[index]?.targetId?.message}
                 initialValue={existingItem?.target.name}

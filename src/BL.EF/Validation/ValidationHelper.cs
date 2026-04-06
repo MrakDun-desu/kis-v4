@@ -15,6 +15,20 @@ public class ValidationHelper(
     private readonly KisDbContext _dbContext = dbContext;
     private readonly SaleTransactionRequestState _state = state;
 
+    internal async Task<bool> IdentifyExistingCashBox(int cashBoxId, CancellationToken token)
+        => await _dbContext.Cashboxes.FindAsync(cashBoxId, token) is not null;
+
+    internal async Task<bool> IdentifyExistingStore(int storeId, CancellationToken token = default) =>
+        await _dbContext.Stores.FindAsync(storeId, token) is not null;
+
+    internal async Task<bool> IdentifyExistingTemplate(int templateId, CancellationToken token = default) =>
+        await _dbContext.ContainerTemplates.FindAsync(templateId, token) is not null;
+
+    internal async Task<bool> IdentifyExistingContainerItem(int storeItemId, CancellationToken token = default) =>
+        await _dbContext.StoreItems.FindAsync(storeItemId, token) switch {
+            null => false,
+            var val => val.IsContainerItem
+        };
     internal async Task<bool> IdentifyExistingAccount(int accountId, CancellationToken token = default) =>
         await _dbContext.Accounts.FindAsync(accountId, token) is not null;
 
@@ -27,14 +41,10 @@ public class ValidationHelper(
     internal async Task<bool> IdentifyExistingContainer(int containerId, CancellationToken token = default) =>
         await _dbContext.Containers.FindAsync(containerId, token) is not null;
 
-    internal async Task<bool> HaveAmountLowerOrEqualToCurrent(
-            ContainerChangeCreateRequest req,
-            CancellationToken token = default) {
-        var container = await _dbContext.Containers.FindAsync(req.ContainerId, token);
-        return container is null || container.Amount >= req.NewAmount;
-    }
-
-    internal async Task<bool> BeNullOrIdentifyExistingContainerItem(int? storeItemId, CancellationToken token = default) =>
+    internal async Task<bool> BeNullOrIdentifyExistingContainerItem(
+        int? storeItemId,
+        CancellationToken token = default
+    ) =>
         storeItemId switch {
             null => true,
             { } id => await _dbContext.StoreItems.FindAsync(id, token)
@@ -48,12 +58,6 @@ public class ValidationHelper(
         containerId switch {
             null => true,
             { } id => await _dbContext.Containers.FindAsync(id, token) is not null
-        };
-
-    internal async Task<bool> IdentifyExistingContainerItem(int storeItemId, CancellationToken token = default) =>
-        await _dbContext.StoreItems.FindAsync(storeItemId, token) switch {
-            null => false,
-            var val => val.IsContainerItem
         };
 
     internal async Task<bool> BeNullOrIdentifyExistingStore(int? storeId, CancellationToken token = default) => storeId switch {
@@ -71,11 +75,11 @@ public class ValidationHelper(
         { } val => await _dbContext.Taps.FindAsync(val, token) is not null
     };
 
-    internal async Task<bool> IdentifyExistingStore(int storeId, CancellationToken token = default) =>
-        await _dbContext.Stores.FindAsync(storeId, token) is not null;
-
-    internal async Task<bool> IdentifyExistingTemplate(int templateId, CancellationToken token = default) =>
-        await _dbContext.ContainerTemplates.FindAsync(templateId, token) is not null;
+    internal async Task<bool> BeNullOrIdentifyExistingAccount(int? accountId, CancellationToken token) =>
+        accountId switch {
+            null => true,
+            var val => await _dbContext.Accounts.FindAsync(accountId, token) is not null
+        };
 
     internal async Task<bool> BeNullOrIdentifyExistingCategory(int? categoryId, CancellationToken token = default) =>
         categoryId switch {
@@ -287,9 +291,6 @@ public class ValidationHelper(
         return paidAmount >= totalPrice;
     }
 
-    internal async Task<bool> IdentifyExistingCashBox(int cashBoxId, CancellationToken token)
-        => await _dbContext.Cashboxes.FindAsync(cashBoxId, token) is not null;
-
     internal async Task<bool> AllModifiersAreCorrect(
         SaleTransactionItemCreateRequest[] saleTransactionItems,
         CancellationToken token
@@ -343,7 +344,10 @@ public class ValidationHelper(
         };
     }
 
-    internal async Task<bool> MustBeUpdateableContainer(ContainerUpdateRequest request, CancellationToken token) {
+    internal async Task<bool> MustBeUpdateableContainer(
+        ContainerUpdateRequest request,
+        CancellationToken token
+    ) {
         var container = await _dbContext.Containers.FindAsync(request.Id, token);
         if (container is null) {
             return true;
@@ -444,4 +448,12 @@ public class ValidationHelper(
             null => true,
             var val => val.ContainerId is null || req.Model.ContainerId is null
         };
+
+    internal async Task<bool> HaveAmountLowerOrEqualToCurrent(
+            ContainerChangeCreateRequest req,
+            CancellationToken token = default) {
+        var container = await _dbContext.Containers.FindAsync(req.ContainerId, token);
+        return container is null || container.Amount >= req.NewAmount;
+    }
+
 }

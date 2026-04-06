@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import type { AccountTransactionModel } from "../../api/apiTypes";
+import { accountTransactionTypes } from "../../constants/accountTransactionTypes";
 
 const AccountTransactionListView = ({
   accountTransactions,
@@ -34,15 +35,12 @@ const AccountTransactionListView = ({
               <TableCell>
                 {Number(transaction.amount) > 0 && "+"}
                 {transaction.amount}
-                {transaction.type.endsWith("Money") && "czk"}
+                {transaction.account.type === "CashBoxAccount" && "czk"}
               </TableCell>
 
               <TableCell>
                 {transaction.account.type === "UserAccount" && (
-                  <>
-                    Uživatel: {transaction.account.user.nick}
-                    {transaction.type === "Prestige" && " (prestiž)"}
-                  </>
+                  <>Uživatel: {transaction.account.user.nick}</>
                 )}
                 {transaction.account.type === "CashBoxAccount" && (
                   <>
@@ -52,10 +50,9 @@ const AccountTransactionListView = ({
                     >
                       {transaction.account.cashBox.name}
                     </Link>
-                    {transaction.type === "SalesMoney" && " (prodej)"}
-                    {transaction.type === "DonationMoney" && " (příspěvek)"}
                   </>
                 )}
+                {` - ${accountTransactionTypes[transaction.type]}`}
               </TableCell>
             </TableRow>
           ))}

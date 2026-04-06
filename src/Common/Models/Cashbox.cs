@@ -8,6 +8,7 @@ namespace KisV4.Common.Models;
 public record CashBoxListModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
+    public required int AccountId { get; init; }
 }
 
 public record CashBoxDetailModel {

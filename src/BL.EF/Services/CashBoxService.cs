@@ -15,10 +15,12 @@ public class CashBoxService(
     private readonly AccountTransactionService _accountTransactionService = accountTransactionService;
 
     public async Task<CashBoxReadAllResponse> ReadAllAsync(CancellationToken token = default) {
-        var data = await _dbContext.Cashboxes.Select(
-            cb => new CashBoxListModel {
+        var data = await _dbContext.Cashboxes
+            .Include(cb => cb.Account)
+            .Select(cb => new CashBoxListModel {
                 Id = cb.Id,
                 Name = cb.Name,
+                AccountId = cb.Account.Id
             }
         ).ToArrayAsync(token);
 
@@ -39,6 +41,7 @@ public class CashBoxService(
         return new CashBoxCreateResponse {
             Id = entity.Id,
             Name = entity.Name,
+            AccountId = entity.Account.Id
         };
     }
 
@@ -70,7 +73,8 @@ public class CashBoxService(
         var id = req.Id;
         var body = req.Model;
         var entity = await _dbContext.Cashboxes
-            .FindAsync(id, token);
+            .Include(cb => cb.Account)
+            .FirstAsync(cb => cb.Id == id, token);
         if (entity is null) {
             return null;
         }
@@ -83,6 +87,7 @@ public class CashBoxService(
         return new CashBoxUpdateResponse {
             Id = entity.Id,
             Name = entity.Name,
+            AccountId = entity.Account.Id
         };
     }
 

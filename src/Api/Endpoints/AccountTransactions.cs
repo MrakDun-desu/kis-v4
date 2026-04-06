@@ -11,6 +11,9 @@ public static class AccountTransactions {
         routeBuilder.MapGet("account-transactions", ReadAll)
             .WithName("AccountTransactionsReadAll")
             .AddValidation<AccountTransactionReadAllRequest>();
+        routeBuilder.MapPost("account-transactions", Create)
+            .WithName("AccountTransactionsCreate")
+            .AddValidation<AccountTransactionCreateRequest>();
     }
 
     public static async Task<Results<Ok<AccountTransactionReadAllResponse>, ValidationProblem>> ReadAll(
@@ -19,5 +22,13 @@ public static class AccountTransactions {
             CancellationToken token = default
             ) {
         return TypedResults.Ok(await service.ReadAllAsync(req, token));
+    }
+
+    public static async Task<Results<Ok<AccountTransactionCreateResponse>, ValidationProblem>> Create(
+            AccountTransactionService service,
+            AccountTransactionCreateRequest req,
+            CancellationToken token = default
+            ) {
+        return TypedResults.Ok(await service.CreateAsync(req, token));
     }
 }

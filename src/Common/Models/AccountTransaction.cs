@@ -6,7 +6,7 @@ namespace KisV4.Common.Models;
 // Base models
 public record AccountTransactionModel {
     public required decimal Amount { get; init; }
-    public required int SaleTransactionId { get; init; }
+    public required int? SaleTransactionId { get; init; }
     public required DateTimeOffset Timestamp { get; init; }
     public required AccountModel Account { get; init; }
     public required AccountTransactionType Type { get; init; }
@@ -25,3 +25,12 @@ public record AccountTransactionReadAllResponse : PagedResponse<AccountTransacti
     public required DateTimeOffset To { get; init; }
     public required decimal Total { get; init; }
 }
+
+public record AccountTransactionCreateRequest {
+    public required int AccountId { get; init; }
+    public required decimal Amount { get; init; }
+    public required AccountTransactionType Type { get; init; }
+    public int? TargetAccountId { get; init; }
+}
+
+public record AccountTransactionCreateResponse : AccountTransactionModel;
