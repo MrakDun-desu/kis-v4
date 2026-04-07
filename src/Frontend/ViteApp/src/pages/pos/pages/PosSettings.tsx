@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import CashBoxPicker from "../../../components/pickers/CashBoxPicker";
 import StorePicker from "../../../components/pickers/StorePicker";
+import { useReaderStore } from "../../../stores/readerStore";
 
 const ValidationSchema = z.object({
   store: z
@@ -26,20 +27,20 @@ const ValidationSchema = z.object({
       "Vyberte platnout kasu",
     )
     .refine((val) => val?.id > 0, "Vyberte platnou kasu"),
-  readerUri: z.union([z.url("Zadejte platné URL"), z.literal("")]),
+  readerUri: z.string(),
 });
 
 type FormType = z.infer<typeof ValidationSchema>;
 
 const PosSettings = () => {
-  const { store, cashBox, readerUri, updateMetadata } = usePosStore(
+  const { store, cashBox, updateMetadata } = usePosStore(
     useShallow((state) => ({
       store: state.currentStore,
       cashBox: state.currentCashBox,
-      readerUri: state.readerUri,
       updateMetadata: state.updateMetadata,
     })),
   );
+  const { readerUri, setReaderUri } = useReaderStore();
   const {
     control,
     register,
@@ -55,7 +56,8 @@ const PosSettings = () => {
   });
 
   const setValues: SubmitHandler<FormType> = (data) => {
-    updateMetadata(data.cashBox, data.store, data.readerUri);
+    updateMetadata(data.cashBox, data.store);
+    setReaderUri(data.readerUri);
   };
 
   return (

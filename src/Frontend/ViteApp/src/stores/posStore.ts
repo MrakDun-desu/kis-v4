@@ -21,12 +21,11 @@ export interface EntityWithName {
 
 interface PosStoreType {
   transactionItems: SaleTransactionItemDisplay[];
+  layoutHistory: number[];
   currentStore?: EntityWithName;
   currentCashBox?: EntityWithName;
   currentLayout?: LayoutReadResponse;
   currentLayoutId?: number;
-  layoutHistory: number[];
-  readerUri?: string;
   setCurrentLayout: (data: LayoutReadResponse | undefined) => void;
   setLayoutId: (val: number | undefined) => void;
   addTransactionItem: (item: SaleTransactionItemDisplay) => void;
@@ -38,7 +37,6 @@ interface PosStoreType {
   updateMetadata: (
     cashBox: EntityWithName | undefined,
     store: EntityWithName | undefined,
-    readerUri: string | undefined
   ) => void
 }
 
@@ -60,7 +58,7 @@ export const usePosStore = create<PosStoreType>((set) => ({
       }
     }
   }),
-  setLayoutId: (val) => set(() => ({ currentLayoutId: val })),
+  setLayoutId: (val) => set({ currentLayoutId: val }),
   addTransactionItem: (item) => set(({ transactionItems: prev }) =>
     ({ transactionItems: [...prev, item] })
   ),
@@ -70,13 +68,12 @@ export const usePosStore = create<PosStoreType>((set) => ({
   updateTransactionItem: (index, update) => set(({ transactionItems: prev }) =>
     ({ transactionItems: prev.map((val, i) => i === index ? { ...val, ...update } : val) })
   ),
-  clearTransactionItems: () => set(() => ({ transactionItems: [] })),
-  clearLayoutHistory: () => set(() => ({ layoutHistory: [] })),
+  clearTransactionItems: () => set({ transactionItems: [] }),
+  clearLayoutHistory: () => set({ layoutHistory: [] }),
   popLayoutHistory: () => set(({ layoutHistory: prev }) =>
     ({ layoutHistory: prev.slice(0, Math.max(prev.length - 1, 0)) })),
-  updateMetadata: ((cashBox, store, readerUri) => set(() => ({
+  updateMetadata: ((cashBox, store) => set({
     currentCashBox: cashBox,
     currentStore: store,
-    readerUri: readerUri
-  })))
+  }))
 }))

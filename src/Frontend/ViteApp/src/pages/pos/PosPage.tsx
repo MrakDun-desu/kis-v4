@@ -22,6 +22,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { usePosStore } from "../../stores/posStore";
 import { useShallow } from "zustand/react/shallow";
 import OrderFinishForm from "../../components/forms/OrderFinishForm";
+import Reader from "../../components/Reader";
 
 interface Link {
   label: string;
@@ -194,6 +195,8 @@ const PosPage = () => {
         <Typography variant="h5" component="h2" marginTop={1}>
           Aktuální objednávka
         </Typography>
+
+        <Reader />
 
         <Box
           display="flex"
