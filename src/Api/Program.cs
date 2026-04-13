@@ -44,11 +44,6 @@ builder.Services.AddAuthentication(allowTestingTokens ? "Bearer" : "oidc")
         opts.TokenValidationParameters.RoleClaimType = "role";
         opts.MapInboundClaims = false;
         opts.SaveToken = true;
-        if (builder.Environment.IsDevelopment()) {
-            opts.BackchannelHttpHandler = new HttpClientHandler {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-        }
     });
 
 builder.Services.AddAuthorizationBuilder()
@@ -155,16 +150,7 @@ builder.Services.AddEntityFrameworkBL();
 builder.Services.AddHttpContextAccessor();
 
 // HTTP client and memory cache for requesting UserInfo from the authorization server
-builder.Services.AddHttpClient()
-    .ConfigureHttpClientDefaults(opts => {
-        if (!builder.Environment.IsDevelopment()) {
-            return;
-        }
-        opts.ConfigurePrimaryHttpMessageHandler(() =>
-        new HttpClientHandler {
-            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        });
-    });
+builder.Services.AddHttpClient();
 builder.Services.AddMemoryCache();
 
 // Time
@@ -212,7 +198,6 @@ Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => 
 
 // Middlewares
 app.UseCors();
-app.UseHttpsRedirection();
 app.UseRouting();
 if (!app.Environment.IsDevelopment()) {
     app.UseHsts();

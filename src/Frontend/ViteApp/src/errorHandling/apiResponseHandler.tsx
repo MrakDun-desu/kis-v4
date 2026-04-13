@@ -2,6 +2,7 @@ import { authEvents } from "../auth/authEvents";
 import { snackbarRef } from "../globalRefs/snackbarRef";
 import type { HttpValidationProblemDetails } from "../api/apiTypes";
 import { Box } from "@mui/material";
+import { redirect } from "react-router-dom";
 
 const handleApiError = (
   response: Response,
@@ -45,7 +46,7 @@ const handleApiError = (
         onNotFound();
       } else {
         // TODO make this work better
-        window.location.href = "/not-found";
+        redirect("/not-found");
       }
       break;
     }

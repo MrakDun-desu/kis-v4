@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import z from "zod";
 import { authEvents } from "./authEvents";
+import { redirect } from "../helpers";
 
 const UserClaimSchema = z.array(
   z.object({
     type: z.string(),
     value: z.union([z.string(), z.number()]),
-    valueType: z.string().nullable(),
   }),
 );
 
@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setLoading(true);
       const authResponse = await fetch(
-        new Request("/bff/user", {
+        new Request(import.meta.env.BASE_URL + "/bff/user", {
           headers: new Headers({
             "X-CSRF": "1",
           }),
@@ -119,19 +119,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = () => {
-    window.location.href = `/bff/login`;
+    redirect("/bff/login");
   };
 
   const signOut = () => {
-    let signOutUrl = "/bff/logout";
-    if (userClaims) {
-      const logoutUrlClaim = userClaims.find(
-        (claim) => claim["type"] === "bff:logout_url",
-      );
-      if (logoutUrlClaim) {
-        signOutUrl = logoutUrlClaim.value as string;
-      }
-    }
+    const signOutUrl =
+      (userClaims?.find((claim) => claim.type === "bff:logout_url")
+        ?.value as string) ?? import.meta.env.BASE_URL + "/bff/logout";
 
     setUserClaims(null);
     window.location.href = signOutUrl;

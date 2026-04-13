@@ -79,7 +79,7 @@ const LayoutDetail = () => {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<LayoutUpdateFormData>({
     values: !layout
       ? {
@@ -224,7 +224,7 @@ const LayoutDetail = () => {
                     <Checkbox
                       {...field}
                       checked={!!field.value}
-                      disabled={!!field.value}
+                      disabled={!!field.value && !isDirty}
                     />
                   }
                 />

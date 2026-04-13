@@ -1,22 +1,16 @@
+using System.Net;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Duende.Bff;
 using Duende.Bff.Yarp;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthorization();
 
-var developmentHandler = new HttpClientHandler {
-    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-};
 
 builder.Services
-    .AddBff(opts => {
-        if (builder.Environment.IsDevelopment()) {
-            opts.BackchannelHttpHandler = developmentHandler;
-        }
-    })
+    .AddBff()
     .AddRemoteApis();
 
 builder.Services
@@ -45,9 +39,6 @@ builder.Services
         foreach (var scope in requiredScopes) {
             options.Scope.Add(scope);
         }
-        if (builder.Environment.IsDevelopment()) {
-            options.BackchannelHttpHandler = developmentHandler;
-        }
     });
 
 builder.Services.AddOpenIdConnectAccessTokenManagement();
@@ -58,6 +49,10 @@ if (app.Environment.IsDevelopment()) {
     app.UseDeveloperExceptionPage();
 }
 
+app.UseForwardedHeaders(new() {
+    ForwardedHeaders = ForwardedHeaders.All,
+    KnownProxies = { IPAddress.Parse("127.0.0.1") }
+});
 app.UseDefaultFiles();
 app.MapStaticAssets();
 app.UseRouting();
@@ -65,7 +60,7 @@ app.UseAuthentication();
 app.UseBff();
 app.UseAuthorization();
 
-app.MapRemoteBffApiEndpoint("/api", new Uri("https://localhost:7001"))
+app.MapRemoteBffApiEndpoint("/api", new Uri("https://su-dev.fit.vutbr.cz/api"))
     .WithAccessToken();
 
 app.Run();

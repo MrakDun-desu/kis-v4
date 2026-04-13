@@ -39,6 +39,7 @@ import StoreTransactionDetail from "./pages/admin/pages/StoreTransactionDetail";
 import SaleTransactionDetail from "./pages/admin/pages/SaleTransactionDetail";
 import RecentTransactions from "./pages/pos/pages/RecentTransactions";
 import CashBoxDetail from "./pages/admin/pages/CashBoxDetail";
+import UserProfile from "./pages/admin/pages/UserProfile";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -56,7 +57,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           <Route
             element={
@@ -86,6 +87,8 @@ function App() {
                 </RequireAuth>
               }
             >
+              <Route path="user-profile" element={<UserProfile />} />
+
               <Route path="store-items" element={<StoreItems />} />
               <Route path="store-items/:id" element={<StoreItemDetail />} />
               <Route path="stores" element={<Stores />} />

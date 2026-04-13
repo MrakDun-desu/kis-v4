@@ -3,29 +3,40 @@ import react from "@vitejs/plugin-react";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/frontend",
   server: {
     port: 7003,
+    host: "127.0.0.1",
+    allowedHosts: ["localhost", "su-dev.fit.vutbr.cz"],
+    hmr: {
+      "protocol": "wss",
+      "host": "su-dev.fit.vutbr.cz",
+      "clientPort": 443,
+      "path": "/frontend/"
+    },
     proxy: {
-      "/bff": {
-        target: "https://localhost:7002",
+      "/frontend/bff": {
+        target: "http://127.0.0.1:7002",
         changeOrigin: true,
-        secure: false,
+        rewrite: (path) => path.replace("/frontend", ""),
+        configure: (proxy) => {
+          proxy.on("proxyReq", (proxyReq) => {
+            proxyReq.setHeader("X-Forwarded-Host", "su-dev.fit.vutbr.cz");
+            proxyReq.setHeader("X-Forwarded-Proto", "https");
+            proxyReq.setHeader("X-Forwarded-Prefix", "/frontend");
+          })
+        }
       },
-      "/signin-oidc": {
-        target: "https://localhost:7002",
+      "/frontend/api": {
+        target: "http://127.0.0.1:7002",
         changeOrigin: true,
-        secure: false,
+        rewrite: (path) => path.replace("/frontend", ""),
       },
-      "/signout": {
-        target: "https://localhost:7002",
+      "/frontend/signin-oidc": {
+        target: "http://127.0.0.1:7002",
         changeOrigin: true,
-        secure: false,
-      },
-      "/api": {
-        target: "https://localhost:7002",
-        changeOrigin: true,
-        secure: false,
-      },
+        rewrite: (path) => path.replace("/frontend", ""),
+      }
     },
   },
   build: {
@@ -37,6 +48,6 @@ export default defineConfig({
       babel: {
         plugins: [["babel-plugin-react-compiler"]],
       },
-    }),
+    })
   ],
 });
