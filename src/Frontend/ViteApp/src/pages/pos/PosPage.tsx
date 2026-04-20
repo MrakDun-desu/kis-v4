@@ -1,10 +1,15 @@
 import {
+  AccountCircle,
   ArrowBack,
   ArrowUpward,
   Cancel,
   Done,
   GridView,
+  Logout,
+  OpenWith,
+  PlayForWork,
   PointOfSale,
+  Replay,
   Store,
 } from "@mui/icons-material";
 import {
@@ -14,15 +19,17 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   Paper,
   Typography,
 } from "@mui/material";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { usePosStore } from "../../stores/posStore";
 import { useShallow } from "zustand/react/shallow";
 import OrderFinishForm from "../../components/forms/OrderFinishForm";
-import Reader from "../../components/Reader";
+import { useAuth } from "../../auth/AuthContext";
+import CustomerChecker from "../../components/CustomerChecker";
 
 interface Link {
   label: string;
@@ -39,10 +46,10 @@ const links: Link[] = [
     label: "Nedávné transakce",
     url: "recent-transactions",
   },
-  // {
-  //   label: "Párování karty",
-  //   url: "card-pairing",
-  // },
+  {
+    label: "Párování karty",
+    url: "card-pairing",
+  },
   {
     label: "Nastavení",
     url: "settings",
@@ -57,11 +64,12 @@ const PosPage = () => {
     currentCashBox,
     currentLayout,
     layoutHistory,
+    customerData,
     clearTransactionItems,
     popLayoutHistory,
     setLayoutId,
-    removeTransactionItem,
-    updateTransactionItem,
+    setCustomerData,
+    setSellForFree,
   } = usePosStore(
     useShallow((state) => ({
       transactionItems: state.transactionItems,
@@ -69,14 +77,25 @@ const PosPage = () => {
       currentCashBox: state.currentCashBox,
       currentLayout: state.currentLayout,
       layoutHistory: state.layoutHistory,
+      customerData: state.customerData,
       clearTransactionItems: state.clearTransactionItems,
       popLayoutHistory: state.popLayoutHistory,
       setLayoutId: state.setLayoutId,
-      removeTransactionItem: state.removeTransactionItem,
-      updateTransactionItem: state.updateTransactionItem,
+      setCustomerData: state.setCustomerData,
+      setSellForFree: state.setSellForFree,
     })),
   );
   const [finishingOrder, setFinishingOrder] = useState(false);
+  const [time, setTime] = useState(new Date());
+  const auth = useAuth();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Box display="flex" gap={1} padding={1} width="100vw" height="100vh">
@@ -192,11 +211,64 @@ const PosPage = () => {
           gap: 2,
         }}
       >
-        <Typography variant="h5" component="h2" marginTop={1}>
-          Aktuální objednávka
-        </Typography>
+        <Box display="flex" flexDirection="column" gap={1}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography fontWeight="bold" fontSize={22}>
+              {time.toLocaleTimeString("cs")}
+            </Typography>
 
-        <Reader />
+            <Box flex="1" />
+
+            <AccountCircle />
+            <Typography fontWeight="bold" fontSize={20}>
+              {auth.userDetails?.nick}
+            </Typography>
+          </Box>
+
+          <Box display="flex" gap={1}>
+            <IconButton
+              size="large"
+              sx={{ border: "1px solid" }}
+              onClick={auth.signOut}
+            >
+              <Logout />
+            </IconButton>
+
+            <IconButton
+              size="large"
+              sx={{ border: "1px solid" }}
+              onClick={() => {
+                setCustomerData(auth.userDetails);
+              }}
+            >
+              <PlayForWork />
+            </IconButton>
+
+            <IconButton
+              size="large"
+              sx={{ border: "1px solid" }}
+              onClick={async () => {
+                try {
+                  if (document.fullscreenElement !== null) {
+                    document.exitFullscreen();
+                  } else {
+                    document.documentElement.requestFullscreen();
+                  }
+                } catch (err) {
+                  console.error(err);
+                }
+              }}
+            >
+              <OpenWith />
+            </IconButton>
+          </Box>
+
+          <Typography variant="h5" component="h2">
+            Objednávka
+          </Typography>
+
+          <CustomerChecker />
+        </Box>
 
         <Box
           display="flex"
@@ -251,7 +323,9 @@ const PosPage = () => {
               size="large"
               startIcon={<Done />}
               sx={{ height: "100px", fontSize: 20 }}
-              disabled={transactionItems.length === 0}
+              disabled={
+                transactionItems.length === 0 || customerData === undefined
+              }
               onClick={() => {
                 if (!currentStore || !currentCashBox) {
                   alert(
@@ -267,13 +341,27 @@ const PosPage = () => {
 
             <Button
               variant="contained"
+              size="large"
+              startIcon={<Replay />}
+              sx={{ height: "70px", fontSize: 20 }}
+              disabled={customerData === undefined}
+              onClick={() => {
+                setCustomerData();
+              }}
+            >
+              Změnit zákazníka
+            </Button>
+
+            <Button
+              variant="contained"
               color="error"
               size="large"
               startIcon={<Cancel />}
-              sx={{ height: "100px", fontSize: 20 }}
+              sx={{ height: "70px", fontSize: 20 }}
               disabled={transactionItems.length === 0}
               onClick={() => {
                 clearTransactionItems();
+                setCustomerData();
               }}
             >
               Zrušit objednávku
@@ -284,21 +372,50 @@ const PosPage = () => {
 
       <Dialog fullScreen open={finishingOrder}>
         <DialogTitle>Dokončení objednávky</DialogTitle>
+
         <DialogContent>
           <OrderFinishForm
             formId="orderFinishForm"
             afterSubmit={() => setFinishingOrder(false)}
           />
         </DialogContent>
+
         <DialogActions>
-          <Button size="large" onClick={() => setFinishingOrder(false)}>
-            Zrušit
-          </Button>
           <Button
             size="large"
+            variant="contained"
+            color="error"
+            sx={{ fontSize: "20px", padding: "1em 2em" }}
+            onClick={() => setFinishingOrder(false)}
+          >
+            Zrušit
+          </Button>
+
+          <Button
+            type="submit"
+            form="orderFinishForm"
+            color="warning"
+            variant="contained"
+            sx={{ fontSize: "20px", padding: "1em 2em" }}
+            onClick={(evt) => {
+              const confirmed = confirm(
+                "Opravdu chcete tuto objednávku prodat zadarmo?",
+              );
+              if (!confirmed) {
+                evt.preventDefault();
+                return;
+              }
+              setSellForFree(true);
+            }}
+          >
+            Prodat zadarmo
+          </Button>
+
+          <Button
             type="submit"
             form="orderFinishForm"
             variant="contained"
+            sx={{ fontSize: "20px", padding: "1em 2em" }}
           >
             Prodat
           </Button>

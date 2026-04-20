@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import CashBoxPicker from "../../../components/pickers/CashBoxPicker";
 import StorePicker from "../../../components/pickers/StorePicker";
-import { useReaderStore } from "../../../stores/readerStore";
+import { useReader } from "../../../contexts/ReaderContext";
 
 const ValidationSchema = z.object({
   store: z
@@ -40,7 +40,7 @@ const PosSettings = () => {
       updateMetadata: state.updateMetadata,
     })),
   );
-  const { readerUri, setReaderUri } = useReaderStore();
+  const { readerUri, setReaderUri } = useReader();
   const {
     control,
     register,

@@ -3,6 +3,8 @@ namespace KisV4.DAL.EF.Entities;
 public record SaleTransaction : Transaction {
     public DateTimeOffset? ClosedAt { get; set; }
 
+    public string? CustomerId { get; set; }
+    public User? Customer { get; set; }
     public string? OpenedById { get; set; }
     public User? OpenedBy { get; set; }
     public ICollection<StoreTransaction> StoreTransactions { get; init; } = [];

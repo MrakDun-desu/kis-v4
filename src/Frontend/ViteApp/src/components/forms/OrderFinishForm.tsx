@@ -21,7 +21,6 @@ import { useLoading } from "../../contexts/LoadingContext";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import handleApiError from "../../errorHandling/apiResponseHandler";
 import { usePosStore } from "../../stores/posStore";
-import { useAuth } from "../../auth/AuthContext";
 import { Add, Backspace, Remove } from "@mui/icons-material";
 
 const OrderFinishForm = ({
@@ -33,15 +32,23 @@ const OrderFinishForm = ({
 }) => {
   const {
     transactionItems,
+    customerData,
+    sellForFree,
     clearTransactionItems,
     removeTransactionItem,
     updateTransactionItem,
+    setCustomerData,
+    setSellForFree,
   } = usePosStore(
     useShallow((state) => ({
       transactionItems: state.transactionItems,
+      customerData: state.customerData,
+      sellForFree: state.sellForFree,
       clearTransactionItems: state.clearTransactionItems,
       removeTransactionItem: state.removeTransactionItem,
       updateTransactionItem: state.updateTransactionItem,
+      setCustomerData: state.setCustomerData,
+      setSellForFree: state.setSellForFree,
     })),
   );
   const { showSnackbar } = useSnackbar();
@@ -51,7 +58,6 @@ const OrderFinishForm = ({
       cashBox: state.currentCashBox,
     })),
   );
-  const { userClaims } = useAuth();
   const { startLoading, stopLoading } = useLoading();
   const [prices, setPrices] = useState<SaleTransactionItemModel[]>();
   const [paidAmount, setPaidAmount] = useState("0");
@@ -88,7 +94,7 @@ const OrderFinishForm = ({
     evt,
   ) => {
     evt?.preventDefault();
-    if (!cashBox || !store) {
+    if (!cashBox || !store || !customerData) {
       return;
     }
     startLoading();
@@ -98,9 +104,12 @@ const OrderFinishForm = ({
         body: {
           cashBoxId: cashBox.id,
           storeId: store.id,
-          customerId:
-            (userClaims!.find((val) => val.type === "sub")?.value as string) ??
-            "0",
+          customerDetails: {
+            nick: customerData.nick,
+            userId: String(customerData.userId),
+            gamificationAllowed: customerData.gamification,
+          },
+          sellForFree,
           paidAmount,
           saleTransactionItems: transactionItems.map((sti) => ({
             amount: sti.amount,
@@ -116,6 +125,7 @@ const OrderFinishForm = ({
     if (data) {
       clearTransactionItems();
       setLayout(undefined);
+      setCustomerData(undefined);
       showSnackbar(
         `Transakce byla úspěšně uložena pod ID ${data.id}!`,
         "success",
@@ -125,6 +135,7 @@ const OrderFinishForm = ({
       handleApiError(response, error);
     }
     stopLoading();
+    setSellForFree(false);
   };
 
   if (!prices) {

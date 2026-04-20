@@ -1,7 +1,6 @@
 using System.Data;
 using System.Globalization;
 using System.Reflection;
-using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Audit.EntityFramework.Providers;
@@ -233,13 +232,5 @@ Users.MapEndpoints(app);
 // OpenAPI
 app.MapOpenApi().AllowAnonymous();
 app.MapScalarApiReference().AllowAnonymous();
-
-// add a testing identity for development environment
-if (builder.Environment.IsDevelopment()) {
-    app.MapGet("identity", (ClaimsPrincipal user) => {
-        var output = user.Claims.Select(c => new { c.Type, c.Value });
-        return JsonSerializer.Serialize(output);
-    });
-}
 
 app.Run();

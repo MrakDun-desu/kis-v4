@@ -37,7 +37,7 @@ public class SaleTransactionCreateValidator : AbstractValidator<SaleTransactionC
         RuleForEach(x => x.SaleTransactionItems)
             .SetValidator(new SaleTransactionItemCreateValidator());
         RuleFor(x => x)
-            .MustAsync((x, token) => helper.PaidAmountIsEnough(x.SaleTransactionItems, x.PaidAmount, token))
+            .MustAsync((x, token) => helper.PaidAmountIsEnough(x.SaleTransactionItems, x.PaidAmount, x.SellForFree, token))
             .OverridePropertyName(ValidationMessages.PaidAmountPropName)
             .WithMessage(ValidationMessages.PaidAmountTooLowMessage);
         RuleFor(x => x.SaleTransactionItems)
@@ -145,7 +145,7 @@ public class SaleTransactionCloseValidator : AbstractValidator<SaleTransactionCl
             .OverridePropertyName(ValidationMessages.PaidAmountPropName)
             .WithMessage(ValidationMessages.PaidAmountLessThan0Message);
         RuleFor(x => x)
-            .MustAsync((x, token) => helper.PaidAmountIsEnough(x.Id, x.Model.PaidAmount, token))
+            .MustAsync((x, token) => helper.PaidAmountIsEnough(x.Id, x.Model.PaidAmount, x.Model.SellForFree, token))
             .OverridePropertyName(ValidationMessages.PaidAmountPropName)
             .WithMessage(ValidationMessages.PaidAmountTooLowMessage);
     }

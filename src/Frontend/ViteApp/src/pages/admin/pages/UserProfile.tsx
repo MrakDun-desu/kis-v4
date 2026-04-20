@@ -1,50 +1,97 @@
-import z from "zod";
 import { useAuth } from "../../../auth/AuthContext";
-import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { useState } from "react";
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
+import { useSnackbar } from "../../../contexts/SnackbarContext";
+import { useLoading } from "../../../contexts/LoadingContext";
+import z from "zod";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-const ValidationSchema = z.object({
-  nickname: z.string().optional(),
-  gamification: z.boolean(),
-  newCardId: z.string().optional(),
+const PinSchema = z.object({
+  newPin: z.string().regex(/^\d{6,10}$/, "PIN musí být 6-10 čísel"),
 });
 
-type FormData = z.infer<typeof ValidationSchema>;
+type PinFormData = z.infer<typeof PinSchema>;
 
 const UserProfile = () => {
   const { userClaims } = useAuth();
+  const [newCardToken, setNewCardToken] = useState("");
+  const { showSnackbar } = useSnackbar();
+  const { startLoading, stopLoading } = useLoading();
   const {
     register,
-    control,
-    formState: { errors, dirtyFields },
+    formState: { errors },
     handleSubmit,
-  } = useForm<FormData>({
-    defaultValues: {
-      gamification:
-        userClaims
-          ?.find((claim) => claim.type === "gam")
-          ?.value.toString()
-          .toLowerCase() === "true",
-      nickname: userClaims?.find((claim) => claim.type === "nick")
-        ?.value as string,
-    },
-  });
+  } = useForm<PinFormData>({ resolver: zodResolver(PinSchema) });
 
-  const updateUserData: SubmitHandler<FormData> = async () => {
-    if (dirtyFields.gamification) {
-      // TODO
+  const updateUserData = async (evt: React.SubmitEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    startLoading();
+    try {
       const resp = await fetch(
-        "su-dev.fit.vutbr.cz/users/me/gamification_consent",
-        { method: "POST" },
+        import.meta.env.BASE_URL + "/auth/users/me/rfid",
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "X-CSRF": "1",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newCardToken),
+        },
       );
+      if (resp.ok) {
+        showSnackbar("Karta úspěšně spárována!", "success");
+        setNewCardToken("");
+      } else {
+        showSnackbar("Neplatný kód karty", "warning");
+      }
+    } catch (err) {
+      console.error(err);
     }
+    stopLoading();
+  };
+
+  const setCardPin: SubmitHandler<PinFormData> = async (data) => {
+    startLoading();
+    try {
+      const resp = await fetch(
+        import.meta.env.BASE_URL + "/auth/users/me/rfid/pin",
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "X-CSRF": "1",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data.newPin),
+        },
+      );
+
+      if (resp.ok) {
+        showSnackbar("Pin úspěšně nastaven!", "success");
+        setNewCardToken("");
+      } else {
+        switch (resp.status) {
+          case 400:
+            showSnackbar("Špatný PIN", "warning");
+            break;
+          case 404:
+            showSnackbar("Karta nenalezena", "warning");
+            break;
+          case 409:
+            showSnackbar(
+              "Konflikt: uživatel si nemůže nastavit PIN",
+              "warning",
+            );
+            break;
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    stopLoading();
   };
 
   return (
@@ -58,56 +105,81 @@ const UserProfile = () => {
         flexDirection="column"
         alignItems="flex-start"
       >
-        <form onSubmit={handleSubmit(updateUserData)}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="flex-start"
-            gap={2}
-            minWidth={300}
-          >
-            <Typography>
-              <b>Jméno:</b>{" "}
-              {userClaims?.find((claim) => claim.type === "name")?.value}
-            </Typography>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="stretch"
+          gap={2}
+          minWidth={300}
+        >
+          <Typography>
+            <b>Jméno:</b>{" "}
+            {userClaims?.find((claim) => claim.type === "name")?.value}
+          </Typography>
 
-            <Typography>
-              <b>E-mail:</b>{" "}
-              {userClaims?.find((claim) => claim.type === "email")?.value}
-            </Typography>
+          <Typography>
+            <b>E-mail:</b>{" "}
+            {userClaims?.find((claim) => claim.type === "email")?.value}
+          </Typography>
 
-            <TextField
-              fullWidth
-              label="Přezdívka"
-              {...register("nickname")}
-              error={!!errors.nickname}
-              helperText={errors.nickname?.message}
-            />
+          <Typography>
+            <b>Přezdívka:</b>{" "}
+            {userClaims?.find((claim) => claim.type === "nick")?.value}
+          </Typography>
 
-            <Controller
-              control={control}
-              name="gamification"
-              render={({ field }) => (
-                <FormControlLabel
-                  label="Souhlas s gamifikací"
-                  control={<Checkbox {...field} checked={field.value} />}
-                />
-              )}
-            />
-
-            <TextField
-              fullWidth
-              label="Kód karty ke spárování"
-              {...register("newCardId")}
-              error={!!errors.newCardId}
-              helperText={errors.newCardId?.message}
-            />
-
-            <Button type="submit" variant="contained">
-              Uložit změny
-            </Button>
+          <Box display="flex" gap={1}>
+            <b>Souhlas s gamifikací:</b>
+            {userClaims
+              ?.find((claim) => claim.type === "gam")
+              ?.value.toString()
+              .toLowerCase() === "true" ? (
+              <CheckBox />
+            ) : (
+              <CheckBoxOutlineBlank />
+            )}
           </Box>
-        </form>
+
+          <form onSubmit={updateUserData}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="flex-start"
+              gap={2}
+            >
+              <TextField
+                fullWidth
+                label="Kód karty ke spárování"
+                value={newCardToken}
+                onChange={(evt) => setNewCardToken(evt.target.value)}
+              />
+
+              <Button type="submit" variant="contained">
+                Přidat novou kartu
+              </Button>
+            </Box>
+          </form>
+
+          <form onSubmit={handleSubmit(setCardPin)}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="flex-start"
+              gap={2}
+            >
+              <TextField
+                fullWidth
+                label="PIN pro přihlášení přes kartu"
+                {...register("newPin")}
+                error={!!errors.newPin}
+                helperText={errors.newPin?.message}
+              />
+
+              <Button type="submit" variant="contained">
+                Nastavit PIN
+              </Button>
+            </Box>
+          </form>
+        </Box>
       </Box>
     </>
   );

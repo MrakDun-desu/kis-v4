@@ -8,12 +8,14 @@ namespace KisV4.Common.Models;
 public record UserListModel {
     public required string Id { get; init; }
     public required string? Nick { get; init; }
+    public required bool GamificationAllowed { get; init; }
 }
 
 // used to show user detail in the admin UI
 public record UserDetailModel {
     public required string Id { get; init; }
     public required string? Nick { get; init; }
+    public required bool GamificationAllowed { get; init; }
     public required AccountTransactionReadAllResponse AccountTransactions { get; init; }
 }
 
@@ -33,3 +35,5 @@ public record UserReadAllRequest : PagedRequest;
 public record UserReadAllResponse : PagedResponse<UserListModel>;
 
 public record UserReadResponse : UserDetailModel;
+
+public record UserPrestigeResponse : CollectionResponse<UserPrestigeModel>;

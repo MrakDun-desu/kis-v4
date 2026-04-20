@@ -9,6 +9,7 @@ public static class UserMapping {
         var val => new UserListModel {
             Id = val.Id,
             Nick = val.Nick,
+            GamificationAllowed = val.GamificationAllowed
         }
     };
 }

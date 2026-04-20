@@ -249,8 +249,12 @@ public class ValidationHelper(
     internal async Task<bool> PaidAmountIsEnough(
         SaleTransactionItemCreateRequest[] saleTransactionItems,
         decimal paidAmount,
+        bool sellForFree,
         CancellationToken token
     ) {
+        if (sellForFree) {
+            return true;
+        }
         var composites = await SaleTransactionService.TryGetCompositesAsync(
             saleTransactionItems,
             _dbContext,
@@ -274,8 +278,12 @@ public class ValidationHelper(
     internal async Task<bool> PaidAmountIsEnough(
         int openTransactionId,
         decimal paidAmount,
+        bool sellForFree,
         CancellationToken token
     ) {
+        if (sellForFree) {
+            return true;
+        }
         _state.SaleTransactionItems ??= await _dbContext.SaleTransactionItems
                     .Where(sti => sti.SaleTransactionId == openTransactionId)
                     .Include(sti => sti.Modifications)

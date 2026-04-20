@@ -3073,6 +3073,57 @@
           }
         }
       }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserReadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/users/prestige": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserPrestigeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -4126,6 +4177,25 @@
           },
           "user": {
             "$ref": "#/components/schemas/UserListModel"
+          }
+        }
+      },
+      "CustomerDetails": {
+        "required": [
+          "userId",
+          "nick",
+          "gamificationAllowed"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "nick": {
+            "type": "string"
+          },
+          "gamificationAllowed": {
+            "type": "boolean"
           }
         }
       },
@@ -5392,8 +5462,9 @@
       "SaleTransactionCloseRequestModel": {
         "required": [
           "cashBoxId",
-          "customerId",
-          "paidAmount"
+          "customerDetails",
+          "paidAmount",
+          "sellForFree"
         ],
         "type": "object",
         "properties": {
@@ -5408,13 +5479,16 @@
             "type": "number",
             "format": "number"
           },
-          "customerId": {
-            "type": "string"
+          "customerDetails": {
+            "$ref": "#/components/schemas/CustomerDetails"
           },
           "paidAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": "string",
             "format": "string"
+          },
+          "sellForFree": {
+            "type": "boolean"
           }
         }
       },
@@ -5422,8 +5496,9 @@
         "required": [
           "storeId",
           "cashBoxId",
-          "customerId",
-          "paidAmount"
+          "customerDetails",
+          "paidAmount",
+          "sellForFree"
         ],
         "type": "object",
         "properties": {
@@ -5443,8 +5518,8 @@
             "type": "number",
             "format": "number"
           },
-          "customerId": {
-            "type": "string"
+          "customerDetails": {
+            "$ref": "#/components/schemas/CustomerDetails"
           },
           "paidAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
@@ -5456,6 +5531,9 @@
             "items": {
               "$ref": "#/components/schemas/SaleTransactionItemCreateRequest"
             }
+          },
+          "sellForFree": {
+            "type": "boolean"
           }
         }
       },
@@ -5468,6 +5546,7 @@
           "startedBy",
           "cancelledBy",
           "openedBy",
+          "customer",
           "saleTransactionItems",
           "accountTransactions",
           "storeTransactions"
@@ -5510,6 +5589,16 @@
             ]
           },
           "openedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "customer": {
             "oneOf": [
               {
                 "type": "null"
@@ -5643,7 +5732,8 @@
           "cancelledAt",
           "startedBy",
           "cancelledBy",
-          "openedBy"
+          "openedBy",
+          "customer"
         ],
         "type": "object",
         "properties": {
@@ -5683,6 +5773,16 @@
             ]
           },
           "openedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "customer": {
             "oneOf": [
               {
                 "type": "null"
@@ -6633,7 +6733,8 @@
       "UserListModel": {
         "required": [
           "id",
-          "nick"
+          "nick",
+          "gamificationAllowed"
         ],
         "type": "object",
         "properties": {
@@ -6645,6 +6746,65 @@
               "null",
               "string"
             ]
+          },
+          "gamificationAllowed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserPrestigeModel": {
+        "required": [
+          "id",
+          "nick",
+          "totalPrestige",
+          "dailyPrestige",
+          "weeklyPrestige",
+          "monthlyPrestige"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nick": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "totalPrestige": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          },
+          "dailyPrestige": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          },
+          "weeklyPrestige": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          },
+          "monthlyPrestige": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          }
+        }
+      },
+      "UserPrestigeResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPrestigeModel"
+            }
           }
         }
       },
@@ -6663,6 +6823,32 @@
           },
           "meta": {
             "$ref": "#/components/schemas/PageMeta"
+          }
+        }
+      },
+      "UserReadResponse": {
+        "required": [
+          "id",
+          "nick",
+          "gamificationAllowed",
+          "accountTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nick": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "gamificationAllowed": {
+            "type": "boolean"
+          },
+          "accountTransactions": {
+            "$ref": "#/components/schemas/AccountTransactionReadAllResponse"
           }
         }
       }

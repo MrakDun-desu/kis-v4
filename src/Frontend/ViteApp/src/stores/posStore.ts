@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { LayoutReadResponse } from "../api/apiTypes";
+import type { UserDetails } from "../auth/AuthContext";
 
 interface ModificationDisplay {
   amount: number;
@@ -19,15 +20,18 @@ export interface EntityWithName {
   name: string;
 }
 
-interface PosStoreType {
+type PosStoreType = {
   transactionItems: SaleTransactionItemDisplay[];
   layoutHistory: number[];
   currentStore?: EntityWithName;
   currentCashBox?: EntityWithName;
   currentLayout?: LayoutReadResponse;
   currentLayoutId?: number;
-  setCurrentLayout: (data: LayoutReadResponse | undefined) => void;
-  setLayoutId: (val: number | undefined) => void;
+  customerData?: UserDetails;
+  sellForFree: boolean;
+  setCustomerData: (data?: UserDetails) => void;
+  setCurrentLayout: (data?: LayoutReadResponse) => void;
+  setLayoutId: (val?: number) => void;
   addTransactionItem: (item: SaleTransactionItemDisplay) => void;
   removeTransactionItem: (index: number) => void;
   updateTransactionItem: (index: number, update: Partial<SaleTransactionItemDisplay>) => void;
@@ -35,14 +39,16 @@ interface PosStoreType {
   clearLayoutHistory: () => void;
   popLayoutHistory: () => void;
   updateMetadata: (
-    cashBox: EntityWithName | undefined,
-    store: EntityWithName | undefined,
-  ) => void
+    cashBox?: EntityWithName,
+    store?: EntityWithName,
+  ) => void,
+  setSellForFree: (val: boolean) => void;
 }
 
 export const usePosStore = create<PosStoreType>((set) => ({
   transactionItems: [],
   layoutHistory: [],
+  sellForFree: false,
   setCurrentLayout: (data) => set(({ layoutHistory }) => {
     if (data) {
       return {
@@ -58,6 +64,7 @@ export const usePosStore = create<PosStoreType>((set) => ({
       }
     }
   }),
+  setCustomerData: (val) => set({ customerData: val }),
   setLayoutId: (val) => set({ currentLayoutId: val }),
   addTransactionItem: (item) => set(({ transactionItems: prev }) =>
     ({ transactionItems: [...prev, item] })
@@ -75,5 +82,6 @@ export const usePosStore = create<PosStoreType>((set) => ({
   updateMetadata: ((cashBox, store) => set({
     currentCashBox: cashBox,
     currentStore: store,
-  }))
+  })),
+  setSellForFree: (val) => set({ sellForFree: val })
 }))

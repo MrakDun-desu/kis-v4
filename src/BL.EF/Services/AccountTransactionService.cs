@@ -1,3 +1,4 @@
+using KisV4.BL.EF.Mapping;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Enums;
 using KisV4.Common.Models;
@@ -57,10 +58,7 @@ public class AccountTransactionService(
                         },
                         UserAccount ua => new UserAccountModel {
                             Id = ua.Id,
-                            User = new UserListModel {
-                                Id = ua.User!.Id,
-                                Nick = ua.User.Nick
-                            },
+                            User = ua.User.ToModel()!,
                         },
                         _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
                     }
@@ -161,10 +159,7 @@ public class AccountTransactionService(
                 },
                 UserAccount ua => new UserAccountModel {
                     Id = ua.Id,
-                    User = new UserListModel {
-                        Id = ua.User!.Id,
-                        Nick = ua.User.Nick
-                    },
+                    User = ua.User.ToModel()!,
                 },
                 _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
             }

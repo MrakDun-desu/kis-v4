@@ -33,6 +33,7 @@ public class SaleTransactionService(
             .Include(st => st.StartedBy)
             .Include(st => st.CancelledBy)
             .Include(st => st.OpenedBy)
+            .Include(st => st.Customer)
             .AsQueryable();
 
         var realFrom = req.From ?? DateTimeOffset.MinValue;
@@ -62,6 +63,7 @@ public class SaleTransactionService(
                 StartedBy = st.StartedBy.ToModel()!,
                 CancelledBy = st.CancelledBy.ToModel(),
                 OpenedBy = st.OpenedBy.ToModel(),
+                Customer = st.Customer.ToModel()
             },
             (data, meta) => new SaleTransactionReadAllResponse {
                 From = realFrom,
@@ -99,6 +101,7 @@ public class SaleTransactionService(
             .Include(st => st.StartedBy)
             .Include(st => st.CancelledBy)
             .Include(st => st.OpenedBy)
+            .Include(st => st.Customer)
             .AsSplitQuery()
             .FirstOrDefaultAsync(st => st.Id == id, token);
 
@@ -114,6 +117,7 @@ public class SaleTransactionService(
             StartedBy = entity.StartedBy.ToModel()!,
             CancelledBy = entity.CancelledBy.ToModel(),
             OpenedBy = entity.OpenedBy.ToModel(),
+            Customer = entity.Customer.ToModel(),
             AccountTransactions = entity.AccountTransactions.Select(at => new AccountTransactionModel {
                 Amount = at.Amount,
                 SaleTransactionId = at.SaleTransactionId,
@@ -122,10 +126,7 @@ public class SaleTransactionService(
                 Account = at.Account switch {
                     UserAccount ua => new UserAccountModel {
                         Id = ua.Id,
-                        User = new UserListModel {
-                            Id = ua.User!.Id,
-                            Nick = ua.User.Nick
-                        },
+                        User = ua.User.ToModel()!,
                     },
                     CashBoxAccount cba => new CashBoxAccountModel {
                         Id = cba.Id,
@@ -153,10 +154,12 @@ public class SaleTransactionService(
         try {
             var customer = await _dbContext.Users
                 .Include(u => u.Account)
-                .FirstAsync(u => u.Id == req.CustomerId, token);
+                .FirstAsync(u => u.Id == req.CustomerDetails.UserId, token);
             if (customer is null) {
                 var newCustomerEntry = _dbContext.Users.Add(new User {
-                    Id = req.CustomerId,
+                    Id = req.CustomerDetails.UserId,
+                    GamificationAllowed = req.CustomerDetails.GamificationAllowed,
+                    Nick = req.CustomerDetails.Nick
                 });
                 await _dbContext.SaveChangesAsync(token);
                 customer = newCustomerEntry.Entity;
@@ -174,24 +177,28 @@ public class SaleTransactionService(
                 false,
                 req.SaleTransactionItems,
                 reqTime,
+                customer.Id,
                 token
             );
 
             var cashBox = await _dbContext.Cashboxes
                 .Include(cb => cb.Account)
                 .FirstAsync(cb => cb.Id == req.CashBoxId, token);
-            var accountTransactions = AddAccountTransactions(
-                entity,
-                saleTransactionItems,
-                composites,
-                customer,
-                cashBox!,
-                req.PaidAmount,
-                reqTime
-            );
-            _dbContext.AccountTransactions.AddRange(accountTransactions);
-            await _dbContext.SaveChangesAsync(token);
+            AccountTransaction[] accountTransactions = [];
+            if (!req.SellForFree) {
+                accountTransactions = AddAccountTransactions(
+                    entity,
+                    saleTransactionItems,
+                    composites,
+                    customer,
+                    cashBox!,
+                    req.PaidAmount,
+                    reqTime
+                );
+                _dbContext.AccountTransactions.AddRange(accountTransactions);
+            }
 
+            await _dbContext.SaveChangesAsync(token);
             var user = await _userService.GetAsync(userId, token);
 
             await dbTransaction.CommitAsync(token);
@@ -203,6 +210,7 @@ public class SaleTransactionService(
                 StartedBy = user,
                 CancelledBy = null,
                 OpenedBy = null,
+                Customer = customer.ToModel(),
                 StoreTransactions = [storeTransaction.ToModel()],
                 AccountTransactions = accountTransactions.Select(at => new AccountTransactionModel {
                     Amount = at.Amount,
@@ -220,10 +228,7 @@ public class SaleTransactionService(
                         },
                         UserAccount ua => new UserAccountModel {
                             Id = ua.Id,
-                            User = new UserListModel {
-                                Id = ua.User!.Id,
-                                Nick = ua.User.Nick
-                            },
+                            User = ua.User.ToModel()!,
                         },
                         _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
                     }
@@ -300,6 +305,7 @@ public class SaleTransactionService(
                 true,
                 req.SaleTransactionItems,
                 reqTime,
+                null,
                 token
             );
 
@@ -315,6 +321,7 @@ public class SaleTransactionService(
                 StartedBy = user,
                 CancelledBy = null,
                 OpenedBy = null,
+                Customer = null,
                 StoreTransactions = [storeTransaction.ToModel()],
                 AccountTransactions = [],
                 SaleTransactionItems = saleTransactionItems.Select(sti => sti.ToModel(composites))
@@ -388,6 +395,7 @@ public class SaleTransactionService(
                 StartedBy = entity.StartedBy.ToModel()!,
                 CancelledBy = entity.CancelledBy.ToModel(),
                 OpenedBy = entity.StartedBy.ToModel(),
+                Customer = null,
                 StoreTransactions = entity.StoreTransactions.Select(st => st.ToModel()),
                 // in update, account transactions should always be empty
                 AccountTransactions = [],
@@ -438,12 +446,15 @@ public class SaleTransactionService(
         }
         await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(token);
         try {
+            var customerDetails = req.Model.CustomerDetails;
             var customer = await _dbContext.Users
                 .Include(u => u.Account)
-                .FirstAsync(u => u.Id == req.Model.CustomerId, token);
+                .FirstAsync(u => u.Id == customerDetails.UserId, token);
             if (customer is null) {
                 var newCustomerEntry = _dbContext.Users.Add(new User {
-                    Id = req.Model.CustomerId,
+                    Id = customerDetails.UserId,
+                    GamificationAllowed = customerDetails.GamificationAllowed,
+                    Nick = customerDetails.Nick
                 });
                 await _dbContext.SaveChangesAsync(token);
                 customer = newCustomerEntry.Entity;
@@ -466,19 +477,25 @@ public class SaleTransactionService(
             var cashBox = await _dbContext.Cashboxes
                 .Include(cb => cb.Account)
                 .FirstAsync(cb => cb.Id == req.Model.CashBoxId, token);
-            var accountTransactions = AddAccountTransactions(
-                entity,
-                saleTransactionItems.ToArray(),
-                composites!,
-                customer,
-                cashBox,
-                req.Model.PaidAmount,
-                reqTime
-            );
-            _dbContext.AccountTransactions.AddRange(accountTransactions);
+
+            AccountTransaction[] accountTransactions = [];
+
+            if (!req.Model.SellForFree) {
+                accountTransactions = AddAccountTransactions(
+                    entity,
+                    saleTransactionItems.ToArray(),
+                    composites!,
+                    customer,
+                    cashBox,
+                    req.Model.PaidAmount,
+                    reqTime
+                );
+                _dbContext.AccountTransactions.AddRange(accountTransactions);
+            }
 
             entity.Note = req.Model.Note;
             entity.ClosedAt = reqTime;
+            entity.CustomerId = customer.Id;
             _dbContext.SaleTransactions.Update(entity);
             await _dbContext.SaveChangesAsync(token);
             await dbTransaction.CommitAsync(token);
@@ -491,6 +508,7 @@ public class SaleTransactionService(
                 StartedBy = entity.StartedBy.ToModel()!,
                 CancelledBy = entity.CancelledBy.ToModel(),
                 OpenedBy = entity.StartedBy.ToModel(),
+                Customer = customer.ToModel(),
                 StoreTransactions = entity.StoreTransactions.Select(st => st.ToModel()),
                 AccountTransactions = accountTransactions.Select(at => new AccountTransactionModel {
                     Amount = at.Amount,
@@ -508,10 +526,7 @@ public class SaleTransactionService(
                         },
                         UserAccount ua => new UserAccountModel {
                             Id = ua.Id,
-                            User = new UserListModel {
-                                Id = ua.User!.Id,
-                                Nick = ua.User.Nick
-                            },
+                            User = ua.User.ToModel()!,
                         },
                         _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
                     }
@@ -591,6 +606,7 @@ public class SaleTransactionService(
         bool open,
         SaleTransactionItemCreateRequest[] itemsToCreate,
         DateTimeOffset reqTime,
+        string? customerId,
         CancellationToken token
     ) {
         var composites = await TryGetCompositesAsync(itemsToCreate, _dbContext, _state, token);
@@ -600,6 +616,7 @@ public class SaleTransactionService(
             StartedById = userId,
             OpenedById = open ? userId : null,
             Reason = TransactionReason.Sale,
+            CustomerId = customerId,
         };
         var saleTransactionItems = AddSaleTransactionItems(entity, itemsToCreate, composites!);
         _dbContext.SaleTransactionItems.AddRange(saleTransactionItems);

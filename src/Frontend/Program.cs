@@ -33,8 +33,9 @@ builder.Services
             "openid",
             "roles",
             "fpo",
-            "offline_access"
-            // TODO add scopes for sales API
+            "offline_access",
+            "rfid:legacy:r",
+            "rfid:pool:w"
         ];
         foreach (var scope in requiredScopes) {
             options.Scope.Add(scope);
@@ -61,6 +62,8 @@ app.UseBff();
 app.UseAuthorization();
 
 app.MapRemoteBffApiEndpoint("/api", new Uri("https://su-dev.fit.vutbr.cz/api"))
+    .WithAccessToken();
+app.MapRemoteBffApiEndpoint("/auth", new Uri("https://su-dev.fit.vutbr.cz"))
     .WithAccessToken();
 
 app.Run();

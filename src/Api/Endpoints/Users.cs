@@ -1,4 +1,3 @@
-using KisV4.Api.RouteFilters;
 using KisV4.BL.EF.Services;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -11,6 +10,8 @@ public static class Users {
         routeBuilder.MapGet("users", ReadAll)
             .WithName("UsersReadAll")
             .AddValidation<UserReadAllRequest>();
+        routeBuilder.MapGet("users/{id}", Read);
+        routeBuilder.MapGet("users/prestige", Prestige);
     }
 
     public static async Task<Results<Ok<UserReadAllResponse>, ValidationProblem>> ReadAll(
@@ -22,7 +23,14 @@ public static class Users {
     }
 
     public static async Task<Results<Ok<UserReadResponse>, NotFound>> Read(
-        int id,
+        string id,
+        UserService service,
+        CancellationToken token = default
+    ) {
+        throw new NotImplementedException();
+    }
+
+    public static async Task<UserPrestigeResponse> Prestige(
         UserService service,
         CancellationToken token = default
     ) {

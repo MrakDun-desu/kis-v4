@@ -11,9 +11,15 @@ const UserClaimSchema = z.array(
 );
 
 type UserClaims = z.infer<typeof UserClaimSchema>;
+export type UserDetails = {
+  nick: string;
+  gamification: boolean;
+  userId: string;
+};
 
 interface AuthContextType {
-  userClaims: UserClaims | null;
+  userClaims?: UserClaims;
+  userDetails?: UserDetails;
   loading: boolean;
   signIn: () => void;
   signOut: () => void;
@@ -25,7 +31,8 @@ const AuthContext = React.createContext<AuthContextType>(null!);
 const authRefreshTimeout = 1000 * 60 * 20;
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [userClaims, setUserClaims] = useState<UserClaims | null>(null);
+  const [userClaims, setUserClaims] = useState<UserClaims>();
+  const [userDetails, setUserDetails] = useState<UserDetails>();
   const [loading, setLoading] = useState(true);
   const [lastVisibilityChange, setLastVisibilityChange] = useState(Date.now());
 
@@ -100,6 +107,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const respValue = await authResponse.json();
         const respClaims = UserClaimSchema.parse(respValue);
         setUserClaims(respClaims);
+        setUserDetails({
+          gamification:
+            respClaims
+              .find((val) => val.type === "gam")
+              ?.value.toString()
+              .toLowerCase() === "true",
+          nick: respClaims.find((val) => val.type === "nick")?.value as string,
+          userId: respClaims.find((val) => val.type === "sub")?.value as string,
+        });
         setLoading(false);
         return respValue;
       } else {
@@ -127,11 +143,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       (userClaims?.find((claim) => claim.type === "bff:logout_url")
         ?.value as string) ?? import.meta.env.BASE_URL + "/bff/logout";
 
-    setUserClaims(null);
+    setUserClaims(undefined);
+    setUserDetails(undefined);
     window.location.href = signOutUrl;
   };
 
-  const value = { userClaims, signIn, signOut, loading };
+  const value = { userClaims, signIn, signOut, loading, userDetails };
 
   return <AuthContext value={value}>{children}</AuthContext>;
 };

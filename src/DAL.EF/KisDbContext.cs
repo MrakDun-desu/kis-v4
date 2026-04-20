@@ -79,6 +79,14 @@ public class KisDbContext(DbContextOptions<KisDbContext> options) : AuditDbConte
             .HasOne(e => e.StartedBy)
             .WithMany(e => e.StartedTransactions);
 
+        modelBuilder.Entity<SaleTransaction>()
+            .HasOne(e => e.Customer)
+            .WithMany();
+
+        modelBuilder.Entity<SaleTransaction>()
+            .HasOne(e => e.OpenedBy)
+            .WithMany();
+
         modelBuilder.Entity<SaleTransactionItem>()
             .HasMany(sti => sti.Modifications)
             .WithOne(m => m.SaleTransactionItem)

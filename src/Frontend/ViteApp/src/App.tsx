@@ -40,6 +40,8 @@ import SaleTransactionDetail from "./pages/admin/pages/SaleTransactionDetail";
 import RecentTransactions from "./pages/pos/pages/RecentTransactions";
 import CashBoxDetail from "./pages/admin/pages/CashBoxDetail";
 import UserProfile from "./pages/admin/pages/UserProfile";
+import ReaderProvider from "./contexts/ReaderContext";
+import CardPairing from "./pages/pos/pages/CardPairing";
 
 function App() {
   const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
@@ -129,7 +131,9 @@ function App() {
               path="pos"
               element={
                 <RequireAuth>
-                  <PosPage />
+                  <ReaderProvider>
+                    <PosPage />
+                  </ReaderProvider>
                 </RequireAuth>
               }
             >
@@ -138,7 +142,7 @@ function App() {
                 path="recent-transactions"
                 element={<RecentTransactions />}
               />
-              <Route path="card-pairing" element={null} />
+              <Route path="card-pairing" element={<CardPairing />} />
               <Route path="settings" element={<PosSettings />} />
               <Route path="taps/:id" element={<PosTap />} />
               <Route path="containers/:id" element={<PosContainerDetail />} />

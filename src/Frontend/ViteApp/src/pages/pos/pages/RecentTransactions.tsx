@@ -70,6 +70,11 @@ const RecentTransactions = () => {
                     Čas vytvoření:{" "}
                     {new Date(transaction.startedAt).toLocaleTimeString("cs")}
                   </Typography>
+
+                  <Typography>
+                    Zákazník:{" "}
+                    <b>{transaction.customer?.nick ?? "Nenastaven"}</b>
+                  </Typography>
                 </Box>
 
                 <Box display="flex" gap={1}>

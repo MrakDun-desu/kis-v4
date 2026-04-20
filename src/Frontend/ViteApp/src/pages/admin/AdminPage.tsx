@@ -14,8 +14,6 @@ import {
 } from "@mui/material";
 import {
   AccountCircle,
-  Build,
-  Discount,
   GridView,
   Inventory,
   Liquor,
@@ -151,14 +149,24 @@ const AdminPage = () => {
           <Typography variant="h6" noWrap component="h1" flexGrow={1}>
             Kachní informační systém
           </Typography>
-          {auth.userClaims && (
-            <span>
-              uživatel:{" "}
-              {auth.userClaims.find((claim: any) => claim["type"] === "name")
-                ?.value ?? "Neznámý"}
-            </span>
-          )}
-          <Button onClick={auth.signOut}>Odhlásit se</Button>
+          <Box display="flex" gap={2} alignItems="center">
+            <Typography>
+              Přihlášen:{" "}
+              <b>
+                {auth.userClaims?.find((val) => val.type === "nick")?.value}
+              </b>
+            </Typography>
+            <Button
+              onClick={() => navigate("user-profile")}
+              endIcon={<AccountCircle />}
+            >
+              Můj profil
+            </Button>
+
+            <Button onClick={auth.signOut} variant="outlined">
+              Odhlásit se
+            </Button>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer

@@ -12,6 +12,7 @@ public record SaleTransactionListModel {
     public required UserListModel StartedBy { get; init; }
     public required UserListModel? CancelledBy { get; init; }
     public required UserListModel? OpenedBy { get; init; }
+    public required UserListModel? Customer { get; init; }
 }
 
 public record SaleTransactionDetailModel {
@@ -22,6 +23,7 @@ public record SaleTransactionDetailModel {
     public required UserListModel StartedBy { get; init; }
     public required UserListModel? CancelledBy { get; init; }
     public required UserListModel? OpenedBy { get; init; }
+    public required UserListModel? Customer { get; init; }
 
     public required IEnumerable<SaleTransactionItemModel> SaleTransactionItems { get; init; }
     public required IEnumerable<AccountTransactionModel> AccountTransactions { get; init; }
@@ -48,13 +50,20 @@ public record SaleTransactionCheckPriceResponse {
     public required IEnumerable<SaleTransactionItemModel> SaleTransactionItems { get; init; } = [];
 }
 
+public record CustomerDetails {
+    public required string UserId { get; init; }
+    public required string Nick { get; init; }
+    public required bool GamificationAllowed { get; init; }
+}
+
 public record SaleTransactionCreateRequest {
     public string? Note { get; init; }
     public required int StoreId { get; init; }
     public required int CashBoxId { get; init; }
-    public required string CustomerId { get; init; }
+    public required CustomerDetails CustomerDetails { get; init; }
     public required decimal PaidAmount { get; init; }
     public SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
+    public required bool SellForFree { get; init; }
 }
 
 public record SaleTransactionOpenRequest {
@@ -79,8 +88,9 @@ public record SaleTransactionUpdateRequest {
 public record SaleTransactionCloseRequestModel {
     public string? Note { get; init; }
     public required int CashBoxId { get; init; }
-    public required string CustomerId { get; init; }
+    public required CustomerDetails CustomerDetails { get; init; }
     public required decimal PaidAmount { get; init; }
+    public required bool SellForFree { get; init; }
 }
 
 public record SaleTransactionCloseRequest {
