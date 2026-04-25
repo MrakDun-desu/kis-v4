@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using KisV4.Common.Authorization;
 using KisV4.Common.DependencyInjection;
 using KisV4.Common.Models;
@@ -13,13 +14,18 @@ public class KisFoodService : IScopedService {
         _httpClient = httpClientFactory.CreateClient(AuthorizationConstants.KisFoodHttpClientName);
     }
 
-    public async Task<JsonDocument?> CreateFoodOrder(KisFoodOrderRequest req) {
-        var kisFoodResponse = await _httpClient.PostAsJsonAsync("https://su-dev.fit.vutbr.cz/food/order", req);
+    public async Task<KisFoodQueueItemDetails[]?> CreateFoodOrder(KisFoodOrderRequest req) {
+        var kisFoodResponse = await _httpClient.PostAsJsonAsync("order", req);
 
         if (!kisFoodResponse.IsSuccessStatusCode) {
             return null;
         }
 
-        return await kisFoodResponse.Content.ReadFromJsonAsync<JsonDocument>();
+        var jsonOpts = new JsonSerializerOptions(JsonSerializerOptions.Web);
+        jsonOpts.Converters.Add(new JsonStringEnumConverter());
+
+        return await kisFoodResponse
+            .Content
+            .ReadFromJsonAsync<KisFoodQueueItemDetails[]>(jsonOpts);
     }
 }

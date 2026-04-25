@@ -176,7 +176,7 @@ const ReaderProvider = ({ children }: { children: React.ReactNode }) => {
           setReaderUri(val);
         },
         requestCard: () => {
-          if (client !== undefined) {
+          if (client !== undefined && client.isReady()) {
             client.modeSingleRead();
             setReaderState("reading");
           }

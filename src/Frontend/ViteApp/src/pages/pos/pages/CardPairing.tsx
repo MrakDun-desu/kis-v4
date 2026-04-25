@@ -19,28 +19,38 @@ const CardPairing = () => {
         return;
       }
       startLoading();
-      const pairingResponse = await fetch(
-        import.meta.env.BASE_URL + `/auth/users/rfids/pool`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "X-CSRF": "1",
-            "Content-Type": "application/json",
+      try {
+        const pairingResponse = await fetch(
+          import.meta.env.BASE_URL + `/auth/users/rfids/pool`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "X-CSRF": "1",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(evt.cardData),
           },
-          body: JSON.stringify(evt.cardData),
-        },
-      );
-      stopLoading();
-      if (pairingResponse.ok) {
-        const pairingResponseData = await pairingResponse.json();
-        setPairingId(pairingResponseData);
+        );
+        stopLoading();
+        if (pairingResponse.ok) {
+          const pairingResponseData = await pairingResponse.json();
+          setPairingId(pairingResponseData);
+        }
+      } catch (err) {
+        showSnackbar("Nepovedlo se vyžádat párovací ID");
+        console.error(err);
       }
     });
-    requestCard();
 
     return removeListener;
   }, []);
+
+  useEffect(() => {
+    if (pairingId === undefined && readerState === "idle") {
+      requestCard();
+    }
+  }, [pairingId, readerState]);
 
   return (
     <Box

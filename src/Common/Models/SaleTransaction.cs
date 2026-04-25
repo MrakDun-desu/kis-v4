@@ -70,7 +70,7 @@ public record SaleTransactionCreateRequest {
 }
 
 public record SaleTransactionCreateResponse : SaleTransactionDetailModel {
-    public required JsonDocument? QueueItems { get; init; }
+    public required KisFoodQueueItemDetails[]? QueueItems { get; init; }
 }
 
 public record SaleTransactionOpenRequest {
@@ -80,7 +80,7 @@ public record SaleTransactionOpenRequest {
 }
 
 public record SaleTransactionOpenResponse : SaleTransactionDetailModel {
-    public required JsonDocument? QueueItems { get; init; }
+    public required KisFoodQueueItemDetails[]? QueueItems { get; init; }
 }
 
 public record SaleTransactionUpdateRequestModel {
@@ -97,7 +97,7 @@ public record SaleTransactionUpdateRequest {
 }
 
 public record SaleTransactionUpdateResponse : SaleTransactionDetailModel {
-    public required JsonDocument? QueueItems { get; init; }
+    public required KisFoodQueueItemDetails[]? QueueItems { get; init; }
 }
 
 public record SaleTransactionCloseRequestModel {

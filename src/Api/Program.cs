@@ -170,7 +170,7 @@ builder.Services.AddClientCredentialsHttpClient(
         ClientCredentialsClientName.Parse(AuthorizationConstants.KisFoodHttpClientName),
     client => {
         client.BaseAddress = new Uri(
-            kisSettings.FoodUrl ?? $"{kisSettings.AuthUrl}food"
+            kisSettings.FoodUrl ?? $"{kisSettings.AuthUrl}food/"
         );
     });
 

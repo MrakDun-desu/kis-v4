@@ -16,7 +16,8 @@ public class SaleTransactionService(
     UserService userService,
     SaleTransactionRequestState state,
     ContainerChangeService containerChangeService,
-    KisFoodService kisFoodService
+    KisFoodService kisFoodService,
+    StoreTransactionService storeTransactionService
 ) : IScopedService {
     private readonly KisDbContext _dbContext = dbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
@@ -24,6 +25,7 @@ public class SaleTransactionService(
     private readonly SaleTransactionRequestState _state = state;
     private readonly ContainerChangeService _containerChangeService = containerChangeService;
     private readonly KisFoodService _kisFoodService = kisFoodService;
+    private readonly StoreTransactionService _storeTransactionService = storeTransactionService;
 
     public async Task<SaleTransactionReadAllResponse> ReadAllAsync(
         SaleTransactionReadAllRequest req,
@@ -593,17 +595,29 @@ public class SaleTransactionService(
                 .ExecuteUpdateAsync(props => {
                     props.SetProperty(sti => sti.Cancelled, true);
                 });
+            var storeTransactionIds = _dbContext.StoreTransactions
+                .IgnoreQueryFilters()
+                .Where(si => si.SaleTransactionId == req.Id)
+                .Select(si => si.Id)
+                .ToArray();
+            foreach (var storeTransactionId in storeTransactionIds) {
+                await StoreTransactionService.UpdateItemAmountsAsync(
+                    storeTransactionId,
+                    true,
+                    _dbContext,
+                    token
+                );
+            }
             await _dbContext.StoreTransactions
                 .IgnoreQueryFilters()
-                .Where(st => st.SaleTransactionId == req.Id)
+                .Where(si => si.SaleTransactionId == req.Id)
                 .ExecuteUpdateAsync(props => {
                     props.SetProperty(si => si.CancelledAt, reqTime);
                     props.SetProperty(si => si.CancelledById, userId);
                 });
             await _dbContext.StoreTransactionItems
                 .IgnoreQueryFilters()
-                .Include(sti => sti.StoreTransaction)
-                .Where(sti => sti.StoreTransaction!.SaleTransactionId == req.Id)
+                .Where(sti => storeTransactionIds.Contains(sti.StoreTransactionId))
                 .ExecuteUpdateAsync(props => {
                     props.SetProperty(sti => sti.Cancelled, true);
                 });
@@ -893,7 +907,7 @@ public class SaleTransactionService(
         return storeTransaction;
     }
 
-    private async Task<JsonDocument?> SendToFoodAsync(
+    private async Task<KisFoodQueueItemDetails[]?> SendToFoodAsync(
         IEnumerable<SaleTransactionItem> transactionItems,
         int storeTransactionId,
         string customerName,

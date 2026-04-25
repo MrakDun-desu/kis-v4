@@ -4246,7 +4246,97 @@
         "type": "string",
         "format": "binary"
       },
-      "JsonDocument": { },
+      "KisFoodProductInfo": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "KisFoodQueueItemDetails": {
+        "required": [
+          "id",
+          "number",
+          "queueId",
+          "queueName",
+          "timestamp",
+          "productCount",
+          "product"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "number": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "queueId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "queueName": {
+            "type": "string"
+          },
+          "timestamp": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "productCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "product": {
+            "$ref": "#/components/schemas/KisFoodProductInfo"
+          },
+          "state": {
+            "$ref": "#/components/schemas/KisFoodQueueItemState"
+          },
+          "printed": {
+            "type": "boolean"
+          },
+          "customerName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KisFoodQueueItemState": {
+        "enum": [
+          "InPreparation",
+          "ReadyToCollect",
+          "Completed",
+          "Cancelled"
+        ]
+      },
       "LayoutCreateRequestModel": {
         "required": [
           "name",
@@ -5647,14 +5737,13 @@
         "type": "object",
         "properties": {
           "queueItems": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/JsonDocument"
-              }
-            ]
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/KisFoodQueueItemDetails"
+            }
           },
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -5940,14 +6029,13 @@
         "type": "object",
         "properties": {
           "queueItems": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/JsonDocument"
-              }
-            ]
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/KisFoodQueueItemDetails"
+            }
           },
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -6190,14 +6278,13 @@
         "type": "object",
         "properties": {
           "queueItems": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/JsonDocument"
-              }
-            ]
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/KisFoodQueueItemDetails"
+            }
           },
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",

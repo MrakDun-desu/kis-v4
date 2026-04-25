@@ -257,7 +257,7 @@ public class StoreTransactionService(
         return storeTransaction;
     }
 
-    private static async Task UpdateItemAmountsAsync(
+    internal static async Task UpdateItemAmountsAsync(
             int transactionId,
             bool cancelledTransaction,
             KisDbContext dbContext,
@@ -271,6 +271,7 @@ public class StoreTransactionService(
         var multiplier = cancelledTransaction ? -1m : 1m;
         await dbContext.StoreItemAmounts
             .Where(sia => dbContext.StoreTransactionItems
+                    .IgnoreQueryFilters()
                     .Any(c => c.StoreId == sia.StoreId
                         && c.StoreItemId == sia.StoreItemId
                         && c.StoreTransactionId == transactionId)
@@ -291,8 +292,10 @@ public class StoreTransactionService(
         // update all composite amounts in one database call
         await dbContext.CompositeAmounts
             .Where(ca => dbContext.Compositions
+                    .IgnoreQueryFilters()
                     .Any(c => c.CompositeId == ca.CompositeId
                         && dbContext.StoreTransactionItems
+                        .IgnoreQueryFilters()
                         .Any(sti => sti.StoreItemId == c.StoreItemId
                             && sti.StoreId == ca.StoreId
                             && sti.StoreTransactionId == transactionId)
@@ -302,6 +305,7 @@ public class StoreTransactionService(
                     props => props.SetProperty(
                         x => x.Amount,
                         x => dbContext.Compositions
+                            .IgnoreQueryFilters()
                             .Where(c => c.CompositeId == x.CompositeId)
                             .Select(c => (int)Math.Floor(dbContext.StoreItemAmounts
                                 .Where(sia => sia.StoreItemId == c.StoreItemId
@@ -322,7 +326,6 @@ public class StoreTransactionService(
         CancellationToken token = default
     ) {
         var storeItemsToUpdate = await dbContext.StoreTransactionItems
-            .IgnoreQueryFilters()
             .Where(sti => sti.StoreTransactionId == transactionId)
             .Select(sti => sti.StoreItemId)
             .Distinct()
