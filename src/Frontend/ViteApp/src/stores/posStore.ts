@@ -29,9 +29,13 @@ type PosStoreType = {
   currentLayoutId?: number;
   customerData?: UserDetails;
   sellForFree: boolean;
+  pickingTable: boolean;
+  orderNote?: string;
   setCustomerData: (data?: UserDetails) => void;
   setCurrentLayout: (data?: LayoutReadResponse) => void;
   setLayoutId: (val?: number) => void;
+  setPickingTable: (val: boolean) => void;
+  setOrderNote: (val?: string) => void;
   addTransactionItem: (item: SaleTransactionItemDisplay) => void;
   removeTransactionItem: (index: number) => void;
   updateTransactionItem: (index: number, update: Partial<SaleTransactionItemDisplay>) => void;
@@ -49,6 +53,7 @@ export const usePosStore = create<PosStoreType>((set) => ({
   transactionItems: [],
   layoutHistory: [],
   sellForFree: false,
+  pickingTable: false,
   setCurrentLayout: (data) => set(({ layoutHistory }) => {
     if (data) {
       return {
@@ -66,6 +71,8 @@ export const usePosStore = create<PosStoreType>((set) => ({
   }),
   setCustomerData: (val) => set({ customerData: val }),
   setLayoutId: (val) => set({ currentLayoutId: val }),
+  setPickingTable: (val) => set({ pickingTable: val }),
+  setOrderNote: (val) => set({ orderNote: val }),
   addTransactionItem: (item) => set(({ transactionItems: prev }) =>
     ({ transactionItems: [...prev, item] })
   ),

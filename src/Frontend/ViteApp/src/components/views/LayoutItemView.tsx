@@ -9,6 +9,8 @@ const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
     currentLayout,
     currentStore,
     transactionItems,
+    orderNote,
+    setPickingTable,
     changeLayout,
     addItem,
     updateItem,
@@ -17,9 +19,11 @@ const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
       currentLayout: state.currentLayout,
       currentStore: state.currentStore,
       transactionItems: state.transactionItems,
+      orderNote: state.orderNote,
       changeLayout: state.setLayoutId,
       addItem: state.addTransactionItem,
       updateItem: state.updateTransactionItem,
+      setPickingTable: state.setPickingTable,
     })),
   );
   const navigate = useNavigate();
@@ -78,6 +82,12 @@ const LayoutItemView = ({ x, y }: { x: number; y: number }) => {
                 saleItemId: layoutItem.target.id,
                 modifications: [],
               });
+            }
+            if (
+              layoutItem.target.triggerTablePicker &&
+              orderNote === undefined
+            ) {
+              setPickingTable(true);
             }
             break;
           }

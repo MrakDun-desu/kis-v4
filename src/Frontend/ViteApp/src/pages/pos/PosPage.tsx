@@ -30,6 +30,7 @@ import { useShallow } from "zustand/react/shallow";
 import OrderFinishForm from "../../components/forms/OrderFinishForm";
 import { useAuth } from "../../auth/AuthContext";
 import CustomerChecker from "../../components/CustomerChecker";
+import TablePickForm from "../../components/forms/TablePickForm";
 
 interface Link {
   label: string;
@@ -65,6 +66,7 @@ const PosPage = () => {
     currentLayout,
     layoutHistory,
     customerData,
+    pickingTable,
     clearTransactionItems,
     popLayoutHistory,
     setLayoutId,
@@ -78,6 +80,7 @@ const PosPage = () => {
       currentLayout: state.currentLayout,
       layoutHistory: state.layoutHistory,
       customerData: state.customerData,
+      pickingTable: state.pickingTable,
       clearTransactionItems: state.clearTransactionItems,
       popLayoutHistory: state.popLayoutHistory,
       setLayoutId: state.setLayoutId,
@@ -418,6 +421,24 @@ const PosPage = () => {
             sx={{ fontSize: "20px", padding: "1em 2em" }}
           >
             Prodat
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={pickingTable}>
+        <DialogTitle>Zvol stůl</DialogTitle>
+        <DialogContent>
+          <TablePickForm id="tablePickForm" />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="large"
+            variant="contained"
+            sx={{ fontSize: "20px", padding: "0.5em 2em" }}
+            type="submit"
+            form="tablePickForm"
+          >
+            Ok
           </Button>
         </DialogActions>
       </Dialog>

@@ -34,6 +34,7 @@ const OrderFinishForm = ({
     transactionItems,
     customerData,
     sellForFree,
+    orderNote,
     clearTransactionItems,
     removeTransactionItem,
     updateTransactionItem,
@@ -44,6 +45,7 @@ const OrderFinishForm = ({
       transactionItems: state.transactionItems,
       customerData: state.customerData,
       sellForFree: state.sellForFree,
+      orderNote: state.orderNote,
       clearTransactionItems: state.clearTransactionItems,
       removeTransactionItem: state.removeTransactionItem,
       updateTransactionItem: state.updateTransactionItem,
@@ -111,6 +113,7 @@ const OrderFinishForm = ({
           },
           sellForFree,
           paidAmount,
+          note: orderNote,
           saleTransactionItems: transactionItems.map((sti) => ({
             amount: sti.amount,
             saleItemId: sti.saleItemId,
