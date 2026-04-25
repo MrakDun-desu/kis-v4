@@ -1017,6 +1017,31 @@ export interface components {
         };
         /** Format: binary */
         IFormFile: string;
+        KisFoodProductInfo: {
+            /** Format: number */
+            id: number;
+            name: string;
+        };
+        KisFoodQueueItemDetails: {
+            /** Format: number */
+            id: number;
+            /** Format: number */
+            number: number;
+            /** Format: number */
+            queueId: number;
+            queueName: string;
+            /** Format: int64 */
+            timestamp: number | string;
+            /** Format: number */
+            productCount: number;
+            product: components["schemas"]["KisFoodProductInfo"];
+            state?: components["schemas"]["KisFoodQueueItemState"];
+            printed?: boolean;
+            customerName?: null | string;
+            note?: null | string;
+        };
+        /** @enum {unknown} */
+        KisFoodQueueItemState: "InPreparation" | "ReadyToCollect" | "Completed" | "Cancelled";
         LayoutCreateRequestModel: {
             /** @default Výchozí layout */
             name: string;
@@ -1375,6 +1400,22 @@ export interface components {
             paidAmount: string;
             sellForFree: boolean;
         };
+        SaleTransactionCloseResponse: {
+            /** Format: number */
+            id: number;
+            note: null | string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            cancelledAt: null | string;
+            startedBy: components["schemas"]["UserListModel"];
+            cancelledBy: null | components["schemas"]["UserListModel"];
+            openedBy: null | components["schemas"]["UserListModel"];
+            customer: null | components["schemas"]["UserListModel"];
+            saleTransactionItems: components["schemas"]["SaleTransactionItemModel"][];
+            accountTransactions: components["schemas"]["AccountTransactionModel"][];
+            storeTransactions: components["schemas"]["StoreTransactionListModel"][];
+        };
         SaleTransactionCreateRequest: {
             note?: null | string;
             /** Format: number */
@@ -1387,7 +1428,8 @@ export interface components {
             saleTransactionItems?: components["schemas"]["SaleTransactionItemCreateRequest"][];
             sellForFree: boolean;
         };
-        SaleTransactionDetailModel: {
+        SaleTransactionCreateResponse: {
+            queueItems: null | components["schemas"]["KisFoodQueueItemDetails"][];
             /** Format: number */
             id: number;
             note: null | string;
@@ -1450,6 +1492,23 @@ export interface components {
             storeId: number;
             saleTransactionItems?: components["schemas"]["SaleTransactionItemCreateRequest"][];
         };
+        SaleTransactionOpenResponse: {
+            queueItems: null | components["schemas"]["KisFoodQueueItemDetails"][];
+            /** Format: number */
+            id: number;
+            note: null | string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            cancelledAt: null | string;
+            startedBy: components["schemas"]["UserListModel"];
+            cancelledBy: null | components["schemas"]["UserListModel"];
+            openedBy: null | components["schemas"]["UserListModel"];
+            customer: null | components["schemas"]["UserListModel"];
+            saleTransactionItems: components["schemas"]["SaleTransactionItemModel"][];
+            accountTransactions: components["schemas"]["AccountTransactionModel"][];
+            storeTransactions: components["schemas"]["StoreTransactionListModel"][];
+        };
         SaleTransactionReadAllResponse: {
             /** Format: date-time */
             from?: null | string;
@@ -1458,11 +1517,44 @@ export interface components {
             data: components["schemas"]["SaleTransactionListModel"][];
             meta: components["schemas"]["PageMeta"];
         };
+        SaleTransactionReadResponse: {
+            /** Format: number */
+            id: number;
+            note: null | string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            cancelledAt: null | string;
+            startedBy: components["schemas"]["UserListModel"];
+            cancelledBy: null | components["schemas"]["UserListModel"];
+            openedBy: null | components["schemas"]["UserListModel"];
+            customer: null | components["schemas"]["UserListModel"];
+            saleTransactionItems: components["schemas"]["SaleTransactionItemModel"][];
+            accountTransactions: components["schemas"]["AccountTransactionModel"][];
+            storeTransactions: components["schemas"]["StoreTransactionListModel"][];
+        };
         SaleTransactionUpdateRequestModel: {
             note?: null | string;
             /** Format: number */
             storeId: number;
             saleTransactionItems?: components["schemas"]["SaleTransactionItemCreateRequest"][];
+        };
+        SaleTransactionUpdateResponse: {
+            queueItems: null | components["schemas"]["KisFoodQueueItemDetails"][];
+            /** Format: number */
+            id: number;
+            note: null | string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            cancelledAt: null | string;
+            startedBy: components["schemas"]["UserListModel"];
+            cancelledBy: null | components["schemas"]["UserListModel"];
+            openedBy: null | components["schemas"]["UserListModel"];
+            customer: null | components["schemas"]["UserListModel"];
+            saleTransactionItems: components["schemas"]["SaleTransactionItemModel"][];
+            accountTransactions: components["schemas"]["AccountTransactionModel"][];
+            storeTransactions: components["schemas"]["StoreTransactionListModel"][];
         };
         StoreCreateRequest: {
             /** @default Sklad Kachna */
@@ -3342,7 +3434,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SaleTransactionDetailModel"];
+                    "application/json": components["schemas"]["SaleTransactionCreateResponse"];
                 };
             };
             /** @description Bad Request */
@@ -3373,7 +3465,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SaleTransactionDetailModel"];
+                    "application/json": components["schemas"]["SaleTransactionReadResponse"];
                 };
             };
             /** @description Not Found */
@@ -3433,7 +3525,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SaleTransactionDetailModel"];
+                    "application/json": components["schemas"]["SaleTransactionUpdateResponse"];
                 };
             };
             /** @description Bad Request */
@@ -3506,7 +3598,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SaleTransactionDetailModel"];
+                    "application/json": components["schemas"]["SaleTransactionOpenResponse"];
                 };
             };
             /** @description Bad Request */
@@ -3541,7 +3633,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SaleTransactionDetailModel"];
+                    "application/json": components["schemas"]["SaleTransactionCloseResponse"];
                 };
             };
             /** @description Bad Request */

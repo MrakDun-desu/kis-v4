@@ -2111,7 +2111,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
+                  "$ref": "#/components/schemas/SaleTransactionCreateResponse"
                 }
               }
             }
@@ -2153,7 +2153,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
+                  "$ref": "#/components/schemas/SaleTransactionReadResponse"
                 }
               }
             }
@@ -2196,7 +2196,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
+                  "$ref": "#/components/schemas/SaleTransactionUpdateResponse"
                 }
               }
             }
@@ -2305,7 +2305,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
+                  "$ref": "#/components/schemas/SaleTransactionOpenResponse"
                 }
               }
             }
@@ -2357,7 +2357,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SaleTransactionDetailModel"
+                  "$ref": "#/components/schemas/SaleTransactionCloseResponse"
                 }
               }
             }
@@ -4246,6 +4246,7 @@
         "type": "string",
         "format": "binary"
       },
+      "JsonDocument": { },
       "LayoutCreateRequestModel": {
         "required": [
           "name",
@@ -5492,6 +5493,97 @@
           }
         }
       },
+      "SaleTransactionCloseResponse": {
+        "required": [
+          "id",
+          "note",
+          "startedAt",
+          "cancelledAt",
+          "startedBy",
+          "cancelledBy",
+          "openedBy",
+          "customer",
+          "saleTransactionItems",
+          "accountTransactions",
+          "storeTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserListModel"
+          },
+          "cancelledBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "openedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "customer": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "saleTransactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
+          },
+          "accountTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
+          },
+          "storeTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
+            }
+          }
+        }
+      },
       "SaleTransactionCreateRequest": {
         "required": [
           "storeId",
@@ -5537,8 +5629,9 @@
           }
         }
       },
-      "SaleTransactionDetailModel": {
+      "SaleTransactionCreateResponse": {
         "required": [
+          "queueItems",
           "id",
           "note",
           "startedAt",
@@ -5553,6 +5646,16 @@
         ],
         "type": "object",
         "properties": {
+          "queueItems": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonDocument"
+              }
+            ]
+          },
           "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": "number",
@@ -5819,6 +5922,108 @@
           }
         }
       },
+      "SaleTransactionOpenResponse": {
+        "required": [
+          "queueItems",
+          "id",
+          "note",
+          "startedAt",
+          "cancelledAt",
+          "startedBy",
+          "cancelledBy",
+          "openedBy",
+          "customer",
+          "saleTransactionItems",
+          "accountTransactions",
+          "storeTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "queueItems": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonDocument"
+              }
+            ]
+          },
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserListModel"
+          },
+          "cancelledBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "openedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "customer": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "saleTransactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
+          },
+          "accountTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
+          },
+          "storeTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
+            }
+          }
+        }
+      },
       "SaleTransactionReadAllResponse": {
         "required": [
           "data",
@@ -5851,6 +6056,97 @@
           }
         }
       },
+      "SaleTransactionReadResponse": {
+        "required": [
+          "id",
+          "note",
+          "startedAt",
+          "cancelledAt",
+          "startedBy",
+          "cancelledBy",
+          "openedBy",
+          "customer",
+          "saleTransactionItems",
+          "accountTransactions",
+          "storeTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserListModel"
+          },
+          "cancelledBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "openedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "customer": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "saleTransactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
+          },
+          "accountTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
+          },
+          "storeTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
+            }
+          }
+        }
+      },
       "SaleTransactionUpdateRequestModel": {
         "required": [
           "storeId"
@@ -5872,6 +6168,108 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SaleTransactionItemCreateRequest"
+            }
+          }
+        }
+      },
+      "SaleTransactionUpdateResponse": {
+        "required": [
+          "queueItems",
+          "id",
+          "note",
+          "startedAt",
+          "cancelledAt",
+          "startedBy",
+          "cancelledBy",
+          "openedBy",
+          "customer",
+          "saleTransactionItems",
+          "accountTransactions",
+          "storeTransactions"
+        ],
+        "type": "object",
+        "properties": {
+          "queueItems": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonDocument"
+              }
+            ]
+          },
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": "number",
+            "format": "number"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "startedBy": {
+            "$ref": "#/components/schemas/UserListModel"
+          },
+          "cancelledBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "openedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "customer": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserListModel"
+              }
+            ]
+          },
+          "saleTransactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleTransactionItemModel"
+            }
+          },
+          "accountTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountTransactionModel"
+            }
+          },
+          "storeTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTransactionListModel"
             }
           }
         }

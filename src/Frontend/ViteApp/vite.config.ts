@@ -41,6 +41,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace("/kis-fe", ""),
       },
+      "/kis-fe/signout-callback-oidc": {
+        target: "http://127.0.0.1:7002",
+        changeOrigin: true,
+        rewrite: (path) => path.replace("/kis-fe", ""),
+      },
     },
   },
   build: {

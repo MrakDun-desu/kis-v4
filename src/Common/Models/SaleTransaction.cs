@@ -1,3 +1,4 @@
+using System.Text.Json;
 using KisV4.Common.ModelWrappers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +43,8 @@ public record SaleTransactionReadAllResponse : PagedResponse<SaleTransactionList
     public DateTimeOffset? To { get; init; }
 }
 
+public record SaleTransactionReadResponse : SaleTransactionDetailModel;
+
 public record SaleTransactionCheckPriceRequest {
     public required SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
 }
@@ -66,10 +69,18 @@ public record SaleTransactionCreateRequest {
     public required bool SellForFree { get; init; }
 }
 
+public record SaleTransactionCreateResponse : SaleTransactionDetailModel {
+    public required JsonDocument? QueueItems { get; init; }
+}
+
 public record SaleTransactionOpenRequest {
     public string? Note { get; init; }
     public required int StoreId { get; init; }
     public SaleTransactionItemCreateRequest[] SaleTransactionItems { get; init; } = [];
+}
+
+public record SaleTransactionOpenResponse : SaleTransactionDetailModel {
+    public required JsonDocument? QueueItems { get; init; }
 }
 
 public record SaleTransactionUpdateRequestModel {
@@ -83,6 +94,10 @@ public record SaleTransactionUpdateRequest {
     public required int Id { get; init; }
     [FromBody]
     public required SaleTransactionUpdateRequestModel Model { get; init; }
+}
+
+public record SaleTransactionUpdateResponse : SaleTransactionDetailModel {
+    public required JsonDocument? QueueItems { get; init; }
 }
 
 public record SaleTransactionCloseRequestModel {
@@ -99,6 +114,8 @@ public record SaleTransactionCloseRequest {
     [FromBody]
     public required SaleTransactionCloseRequestModel Model { get; init; }
 }
+
+public record SaleTransactionCloseResponse : SaleTransactionDetailModel;
 
 public record SaleTransactionDeleteRequest {
     [FromRoute]

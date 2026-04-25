@@ -35,7 +35,9 @@ builder.Services
             "fpo",
             "offline_access",
             "rfid:legacy:r",
-            "rfid:pool:w"
+            "rfid:pool:w",
+            "kf:r",
+            "kf:w"
         ];
         foreach (var scope in requiredScopes) {
             options.Scope.Add(scope);

@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using FluentValidation;
 using KisV4.BL.EF.Services;
-using KisV4.Common;
 using KisV4.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -53,7 +52,7 @@ public static class SaleTransactions {
     }
 
     public static async Task<Results<
-        Ok<SaleTransactionDetailModel>,
+        Ok<SaleTransactionReadResponse>,
         NotFound
     >> Read(
         int id,
@@ -68,7 +67,7 @@ public static class SaleTransactions {
     }
 
     public static async Task<Results<
-        CreatedAtRoute<SaleTransactionDetailModel>,
+        CreatedAtRoute<SaleTransactionCreateResponse>,
         ValidationProblem
     >> Create(
         SaleTransactionCreateRequest req,
@@ -93,7 +92,7 @@ public static class SaleTransactions {
     }
 
     public static async Task<Results<
-        CreatedAtRoute<SaleTransactionDetailModel>,
+        CreatedAtRoute<SaleTransactionOpenResponse>,
         ValidationProblem
     >> Open(
         SaleTransactionOpenRequest req,
@@ -106,7 +105,7 @@ public static class SaleTransactions {
     }
 
     public static async Task<Results<
-        Ok<SaleTransactionDetailModel>,
+        Ok<SaleTransactionUpdateResponse>,
         NotFound,
         ValidationProblem,
         ForbidHttpResult
@@ -125,7 +124,7 @@ public static class SaleTransactions {
     }
 
     public static async Task<Results<
-        Ok<SaleTransactionDetailModel>,
+        Ok<SaleTransactionCloseResponse>,
         NotFound,
         ValidationProblem,
         ForbidHttpResult

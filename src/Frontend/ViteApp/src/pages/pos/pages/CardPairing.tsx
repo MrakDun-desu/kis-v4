@@ -2,12 +2,14 @@ import { Box, Button, Typography } from "@mui/material";
 import { useReader } from "../../../contexts/ReaderContext";
 import { useEffect, useState } from "react";
 import { useLoading } from "../../../contexts/LoadingContext";
+import { useSnackbar } from "../../../contexts/SnackbarContext";
 
 const CardPairing = () => {
   const { readerState, requestCard, addReadListener } = useReader();
   const [pairingId, setPairingId] = useState<string>();
   const [newCard, setNewCard] = useState<boolean>();
   const { startLoading, stopLoading } = useLoading();
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     const removeListener = addReadListener(async (evt) => {
@@ -79,6 +81,41 @@ const CardPairing = () => {
           <Typography variant="h3" textAlign="center">
             {pairingId}
           </Typography>
+
+          <Button
+            variant="outlined"
+            size="large"
+            sx={{ alignSelf: "center", fontSize: 20 }}
+            onClick={async () => {
+              if (pairingId === undefined) {
+                return;
+              }
+              startLoading();
+              try {
+                const res = await fetch(
+                  `/food/pairing_code/${pairingId}/print`,
+                  {
+                    method: "POST",
+                    headers: {
+                      "X-CSRF": "1",
+                    },
+                  },
+                );
+
+                if (res.ok) {
+                  showSnackbar("Požadavka na tištení přijata", "success");
+                } else {
+                  showSnackbar("Chyba v požadavku");
+                }
+              } catch (err) {
+                showSnackbar("Chyba v požadavku");
+                console.error(err);
+              }
+              stopLoading();
+            }}
+          >
+            Vytiskni kód
+          </Button>
 
           <Button
             variant="outlined"

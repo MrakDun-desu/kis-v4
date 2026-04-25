@@ -2,14 +2,14 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Box, Button, Skeleton, Typography } from "@mui/material";
 import SaleTransactionItemListView from "../../../components/views/SaleTransactionItemListView";
-import type { SaleTransactionDetailModel } from "../../../api/apiTypes";
 import { apiClient } from "../../../api/apiClient";
 import handleApiError from "../../../errorHandling/apiResponseHandler";
 import AccountTransactionListView from "../../../components/views/AccountTransactionListView";
+import type { SaleTransactionReadResponse } from "../../../api/apiTypes";
 
 const SaleTransactionDetail = () => {
   const [saleTransaction, setSaleTransaction] =
-    useState<SaleTransactionDetailModel>();
+    useState<SaleTransactionReadResponse>();
   const [refreshCounter, setRefreshCounter] = useState(0);
   const { id } = useParams();
 

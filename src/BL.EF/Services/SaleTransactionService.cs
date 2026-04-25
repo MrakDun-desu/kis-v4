@@ -1,3 +1,4 @@
+using System.Text.Json;
 using KisV4.BL.EF.Mapping;
 using KisV4.Common.Authorization;
 using KisV4.Common.DependencyInjection;
@@ -14,13 +15,15 @@ public class SaleTransactionService(
     TimeProvider timeProvider,
     UserService userService,
     SaleTransactionRequestState state,
-    ContainerChangeService containerChangeService
+    ContainerChangeService containerChangeService,
+    KisFoodService kisFoodService
 ) : IScopedService {
     private readonly KisDbContext _dbContext = dbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
     private readonly UserService _userService = userService;
     private readonly SaleTransactionRequestState _state = state;
     private readonly ContainerChangeService _containerChangeService = containerChangeService;
+    private readonly KisFoodService _kisFoodService = kisFoodService;
 
     public async Task<SaleTransactionReadAllResponse> ReadAllAsync(
         SaleTransactionReadAllRequest req,
@@ -77,7 +80,7 @@ public class SaleTransactionService(
         );
     }
 
-    public async Task<SaleTransactionDetailModel?> ReadAsync(
+    public async Task<SaleTransactionReadResponse?> ReadAsync(
         int id,
         CancellationToken token = default
     ) {
@@ -109,7 +112,7 @@ public class SaleTransactionService(
             return null;
         }
 
-        return new SaleTransactionDetailModel {
+        return new SaleTransactionReadResponse {
             Id = entity.Id,
             Note = entity.Note,
             StartedAt = entity.StartedAt,
@@ -144,7 +147,7 @@ public class SaleTransactionService(
         };
     }
 
-    public async Task<SaleTransactionDetailModel> CreateAsync(
+    public async Task<SaleTransactionCreateResponse> CreateAsync(
         SaleTransactionCreateRequest req,
         string userId,
         CancellationToken token = default
@@ -201,8 +204,16 @@ public class SaleTransactionService(
             await _dbContext.SaveChangesAsync(token);
             var user = await _userService.GetAsync(userId, token);
 
+            var foodResponse = await SendToFoodAsync(
+                entity.SaleTransactionItems,
+                storeTransaction.Id,
+                customer.Nick!,
+                entity.Note
+            );
+
             await dbTransaction.CommitAsync(token);
-            return new SaleTransactionDetailModel {
+
+            return new SaleTransactionCreateResponse {
                 Id = entity.Id,
                 Note = entity.Note,
                 StartedAt = entity.StartedAt,
@@ -233,7 +244,8 @@ public class SaleTransactionService(
                         _ => throw new ArgumentOutOfRangeException("Nonexistent account type")
                     }
                 }),
-                SaleTransactionItems = saleTransactionItems.Select(sti => sti.ToModel(composites))
+                SaleTransactionItems = saleTransactionItems.Select(sti => sti.ToModel(composites)),
+                QueueItems = foodResponse
             };
         } catch {
             await dbTransaction.RollbackAsync(token);
@@ -285,7 +297,7 @@ public class SaleTransactionService(
         };
     }
 
-    public async Task<SaleTransactionDetailModel> OpenAsync(
+    public async Task<SaleTransactionOpenResponse> OpenAsync(
         SaleTransactionOpenRequest req,
         string userId,
         CancellationToken token = default
@@ -311,9 +323,16 @@ public class SaleTransactionService(
 
             var user = await _userService.GetAsync(userId);
 
+            var foodResponse = await SendToFoodAsync(
+                saleTransactionItems,
+                storeTransaction.Id,
+                string.Empty,
+                entity.Note
+            );
+
             await dbTransaction.CommitAsync(token);
 
-            return new SaleTransactionDetailModel {
+            return new SaleTransactionOpenResponse {
                 Id = entity.Id,
                 Note = entity.Note,
                 StartedAt = entity.StartedAt,
@@ -324,7 +343,8 @@ public class SaleTransactionService(
                 Customer = null,
                 StoreTransactions = [storeTransaction.ToModel()],
                 AccountTransactions = [],
-                SaleTransactionItems = saleTransactionItems.Select(sti => sti.ToModel(composites))
+                SaleTransactionItems = saleTransactionItems.Select(sti => sti.ToModel(composites)),
+                QueueItems = foodResponse
             };
         } catch {
             await dbTransaction.RollbackAsync(token);
@@ -332,7 +352,7 @@ public class SaleTransactionService(
         }
     }
 
-    public async Task<SaleTransactionDetailModel?> UpdateAsync(
+    public async Task<SaleTransactionUpdateResponse?> UpdateAsync(
         SaleTransactionUpdateRequest req,
         string userId,
         CancellationToken token = default
@@ -385,9 +405,16 @@ public class SaleTransactionService(
 
             await StoreTransactionService.CreateInternalAsync(storeTransaction, userId, _dbContext, reqTime, token);
 
+            var foodResponse = await SendToFoodAsync(
+                entity.SaleTransactionItems,
+                storeTransaction.Id,
+                string.Empty,
+                entity.Note
+            );
+
             await dbTransaction.CommitAsync(token);
 
-            return new SaleTransactionDetailModel {
+            return new SaleTransactionUpdateResponse {
                 Id = entity.Id,
                 Note = entity.Note,
                 StartedAt = entity.StartedAt,
@@ -399,7 +426,8 @@ public class SaleTransactionService(
                 StoreTransactions = entity.StoreTransactions.Select(st => st.ToModel()),
                 // in update, account transactions should always be empty
                 AccountTransactions = [],
-                SaleTransactionItems = entity.SaleTransactionItems.Select(sti => sti.ToModel())
+                SaleTransactionItems = entity.SaleTransactionItems.Select(sti => sti.ToModel()),
+                QueueItems = foodResponse
             };
         } catch {
             await dbTransaction.RollbackAsync(token);
@@ -407,7 +435,7 @@ public class SaleTransactionService(
         }
     }
 
-    public async Task<SaleTransactionDetailModel?> CloseAsync(
+    public async Task<SaleTransactionCloseResponse?> CloseAsync(
         SaleTransactionCloseRequest req,
         string userId,
         CancellationToken token = default
@@ -500,7 +528,7 @@ public class SaleTransactionService(
             await _dbContext.SaveChangesAsync(token);
             await dbTransaction.CommitAsync(token);
 
-            return new SaleTransactionDetailModel {
+            return new SaleTransactionCloseResponse {
                 Id = entity.Id,
                 Note = entity.Note,
                 StartedAt = entity.StartedAt,
@@ -863,5 +891,20 @@ public class SaleTransactionService(
         }
 
         return storeTransaction;
+    }
+
+    private async Task<JsonDocument?> SendToFoodAsync(
+        IEnumerable<SaleTransactionItem> transactionItems,
+        int storeTransactionId,
+        string customerName,
+        string? note
+    ) {
+        return await _kisFoodService.CreateFoodOrder(new() {
+            CustomerName = customerName,
+            OrderId = storeTransactionId.ToString(),
+            OrderNote = note,
+            ProductIds = transactionItems.Select(sti => sti.SaleItemId).ToArray(),
+            ProductQuantities = transactionItems.Select(sti => sti.Amount).ToArray()
+        });
     }
 }

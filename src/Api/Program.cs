@@ -4,9 +4,11 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Audit.EntityFramework.Providers;
+using Duende.AccessTokenManagement;
 using KisV4.Api.Endpoints;
 using KisV4.Api.Middlewares;
 using KisV4.BL.EF;
+using KisV4.Common.Authorization;
 using KisV4.Common.Models;
 using KisV4.DAL.EF;
 using KisV4.DAL.EF.Entities;
@@ -31,8 +33,11 @@ builder.Services.AddCors(opts => {
             .AllowAnyMethod());
 });
 
+var kisSettings = builder.Configuration.GetRequiredSection("Kis").Get<KisSettings>()!;
+builder.Services.Configure<KisSettings>(builder.Configuration.GetRequiredSection("Kis"));
+
 // Auth
-const string oidcAuthority = "https://su-dev.fit.vutbr.cz/";
+var oidcAuthority = kisSettings.AuthUrl;
 var allowTestingTokens = args.Contains("--testing-auth");
 builder.Services.AddAuthentication(allowTestingTokens ? "Bearer" : "oidc")
     .AddJwtBearer("Bearer")
@@ -152,6 +157,23 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 builder.Services.AddMemoryCache();
 
+// HTTP client for accessing KIS Food with the client access token
+builder.Services.AddClientCredentialsTokenManagement()
+       .AddClient(AuthorizationConstants.KisFoodHttpClientName, client => {
+           client.TokenEndpoint = new Uri(kisSettings.AuthUrl + "connect/token");
+           client.ClientId = ClientId.Parse(kisSettings.ClientId);
+           client.ClientSecret = ClientSecret.Parse(kisSettings.ClientSecret);
+           client.Scope = Duende.AccessTokenManagement.Scope.Parse("kf:w");
+       });
+builder.Services.AddClientCredentialsHttpClient(
+        AuthorizationConstants.KisFoodHttpClientName,
+        ClientCredentialsClientName.Parse(AuthorizationConstants.KisFoodHttpClientName),
+    client => {
+        client.BaseAddress = new Uri(
+            kisSettings.FoodUrl ?? $"{kisSettings.AuthUrl}food"
+        );
+    });
+
 // Time
 builder.Services.AddSingleton(TimeProvider.System);
 
@@ -173,6 +195,12 @@ if (args.Contains("--test-seed")) {
     Audit.Core.Configuration.AuditDisabled = true;
     seeder.Seed();
     Audit.Core.Configuration.AuditDisabled = false;
+}
+
+if (args.Contains("--migrate-db")) {
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<KisDbContext>();
+    dbContext.Database.EnsureCreated();
 }
 
 // Auditing
