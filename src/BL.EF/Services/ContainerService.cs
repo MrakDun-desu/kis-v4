@@ -96,6 +96,7 @@ public class ContainerService(
                         Id = si.Id,
                         Name = si.Name,
                         Image = si.Image,
+                        TriggerTablePicker = si.TriggerTablePicker,
                         CurrentCost = Math.Round(si.Compositions
                             .Sum(c => c.Amount * c.StoreItem!.CurrentCost)
                             * (si.MarginPercent * 0.01m + 1m) + si.MarginStatic, 2),

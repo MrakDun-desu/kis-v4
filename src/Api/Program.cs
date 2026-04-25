@@ -188,6 +188,12 @@ builder.Services.AddExceptionHandler<ExceptionHandlerMiddleware>();
 var app = builder.Build();
 
 // Seeding
+if (args.Contains("--migrate-db")) {
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<KisDbContext>();
+    dbContext.Database.EnsureCreated();
+}
+
 if (args.Contains("--test-seed")) {
     using var scope = app.Services.CreateScope();
     var seeder = scope.ServiceProvider.GetRequiredService<TestSeeder>();
@@ -195,12 +201,6 @@ if (args.Contains("--test-seed")) {
     Audit.Core.Configuration.AuditDisabled = true;
     seeder.Seed();
     Audit.Core.Configuration.AuditDisabled = false;
-}
-
-if (args.Contains("--migrate-db")) {
-    using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<KisDbContext>();
-    dbContext.Database.EnsureCreated();
 }
 
 // Auditing

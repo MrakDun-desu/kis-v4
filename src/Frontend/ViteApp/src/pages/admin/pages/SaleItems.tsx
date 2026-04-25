@@ -12,10 +12,9 @@ import {
 import { getGridStringOperators } from "@mui/x-data-grid";
 import { csCZ } from "@mui/x-data-grid/locales";
 import { useNavigate } from "react-router-dom";
-import { printTypes } from "../../../constants/printTypes";
 import CategoryFilter from "../../../components/filters/CategoryFilter";
 import SaleItemCreateForm from "../../../components/forms/SaleItemCreateForm";
-import type { SaleItemListModel, PrintType } from "../../../api/apiTypes";
+import type { SaleItemListModel } from "../../../api/apiTypes";
 import type { operations } from "../../../api/apiSchema";
 import { apiClient } from "../../../api/apiClient";
 import handleApiError from "../../../errorHandling/apiResponseHandler";
@@ -106,14 +105,23 @@ const SaleItems = () => {
     },
 
     {
-      field: "printType",
-      headerName: "Tisknout?",
-      type: "string",
+      field: "triggerTablePicker",
+      headerName: "Zobrazit při prodeji výběr stolu",
+      type: "boolean",
       sortable: false,
       filterable: false,
       editable: false,
       flex: 1,
-      valueFormatter: (value: PrintType) => printTypes[value],
+    },
+
+    {
+      field: "sendToFood",
+      headerName: "Dlouhá příprava",
+      type: "boolean",
+      sortable: false,
+      filterable: false,
+      editable: false,
+      flex: 1,
     },
 
     {

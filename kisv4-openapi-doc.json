@@ -5108,14 +5108,6 @@
           }
         }
       },
-      "PrintType": {
-        "enum": [
-          "DontPrint",
-          "PrintForCustomer",
-          "PrintForEmployee",
-          "PrintForBoth"
-        ]
-      },
       "SaleItemContainerModel": {
         "required": [
           "id",
@@ -5123,7 +5115,8 @@
           "image",
           "currentCost",
           "amountInStore",
-          "amountInContainer"
+          "amountInContainer",
+          "triggerTablePicker"
         ],
         "type": "object",
         "properties": {
@@ -5155,12 +5148,17 @@
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": "string",
             "format": "string"
+          },
+          "triggerTablePicker": {
+            "type": "boolean"
           }
         }
       },
       "SaleItemCreateRequest": {
         "required": [
-          "name"
+          "name",
+          "sendToFood",
+          "triggerTablePicker"
         ],
         "type": "object",
         "properties": {
@@ -5192,9 +5190,11 @@
             "format": "string",
             "default": 0
           },
-          "printType": {
-            "default": "DontPrint",
-            "$ref": "#/components/schemas/PrintType"
+          "sendToFood": {
+            "type": "boolean"
+          },
+          "triggerTablePicker": {
+            "type": "boolean"
           },
           "categoryIds": {
             "type": "array",
@@ -5219,10 +5219,12 @@
           "id",
           "name",
           "image",
+          "currentCost",
           "marginPercent",
           "marginStatic",
           "prestigeAmount",
-          "printType",
+          "sendToFood",
+          "triggerTablePicker",
           "applicableModifiers",
           "categories"
         ],
@@ -5242,6 +5244,11 @@
               "string"
             ]
           },
+          "currentCost": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          },
           "marginPercent": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": "string",
@@ -5257,8 +5264,11 @@
             "type": "string",
             "format": "string"
           },
-          "printType": {
-            "$ref": "#/components/schemas/PrintType"
+          "sendToFood": {
+            "type": "boolean"
+          },
+          "triggerTablePicker": {
+            "type": "boolean"
           },
           "applicableModifiers": {
             "type": "array",
@@ -5282,7 +5292,8 @@
           "marginPercent",
           "marginStatic",
           "prestigeAmount",
-          "printType"
+          "sendToFood",
+          "triggerTablePicker"
         ],
         "type": "object",
         "properties": {
@@ -5315,8 +5326,11 @@
             "type": "string",
             "format": "string"
           },
-          "printType": {
-            "$ref": "#/components/schemas/PrintType"
+          "sendToFood": {
+            "type": "boolean"
+          },
+          "triggerTablePicker": {
+            "type": "boolean"
           }
         }
       },
@@ -5326,7 +5340,8 @@
           "name",
           "image",
           "currentCost",
-          "amountInStore"
+          "amountInStore",
+          "triggerTablePicker"
         ],
         "type": "object",
         "properties": {
@@ -5353,6 +5368,9 @@
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": "string",
             "format": "string"
+          },
+          "triggerTablePicker": {
+            "type": "boolean"
           }
         }
       },
@@ -5379,10 +5397,12 @@
           "id",
           "name",
           "image",
+          "currentCost",
           "marginPercent",
           "marginStatic",
           "prestigeAmount",
-          "printType",
+          "sendToFood",
+          "triggerTablePicker",
           "applicableModifiers",
           "categories"
         ],
@@ -5402,6 +5422,11 @@
               "string"
             ]
           },
+          "currentCost": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          },
           "marginPercent": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": "string",
@@ -5417,8 +5442,11 @@
             "type": "string",
             "format": "string"
           },
-          "printType": {
-            "$ref": "#/components/schemas/PrintType"
+          "sendToFood": {
+            "type": "boolean"
+          },
+          "triggerTablePicker": {
+            "type": "boolean"
           },
           "applicableModifiers": {
             "type": "array",
@@ -5436,7 +5464,9 @@
       },
       "SaleItemUpdateModel": {
         "required": [
-          "name"
+          "name",
+          "sendToFood",
+          "triggerTablePicker"
         ],
         "type": "object",
         "properties": {
@@ -5468,9 +5498,11 @@
             "format": "string",
             "default": 0
           },
-          "printType": {
-            "default": "DontPrint",
-            "$ref": "#/components/schemas/PrintType"
+          "sendToFood": {
+            "type": "boolean"
+          },
+          "triggerTablePicker": {
+            "type": "boolean"
           },
           "categoryIds": {
             "type": "array",
@@ -5495,10 +5527,12 @@
           "id",
           "name",
           "image",
+          "currentCost",
           "marginPercent",
           "marginStatic",
           "prestigeAmount",
-          "printType",
+          "sendToFood",
+          "triggerTablePicker",
           "applicableModifiers",
           "categories"
         ],
@@ -5518,6 +5552,11 @@
               "string"
             ]
           },
+          "currentCost": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": "string",
+            "format": "string"
+          },
           "marginPercent": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": "string",
@@ -5533,8 +5572,11 @@
             "type": "string",
             "format": "string"
           },
-          "printType": {
-            "$ref": "#/components/schemas/PrintType"
+          "sendToFood": {
+            "type": "boolean"
+          },
+          "triggerTablePicker": {
+            "type": "boolean"
           },
           "applicableModifiers": {
             "type": "array",

@@ -105,12 +105,14 @@ const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
           error={!!errors.name}
           helperText={errors.name?.message}
         />
+
         <TextField
           label="Název jednotky"
           {...register("unitName")}
           error={!!errors.unitName}
           helperText={errors.unitName?.message}
         />
+
         <FormControl>
           <InputLabel id="categorySelect">Kategorie</InputLabel>
           <Controller
@@ -135,10 +137,12 @@ const StoreItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
             )}
           />
         </FormControl>
+
         <FormControlLabel
           label="Kegová položka"
           control={<Checkbox {...register("isContainerItem")} />}
         />
+
         <TextField
           label="Počáteční cena"
           {...register("initialCost")}

@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import {
   Box,
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -15,13 +18,11 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
 import validationConstants from "../../../constants/validationConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { printTypes } from "../../../constants/printTypes";
 import { useLoading } from "../../../contexts/LoadingContext";
 import CompositionListView from "../../../components/views/CompositionListView";
 import CompositionCreateForm from "../../../components/forms/CompositionCreateForm";
 import type {
   CategoryModel,
-  PrintType,
   SaleItemReadResponse,
   SaleItemUpdateModel,
 } from "../../../api/apiTypes";
@@ -52,15 +53,17 @@ const ValidationSchema = z.object({
     .string()
     .regex(validationConstants.numberRegex, "Prestiž musí být číslo")
     .refine((val) => Number(val) >= 0, "Prestiž musí být větší/rovna nule"),
-  printType: z.custom<PrintType>(),
   modifierIds: z.array(z.number()).optional(),
   categoryIds: z.array(z.number()).optional(),
+  triggerTablePicker: z.boolean(),
+  sendToFood: z.boolean(),
 });
 
 const SaleItemDetail = () => {
   const [saleItem, setSaleItem] = useState<SaleItemReadResponse>();
   const [categories, setCategories] = useState<CategoryModel[]>();
   const [compositionRefreshCounter, setCompositionRefreshCounter] = useState(0);
+  const [saleItemRefreshCounter, setSaleItemRefreshCounter] = useState(0);
   const { startLoading, stopLoading } = useLoading();
   const { id } = useParams();
 
@@ -69,6 +72,7 @@ const SaleItemDetail = () => {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<SaleItemUpdateModel>({
     values: !saleItem
       ? {
@@ -77,9 +81,10 @@ const SaleItemDetail = () => {
           marginPercent: "0",
           marginStatic: "0.00",
           prestigeAmount: "0",
-          printType: "DontPrint",
           categoryIds: [],
           modifierIds: [],
+          triggerTablePicker: false,
+          sendToFood: false,
         }
       : {
           name: saleItem.name,
@@ -87,12 +92,16 @@ const SaleItemDetail = () => {
           marginPercent: String(saleItem.marginPercent),
           marginStatic: String(saleItem.marginStatic),
           prestigeAmount: String(saleItem.prestigeAmount),
-          printType: saleItem.printType,
+          triggerTablePicker: saleItem.triggerTablePicker,
+          sendToFood: saleItem.sendToFood,
           categoryIds: saleItem.categories.map((cat) => cat.id),
           modifierIds: saleItem.applicableModifiers.map((mod) => mod.id),
         },
     resolver: zodResolver(ValidationSchema),
   });
+
+  const sendToFood = watch("sendToFood");
+  const triggerTablePicker = watch("triggerTablePicker");
 
   useEffect(() => {
     const getSaleItem = async () => {
@@ -105,7 +114,8 @@ const SaleItemDetail = () => {
       }
     };
     getSaleItem();
-  }, []);
+  }, [saleItemRefreshCounter]);
+
   useEffect(() => {
     const getCategories = async () => {
       const { response, data } = await apiClient.GET("/categories");
@@ -187,20 +197,39 @@ const SaleItemDetail = () => {
                 error={!!errors.name}
                 helperText={errors?.name?.message}
               />
+
+              <Typography>Aktuální cena: {saleItem.currentCost} kč</Typography>
+
               <TextField
                 fullWidth
                 label="Procentuální marže"
                 {...register("marginPercent")}
                 error={!!errors.marginPercent}
                 helperText={errors.marginPercent?.message}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">%</InputAdornment>
+                    ),
+                  },
+                }}
               />
+
               <TextField
                 fullWidth
                 label="Statická marže"
                 {...register("marginStatic")}
                 error={!!errors.marginStatic}
                 helperText={errors.marginStatic?.message}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">kč</InputAdornment>
+                    ),
+                  },
+                }}
               />
+
               <TextField
                 fullWidth
                 label="Prestiž"
@@ -208,21 +237,24 @@ const SaleItemDetail = () => {
                 error={!!errors.prestigeAmount}
                 helperText={errors.prestigeAmount?.message}
               />
-              <FormControl fullWidth>
-                <InputLabel id="printType">Tisknout?</InputLabel>
-                <Select
-                  label="Tisknout?"
-                  labelId="printType"
-                  defaultValue="DontPrint"
-                  {...register("printType")}
-                >
-                  {Object.keys(printTypes).map((x) => (
-                    <MenuItem value={x} key={x}>
-                      {printTypes[x as PrintType]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+
+              <FormControlLabel
+                label="Zobrazit při prodeji výběr stolu"
+                control={
+                  <Checkbox
+                    {...register("triggerTablePicker")}
+                    checked={triggerTablePicker}
+                  />
+                }
+              />
+
+              <FormControlLabel
+                label="Dlouhá příprava"
+                control={
+                  <Checkbox {...register("sendToFood")} checked={sendToFood} />
+                }
+              />
+
               <FormControl fullWidth>
                 <InputLabel id="categorySelect">Kategorie</InputLabel>
                 <Controller
@@ -247,6 +279,7 @@ const SaleItemDetail = () => {
                   )}
                 />
               </FormControl>
+
               <Button type="submit" variant="contained">
                 Uložit změny
               </Button>
@@ -274,7 +307,10 @@ const SaleItemDetail = () => {
           />
           <CompositionCreateForm
             compositeId={Number(id)}
-            afterSubmit={() => setCompositionRefreshCounter((val) => val + 1)}
+            afterSubmit={() => {
+              setCompositionRefreshCounter((val) => val + 1);
+              setSaleItemRefreshCounter((val) => val + 1);
+            }}
           />
         </Box>
       </Box>

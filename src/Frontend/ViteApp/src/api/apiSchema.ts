@@ -1257,8 +1257,6 @@ export interface components {
             /** Format: number */
             total: number;
         };
-        /** @enum {unknown} */
-        PrintType: "DontPrint" | "PrintForCustomer" | "PrintForEmployee" | "PrintForBoth";
         SaleItemContainerModel: {
             /** Format: number */
             id: number;
@@ -1270,6 +1268,7 @@ export interface components {
             amountInStore: string;
             /** Format: string */
             amountInContainer: string;
+            triggerTablePicker: boolean;
         };
         SaleItemCreateRequest: {
             /** @default Kofola */
@@ -1290,8 +1289,8 @@ export interface components {
              * @default 0
              */
             prestigeAmount: string;
-            /** @default DontPrint */
-            printType: components["schemas"]["PrintType"];
+            sendToFood: boolean;
+            triggerTablePicker: boolean;
             categoryIds?: number[];
             modifierIds?: number[];
         };
@@ -1301,12 +1300,15 @@ export interface components {
             name: string;
             image: null | string;
             /** Format: string */
+            currentCost: string;
+            /** Format: string */
             marginPercent: string;
             /** Format: string */
             marginStatic: string;
             /** Format: string */
             prestigeAmount: string;
-            printType: components["schemas"]["PrintType"];
+            sendToFood: boolean;
+            triggerTablePicker: boolean;
             applicableModifiers: components["schemas"]["ModifierListModel"][];
             categories: components["schemas"]["CategoryModel"][];
         };
@@ -1321,7 +1323,8 @@ export interface components {
             marginStatic: string;
             /** Format: string */
             prestigeAmount: string;
-            printType: components["schemas"]["PrintType"];
+            sendToFood: boolean;
+            triggerTablePicker: boolean;
         };
         SaleItemOperatorModel: {
             /** Format: number */
@@ -1332,6 +1335,7 @@ export interface components {
             currentCost: string;
             /** Format: string */
             amountInStore: string;
+            triggerTablePicker: boolean;
         };
         SaleItemReadAllResponse: {
             data: components["schemas"]["SaleItemListModel"][];
@@ -1343,12 +1347,15 @@ export interface components {
             name: string;
             image: null | string;
             /** Format: string */
+            currentCost: string;
+            /** Format: string */
             marginPercent: string;
             /** Format: string */
             marginStatic: string;
             /** Format: string */
             prestigeAmount: string;
-            printType: components["schemas"]["PrintType"];
+            sendToFood: boolean;
+            triggerTablePicker: boolean;
             applicableModifiers: components["schemas"]["ModifierListModel"][];
             categories: components["schemas"]["CategoryModel"][];
         };
@@ -1371,8 +1378,8 @@ export interface components {
              * @default 0
              */
             prestigeAmount: string;
-            /** @default DontPrint */
-            printType: components["schemas"]["PrintType"];
+            sendToFood: boolean;
+            triggerTablePicker: boolean;
             categoryIds?: number[];
             modifierIds?: number[];
         };
@@ -1382,12 +1389,15 @@ export interface components {
             name: string;
             image: null | string;
             /** Format: string */
+            currentCost: string;
+            /** Format: string */
             marginPercent: string;
             /** Format: string */
             marginStatic: string;
             /** Format: string */
             prestigeAmount: string;
-            printType: components["schemas"]["PrintType"];
+            sendToFood: boolean;
+            triggerTablePicker: boolean;
             applicableModifiers: components["schemas"]["ModifierListModel"][];
             categories: components["schemas"]["CategoryModel"][];
         };

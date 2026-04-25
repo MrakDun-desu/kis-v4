@@ -14,8 +14,11 @@ public class KisFoodService : IScopedService {
         _httpClient = httpClientFactory.CreateClient(AuthorizationConstants.KisFoodHttpClientName);
     }
 
-    public async Task<KisFoodQueueItemDetails[]?> CreateFoodOrder(KisFoodOrderRequest req) {
-        var kisFoodResponse = await _httpClient.PostAsJsonAsync("order", req);
+    public async Task<KisFoodQueueItemDetails[]?> CreateFoodOrder(
+        KisFoodOrderRequest req,
+        CancellationToken token = default
+    ) {
+        var kisFoodResponse = await _httpClient.PostAsJsonAsync("order", req, token);
 
         if (!kisFoodResponse.IsSuccessStatusCode) {
             return null;

@@ -36,7 +36,8 @@ public class SaleItemService(
                     MarginPercent = si.MarginPercent,
                     MarginStatic = si.MarginStatic,
                     PrestigeAmount = si.PrestigeAmount,
-                    PrintType = si.PrintType
+                    SendToFood = si.SendToFood,
+                    TriggerTablePicker = si.TriggerTablePicker
                 },
                 (data, meta) => new SaleItemReadAllResponse { Data = data, Meta = meta },
                 si => si.Id,
@@ -51,6 +52,8 @@ public class SaleItemService(
         return await _dbContext.SaleItems
             .Include(si => si.Categories)
             .Include(si => si.ApplicableModifiers)
+            .Include(si => si.Compositions)
+            .ThenInclude(c => c.StoreItem)
             .AsSplitQuery()
             .Select(si => new SaleItemReadResponse {
                 Id = si.Id,
@@ -59,9 +62,13 @@ public class SaleItemService(
                 MarginPercent = si.MarginPercent,
                 MarginStatic = si.MarginStatic,
                 PrestigeAmount = si.PrestigeAmount,
-                PrintType = si.PrintType,
                 Categories = si.Categories.Select(c => c.ToModel()),
-                ApplicableModifiers = si.ApplicableModifiers.Select(m => m.ToModel())
+                ApplicableModifiers = si.ApplicableModifiers.Select(m => m.ToModel()),
+                SendToFood = si.SendToFood,
+                TriggerTablePicker = si.TriggerTablePicker,
+                CurrentCost = Math.Round(si.Compositions
+                    .Sum(c => c.Amount * c.StoreItem!.CurrentCost)
+                    * (si.MarginPercent * 0.01m + 1m) + si.MarginStatic, 2),
             })
             .FirstOrDefaultAsync(si => si.Id == id, token);
     }
@@ -85,9 +92,10 @@ public class SaleItemService(
             MarginPercent = req.MarginPercent,
             MarginStatic = req.MarginStatic,
             PrestigeAmount = req.PrestigeAmount,
-            PrintType = req.PrintType,
             Categories = categories,
-            ApplicableModifiers = modifiers
+            ApplicableModifiers = modifiers,
+            SendToFood = req.SendToFood,
+            TriggerTablePicker = req.TriggerTablePicker
         };
 
         _dbContext.SaleItems.Add(entity);
@@ -107,9 +115,11 @@ public class SaleItemService(
             MarginPercent = entity.MarginPercent,
             MarginStatic = entity.MarginStatic,
             PrestigeAmount = entity.PrestigeAmount,
-            PrintType = entity.PrintType,
             ApplicableModifiers = entity.ApplicableModifiers.Select(c => c.ToModel()),
-            Categories = entity.Categories.Select(c => c.ToModel())
+            Categories = entity.Categories.Select(c => c.ToModel()),
+            SendToFood = entity.SendToFood,
+            TriggerTablePicker = entity.TriggerTablePicker,
+            CurrentCost = 0m
         };
     }
 
@@ -122,6 +132,8 @@ public class SaleItemService(
         var entity = await _dbContext.SaleItems
             .Include(si => si.Categories)
             .Include(si => si.ApplicableModifiers)
+            .Include(si => si.Compositions)
+            .ThenInclude(c => c.StoreItem)
             .AsSplitQuery()
             .FirstOrDefaultAsync(si => si.Id == id, token);
 
@@ -142,7 +154,8 @@ public class SaleItemService(
         entity.MarginPercent = model.MarginPercent;
         entity.MarginStatic = model.MarginStatic;
         entity.PrestigeAmount = model.PrestigeAmount;
-        entity.PrintType = model.PrintType;
+        entity.SendToFood = model.SendToFood;
+        entity.TriggerTablePicker = model.TriggerTablePicker;
         entity.Categories.Clear();
         foreach (var category in categories) {
             entity.Categories.Add(category);
@@ -162,9 +175,13 @@ public class SaleItemService(
             MarginPercent = entity.MarginPercent,
             MarginStatic = entity.MarginStatic,
             PrestigeAmount = entity.PrestigeAmount,
-            PrintType = entity.PrintType,
             Categories = entity.Categories.Select(c => c.ToModel()),
-            ApplicableModifiers = entity.ApplicableModifiers.Select(m => m.ToModel())
+            ApplicableModifiers = entity.ApplicableModifiers.Select(m => m.ToModel()),
+            SendToFood = entity.SendToFood,
+            TriggerTablePicker = entity.TriggerTablePicker,
+            CurrentCost = Math.Round(entity.Compositions
+                .Sum(c => c.Amount * c.StoreItem!.CurrentCost)
+                * (entity.MarginPercent * 0.01m + 1m) + entity.MarginStatic, 2),
         };
     }
 

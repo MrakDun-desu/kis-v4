@@ -1,4 +1,3 @@
-using System.Text.Json;
 using KisV4.BL.EF.Mapping;
 using KisV4.Common.Authorization;
 using KisV4.Common.DependencyInjection;
@@ -911,14 +910,28 @@ public class SaleTransactionService(
         IEnumerable<SaleTransactionItem> transactionItems,
         int storeTransactionId,
         string customerName,
-        string? note
+        string? note,
+        CancellationToken token = default
     ) {
+
+        var saleItemIds = transactionItems.Select(sti => sti.SaleItemId).ToArray();
+        var relevantSaleItemIds = await _dbContext.SaleItems
+            .Where(si => saleItemIds.Contains(si.Id))
+            .Where(si => si.SendToFood)
+            .Select(si => si.Id)
+            .ToArrayAsync(token);
+
+        var relevantTransactionItems = transactionItems
+            .Where(si => relevantSaleItemIds.Contains(si.SaleItemId))
+            .Select(si => (si.SaleItemId, si.Amount))
+            .ToArray();
+
         return await _kisFoodService.CreateFoodOrder(new() {
             CustomerName = customerName,
             OrderId = storeTransactionId.ToString(),
             OrderNote = note,
-            ProductIds = transactionItems.Select(sti => sti.SaleItemId).ToArray(),
-            ProductQuantities = transactionItems.Select(sti => sti.Amount).ToArray()
-        });
+            ProductIds = relevantTransactionItems.Select(sti => sti.SaleItemId).ToArray(),
+            ProductQuantities = relevantTransactionItems.Select(sti => sti.Amount).ToArray()
+        }, token);
     }
 }

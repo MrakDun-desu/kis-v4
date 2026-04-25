@@ -222,6 +222,7 @@ public class LayoutService(
                     Id = li.TargetId,
                     Image = li.Target!.Image,
                     Name = li.Target.Name,
+                    TriggerTablePicker = li.Target.TriggerTablePicker,
                     AmountInStore = storeId.HasValue
                         ? _dbContext.CompositeAmounts.First(
                             ca => ca.CompositeId == li.TargetId && ca.StoreId == storeId.Value

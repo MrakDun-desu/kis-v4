@@ -14,7 +14,8 @@ public record SaleItemListModel {
     public required decimal MarginPercent { get; init; }
     public required decimal MarginStatic { get; init; }
     public required decimal PrestigeAmount { get; init; }
-    public required PrintType PrintType { get; init; }
+    public required bool SendToFood { get; init; }
+    public required bool TriggerTablePicker { get; init; }
 }
 
 // Used in operator for listing sale items in layouts
@@ -24,6 +25,7 @@ public record SaleItemOperatorModel {
     public required string? Image { get; init; }
     public required decimal CurrentCost { get; init; }
     public required decimal? AmountInStore { get; init; }
+    public required bool TriggerTablePicker { get; init; }
 }
 
 public record SaleItemContainerModel {
@@ -33,6 +35,7 @@ public record SaleItemContainerModel {
     public required decimal CurrentCost { get; init; }
     public required decimal AmountInStore { get; init; }
     public required decimal AmountInContainer { get; init; }
+    public required bool TriggerTablePicker { get; init; }
 }
 
 // Used in admin for detail view (composition is fetched separately)
@@ -40,10 +43,12 @@ public record SaleItemDetailModel {
     public required int Id { get; init; }
     public required string Name { get; init; }
     public required string? Image { get; init; }
+    public required decimal CurrentCost { get; init; }
     public required decimal MarginPercent { get; init; }
     public required decimal MarginStatic { get; init; }
     public required decimal PrestigeAmount { get; init; }
-    public required PrintType PrintType { get; init; }
+    public required bool SendToFood { get; init; }
+    public required bool TriggerTablePicker { get; init; }
     public required IEnumerable<ModifierListModel> ApplicableModifiers { get; init; }
     public required IEnumerable<CategoryModel> Categories { get; init; }
 }
@@ -58,8 +63,8 @@ public record SaleItemUpdateModel {
     public decimal MarginStatic { get; init; }
     [DefaultValue(typeof(decimal), "0")]
     public decimal PrestigeAmount { get; init; }
-    [DefaultValue(PrintType.DontPrint)]
-    public PrintType PrintType { get; init; }
+    public required bool SendToFood { get; init; }
+    public required bool TriggerTablePicker { get; init; }
     [DefaultValue(new int[0])]
     public int[] CategoryIds { get; init; } = [];
     [DefaultValue(new int[0])]
@@ -84,8 +89,8 @@ public record SaleItemCreateRequest {
     public decimal MarginStatic { get; init; }
     [DefaultValue(typeof(decimal), "0")]
     public decimal PrestigeAmount { get; init; }
-    [DefaultValue(PrintType.DontPrint)]
-    public PrintType PrintType { get; init; }
+    public required bool SendToFood { get; init; }
+    public required bool TriggerTablePicker { get; init; }
     [DefaultValue(new int[0])]
     public int[] CategoryIds { get; init; } = [];
     [DefaultValue(new int[0])]

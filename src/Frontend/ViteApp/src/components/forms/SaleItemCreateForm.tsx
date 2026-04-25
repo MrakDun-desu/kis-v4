@@ -3,21 +3,18 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { printTypes } from "../../constants/printTypes";
 import validationConstants from "../../constants/validationConstants";
 import { useLoading } from "../../contexts/LoadingContext";
-import type {
-  PrintType,
-  SaleItemCreateRequest,
-  CategoryModel,
-} from "../../api/apiTypes";
+import type { SaleItemCreateRequest, CategoryModel } from "../../api/apiTypes";
 import { apiClient } from "../../api/apiClient";
 import handleApiError from "../../errorHandling/apiResponseHandler";
 
@@ -45,9 +42,10 @@ const ValidationSchema = z.object({
     .string()
     .regex(validationConstants.numberRegex, "Prestiž musí být číslo")
     .refine((val) => Number(val) >= 0, "Prestiž musí být větší/rovna nule"),
-  printType: z.custom<PrintType>(),
   modifierIds: z.array(z.number()).optional(),
   categoryIds: z.array(z.number()).optional(),
+  triggerTablePicker: z.boolean(),
+  sendToFood: z.boolean(),
 });
 
 const defaultValue: SaleItemCreateRequest = {
@@ -56,7 +54,8 @@ const defaultValue: SaleItemCreateRequest = {
   marginPercent: "0.00",
   marginStatic: "0.00",
   prestigeAmount: "0.00",
-  printType: "DontPrint",
+  triggerTablePicker: false,
+  sendToFood: false,
   modifierIds: [],
   categoryIds: [],
 };
@@ -122,6 +121,7 @@ const SaleItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
           error={!!errors.name}
           helperText={errors.name?.message}
         />
+
         <TextField
           fullWidth
           label="Procentuální marže"
@@ -129,6 +129,7 @@ const SaleItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
           error={!!errors.marginPercent}
           helperText={errors.marginPercent?.message}
         />
+
         <TextField
           fullWidth
           label="Statická marže"
@@ -136,6 +137,7 @@ const SaleItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
           error={!!errors.marginStatic}
           helperText={errors.marginStatic?.message}
         />
+
         <TextField
           fullWidth
           label="Prestiž"
@@ -143,21 +145,17 @@ const SaleItemCreateForm = ({ id, beforeSubmit, afterSubmit }: Props) => {
           error={!!errors.prestigeAmount}
           helperText={errors.prestigeAmount?.message}
         />
-        <FormControl fullWidth>
-          <InputLabel id="printType">Tisknout?</InputLabel>
-          <Select
-            label="Tisknout?"
-            labelId="printType"
-            defaultValue="DontPrint"
-            {...register("printType")}
-          >
-            {Object.keys(printTypes).map((x) => (
-              <MenuItem value={x} key={x}>
-                {printTypes[x as PrintType]}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+
+        <FormControlLabel
+          label="Zobrazit při prodeji výběr stolu"
+          control={<Checkbox {...register("triggerTablePicker")} />}
+        />
+
+        <FormControlLabel
+          label="Dlouhá příprava"
+          control={<Checkbox {...register("sendToFood")} />}
+        />
+
         {/* TODO add image and modifier pickers */}
         <FormControl fullWidth>
           <InputLabel id="categorySelect">Kategorie</InputLabel>

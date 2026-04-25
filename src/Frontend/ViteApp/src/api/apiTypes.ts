@@ -76,7 +76,6 @@ export type ModifierReadResponse = Schemas['ModifierReadResponse'];
 export type ModifierUpdateModel = Schemas['ModifierUpdateModel'];
 export type ModifierUpdateResponse = Schemas['ModifierUpdateResponse'];
 export type PageMeta = Schemas['PageMeta'];
-export type PrintType = Schemas['PrintType'];
 export type SaleItemContainerModel = Schemas['SaleItemContainerModel'];
 export type SaleItemCreateRequest = Schemas['SaleItemCreateRequest'];
 export type SaleItemCreateResponse = Schemas['SaleItemCreateResponse'];

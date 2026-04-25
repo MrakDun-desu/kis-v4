@@ -12,6 +12,7 @@ public static class SaleItemMapping {
             MarginPercent = source.MarginPercent,
             MarginStatic = source.MarginStatic,
             PrestigeAmount = source.PrestigeAmount,
-            PrintType = source.PrintType
+            SendToFood = source.SendToFood,
+            TriggerTablePicker = source.TriggerTablePicker,
         };
 }
