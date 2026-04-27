@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/kis-fe",
+  base: "/kisv4fe",
   server: {
     port: 7003,
     host: "127.0.0.1",
@@ -14,37 +14,37 @@ export default defineConfig({
       "clientPort": 443,
     },
     proxy: {
-      "/kis-fe/bff": {
+      "/kisv4fe/bff": {
         target: "http://127.0.0.1:7002",
         changeOrigin: true,
-        rewrite: (path) => path.replace("/kis-fe", ""),
+        rewrite: (path) => path.replace("/kisv4fe", ""),
         configure: (proxy) => {
           proxy.on("proxyReq", (proxyReq) => {
             proxyReq.setHeader("X-Forwarded-Host", "su-dev.fit.vutbr.cz");
             proxyReq.setHeader("X-Forwarded-Proto", "https");
-            proxyReq.setHeader("X-Forwarded-Prefix", "/kis-fe");
+            proxyReq.setHeader("X-Forwarded-Prefix", "/kisv4fe");
           })
         }
       },
-      "/kis-fe/api": {
+      "/kisv4fe/api": {
         target: "http://127.0.0.1:7002",
         changeOrigin: true,
-        rewrite: (path) => path.replace("/kis-fe", ""),
+        rewrite: (path) => path.replace("/kisv4fe", ""),
       },
-      "/kis-fe/auth": {
+      "/kisv4fe/auth": {
         target: "http://127.0.0.1:7002",
         changeOrigin: true,
-        rewrite: (path) => path.replace("/kis-fe", ""),
+        rewrite: (path) => path.replace("/kisv4fe", ""),
       },
-      "/kis-fe/signin-oidc": {
+      "/kisv4fe/signin-oidc": {
         target: "http://127.0.0.1:7002",
         changeOrigin: true,
-        rewrite: (path) => path.replace("/kis-fe", ""),
+        rewrite: (path) => path.replace("/kisv4fe", ""),
       },
-      "/kis-fe/signout-callback-oidc": {
+      "/kisv4fe/signout-callback-oidc": {
         target: "http://127.0.0.1:7002",
         changeOrigin: true,
-        rewrite: (path) => path.replace("/kis-fe", ""),
+        rewrite: (path) => path.replace("/kisv4fe", ""),
       },
     },
   },

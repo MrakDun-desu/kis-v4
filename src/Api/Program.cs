@@ -1,5 +1,6 @@
 using System.Data;
 using System.Globalization;
+using System.Net;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,6 +16,7 @@ using KisV4.DAL.EF.Entities;
 using KisV4.DAL.EF.Seeding;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
@@ -224,6 +226,12 @@ Audit.Core.Configuration.DataProvider = new EntityFrameworkDataProvider(opts => 
 });
 
 // Middlewares
+app.UseForwardedHeaders(new ForwardedHeadersOptions {
+    ForwardedHeaders = ForwardedHeaders.All,
+    KnownIPNetworks = { new System.Net.IPNetwork(IPAddress.Parse("172.16.0.0"), 12) }
+});
+
+app.UsePathBase(new PathString(kisSettings.PathBase));
 app.UseCors();
 app.UseRouting();
 if (!app.Environment.IsDevelopment()) {

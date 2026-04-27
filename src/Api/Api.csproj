@@ -13,20 +13,20 @@
 
     <ItemGroup>
         <!-- Normal dependencies -->
-        <PackageReference Include="File.TypeChecker" Version="4.3.0" />
+        <PackageReference Include="File.TypeChecker" Version="4.4.0" />
         <PackageReference Include="FluentValidation" Version="12.1.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
-        <PackageReference Include="Scalar.AspNetCore" Version="2.13.1" />
-        <PackageReference Include="Duende.AccessTokenManagement" Version="4.1.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.14.4" />
+        <PackageReference Include="Duende.AccessTokenManagement" Version="4.2.0" />
 
         <!-- Dependencies for migrating the database with EFCore tools -->
-        <PackageReference PrivateAssets="all" Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
+        <PackageReference PrivateAssets="all" Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
         <!-- OpenAPI file generation -->
-        <PackageReference PrivateAssets="all" Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.3">
+        <PackageReference PrivateAssets="all" Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.7">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>

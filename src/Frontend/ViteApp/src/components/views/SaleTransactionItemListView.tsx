@@ -36,7 +36,7 @@ const SaleTransactionItemListView = ({
               <TableCell>{item.lineNumber}</TableCell>
 
               <TableCell>
-                <Link to={`/admin/store-items/${item.saleItemId}`}>
+                <Link to={`/admin/sale-items/${item.saleItemId}`}>
                   {item.saleItemName}
                 </Link>
               </TableCell>
